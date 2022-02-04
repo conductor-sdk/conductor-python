@@ -1,9 +1,11 @@
 from src.automator.task_runner import TaskRunner
+from src.http.api.task_resource_api import TaskResourceApi
 import multiprocessing
 
 
 class ParallelTaskHandler:
     task_runner_processes = []
+    task_client = TaskResourceApi()
 
     def __init__(self, workers):
         for worker in workers:
