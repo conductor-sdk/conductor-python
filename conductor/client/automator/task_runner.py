@@ -1,43 +1,42 @@
-from src.http.api.task_resource_api import TaskResourceApi
-from src.http.models.task import Task
-from src.http.models.task_result import TaskResult
-from src.http.rest import ApiException
+from conductor.client.http.api.task_resource_api import TaskResourceApi
+from conductor.client.http.models.task import Task
+from conductor.client.http.models.task_result import TaskResult
+from conductor.client.http.rest import ApiException
 import logging
 import time
 
 
 class TaskRunner:
-    POLLING_INTERVAL = 5
-
     def __init__(self, worker):
         self.worker = worker
 
     def run(self):
         while True:
-            self.__wait()
             task = self.__poll_task()
             task_result = self.__execute_task(task)
-            response = self.__update_task(task_result)
-
-    def __wait(self):
-        logging.debug(f'Sleep for {self.POLLING_INTERVAL} seconds')
-        time.sleep(self.POLLING_INTERVAL)
+            self.__update_task(task_result)
+            self.__wait_for_polling_interval()
 
     def __poll_task(self):
         task_definition_name = self.worker.get_task_definition_name()
+        logging.debug(f'Polling task for: {task_definition_name}')
         try:
-            return TaskResourceApi().poll(
+            task = TaskResourceApi().poll(
                 tasktype=task_definition_name
             )
         except ApiException as e:
             logging.warning(
                 f'Failed to poll task for: {task_definition_name}, ApiException.status: {e.status}'
             )
-        except Exception as e:
-            logging.warning(
-                f'Failed to poll task for: {task_definition_name}, Exception: {e}'
+            return None
+        message = 'Polled task for worker: {task_definition_name}, identity: {identity}'
+        logging.debug(
+            message.format(
+                task_definition_name=task_definition_name,
+                identity=self.worker.get_identity()
             )
-        return None
+        )
+        return task
 
     def __execute_task(self, task):
         if isinstance(task, Task) == False:
@@ -100,6 +99,7 @@ class TaskRunner:
                     reason=e
                 )
             )
+            return None
         message = 'Updated task, id: {task_id}, type: {task_type}, worker: {worker_name}, response: {response}'
         logging.info(
             message.format(
@@ -110,3 +110,8 @@ class TaskRunner:
             )
         )
         return response
+
+    def __wait_for_polling_interval(self):
+        polling_interval = self.worker.get_polling_interval()
+        logging.debug(f'Sleep for {polling_interval} seconds')
+        time.sleep(polling_interval)

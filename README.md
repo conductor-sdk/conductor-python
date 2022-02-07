@@ -1,8 +1,69 @@
 # Conductor Python
 
-Software Development Kit for Netflix Conductor, written on Python.
+Software Development Kit for Netflix Conductor, written on and providing support for Python.
 
-## Set up Conductor
+## Quick Guide
+
+In case you have already set up Conductor and got it running, you can quickly onboard to it with these steps:
+1. Install Conductor Python SDK from pypi:
+    ```shell
+    $ python3 -m pip install conductor-python
+    ```
+2. Run Conductor Python SDK:
+    ```shell
+    $ python3 -m conductor.client
+    ```
+
+### Custom worker
+
+In order to create a custom python worker, it should inherit from `WorkerInterface` and instantiate a `TaskHandler` object.
+
+Here is an example:
+
+* Worker:
+  * Details:
+    ```python
+    from conductor.client.worker.worker_interface import WorkerInterface
+    import multiprocessing
+    import socket
+
+
+    class SimplePythonWorker(WorkerInterface):
+        def get_task_definition_name(self):
+            return 'simple_python_worker'
+
+        def execute(self, task_result):
+            task_result.add_output_data('hostname', socket.gethostname())
+            task_result.add_output_data('cpu_cores', multiprocessing.cpu_count())
+            return task_result
+
+        def get_polling_interval(self):
+            return 3
+    ```
+    * Name: `simple_python_worker`
+    * Input: `None`
+    * Output: [`hostname`, `cpu_cores`]
+    * Polling Interval: `3s`
+* Main:
+    ```python
+    from conductor.client.automator.task_handler import TaskHandler
+    from conductor.client.worker.simple_python_worker import SimplePythonWorker
+
+
+    def main():
+        workers = [SimplePythonWorker()] * 1
+        with TaskHandler(workers) as parallel_task_handler:
+            parallel_task_handler.start()
+
+
+    if __name__ == '__main__':
+        main()
+    ```
+    * Single worker within TaskHandler
+
+## Full installation guide
+
+### Set up Conductor
 
 1. Clone Netflix Conductor repository: https://github.com/Netflix/conductor
     ```shell
@@ -24,13 +85,9 @@ You should be able to access:
 * Conductor UI:
   * http://localhost:5000
 
-## Install Python SDK package
+### Run
 
-// TODO
-
-## Run
-
-### Create new task
+#### Create new task
 
 You need to define a *Task* within *Conductor* that your `Python Worker` is capable of running.
 
@@ -73,7 +130,7 @@ Make a POST request to `/metadata/taskdefs` endpoint at your conductor server.
       ]'
     ```
 
-### Create new workflow
+#### Create new workflow
 
 You need to define a *Workflow* within *Conductor* that contains the *Task* you had just defined.
 
@@ -107,7 +164,7 @@ Make a POST request to `/metadata/workflow` endpoint at your conductor server.
     }
     ```
 * Command example:
-    ```bash
+    ```shell
     $ curl -X 'POST' \
         'http://localhost:8080/api/metadata/workflow' \
         -H 'accept: */*' \
@@ -138,7 +195,7 @@ Make a POST request to `/metadata/workflow` endpoint at your conductor server.
       }'
     ```
 
-### Start new workflow
+#### Start new workflow
 
 Now that you have defined a *Task* and a *Workflow* within *Conductor*, you should be able to run it.
 
@@ -181,7 +238,7 @@ Make a POST request to `/workflow/{name}` endpoint at your conductor server.
 You should receive a *Workflow ID* at the *Response body*
 * *Workflow ID* example: `8ff0bc06-4413-4c94-b27a-b3210412a914`
 
-### See workflow execution
+#### See workflow execution
 
 Now you must be able to see its execution through the UI.
 * URL: 

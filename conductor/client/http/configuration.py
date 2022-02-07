@@ -63,7 +63,8 @@ class Configuration(six.with_metaclass(TypeWithDefault, object)):
         self.password = ""
         # Logging Settings
         self.logger = {}
-        self.logger["package_logger"] = logging.getLogger("src.http")
+        self.logger["package_logger"] = logging.getLogger(
+            "conductor.client.http")
         self.logger["urllib3_logger"] = logging.getLogger("urllib3")
         # Log format
         self.logger_format = '%(asctime)s %(levelname)s %(message)s'

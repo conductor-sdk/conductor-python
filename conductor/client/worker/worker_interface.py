@@ -1,4 +1,5 @@
 import abc
+import socket
 
 
 class WorkerInterface(abc.ABC):
@@ -20,3 +21,18 @@ class WorkerInterface(abc.ABC):
                  If the task is not completed yet, return with the status as IN_PROGRESS.
         """
         pass
+
+    @abc.abstractmethod
+    def get_polling_interval(self):
+        """Retrieve interval in seconds at which the server should be polled for worker tasks.
+
+        :return: float
+        """
+        pass
+
+    def get_identity(self):
+        """Retrieve the hostname of the instance that the worker is running.
+
+        :return: str
+        """
+        return socket.gethostname()
