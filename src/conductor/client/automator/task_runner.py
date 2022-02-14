@@ -1,16 +1,31 @@
+from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api.task_resource_api import TaskResourceApi
+from conductor.client.http.api_client import ApiClient
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.rest import ApiException
 import logging
+import os
 import time
 
 
+logger = logging.getLogger(
+    '.'.join(
+        [
+            str(os.getpid()),
+            __name__
+        ]
+    )
+)
+
+
 class TaskRunner:
-    def __init__(self, worker):
+    def __init__(self, configuration, worker):
+        self.configuration = configuration
         self.worker = worker
 
     def run(self):
+        self.configuration.apply_logging_config()
         while True:
             task = self.__poll_task()
             task_result = self.__execute_task(task)
@@ -19,18 +34,18 @@ class TaskRunner:
 
     def __poll_task(self):
         task_definition_name = self.worker.get_task_definition_name()
-        logging.debug(f'Polling task for: {task_definition_name}')
+        logger.debug(f'Polling task for: {task_definition_name}')
         try:
-            task = TaskResourceApi().poll(
+            task = TaskResourceApi(ApiClient(configuration=self.configuration)).poll(
                 tasktype=task_definition_name
             )
-        except ApiException as e:
-            logging.warning(
-                f'Failed to poll task for: {task_definition_name}, ApiException.status: {e.status}'
+        except Exception as e:
+            logger.warning(
+                f'Failed to poll task for: {task_definition_name}, reason: {e}'
             )
             return None
         message = 'Polled task for worker: {task_definition_name}, identity: {identity}'
-        logging.debug(
+        logger.debug(
             message.format(
                 task_definition_name=task_definition_name,
                 identity=self.worker.get_identity()
@@ -41,7 +56,7 @@ class TaskRunner:
     def __execute_task(self, task):
         if isinstance(task, Task) == False:
             return None
-        logging.info(
+        logger.info(
             'Executing task, id: {task_id}, type: {task_type}, worker: {worker_name}'.format(
                 task_id=task.task_id,
                 task_type=task.task_type,
@@ -61,7 +76,7 @@ class TaskRunner:
                 'Failed to execute task, id: {task_id}'
                 ', type: {task_type}, worker: {worker_name}, reason: {reason}'
             )
-            logging.warning(
+            logger.warning(
                 message.format(
                     task_id=task.task_id,
                     task_type=task.task_type,
@@ -71,7 +86,7 @@ class TaskRunner:
             )
             return None
         message = 'Executed task, id: {task_id}, type: {task_type}, worker: {worker_name}'
-        logging.info(
+        logger.info(
             message.format(
                 task_id=task.task_id,
                 task_type=task.task_type,
@@ -83,7 +98,7 @@ class TaskRunner:
         if isinstance(task_result, TaskResult) == False:
             return None
         try:
-            response = TaskResourceApi().update_task(
+            response = TaskResourceApi(ApiClient(configuration=self.configuration)).update_task(
                 body=task_result
             )
         except Exception as e:
@@ -91,7 +106,7 @@ class TaskRunner:
                 'Failed to update task, id: {task_id}'
                 ', type: {task_type}, worker: {worker_name}, reason: {reason}'
             )
-            logging.warning(
+            logger.warning(
                 message.format(
                     task_id=task_result.task_id,
                     task_type=task_result.task_type,
@@ -101,7 +116,7 @@ class TaskRunner:
             )
             return None
         message = 'Updated task, id: {task_id}, type: {task_type}, worker: {worker_name}, response: {response}'
-        logging.info(
+        logger.info(
             message.format(
                 task_id=task_result.task_id,
                 task_type=task_result.task_type,
@@ -113,5 +128,5 @@ class TaskRunner:
 
     def __wait_for_polling_interval(self):
         polling_interval = self.worker.get_polling_interval()
-        logging.debug(f'Sleep for {polling_interval} seconds')
+        logger.debug(f'Sleep for {polling_interval} seconds')
         time.sleep(polling_interval)
