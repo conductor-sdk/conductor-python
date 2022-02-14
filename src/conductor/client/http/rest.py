@@ -11,25 +11,26 @@
 """
 
 from __future__ import absolute_import
-
+from six.moves.urllib.parse import urlencode
+import certifi
 import io
 import json
 import logging
+import os
 import re
-import ssl
-
-import certifi
-# python 2 and python 3 compatibility library
 import six
-from six.moves.urllib.parse import urlencode
-
-try:
-    import urllib3
-except ImportError:
-    raise ImportError('Swagger python client requires urllib3.')
+import ssl
+import urllib3
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(
+    '.'.join(
+        [
+            str(os.getpid()),
+            __name__
+        ]
+    )
+)
 
 
 class RESTResponse(io.IOBase):
