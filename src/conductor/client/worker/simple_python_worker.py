@@ -14,7 +14,14 @@ class SimplePythonWorker(WorkerInterface):
             workflow_instance_id=task.workflow_instance_id,
             worker_id=self.get_task_definition_name()
         )
-        task_result.add_output_data('hostname', socket.gethostname())
-        task_result.add_output_data('cpu_cores', multiprocessing.cpu_count())
+        self.__execute(task_result)
         task_result.status = 'COMPLETED'
         return task_result
+
+    def __execute(self, task_result):
+        task_result.add_output_data(
+            'hostname', socket.gethostname()
+        )
+        task_result.add_output_data(
+            'cpu_cores', multiprocessing.cpu_count()
+        )
