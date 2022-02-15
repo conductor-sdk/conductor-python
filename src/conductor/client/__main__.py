@@ -1,7 +1,7 @@
-import logging
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.worker.simple_python_worker import SimplePythonWorker
+import logging
 import os
 
 logger = logging.getLogger(
