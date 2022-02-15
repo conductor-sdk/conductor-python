@@ -4,12 +4,15 @@ import socket
 
 class WorkerInterface(abc.ABC):
 
-    @abc.abstractmethod
+    def __init__(self, name):
+        self.name = name
+
     def get_task_definition_name(self):
         """Retrieve the name of the task definition the worker is currently working on.
 
         :return: TaskResult
         """
+        return self.name
         pass
 
     @abc.abstractmethod

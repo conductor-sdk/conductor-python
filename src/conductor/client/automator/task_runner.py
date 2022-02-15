@@ -28,9 +28,10 @@ class TaskRunner:
         self.configuration.apply_logging_config()
         while True:
             task = self.__poll_task()
-            task_result = self.__execute_task(task)
-            self.__update_task(task_result)
-            self.__wait_for_polling_interval()
+            if task is not None:
+                task_result = self.__execute_task(task)
+                self.__update_task(task_result)
+                self.__wait_for_polling_interval()
 
     def __poll_task(self):
         task_definition_name = self.worker.get_task_definition_name()
@@ -95,7 +96,7 @@ class TaskRunner:
         )
 
     def __update_task(self, task_result):
-        print('updating task ' + str(task_result))
+        logger.debug('updating task: {}, status: {}'.format(task_result.task_id, task_result.status))
         if isinstance(task_result, TaskResult) == False:
             return None
         try:
