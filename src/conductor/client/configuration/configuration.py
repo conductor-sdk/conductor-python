@@ -89,7 +89,7 @@ class Configuration:
         else:
             # turn off httplib debug
             httplib.HTTPConnection.debuglevel = 0
-            self.__log_level = logging.WARNING
+            self.__log_level = logging.INFO
 
     @property
     def logger_format(self):
