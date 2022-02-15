@@ -40,9 +40,6 @@ class TaskRunner:
                 tasktype=task_definition_name
             )
         except Exception as e:
-            logger.warning(
-                f'Failed to poll task for: {task_definition_name}, reason: {e}'
-            )
             return None
         message = 'Polled task for worker: {task_definition_name}, identity: {identity}'
         logger.debug(
@@ -65,11 +62,14 @@ class TaskRunner:
         )
         task_result = TaskResult(
             task_id=task.task_id,
-            workflow_instance_id=task.workflow_instance_id
+            workflow_instance_id=task.workflow_instance_id,
+            worker_id=self.worker.get_task_definition_name()
         )
         try:
-            self.worker.execute(task_result)
+            self.worker.execute(task)
             task_result.status = 'COMPLETED'
+            task_result.output_data = task.output_data
+            return task_result
         except Exception as e:
             task_result.status = 'FAILED'
             message = (
@@ -95,6 +95,7 @@ class TaskRunner:
         )
 
     def __update_task(self, task_result):
+        print('updating task ' + str(task_result))
         if isinstance(task_result, TaskResult) == False:
             return None
         try:
@@ -115,11 +116,10 @@ class TaskRunner:
                 )
             )
             return None
-        message = 'Updated task, id: {task_id}, type: {task_type}, worker: {worker_name}, response: {response}'
+        message = 'Updated task, id: {task_id}, worker: {worker_name}, response: {response}'
         logger.info(
             message.format(
                 task_id=task_result.task_id,
-                task_type=task_result.task_type,
                 worker_name=self.worker.get_task_definition_name(),
                 response=response
             )

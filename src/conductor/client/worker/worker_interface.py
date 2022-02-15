@@ -13,10 +13,10 @@ class WorkerInterface(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def execute(self, task_result):
+    def execute(self, task):
         """Executes a task and returns the updated task.
 
-        :param TaskResult task: (required)
+        :param Task task: (required)
         :return: TaskResult
                  If the task is not completed yet, return with the status as IN_PROGRESS.
         """
