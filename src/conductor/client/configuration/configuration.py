@@ -164,3 +164,4 @@ class Configuration:
             format=self.logger_format,
             level=self.__log_level
         )
+        logging.getLogger('urllib3').setLevel(logging.WARNING)
