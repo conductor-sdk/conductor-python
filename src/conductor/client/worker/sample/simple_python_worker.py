@@ -1,7 +1,5 @@
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.worker.worker_interface import WorkerInterface
-import multiprocessing
-import socket
 
 
 class SimplePythonWorker(WorkerInterface):
@@ -19,9 +17,4 @@ class SimplePythonWorker(WorkerInterface):
         return task_result
 
     def __execute(self, task_result):
-        task_result.add_output_data(
-            'hostname', socket.gethostname()
-        )
-        task_result.add_output_data(
-            'cpu_cores', multiprocessing.cpu_count()
-        )
+        task_result.add_output_data('key', 'value')

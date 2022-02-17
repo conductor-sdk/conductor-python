@@ -1,15 +1,11 @@
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.worker.simple_python_worker import SimplePythonWorker
+from conductor.client.worker.sample.simple_python_worker import SimplePythonWorker
 import logging
-import os
 
 logger = logging.getLogger(
-    '.'.join(
-        [
-            str(os.getpid()),
-            __name__
-        ]
+    Configuration.get_logging_formatted_name(
+        __name__
     )
 )
 
@@ -19,11 +15,10 @@ def main():
         debug=True
     )
     configuration.apply_logging_config()
-
-    workers = [SimplePythonWorker()] * 20
-    logger.info(f'Created {len(workers)} workers: {workers}')
+    workers = [SimplePythonWorker()] * 3
+    logger.debug(f'Created workers: {workers}')
     with TaskHandler(configuration, workers) as task_handler:
-        logger.info('Created TaskHandler')
+        logger.debug(f'Created task_handler: {task_handler}')
         task_handler.start()
 
 
