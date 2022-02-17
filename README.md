@@ -255,14 +255,12 @@ Now you must be able to see its execution through the UI.
   * suffix: `${workflow_id}`
 * Example: `http://localhost:5001/execution/8ff0bc06-4413-4c94-b27a-b3210412a914`
 
-### Test
+### Unit Tests
 
-#### Unit Testing
-
-In order to run unit testing, go to `src` folder from repository root folder and run:
+#### Simple validation
 
 ```shell
-$ python3 -m unittest -v
+/conductor-python/src$ python3 -m unittest -v
 test_execute_task (tst.automator.test_task_runner.TestTaskRunner) ... ok
 test_execute_task_with_faulty_execution_worker (tst.automator.test_task_runner.TestTaskRunner) ... ok
 test_execute_task_with_invalid_task (tst.automator.test_task_runner.TestTaskRunner) ... ok
@@ -271,4 +269,22 @@ test_execute_task_with_invalid_task (tst.automator.test_task_runner.TestTaskRunn
 Ran 3 tests in 0.001s
 
 OK
+```
+
+#### Run with code coverage
+
+```shell
+/conductor-python/src$ python3 -m coverage run --source=conductor/ -m unittest
+```
+
+Report:
+
+```shell
+/conductor-python/src$ python3 -m coverage report
+```
+
+Visual coverage results:
+
+```shell
+/conductor-python/src$ python3 -m coverage html
 ```
