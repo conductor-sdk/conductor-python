@@ -1,14 +1,11 @@
 from conductor.client.automator.task_runner import TaskRunner
+from conductor.client.configuration.configuration import Configuration
 import logging
 import multiprocessing
-import os
 
 logger = logging.getLogger(
-    '.'.join(
-        [
-            str(os.getpid()),
-            __name__
-        ]
+    Configuration.get_logging_formatted_name(
+        __name__
     )
 )
 

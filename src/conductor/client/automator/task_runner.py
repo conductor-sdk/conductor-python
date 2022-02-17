@@ -1,18 +1,14 @@
+from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 import logging
-import os
 import time
 
-
 logger = logging.getLogger(
-    '.'.join(
-        [
-            str(os.getpid()),
-            __name__
-        ]
+    Configuration.get_logging_formatted_name(
+        __name__
     )
 )
 
@@ -53,37 +49,37 @@ class TaskRunner:
         if isinstance(task, Task) == False:
             return None
         logger.info(
-            'Executing task, id: {task_id}, type: {task_type}, worker: {worker_name}'.format(
+            'Executing task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}'.format(
                 task_id=task.task_id,
-                task_type=task.task_type,
+                workflow_instance_id=task.workflow_instance_id,
                 worker_name=self.worker.get_task_definition_name()
             )
         )
         try:
             task_result = self.worker.execute(task)
-        except Exception as e:
-            task_result.status = 'FAILED'
-            message = (
-                'Failed to execute task, id: {task_id}'
-                ', type: {task_type}, worker: {worker_name}, reason: {reason}'
-            )
-            logger.warning(
-                message.format(
+            logger.info(
+                'Executed task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}'.format(
                     task_id=task.task_id,
-                    task_type=task.task_type,
-                    worker_name=self.worker.get_task_definition_name(),
-                    reason=e
+                    workflow_instance_id=task.workflow_instance_id,
+                    worker_name=self.worker.get_task_definition_name()
                 )
             )
-            return None
-        message = 'Executed task, id: {task_id}, type: {task_type}, worker: {worker_name}'
-        logger.info(
-            message.format(
+        except Exception as e:
+            task_result = TaskResult(
                 task_id=task.task_id,
-                task_type=task.task_type,
-                worker_name=self.worker.get_task_definition_name()
+                workflow_instance_id=task.workflow_instance_id,
+                worker_id=self.worker.get_task_definition_name()
             )
-        )
+            task_result.status = 'FAILED'
+            task_result.reason_for_incompletion = str(e)
+            logger.warning(
+                'Failed to execute task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}, reason: {reason}'.format(
+                    task_id=task.task_id,
+                    workflow_instance_id=task.workflow_instance_id,
+                    worker_name=self.worker.get_task_definition_name(),
+                    reason=str(e)
+                )
+            )
         return task_result
 
     def __update_task(self, task_result):
@@ -92,8 +88,6 @@ class TaskRunner:
                 task_result.task_id, task_result.status
             )
         )
-        if isinstance(task_result, TaskResult) == False:
-            return None
         try:
             response = TaskResourceApi(ApiClient(configuration=self.configuration)).update_task(
                 body=task_result
@@ -108,7 +102,7 @@ class TaskRunner:
                     task_id=task_result.task_id,
                     task_type=task_result.task_type,
                     worker_name=self.worker.get_task_definition_name(),
-                    reason=e
+                    reason=str(e)
                 )
             )
             return None

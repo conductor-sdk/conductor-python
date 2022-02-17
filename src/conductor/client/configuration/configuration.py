@@ -1,12 +1,9 @@
-from __future__ import absolute_import
-
-import copy
+from six.moves import http_client as httplib
 import logging
 import multiprocessing
+import os
 import sys
 import urllib3
-
-from six.moves import http_client as httplib
 
 
 class Configuration:
@@ -165,3 +162,7 @@ class Configuration:
             level=self.__log_level
         )
         logging.getLogger('urllib3').setLevel(logging.WARNING)
+
+    @staticmethod
+    def get_logging_formatted_name(name):
+        return f'[{os.getpid()}] {name}'

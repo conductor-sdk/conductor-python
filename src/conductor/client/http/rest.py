@@ -1,22 +1,17 @@
-from __future__ import absolute_import
+from conductor.client.configuration.configuration import Configuration
 from six.moves.urllib.parse import urlencode
 import certifi
 import io
 import json
 import logging
-import os
 import re
 import six
 import ssl
 import urllib3
 
-
 logger = logging.getLogger(
-    '.'.join(
-        [
-            str(os.getpid()),
-            __name__
-        ]
+    Configuration.get_logging_formatted_name(
+        __name__
     )
 )
 
