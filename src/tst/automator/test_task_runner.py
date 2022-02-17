@@ -1,3 +1,4 @@
+import logging
 from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
@@ -10,6 +11,12 @@ import unittest
 class TestTaskRunner(unittest.TestCase):
     TASK_ID = 'TASK_ID'
     WORKFLOW_INSTANCE_ID = 'WORKFLOW_INSTANCE_ID'
+
+    def setUp(self):
+        logging.disable(logging.CRITICAL)
+
+    def tearDown(self):
+        logging.disable(logging.NOTSET)
 
     def test_execute_task_with_invalid_task(self):
         task_runner = TaskRunner(
