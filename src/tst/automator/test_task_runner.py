@@ -30,7 +30,7 @@ class TestTaskRunner(unittest.TestCase):
                 configuration=None,
                 worker=SimplePythonWorker()
             )
-            self.assertEqual(str(expected_exception), str(context.exception))
+            self.assertEqual(expected_exception, context.exception)
 
     def test_initialization_with_invalid_worker(self):
         expected_exception = Exception('Invalid worker')
@@ -39,7 +39,7 @@ class TestTaskRunner(unittest.TestCase):
                 configuration=Configuration(),
                 worker=None
             )
-            self.assertEqual(str(expected_exception), str(context.exception))
+            self.assertEqual(expected_exception, context.exception)
 
     def test_poll_task(self):
         expected_task = self.__get_valid_task()
@@ -138,8 +138,7 @@ class TestTaskRunner(unittest.TestCase):
             task_runner = self.__get_valid_task_runner()
             with self.assertRaises(Exception) as context:
                 task_runner._TaskRunner__wait_for_polling_interval()
-                self.assertEqual(str(expected_exception),
-                                 str(context.exception))
+                self.assertEqual(expected_exception, context.exception)
 
     def test_wait_for_polling_interval(self):
         expected_time = SimplePythonWorker().get_polling_interval_in_seconds()
