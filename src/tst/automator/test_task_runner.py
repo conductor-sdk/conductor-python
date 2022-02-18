@@ -7,6 +7,7 @@ from conductor.client.worker.sample.faulty_execution_worker import FaultyExecuti
 from conductor.client.worker.sample.simple_python_worker import SimplePythonWorker
 from unittest.mock import patch
 import logging
+import time
 import unittest
 
 
@@ -27,7 +28,7 @@ class TestTaskRunner(unittest.TestCase):
                 configuration=None,
                 worker=SimplePythonWorker()
             )
-        self.assertEqual(str(expected_exception), str(context.exception))
+            self.assertEqual(str(expected_exception), str(context.exception))
 
     def test_initialization_with_invalid_worker(self):
         expected_exception = Exception('Invalid worker')
@@ -36,7 +37,7 @@ class TestTaskRunner(unittest.TestCase):
                 configuration=Configuration(),
                 worker=None
             )
-        self.assertEqual(str(expected_exception), str(context.exception))
+            self.assertEqual(str(expected_exception), str(context.exception))
 
     def test_poll_task(self):
         expected_task = self.__get_valid_task()
@@ -113,12 +114,17 @@ class TestTaskRunner(unittest.TestCase):
             task_runner = self.__get_valid_task_runner()
             with self.assertRaises(Exception) as context:
                 task_runner._TaskRunner__wait_for_polling_interval()
-            self.assertEqual(str(expected_exception), str(context.exception))
+                self.assertEqual(str(expected_exception),
+                                 str(context.exception))
 
     def test_wait_for_polling_interval(self):
+        expected_time = SimplePythonWorker().get_polling_interval_in_seconds()
         task_runner = self.__get_valid_task_runner()
-        # TODO: add stopwatch to validate if the thread slept at least for `polling_interval` seconds
+        start_time = time.time()
         task_runner._TaskRunner__wait_for_polling_interval()
+        finish_time = time.time()
+        spent_time = finish_time - start_time
+        self.assertGreater(spent_time, expected_time)
 
     def __get_valid_task_runner(self):
         return TaskRunner(
