@@ -3,6 +3,7 @@ from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
+from conductor.client.worker.worker_interface import WorkerInterface
 import logging
 import time
 
@@ -15,6 +16,10 @@ logger = logging.getLogger(
 
 class TaskRunner:
     def __init__(self, configuration, worker):
+        if not isinstance(configuration, Configuration):
+            raise Exception('Invalid configuration')
+        if not isinstance(worker, WorkerInterface):
+            raise Exception('Invalid worker')
         self.configuration = configuration
         self.worker = worker
 
@@ -29,12 +34,17 @@ class TaskRunner:
 
     def __poll_task(self):
         task_definition_name = self.worker.get_task_definition_name()
-        logger.debug(f'Polling task for: {task_definition_name}')
+        logger.info(f'Polling task for: {task_definition_name}')
+        task_resource_api = TaskResourceApi(
+            ApiClient(
+                configuration=self.configuration
+            )
+        )
         try:
-            task = TaskResourceApi(ApiClient(configuration=self.configuration)).poll(
+            task = task_resource_api.poll(
                 tasktype=task_definition_name
             )
-        except Exception as e:
+        except Exception:
             return None
         message = 'Polled task for worker: {task_definition_name}, identity: {identity}'
         logger.debug(
