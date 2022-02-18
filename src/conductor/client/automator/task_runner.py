@@ -56,7 +56,7 @@ class TaskRunner:
         return task
 
     def __execute_task(self, task):
-        if isinstance(task, Task) == False:
+        if not isinstance(task, Task):
             return None
         logger.info(
             'Executing task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}'.format(
@@ -93,9 +93,13 @@ class TaskRunner:
         return task_result
 
     def __update_task(self, task_result):
+        if not isinstance(task_result, TaskResult):
+            return None
         logger.debug(
-            'Updating task: {}, status: {}'.format(
-                task_result.task_id, task_result.status
+            'Updating task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}'.format(
+                task_id=task_result.task_id,
+                workflow_instance_id=task_result.workflow_instance_id,
+                worker_name=self.worker.get_task_definition_name()
             )
         )
         try:
@@ -103,25 +107,21 @@ class TaskRunner:
                 body=task_result
             )
         except Exception as e:
-            message = (
-                'Failed to update task, id: {task_id}'
-                ', type: {task_type}, worker: {worker_name}, reason: {reason}'
-            )
             logger.warning(
-                message.format(
+                'Failed to update task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}, reason: {reason}'.format(
                     task_id=task_result.task_id,
-                    task_type=task_result.task_type,
+                    workflow_instance_id=task_result.workflow_instance_id,
                     worker_name=self.worker.get_task_definition_name(),
                     reason=str(e)
                 )
             )
             return None
-        message = 'Updated task, id: {task_id}, worker: {worker_name}, response: {response}'
         logger.info(
-            message.format(
+            'Updated task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}, response: {response}'.format(
                 task_id=task_result.task_id,
+                workflow_instance_id=task_result.workflow_instance_id,
                 worker_name=self.worker.get_task_definition_name(),
-                response=response
+                response=str(response)
             )
         )
         return response

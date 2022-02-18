@@ -1,6 +1,7 @@
 from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api.task_resource_api import TaskResourceApi
+from conductor.client.http.models import task_result
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.worker.sample.faulty_execution_worker import FaultyExecutionWorker
@@ -12,8 +13,9 @@ import unittest
 
 
 class TestTaskRunner(unittest.TestCase):
-    TASK_ID = 'TASK_ID'
-    WORKFLOW_INSTANCE_ID = 'WORKFLOW_INSTANCE_ID'
+    TASK_ID = 'VALID_TASK_ID'
+    WORKFLOW_INSTANCE_ID = 'VALID_WORKFLOW_INSTANCE_ID'
+    UPDATE_TASK_RESPONSE = 'VALID_UPDATE_TASK_RESPONSE'
 
     def setUp(self):
         logging.disable(logging.CRITICAL)
@@ -84,16 +86,8 @@ class TestTaskRunner(unittest.TestCase):
         self.assertEqual(task_result, expected_task_result)
 
     def test_execute_task(self):
+        expected_task_result = self.__get_valid_task_result()
         worker = SimplePythonWorker()
-        expected_task_result = TaskResult(
-            task_id=self.TASK_ID,
-            workflow_instance_id=self.WORKFLOW_INSTANCE_ID,
-            worker_id=worker.get_task_definition_name(),
-            status='COMPLETED',
-            output_data={
-                'key': 'value'
-            }
-        )
         task_runner = TaskRunner(
             configuration=Configuration(),
             worker=worker
@@ -101,6 +95,36 @@ class TestTaskRunner(unittest.TestCase):
         task = self.__get_valid_task()
         task_result = task_runner._TaskRunner__execute_task(task)
         self.assertEqual(task_result, expected_task_result)
+
+    def test_update_task_with_invalid_task_result(self):
+        expected_response = None
+        task_runner = self.__get_valid_task_runner()
+        response = task_runner._TaskRunner__update_task(None)
+        self.assertEqual(response, expected_response)
+
+    def test_update_task_with_faulty_task_api(self):
+        expected_response = None
+        with patch.object(
+            TaskResourceApi,
+            'update_task',
+            side_effect=Exception()
+        ):
+            task_runner = self.__get_valid_task_runner()
+            task_result = self.__get_valid_task_result()
+            response = task_runner._TaskRunner__update_task(task_result)
+            self.assertEqual(response, expected_response)
+
+    def test_update_task(self):
+        expected_response = self.UPDATE_TASK_RESPONSE
+        with patch.object(
+            TaskResourceApi,
+            'update_task',
+            return_value=self.UPDATE_TASK_RESPONSE
+        ):
+            task_runner = self.__get_valid_task_runner()
+            task_result = self.__get_valid_task_result()
+            response = task_runner._TaskRunner__update_task(task_result)
+            self.assertEqual(response, expected_response)
 
     def test_wait_for_polling_interval_with_faulty_worker(self):
         expected_exception = Exception(
@@ -136,4 +160,15 @@ class TestTaskRunner(unittest.TestCase):
         return Task(
             task_id=self.TASK_ID,
             workflow_instance_id=self.WORKFLOW_INSTANCE_ID
+        )
+
+    def __get_valid_task_result(self):
+        return TaskResult(
+            task_id=self.TASK_ID,
+            workflow_instance_id=self.WORKFLOW_INSTANCE_ID,
+            worker_id=SimplePythonWorker().get_task_definition_name(),
+            status='COMPLETED',
+            output_data={
+                'key': 'value'
+            }
         )
