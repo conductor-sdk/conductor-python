@@ -12,6 +12,8 @@ logger = logging.getLogger(
 
 class TaskHandler:
     def __init__(self, configuration, workers):
+        if not isinstance(workers, list):
+            raise Exception('Invalid worker list')
         self.task_runner_processes = []
         for worker in workers:
             task_runner = TaskRunner(configuration, worker)
