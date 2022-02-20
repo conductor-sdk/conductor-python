@@ -3,6 +3,7 @@ from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
+from conductor.client.worker.worker_interface import WorkerInterface
 import logging
 import time
 
@@ -15,26 +16,38 @@ logger = logging.getLogger(
 
 class TaskRunner:
     def __init__(self, configuration, worker):
+        if not isinstance(configuration, Configuration):
+            raise Exception('Invalid configuration')
+        if not isinstance(worker, WorkerInterface):
+            raise Exception('Invalid worker')
         self.configuration = configuration
         self.worker = worker
 
     def run(self):
         self.configuration.apply_logging_config()
         while True:
-            task = self.__poll_task()
-            if task != None:
-                task_result = self.__execute_task(task)
-                self.__update_task(task_result)
-            self.__wait_for_polling_interval()
+            self.run_once()
+
+    def run_once(self):
+        task = self.__poll_task()
+        if task != None:
+            task_result = self.__execute_task(task)
+            self.__update_task(task_result)
+        self.__wait_for_polling_interval()
 
     def __poll_task(self):
         task_definition_name = self.worker.get_task_definition_name()
-        logger.debug(f'Polling task for: {task_definition_name}')
+        logger.info(f'Polling task for: {task_definition_name}')
+        task_resource_api = TaskResourceApi(
+            ApiClient(
+                configuration=self.configuration
+            )
+        )
         try:
-            task = TaskResourceApi(ApiClient(configuration=self.configuration)).poll(
+            task = task_resource_api.poll(
                 tasktype=task_definition_name
             )
-        except Exception as e:
+        except Exception:
             return None
         message = 'Polled task for worker: {task_definition_name}, identity: {identity}'
         logger.debug(
@@ -46,7 +59,7 @@ class TaskRunner:
         return task
 
     def __execute_task(self, task):
-        if isinstance(task, Task) == False:
+        if not isinstance(task, Task):
             return None
         logger.info(
             'Executing task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}'.format(
@@ -83,35 +96,40 @@ class TaskRunner:
         return task_result
 
     def __update_task(self, task_result):
+        if not isinstance(task_result, TaskResult):
+            return None
         logger.debug(
-            'Updating task: {}, status: {}'.format(
-                task_result.task_id, task_result.status
+            'Updating task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}'.format(
+                task_id=task_result.task_id,
+                workflow_instance_id=task_result.workflow_instance_id,
+                worker_name=self.worker.get_task_definition_name()
+            )
+        )
+        task_resource_api = TaskResourceApi(
+            ApiClient(
+                configuration=self.configuration
             )
         )
         try:
-            response = TaskResourceApi(ApiClient(configuration=self.configuration)).update_task(
+            response = task_resource_api.update_task(
                 body=task_result
             )
         except Exception as e:
-            message = (
-                'Failed to update task, id: {task_id}'
-                ', type: {task_type}, worker: {worker_name}, reason: {reason}'
-            )
             logger.warning(
-                message.format(
+                'Failed to update task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}, reason: {reason}'.format(
                     task_id=task_result.task_id,
-                    task_type=task_result.task_type,
+                    workflow_instance_id=task_result.workflow_instance_id,
                     worker_name=self.worker.get_task_definition_name(),
                     reason=str(e)
                 )
             )
             return None
-        message = 'Updated task, id: {task_id}, worker: {worker_name}, response: {response}'
         logger.info(
-            message.format(
+            'Updated task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}, response: {response}'.format(
                 task_id=task_result.task_id,
+                workflow_instance_id=task_result.workflow_instance_id,
                 worker_name=self.worker.get_task_definition_name(),
-                response=response
+                response=str(response)
             )
         )
         return response
