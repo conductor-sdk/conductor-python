@@ -40,6 +40,25 @@ class TestTaskRunner(unittest.TestCase):
             )
             self.assertEqual(expected_exception, context.exception)
 
+    def test_run_once(self):
+        expected_time = SimplePythonWorker().get_polling_interval_in_seconds()
+        with patch.object(
+            TaskResourceApi,
+            'poll',
+            return_value=self.__get_valid_task()
+        ):
+            with patch.object(
+                TaskResourceApi,
+                'update_task',
+                return_value=self.UPDATE_TASK_RESPONSE
+            ):
+                task_runner = self.__get_valid_task_runner()
+                start_time = time.time()
+                task_runner.run_once()
+                finish_time = time.time()
+                spent_time = finish_time - start_time
+                self.assertGreater(spent_time, expected_time)
+
     def test_poll_task(self):
         expected_task = self.__get_valid_task()
         with patch.object(

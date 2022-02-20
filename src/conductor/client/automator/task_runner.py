@@ -26,11 +26,14 @@ class TaskRunner:
     def run(self):
         self.configuration.apply_logging_config()
         while True:
-            task = self.__poll_task()
-            if task != None:
-                task_result = self.__execute_task(task)
-                self.__update_task(task_result)
-            self.__wait_for_polling_interval()
+            self.run_once()
+
+    def run_once(self):
+        task = self.__poll_task()
+        if task != None:
+            task_result = self.__execute_task(task)
+            self.__update_task(task_result)
+        self.__wait_for_polling_interval()
 
     def __poll_task(self):
         task_definition_name = self.worker.get_task_definition_name()
@@ -102,8 +105,13 @@ class TaskRunner:
                 worker_name=self.worker.get_task_definition_name()
             )
         )
+        task_resource_api = TaskResourceApi(
+            ApiClient(
+                configuration=self.configuration
+            )
+        )
         try:
-            response = TaskResourceApi(ApiClient(configuration=self.configuration)).update_task(
+            response = task_resource_api.update_task(
                 body=task_result
             )
         except Exception as e:
