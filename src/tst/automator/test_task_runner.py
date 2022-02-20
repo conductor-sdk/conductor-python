@@ -1,7 +1,6 @@
 from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api.task_resource_api import TaskResourceApi
-from conductor.client.http.models import task_result
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.worker.sample.faulty_execution_worker import FaultyExecutionWorker

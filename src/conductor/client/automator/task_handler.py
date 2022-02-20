@@ -26,11 +26,7 @@ class TaskHandler:
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        for task_runner_process in self.task_runner_processes:
-            try:
-                task_runner_process.kill()
-            except:
-                task_runner_process.terminate()
+        pass
 
     def start(self):
         for task_runner_process in self.task_runner_processes:
