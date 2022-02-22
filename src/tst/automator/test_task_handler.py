@@ -42,5 +42,5 @@ class TestTaskHandler(unittest.TestCase):
     def __get_valid_task_handler(self):
         return TaskHandler(
             configuration=Configuration(),
-            workers=[SimplePythonWorker()]
+            workers=[SimplePythonWorker('task')]
         )
