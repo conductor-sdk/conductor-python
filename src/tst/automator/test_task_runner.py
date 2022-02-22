@@ -27,7 +27,7 @@ class TestTaskRunner(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             TaskRunner(
                 configuration=None,
-                worker=SimplePythonWorker()
+                worker=self.__get_valid_worker()
             )
             self.assertEqual(expected_exception, context.exception)
 
@@ -41,7 +41,7 @@ class TestTaskRunner(unittest.TestCase):
             self.assertEqual(expected_exception, context.exception)
 
     def test_run_once(self):
-        expected_time = SimplePythonWorker().get_polling_interval_in_seconds()
+        expected_time = self.__get_valid_worker().get_polling_interval_in_seconds()
         with patch.object(
             TaskResourceApi,
             'poll',
@@ -87,7 +87,7 @@ class TestTaskRunner(unittest.TestCase):
         self.assertEqual(task_result, None)
 
     def test_execute_task_with_faulty_execution_worker(self):
-        worker = FaultyExecutionWorker()
+        worker = FaultyExecutionWorker('task')
         expected_task_result = TaskResult(
             task_id=self.TASK_ID,
             workflow_instance_id=self.WORKFLOW_INSTANCE_ID,
@@ -105,7 +105,7 @@ class TestTaskRunner(unittest.TestCase):
 
     def test_execute_task(self):
         expected_task_result = self.__get_valid_task_result()
-        worker = SimplePythonWorker()
+        worker = self.__get_valid_worker()
         task_runner = TaskRunner(
             configuration=Configuration(),
             worker=worker
@@ -159,7 +159,7 @@ class TestTaskRunner(unittest.TestCase):
                 self.assertEqual(expected_exception, context.exception)
 
     def test_wait_for_polling_interval(self):
-        expected_time = SimplePythonWorker().get_polling_interval_in_seconds()
+        expected_time = self.__get_valid_worker().get_polling_interval_in_seconds()
         task_runner = self.__get_valid_task_runner()
         start_time = time.time()
         task_runner._TaskRunner__wait_for_polling_interval()
@@ -170,7 +170,7 @@ class TestTaskRunner(unittest.TestCase):
     def __get_valid_task_runner(self):
         return TaskRunner(
             configuration=Configuration(),
-            worker=SimplePythonWorker()
+            worker=self.__get_valid_worker()
         )
 
     def __get_valid_task(self):
@@ -183,9 +183,12 @@ class TestTaskRunner(unittest.TestCase):
         return TaskResult(
             task_id=self.TASK_ID,
             workflow_instance_id=self.WORKFLOW_INSTANCE_ID,
-            worker_id=SimplePythonWorker().get_task_definition_name(),
+            worker_id=self.__get_valid_worker().get_identity(),
             status='COMPLETED',
             output_data={
                 'key': 'value'
             }
         )
+
+    def __get_valid_worker(self):
+        return SimplePythonWorker('task')
