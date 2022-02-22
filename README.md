@@ -147,7 +147,7 @@ Software Development Kit for Netflix Conductor, written on and providing support
     
     Now you must be able to see its execution through the UI.
     * Example: `http://localhost:5000/execution/8ff0bc06-4413-4c94-b27a-b3210412a914`
-
+1. Run your Python file with the `main` method
 
 ### Unit Tests
 
