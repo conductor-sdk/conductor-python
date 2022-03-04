@@ -3,6 +3,7 @@ from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
+from conductor.client.telemetry.metrics_collector import MetricsCollector
 from conductor.client.worker.worker_interface import WorkerInterface
 import logging
 import time
@@ -15,6 +16,8 @@ logger = logging.getLogger(
 
 
 class TaskRunner:
+    metrics_collector = MetricsCollector()
+
     def __init__(self, worker: WorkerInterface, configuration: Configuration = None):
         if configuration != None and not isinstance(configuration, Configuration):
             raise Exception('Invalid configuration')
@@ -30,6 +33,7 @@ class TaskRunner:
             self.run_once()
 
     def run_once(self) -> None:
+        self.metrics_collector.increment_counter()
         task = self.__poll_task()
         if task != None:
             task_result = self.__execute_task(task)
