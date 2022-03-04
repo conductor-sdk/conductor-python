@@ -33,7 +33,7 @@ class TaskRunner:
             self.run_once()
 
     def run_once(self) -> None:
-        self.metrics_collector.increment_counter()
+        # self.metrics_collector.increment_counter()
         task = self.__poll_task()
         if task != None:
             task_result = self.__execute_task(task)
