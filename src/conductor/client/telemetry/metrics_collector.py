@@ -25,6 +25,7 @@ class MetricsCollector:
             registry=self.registry
         )
         self.task_paused_counter = Counter(
+            # TODO
             name='task_paused',
             documentation='Number of times the task has been polled, when the worker has been paused',
             registry=self.registry
@@ -55,6 +56,7 @@ class MetricsCollector:
             registry=self.registry
         )
         self.external_payload_used_counter = Counter(
+            # TODO
             name='external_payload_used',
             documentation='Size of TaskResult',
             registry=self.registry
@@ -63,6 +65,3 @@ class MetricsCollector:
         # task_ack_failed
         # task_ack_error
         # workflow_input_size
-
-    # def increment_counter(self):
-    #     self.counter.inc()
