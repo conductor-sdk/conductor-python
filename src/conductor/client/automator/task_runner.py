@@ -54,8 +54,10 @@ class TaskRunner:
             finish_time = time.time()
             spent_time = finish_time - start_time
             # self.metrics_collector.task_poll_time_gauge.set(spent_time)
-        except Exception:
-            # self.metrics_collector.task_poll_error_counter.inc()
+        except Exception as e:
+            self.metrics_collector.increment_task_poll_error_counter(
+                task_definition_name, e
+            )
             return None
         message = 'Polled task for worker: {task_definition_name}, identity: {identity}'
         logger.debug(
