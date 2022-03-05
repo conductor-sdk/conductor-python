@@ -131,7 +131,10 @@ class TaskRunner:
                 body=task_result
             )
         except Exception as e:
-            # self.metrics_collector.task_update_error_counter.inc()
+            self.metrics_collector.increment_task_update_error_count(
+                task_type=self.worker.get_task_definition_name(),
+                exception=e
+            )
             logger.warning(
                 'Failed to update task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}, reason: {reason}'.format(
                     task_id=task_result.task_id,
