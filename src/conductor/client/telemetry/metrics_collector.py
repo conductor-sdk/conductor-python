@@ -1,67 +1,58 @@
 from conductor.client.configuration.configuration import Configuration
-from prometheus_client import CollectorRegistry, Gauge
+from conductor.client.telemetry.model.metric_documentation import MetricDocumentation
+from conductor.client.telemetry.model.metric_label import MetricLabel
+from conductor.client.telemetry.model.metric_name import MetricName
+from prometheus_client import CollectorRegistry
 from prometheus_client import Counter
+from prometheus_client import Gauge
 from prometheus_client.multiprocess import MultiProcessCollector
+from typing import List
 import os
 
 
 class MetricsCollector:
-    def __init__(self):
-        # TODO improve this hard coded ENV
-        os.environ["PROMETHEUS_MULTIPROC_DIR"] = Configuration.METRICS_PREFIX_DIR
-        self.registry = CollectorRegistry()
-        MultiProcessCollector(self.registry)
-        self.__create_counters()
+    counters = {}
+    registry = CollectorRegistry()
 
-    def __create_counters(self):
-        self.task_poll_counter = Counter(
-            name='task_poll',
-            documentation='Number of times the task has been polled',
+    def __init__(self):
+        # TODO improve hard coded ENV
+        os.environ["PROMETHEUS_MULTIPROC_DIR"] = Configuration.METRICS_PREFIX_DIR
+        MultiProcessCollector(self.registry)
+
+    def increment_task_poll_counter(self, task_type: str) -> None:
+        counter = self.__get_counter(
+            name=MetricName.TASK_POLL,
+            documentation=MetricDocumentation.TASK_POLL,
+            labelnames=[
+                MetricLabel.TASK_TYPE
+            ]
+        )
+        self.__increment_counter(counter, [task_type])
+
+    def __increment_counter(self, counter: Counter, label_values: List[MetricLabel]) -> None:
+        counter.labels(*label_values).inc()
+
+    def __get_counter(
+        self,
+        name: MetricName,
+        documentation: MetricDocumentation,
+        labelnames: List[MetricLabel]
+    ) -> Counter:
+        if name not in self.counters:
+            self.counters[name] = self.__generate_counter(
+                name, documentation, labelnames
+            )
+        return self.counters[name]
+
+    def __generate_counter(
+        self,
+        name: MetricName,
+        documentation: MetricDocumentation,
+        labelnames: List[MetricLabel]
+    ) -> Counter:
+        return Counter(
+            name=name,
+            documentation=documentation,
+            labelnames=labelnames,
             registry=self.registry
         )
-        self.task_poll_error_counter = Counter(
-            name='task_poll_error',
-            documentation='Number of times the task has been polled, when the worker has been paused',
-            registry=self.registry
-        )
-        self.task_paused_counter = Counter(
-            # TODO
-            name='task_paused',
-            documentation='Number of times the task has been polled, when the worker has been paused',
-            registry=self.registry
-        )
-        self.task_execute_error_counter = Counter(
-            name='task_execute_error',
-            documentation='Number of times the task has been executed with an error',
-            registry=self.registry
-        )
-        self.task_update_error_counter = Counter(
-            name='task_update_error',
-            documentation='Number of times the task has been updated with an error',
-            registry=self.registry
-        )
-        self.task_poll_time_gauge = Gauge(
-            name='task_poll_time',
-            documentation='Time to poll for a task',
-            registry=self.registry
-        )
-        self.task_execute_time_gauge = Gauge(
-            name='task_execute_time',
-            documentation='Time to execute a task',
-            registry=self.registry
-        )
-        self.task_result_size_gauge = Gauge(
-            name='task_result_size',
-            documentation='Size of TaskResult',
-            registry=self.registry
-        )
-        self.external_payload_used_counter = Counter(
-            # TODO
-            name='external_payload_used',
-            documentation='Size of TaskResult',
-            registry=self.registry
-        )
-        # task_execution_queue_full
-        # task_ack_failed
-        # task_ack_error
-        # workflow_input_size

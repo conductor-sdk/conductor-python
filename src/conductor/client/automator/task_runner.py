@@ -41,8 +41,10 @@ class TaskRunner:
         self.__wait_for_polling_interval()
 
     def __poll_task(self) -> Task:
-        self.metrics_collector.task_poll_counter.inc()
         task_definition_name = self.worker.get_task_definition_name()
+        self.metrics_collector.increment_task_poll_counter(
+            task_definition_name
+        )
         logger.info(f'Polling task for: {task_definition_name}')
         try:
             start_time = time.time()
@@ -51,9 +53,9 @@ class TaskRunner:
             )
             finish_time = time.time()
             spent_time = finish_time - start_time
-            self.metrics_collector.task_poll_time_gauge.set(spent_time)
+            # self.metrics_collector.task_poll_time_gauge.set(spent_time)
         except Exception:
-            self.metrics_collector.task_poll_error_counter.inc()
+            # self.metrics_collector.task_poll_error_counter.inc()
             return None
         message = 'Polled task for worker: {task_definition_name}, identity: {identity}'
         logger.debug(
@@ -79,10 +81,10 @@ class TaskRunner:
             task_result = self.worker.execute(task)
             finish_time = time.time()
             spent_time = finish_time - start_time
-            self.metrics_collector.task_execute_time_gauge.set(spent_time)
-            self.metrics_collector.task_result_size_gauge.set(
-                sizeof(task_result)
-            )
+            # self.metrics_collector.task_execute_time_gauge.set(spent_time)
+            # self.metrics_collector.task_result_size_gauge.set(
+            #     sizeof(task_result)
+            # )
             logger.info(
                 'Executed task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}'.format(
                     task_id=task.task_id,
@@ -91,7 +93,7 @@ class TaskRunner:
                 )
             )
         except Exception as e:
-            self.metrics_collector.task_execute_error_counter.inc()
+            # self.metrics_collector.task_execute_error_counter.inc()
             task_result = TaskResult(
                 task_id=task.task_id,
                 workflow_instance_id=task.workflow_instance_id,
@@ -124,7 +126,7 @@ class TaskRunner:
                 body=task_result
             )
         except Exception as e:
-            self.metrics_collector.task_update_error_counter.inc()
+            # self.metrics_collector.task_update_error_counter.inc()
             logger.warning(
                 'Failed to update task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}, reason: {reason}'.format(
                     task_id=task_result.task_id,

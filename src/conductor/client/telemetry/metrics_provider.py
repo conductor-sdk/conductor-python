@@ -17,7 +17,6 @@ def provide_metrics():
     OUTPUT_FILE_PATH = os.path.join(
         Configuration.METRICS_PREFIX_DIR, 'latest.txt'
     )
-    logger.debug(f'OUTPUT_FILE_PATH: {OUTPUT_FILE_PATH}')
     registry = CollectorRegistry()
     MultiProcessCollector(registry)
     while True:
@@ -25,5 +24,4 @@ def provide_metrics():
             OUTPUT_FILE_PATH,
             registry
         )
-        logger.debug('Updated metrics to file')
-        time.sleep(5)
+        time.sleep(0.1)
