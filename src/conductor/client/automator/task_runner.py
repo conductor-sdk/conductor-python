@@ -95,7 +95,10 @@ class TaskRunner:
                 )
             )
         except Exception as e:
-            # self.metrics_collector.task_execute_error_counter.inc()
+            self.metrics_collector.increment_task_execution_error_counter(
+                task_type=self.worker.get_task_definition_name(),
+                exception=e
+            )
             task_result = TaskResult(
                 task_id=task.task_id,
                 workflow_instance_id=task.workflow_instance_id,
