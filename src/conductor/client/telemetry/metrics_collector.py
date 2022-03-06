@@ -145,14 +145,24 @@ class MetricsCollector:
             value=payload_size
         )
 
-    def record_task_poll_spent_time(self, task_type: str, spent_time: float) -> None:
+    def record_task_poll_time(self, task_type: str, time_spent: float) -> None:
         self.__record_gauge(
             name=MetricName.TASK_POLL_TIME,
             documentation=MetricDocumentation.TASK_POLL_TIME,
             labels={
                 MetricLabel.TASK_TYPE: task_type
             },
-            value=spent_time
+            value=time_spent
+        )
+
+    def record_task_execute_time(self, task_type: str, time_spent: float) -> None:
+        self.__record_gauge(
+            name=MetricName.TASK_EXECUTE_TIME,
+            documentation=MetricDocumentation.TASK_EXECUTE_TIME,
+            labels={
+                MetricLabel.TASK_TYPE: task_type
+            },
+            value=time_spent
         )
 
     def __increment_counter(

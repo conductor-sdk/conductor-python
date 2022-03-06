@@ -52,16 +52,16 @@ class TaskRunner:
                 tasktype=task_definition_name
             )
             finish_time = time.time()
-            spent_time = finish_time - start_time
+            time_spent = finish_time - start_time
             self.metrics_collector.record_task_poll_time_spent(
-                task_definition_name, spent_time
+                task_definition_name, time_spent
             )
         except Exception as e:
             self.metrics_collector.increment_task_poll_error(
                 task_definition_name, e
             )
             return None
-        message = 'Polled task for worker: {task_definition_name}, identity: {identity}'
+        message = 'Polled task: {task_definition_name}, worker_id: {identity}'
         logger.debug(
             message.format(
                 task_definition_name=task_definition_name,
@@ -73,46 +73,48 @@ class TaskRunner:
     def __execute_task(self, task: Task) -> TaskResult:
         if not isinstance(task, Task):
             return None
+        task_definition_name = self.worker.get_task_definition_name()
         logger.info(
-            'Executing task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}'.format(
+            'Executing task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}'.format(
                 task_id=task.task_id,
-                workflow_instance_id=task.workflow_instance_id,
-                worker_name=self.worker.get_task_definition_name()
+                workflow_instance_id=task.workflow_instance_id
             )
         )
         try:
             start_time = time.time()
             task_result = self.worker.execute(task)
             finish_time = time.time()
-            spent_time = finish_time - start_time
-            # self.metrics_collector.task_execute_time_gauge.set(spent_time)
-            # self.metrics_collector.task_result_size_gauge.set(
-            #     sizeof(task_result)
-            # )
+            time_spent = finish_time - start_time
+            self.metrics_collector.record_task_execute_time(
+                task_definition_name,
+                time_spent
+            )
+            self.metrics_collector.record_task_result_payload_size(
+                task_definition_name,
+                sizeof(task_result)
+            )
             logger.info(
-                'Executed task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}'.format(
+                'Executed task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}'.format(
                     task_id=task.task_id,
-                    workflow_instance_id=task.workflow_instance_id,
-                    worker_name=self.worker.get_task_definition_name()
+                    workflow_instance_id=task.workflow_instance_id
                 )
             )
         except Exception as e:
-            self.metrics_collector.increment_task_execution_error_counter(
-                task_type=self.worker.get_task_definition_name(),
+            self.metrics_collector.increment_task_execution_error(
+                task_type=task_definition_name,
                 exception=e
             )
             task_result = TaskResult(
                 task_id=task.task_id,
                 workflow_instance_id=task.workflow_instance_id,
-                worker_id=self.worker.get_task_definition_name()
+                worker_id=self.worker.get_identity()
             )
             task_result.status = 'FAILED'
             task_result.reason_for_incompletion = str(e)
             logger.warning(
-                'Failed to execute task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}, reason: {reason}'.format(
+                'Failed to execute task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, reason: {reason}'.format(
                     task_id=task.task_id,
                     workflow_instance_id=task.workflow_instance_id,
-                    worker_name=self.worker.get_task_definition_name(),
                     reason=str(e)
                 )
             )
@@ -121,11 +123,11 @@ class TaskRunner:
     def __update_task(self, task_result: TaskResult):
         if not isinstance(task_result, TaskResult):
             return None
+        task_definition_name = self.worker.get_task_definition_name()
         logger.debug(
-            'Updating task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}'.format(
+            'Updating task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}'.format(
                 task_id=task_result.task_id,
                 workflow_instance_id=task_result.workflow_instance_id,
-                worker_name=self.worker.get_task_definition_name()
             )
         )
         try:
@@ -133,24 +135,22 @@ class TaskRunner:
                 body=task_result
             )
         except Exception as e:
-            self.metrics_collector.increment_task_update_error_count(
-                task_type=self.worker.get_task_definition_name(),
+            self.metrics_collector.increment_task_update_error(
+                task_type=task_definition_name,
                 exception=e
             )
             logger.warning(
-                'Failed to update task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}, reason: {reason}'.format(
+                'Failed to update task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, reason: {reason}'.format(
                     task_id=task_result.task_id,
                     workflow_instance_id=task_result.workflow_instance_id,
-                    worker_name=self.worker.get_task_definition_name(),
                     reason=str(e)
                 )
             )
             return None
         logger.info(
-            'Updated task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, worker: {worker_name}, response: {response}'.format(
+            'Updated task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, response: {response}'.format(
                 task_id=task_result.task_id,
                 workflow_instance_id=task_result.workflow_instance_id,
-                worker_name=self.worker.get_task_definition_name(),
                 response=str(response)
             )
         )
