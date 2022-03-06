@@ -58,7 +58,7 @@ class TaskRunner:
             )
         except Exception as e:
             self.metrics_collector.increment_task_poll_error(
-                task_definition_name, e
+                task_definition_name, type(e)
             )
             return None
         message = 'Polled task: {task_definition_name}, worker_id: {identity}'
@@ -101,8 +101,7 @@ class TaskRunner:
             )
         except Exception as e:
             self.metrics_collector.increment_task_execution_error(
-                task_type=task_definition_name,
-                exception=e
+                task_definition_name, type(e)
             )
             task_result = TaskResult(
                 task_id=task.task_id,
@@ -136,8 +135,7 @@ class TaskRunner:
             )
         except Exception as e:
             self.metrics_collector.increment_task_update_error(
-                task_type=task_definition_name,
-                exception=e
+                task_definition_name, type(e)
             )
             logger.warning(
                 'Failed to update task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, reason: {reason}'.format(
