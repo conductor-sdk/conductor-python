@@ -6,12 +6,13 @@ from prometheus_client import CollectorRegistry
 from prometheus_client import Counter
 from prometheus_client import Gauge
 from prometheus_client.multiprocess import MultiProcessCollector
-from typing import Dict, List
+from typing import Any, Dict, List
 import os
 
 
 class MetricsCollector:
     counters = {}
+    gauges = {}
     registry = CollectorRegistry()
 
     def __init__(self):
@@ -19,7 +20,7 @@ class MetricsCollector:
         os.environ["PROMETHEUS_MULTIPROC_DIR"] = Configuration.METRICS_PREFIX_DIR
         MultiProcessCollector(self.registry)
 
-    def increment_task_poll_counter(self, task_type: str) -> None:
+    def increment_task_poll(self, task_type: str) -> None:
         self.__increment_counter(
             name=MetricName.TASK_POLL,
             documentation=MetricDocumentation.TASK_POLL,
@@ -28,7 +29,7 @@ class MetricsCollector:
             }
         )
 
-    def increment_task_execution_queue_full_counter(self, task_type: str) -> None:
+    def increment_task_execution_queue_full(self, task_type: str) -> None:
         self.__increment_counter(
             name=MetricName.TASK_EXECUTION_QUEUE_FULL,
             documentation=MetricDocumentation.TASK_EXECUTION_QUEUE_FULL,
@@ -37,14 +38,14 @@ class MetricsCollector:
             }
         )
 
-    def increment_uncaught_exception_counter(self):
+    def increment_uncaught_exception(self):
         self.__increment_counter(
             name=MetricName.THREAD_UNCAUGHT_EXCEPTION,
             documentation=MetricDocumentation.THREAD_UNCAUGHT_EXCEPTION,
             labels={}
         )
 
-    def increment_task_poll_error_counter(self, task_type: str, exception: Exception) -> None:
+    def increment_task_poll_error(self, task_type: str, exception: Exception) -> None:
         self.__increment_counter(
             name=MetricName.TASK_POLL_ERROR,
             documentation=MetricDocumentation.TASK_POLL_ERROR,
@@ -54,7 +55,7 @@ class MetricsCollector:
             }
         )
 
-    def increment_task_paused_counter(self, task_type: str) -> None:
+    def increment_task_paused(self, task_type: str) -> None:
         self.__increment_counter(
             name=MetricName.TASK_PAUSED,
             documentation=MetricDocumentation.TASK_PAUSED,
@@ -63,7 +64,7 @@ class MetricsCollector:
             }
         )
 
-    def increment_task_execution_error_counter(self, task_type: str, exception: Exception) -> None:
+    def increment_task_execution_error(self, task_type: str, exception: Exception) -> None:
         self.__increment_counter(
             name=MetricName.TASK_EXECUTE_ERROR,
             documentation=MetricDocumentation.TASK_EXECUTE_ERROR,
@@ -73,7 +74,7 @@ class MetricsCollector:
             }
         )
 
-    def increment_task_ack_failed_counter(self, task_type: str) -> None:
+    def increment_task_ack_failed(self, task_type: str) -> None:
         self.__increment_counter(
             name=MetricName.TASK_ACK_FAILED,
             documentation=MetricDocumentation.TASK_ACK_FAILED,
@@ -82,7 +83,7 @@ class MetricsCollector:
             }
         )
 
-    def increment_task_ack_error_counter(self, task_type: str, exception: Exception) -> None:
+    def increment_task_ack_error(self, task_type: str, exception: Exception) -> None:
         self.__increment_counter(
             name=MetricName.TASK_ACK_ERROR,
             documentation=MetricDocumentation.TASK_ACK_ERROR,
@@ -92,11 +93,7 @@ class MetricsCollector:
             }
         )
 
-    # public static void recordTaskResultPayloadSize(String taskType, long payloadSize) {
-    #     getGauge(TASK_RESULT_SIZE, TASK_TYPE, taskType).getAndSet(payloadSize);
-    # }
-
-    def increment_task_update_error_count(self, task_type: str, exception: Exception) -> None:
+    def increment_task_update_error(self, task_type: str, exception: Exception) -> None:
         self.__increment_counter(
             name=MetricName.TASK_UPDATE_ERROR,
             documentation=MetricDocumentation.TASK_UPDATE_ERROR,
@@ -106,13 +103,7 @@ class MetricsCollector:
             }
         )
 
-    # public static void recordWorkflowInputPayloadSize(
-    #         String workflowType, String version, long payloadSize) {
-    #     getGauge(WORKFLOW_INPUT_SIZE, WORKFLOW_TYPE, workflowType, WORKFLOW_VERSION, version)
-    #             .getAndSet(payloadSize);
-    # }
-
-    def increment_external_payload_used_counter(self, entity_name: str, operation: str, payload_type: str) -> None:
+    def increment_external_payload_used(self, entity_name: str, operation: str, payload_type: str) -> None:
         self.__increment_counter(
             name=MetricName.EXTERNAL_PAYLOAD_USED,
             documentation=MetricDocumentation.EXTERNAL_PAYLOAD_USED,
@@ -123,7 +114,7 @@ class MetricsCollector:
             }
         )
 
-    def increment_workflow_start_error_counter(self, workflow_type: str, exception: Exception) -> None:
+    def increment_workflow_start_error(self, workflow_type: str, exception: Exception) -> None:
         self.__increment_counter(
             name=MetricName.WORKFLOW_START_ERROR,
             documentation=MetricDocumentation.WORKFLOW_START_ERROR,
@@ -133,11 +124,36 @@ class MetricsCollector:
             }
         )
 
+    def record_workflow_input_payload_size(self, workflow_type: str, version: str, payload_size: int) -> None:
+        self.__record_gauge(
+            name=MetricName.WORKFLOW_INPUT_SIZE,
+            documentation=MetricDocumentation.WORKFLOW_INPUT_SIZE,
+            labels={
+                MetricLabel.WORKFLOW_TYPE: workflow_type,
+                MetricLabel.WORKFLOW_VERSION: version
+            },
+            value=payload_size
+        )
+
+    def record_task_result_payload_size(self, task_type: str, payload_size: int) -> None:
+        self.__record_gauge(
+            name=MetricName.TASK_RESULT_SIZE,
+            documentation=MetricDocumentation.TASK_RESULT_SIZE,
+            labels={
+                MetricLabel.TASK_TYPE: task_type
+            },
+            value=payload_size
+        )
+
+    # public static void recordTaskResultPayloadSize(String taskType, long payloadSize) {
+    #     getGauge(TASK_RESULT_SIZE, TASK_TYPE, taskType).getAndSet(payloadSize);
+    # }
+
     def __increment_counter(
         self,
         name: MetricName,
         documentation: MetricDocumentation,
-        labels=Dict[MetricLabel, str]
+        labels: Dict[MetricLabel, str]
     ) -> None:
         counter = self.__get_counter(
             name=name,
@@ -145,6 +161,20 @@ class MetricsCollector:
             labelnames=labels.keys()
         )
         counter.labels(*labels.values()).inc()
+
+    def __record_gauge(
+        self,
+        name: MetricName,
+        documentation: MetricDocumentation,
+        labels: Dict[MetricLabel, str],
+        value: Any
+    ) -> None:
+        gauge = self.__get_gauge(
+            name=name,
+            documentation=documentation,
+            labelnames=labels.keys()
+        )
+        gauge.labels(*labels.values()).set(value)
 
     def __get_counter(
         self,
@@ -158,6 +188,18 @@ class MetricsCollector:
             )
         return self.counters[name]
 
+    def __get_gauge(
+        self,
+        name: MetricName,
+        documentation: MetricDocumentation,
+        labelnames: List[MetricLabel]
+    ) -> Gauge:
+        if name not in self.gauges:
+            self.gauges[name] = self.__generate_gauge(
+                name, documentation, labelnames
+            )
+        return self.gauges[name]
+
     def __generate_counter(
         self,
         name: MetricName,
@@ -165,6 +207,19 @@ class MetricsCollector:
         labelnames: List[MetricLabel]
     ) -> Counter:
         return Counter(
+            name=name,
+            documentation=documentation,
+            labelnames=labelnames,
+            registry=self.registry
+        )
+
+    def __generate_gauge(
+        self,
+        name: MetricName,
+        documentation: MetricDocumentation,
+        labelnames: List[MetricLabel]
+    ) -> Gauge:
+        return Gauge(
             name=name,
             documentation=documentation,
             labelnames=labelnames,
