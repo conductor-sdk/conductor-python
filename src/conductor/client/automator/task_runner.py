@@ -42,7 +42,7 @@ class TaskRunner:
 
     def __poll_task(self) -> Task:
         task_definition_name = self.worker.get_task_definition_name()
-        self.metrics_collector.increment_task_poll_counter(
+        self.metrics_collector.increment_task_poll(
             task_definition_name
         )
         logger.info(f'Polling task for: {task_definition_name}')
@@ -53,9 +53,11 @@ class TaskRunner:
             )
             finish_time = time.time()
             spent_time = finish_time - start_time
-            # self.metrics_collector.task_poll_time_gauge.set(spent_time)
+            self.metrics_collector.record_task_poll_time_spent(
+                task_definition_name, spent_time
+            )
         except Exception as e:
-            self.metrics_collector.increment_task_poll_error_counter(
+            self.metrics_collector.increment_task_poll_error(
                 task_definition_name, e
             )
             return None

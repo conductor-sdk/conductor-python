@@ -145,9 +145,15 @@ class MetricsCollector:
             value=payload_size
         )
 
-    # public static void recordTaskResultPayloadSize(String taskType, long payloadSize) {
-    #     getGauge(TASK_RESULT_SIZE, TASK_TYPE, taskType).getAndSet(payloadSize);
-    # }
+    def record_task_poll_spent_time(self, task_type: str, spent_time: float) -> None:
+        self.__record_gauge(
+            name=MetricName.TASK_POLL_TIME,
+            documentation=MetricDocumentation.TASK_POLL_TIME,
+            labels={
+                MetricLabel.TASK_TYPE: task_type
+            },
+            value=spent_time
+        )
 
     def __increment_counter(
         self,
