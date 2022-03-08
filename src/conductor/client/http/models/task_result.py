@@ -1,6 +1,6 @@
+from conductor.client.http.models.task_result_status import TaskResultStatus
 import pprint
 import re  # noqa: F401
-
 import six
 
 
@@ -201,14 +201,16 @@ class TaskResult(object):
         :param status: The status of this TaskResult.  # noqa: E501
         :type: str
         """
-        allowed_values = ["IN_PROGRESS", "FAILED", "FAILED_WITH_TERMINAL_ERROR", "COMPLETED"]  # noqa: E501
+        allowed_values = [
+            task_result_status.name for task_result_status in TaskResultStatus
+        ]
         if status not in allowed_values:
             raise ValueError(
                 "Invalid value for `status` ({0}), must be one of {1}"  # noqa: E501
                 .format(status, allowed_values)
             )
 
-        self._status = status
+        self._status = TaskResultStatus[status]
 
     @property
     def output_data(self):
