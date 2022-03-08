@@ -7,8 +7,10 @@ import urllib3
 
 
 class Configuration:
-    # TODO remove hard coded variable
-    METRICS_PREFIX_DIR = '/Users/gardusig/orkes/conductor-python/metrics'
+    # TODO consume this variables from ENV
+    METRICS_DIRECTORY = '/Users/gardusig/orkes/conductor-python/metrics'
+    METRICS_FILE_NAME = 'latest.txt'
+    METRICS_UPDATE_INTERVAL = 0.1
 
     def __init__(self, base_url="http://localhost:8080", debug=False):
         """Constructor"""

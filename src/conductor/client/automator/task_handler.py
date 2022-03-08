@@ -1,6 +1,6 @@
 from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.telemetry.metrics_provider import provide_metrics
+from conductor.client.telemetry.metrics_collector import MetricsCollector
 from conductor.client.worker.worker_interface import WorkerInterface
 from multiprocessing import Process
 from typing import List
@@ -44,7 +44,7 @@ class TaskHandler:
 
     def __create_metrics_provider_process(self):
         self.metrics_provider_process = Process(
-            target=provide_metrics
+            target=MetricsCollector.provide_metrics
         )
         logger.info('Created MetricsProvider process')
 

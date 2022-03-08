@@ -8,8 +8,7 @@ def main():
     configuration = Configuration(debug=True)
     task_definition_name = 'python_task_example'
     workers = [
-        SimplePythonWorker(task_definition_name),
-        # FaultyExecutionWorker(task_definition_name)
+        SimplePythonWorker(task_definition_name)
     ]
     with TaskHandler(workers, configuration) as task_handler:
         task_handler.start_processes()

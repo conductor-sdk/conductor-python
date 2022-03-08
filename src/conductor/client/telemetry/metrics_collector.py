@@ -5,9 +5,18 @@ from conductor.client.telemetry.model.metric_name import MetricName
 from prometheus_client import CollectorRegistry
 from prometheus_client import Counter
 from prometheus_client import Gauge
+from prometheus_client import write_to_textfile
 from prometheus_client.multiprocess import MultiProcessCollector
 from typing import Any, Dict, List
+import logging
 import os
+import time
+
+logger = logging.getLogger(
+    Configuration.get_logging_formatted_name(
+        __name__
+    )
+)
 
 
 class MetricsCollector:
@@ -17,8 +26,23 @@ class MetricsCollector:
 
     def __init__(self):
         # TODO improve hard coded ENV
-        os.environ["PROMETHEUS_MULTIPROC_DIR"] = Configuration.METRICS_PREFIX_DIR
+        os.environ["PROMETHEUS_MULTIPROC_DIR"] = Configuration.METRICS_DIRECTORY
         MultiProcessCollector(self.registry)
+
+    @staticmethod
+    def provide_metrics():
+        OUTPUT_FILE_PATH = os.path.join(
+            Configuration.METRICS_DIRECTORY,
+            Configuration.METRICS_FILE_NAME
+        )
+        registry = CollectorRegistry()
+        MultiProcessCollector(registry)
+        while True:
+            write_to_textfile(
+                OUTPUT_FILE_PATH,
+                registry
+            )
+            time.sleep(Configuration.METRICS_UPDATE_INTERVAL)
 
     def increment_task_poll(self, task_type: str) -> None:
         self.__increment_counter(
