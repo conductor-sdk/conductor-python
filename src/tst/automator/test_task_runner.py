@@ -92,7 +92,7 @@ class TestTaskRunner(unittest.TestCase):
         expected_task_result = TaskResult(
             task_id=self.TASK_ID,
             workflow_instance_id=self.WORKFLOW_INSTANCE_ID,
-            worker_id=worker.get_task_definition_name(),
+            worker_id=worker.get_identity(),
             status=TaskResultStatus.FAILED,
             reason_for_incompletion='faulty execution'
         )
