@@ -7,6 +7,3 @@ class SimplePythonWorker(WorkerInterface):
         task_result.add_output_data('key', 'value')
         task_result.status = 'COMPLETED'
         return task_result
-
-    def get_polling_interval_in_seconds(self):
-        return 1.5
