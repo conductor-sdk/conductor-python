@@ -49,13 +49,14 @@ Software Development Kit for Netflix Conductor, written on and providing support
 
     def main():
         configuration = Configuration(debug=True)
-        task_definition_name = 'python_example_task'
+        task_definition_name = 'python_task_example'
         workers = [
-            SimplePythonWorker(task_definition_name),
-            FaultyExecutionWorker(task_definition_name)
+            FaultyExecutionWorker(task_definition_name),
+            SimplePythonWorker(task_definition_name)
         ]
         with TaskHandler(workers, configuration) as task_handler:
-            task_handler.start()
+            task_handler.start_processes()
+            task_handler.join_processes()
 
 
     if __name__ == '__main__':
