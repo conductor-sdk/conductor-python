@@ -8,7 +8,7 @@ import urllib3
 
 class Configuration:
     # TODO consume this variables from ENV
-    METRICS_DIRECTORY = '/Users/gardusig/orkes/conductor-python/metrics'
+    METRICS_DIRECTORY = '.'
     METRICS_FILE_NAME = 'latest.txt'
     METRICS_UPDATE_INTERVAL = 0.1
 
