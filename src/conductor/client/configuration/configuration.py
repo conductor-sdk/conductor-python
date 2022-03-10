@@ -7,9 +7,9 @@ import urllib3
 
 
 class Configuration:
-    # TODO consume this variables from ENV
+    # TODO consume these variables from ENV
     METRICS_DIRECTORY = '.'
-    METRICS_FILE_NAME = 'latest.txt'
+    METRICS_FILE_NAME = 'metrics.log'
     METRICS_UPDATE_INTERVAL = 0.1
 
     def __init__(self, base_url="http://localhost:8080", debug=False):
