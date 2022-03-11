@@ -3,6 +3,7 @@ from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
+from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.worker.sample.faulty_execution_worker import FaultyExecutionWorker
 from conductor.client.worker.sample.simple_python_worker import SimplePythonWorker
 from unittest.mock import patch
@@ -92,7 +93,7 @@ class TestTaskRunner(unittest.TestCase):
             task_id=self.TASK_ID,
             workflow_instance_id=self.WORKFLOW_INSTANCE_ID,
             worker_id=worker.get_identity(),
-            status='FAILED',
+            status=TaskResultStatus.FAILED,
             reason_for_incompletion='faulty execution'
         )
         task_runner = TaskRunner(
@@ -184,7 +185,7 @@ class TestTaskRunner(unittest.TestCase):
             task_id=self.TASK_ID,
             workflow_instance_id=self.WORKFLOW_INSTANCE_ID,
             worker_id=self.__get_valid_worker().get_identity(),
-            status='COMPLETED',
+            status=TaskResultStatus.COMPLETED,
             output_data={
                 'key': 'value'
             }

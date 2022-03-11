@@ -28,14 +28,17 @@ Software Development Kit for Netflix Conductor, written on and providing support
     ```
 2. Create a worker capable of executing a `Task`. Example:
     ```python
+    from conductor.client.http.models.task import Task
+    from conductor.client.http.models.task_result import TaskResult
+    from conductor.client.http.models.task_result_status import TaskResultStatus
     from conductor.client.worker.worker_interface import WorkerInterface
 
 
     class SimplePythonWorker(WorkerInterface):
-        def execute(self, task):
+        def execute(self, task: Task) -> TaskResult:
             task_result = self.get_task_result_from_task(task)
             task_result.add_output_data('key', 'value')
-            task_result.status = 'COMPLETED'
+            task_result.status = TaskResultStatus.COMPLETED
             return task_result
     ```
     * The `add_output_data` is the most relevant part, since you can store information in a dictionary, which will be sent within `TaskResult` as your execution response to Conductor
@@ -49,13 +52,14 @@ Software Development Kit for Netflix Conductor, written on and providing support
 
     def main():
         configuration = Configuration(debug=True)
-        task_definition_name = 'python_example_task'
+        task_definition_name = 'python_task_example'
         workers = [
-            SimplePythonWorker(task_definition_name),
-            FaultyExecutionWorker(task_definition_name)
+            FaultyExecutionWorker(task_definition_name),
+            SimplePythonWorker(task_definition_name)
         ]
         with TaskHandler(workers, configuration) as task_handler:
-            task_handler.start()
+            task_handler.start_processes()
+            task_handler.join_processes()
 
 
     if __name__ == '__main__':
