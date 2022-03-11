@@ -1,5 +1,5 @@
-from conductor.client.configuration.authentication_settings import AuthenticationSettings
-from conductor.client.configuration.metrics_settings import MetricsSettings
+from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
+from conductor.client.configuration.settings.metrics_settings import MetricsSettings
 from six.moves import http_client as httplib
 import logging
 import multiprocessing

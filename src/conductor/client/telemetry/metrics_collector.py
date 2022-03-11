@@ -1,5 +1,5 @@
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.metrics_settings import MetricsSettings
+from conductor.client.configuration.settings.metrics_settings import MetricsSettings
 from conductor.client.telemetry.model.metric_documentation import MetricDocumentation
 from conductor.client.telemetry.model.metric_label import MetricLabel
 from conductor.client.telemetry.model.metric_name import MetricName
