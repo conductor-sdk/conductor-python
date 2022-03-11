@@ -1,6 +1,6 @@
 from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.telemetry.metrics_collector import MetricsCollector
+from conductor.client.telemetry.metrics_collector import provide_metrics
 from conductor.client.worker.worker_interface import WorkerInterface
 from multiprocessing import Process
 from typing import List
@@ -21,7 +21,7 @@ class TaskHandler:
     ):
         if not isinstance(workers, list):
             raise Exception('Invalid worker list')
-        self.__create_metrics_provider_process()
+        self.__create_metrics_provider_process(configuration)
         self.__create_task_runner_processes(workers, configuration)
         logger.info('Created all processes')
 
@@ -42,9 +42,10 @@ class TaskHandler:
         self.__join_task_runner_processes()
         logger.info('Joined all processes')
 
-    def __create_metrics_provider_process(self):
+    def __create_metrics_provider_process(self, configuration):
         self.metrics_provider_process = Process(
-            target=MetricsCollector.provide_metrics
+            target=provide_metrics,
+            args=(configuration.metrics_settings,)
         )
         logger.info('Created MetricsProvider process')
 

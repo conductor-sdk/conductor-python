@@ -18,8 +18,6 @@ logger = logging.getLogger(
 
 
 class TaskRunner:
-    metrics_collector = MetricsCollector()
-
     def __init__(self, worker: WorkerInterface, configuration: Configuration = None):
         if configuration != None and not isinstance(configuration, Configuration):
             raise Exception('Invalid configuration')
@@ -27,6 +25,9 @@ class TaskRunner:
             raise Exception('Invalid worker')
         self.configuration = configuration
         self.worker = worker
+        self.metrics_collector = MetricsCollector(
+            configuration.metrics_settings
+        )
 
     def run(self) -> None:
         if self.configuration != None:
