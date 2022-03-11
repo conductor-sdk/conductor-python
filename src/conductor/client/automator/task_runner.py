@@ -8,6 +8,7 @@ from conductor.client.worker.worker_interface import WorkerInterface
 import logging
 import sys
 import time
+import traceback
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -45,7 +46,7 @@ class TaskRunner:
         self.metrics_collector.increment_task_poll(
             task_definition_name
         )
-        logger.info(f'Polling task for: {task_definition_name}')
+        logger.debug(f'Polling task for: {task_definition_name}')
         try:
             start_time = time.time()
             task = self.__get_task_resource_api().poll(
@@ -60,8 +61,8 @@ class TaskRunner:
             self.metrics_collector.increment_task_poll_error(
                 task_definition_name, type(e)
             )
-            logger.warning(
-                f'Failed to poll task for: {task_definition_name}, reason: {e}'
+            logger.info(
+                f'Failed to poll task for: {task_definition_name}, reason: {traceback.format_exc()}'
             )
             return None
         logger.debug(
@@ -73,7 +74,7 @@ class TaskRunner:
         if not isinstance(task, Task):
             return None
         task_definition_name = self.worker.get_task_definition_name()
-        logger.info(
+        logger.debug(
             'Executing task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}'.format(
                 task_id=task.task_id,
                 workflow_instance_id=task.workflow_instance_id,
@@ -93,7 +94,7 @@ class TaskRunner:
                 task_definition_name,
                 sys.getsizeof(task_result)
             )
-            logger.info(
+            logger.debug(
                 'Executed task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}'.format(
                     task_id=task.task_id,
                     workflow_instance_id=task.workflow_instance_id,
@@ -111,12 +112,12 @@ class TaskRunner:
             )
             task_result.status = 'FAILED'
             task_result.reason_for_incompletion = str(e)
-            logger.warning(
+            logger.info(
                 'Failed to execute task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, reason: {reason}'.format(
                     task_id=task.task_id,
                     workflow_instance_id=task.workflow_instance_id,
                     task_definition_name=task_definition_name,
-                    reason=e
+                    reason=traceback.format_exc()
                 )
             )
         return task_result
@@ -140,16 +141,16 @@ class TaskRunner:
             self.metrics_collector.increment_task_update_error(
                 task_definition_name, type(e)
             )
-            logger.warning(
+            logger.info(
                 'Failed to update task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, reason: {reason}'.format(
                     task_id=task_result.task_id,
                     workflow_instance_id=task_result.workflow_instance_id,
                     task_definition_name=task_definition_name,
-                    reason=e
+                    reason=traceback.format_exc()
                 )
             )
             return None
-        logger.info(
+        logger.debug(
             'Updated task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, response: {response}'.format(
                 task_id=task_result.task_id,
                 workflow_instance_id=task_result.workflow_instance_id,
