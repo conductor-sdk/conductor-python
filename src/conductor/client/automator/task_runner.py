@@ -1,5 +1,6 @@
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api_client import ApiClient
+from conductor.client.http.api.authentication_resource_api import AuthenticationResourceApi
 from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
@@ -28,6 +29,8 @@ class TaskRunner:
         self.metrics_collector = MetricsCollector(
             configuration.metrics_settings
         )
+        self.token = self.__get_new_token()
+        print(f'token: {self.token}')
 
     def run(self) -> None:
         if self.configuration != None:
@@ -172,3 +175,13 @@ class TaskRunner:
                 configuration=self.configuration
             )
         )
+
+    def __get_new_token(self) -> str:
+        try:
+            return AuthenticationResourceApi(
+                ApiClient(
+                    configuration=self.configuration
+                )
+            ).token
+        except Exception:
+            return None
