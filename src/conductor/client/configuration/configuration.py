@@ -7,6 +7,8 @@ import os
 
 
 class Configuration:
+    token = None
+
     def __init__(
             self,
             base_url: str = "http://localhost:8080",
@@ -111,3 +113,6 @@ class Configuration:
     @staticmethod
     def get_logging_formatted_name(name):
         return f'[{os.getpid()}] {name}'
+
+    def update_token(self, token: str):
+        self.token = token

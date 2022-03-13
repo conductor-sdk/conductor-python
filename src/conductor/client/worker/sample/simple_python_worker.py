@@ -10,3 +10,6 @@ class SimplePythonWorker(WorkerInterface):
         task_result.add_output_data('key', 'value')
         task_result.status = TaskResultStatus.COMPLETED
         return task_result
+
+    def get_polling_interval_in_seconds(self) -> float:
+        return 2

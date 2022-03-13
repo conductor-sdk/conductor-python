@@ -29,8 +29,6 @@ class TaskRunner:
         self.metrics_collector = MetricsCollector(
             configuration.metrics_settings
         )
-        self.token = self.__get_new_token()
-        print(f'token: {self.token}')
 
     def run(self) -> None:
         if self.configuration != None:
@@ -39,6 +37,7 @@ class TaskRunner:
             self.run_once()
 
     def run_once(self) -> None:
+        self.__refresh_auth_token()
         task = self.__poll_task()
         if task != None:
             task_result = self.__execute_task(task)
@@ -176,12 +175,20 @@ class TaskRunner:
             )
         )
 
+    def __refresh_auth_token(self) -> None:
+        token = None
+        if self.configuration.authentication_settings is not None:
+            token = self.__get_new_token()
+        self.configuration.update_token(token)
+
     def __get_new_token(self) -> str:
         try:
-            return AuthenticationResourceApi(
-                ApiClient(
-                    configuration=self.configuration
-                )
-            ).token
+            auth_api = AuthenticationResourceApi(
+                ApiClient(self.configuration)
+            )
+            return auth_api.token
         except Exception:
+            logger.debug(
+                f'Failed to get new token, reason: {traceback.format_exc()}'
+            )
             return None
