@@ -10,13 +10,13 @@ def main():
         base_url='https://play.orkes.io',
         debug=True,
         authentication_settings=AuthenticationSettings(
-            key_id='16e1432f-f8a1-4d2a-88fa-a2cec79257e0',
-            key_secret='exTbzORreDLAdTislkECvglBhHXbLrPqUutVwMt1Q6oXBp94'
+            key_id='id',
+            key_secret='secret'
         )
     )
     task_definition_name = 'python_task_example'
     workers = [
-        # FaultyExecutionWorker(task_definition_name),
+        FaultyExecutionWorker(task_definition_name),
         SimplePythonWorker(task_definition_name)
     ]
     with TaskHandler(workers, configuration) as task_handler:
