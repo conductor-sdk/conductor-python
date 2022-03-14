@@ -118,7 +118,11 @@ class ApiClient(object):
                                                     collection_formats)
 
         # auth setting
-        self.update_params_for_auth(header_params, query_params, auth_settings)
+        self.update_params_for_auth(
+            header_params,
+            query_params,
+            self.__get_authentication_headers()
+        )
 
         # body
         if body:
@@ -463,22 +467,14 @@ class ApiClient(object):
         :param querys: Query parameters tuple list to be updated.
         :param auth_settings: Authentication setting identifiers list.
         """
-        if not auth_settings:
+        if auth_settings is None:
             return
-
-        for auth in auth_settings:
-            auth_setting = self.configuration.auth_settings().get(auth)
-            if auth_setting:
-                if not auth_setting['value']:
-                    continue
-                elif auth_setting['in'] == 'header':
-                    headers[auth_setting['key']] = auth_setting['value']
-                elif auth_setting['in'] == 'query':
-                    querys.append((auth_setting['key'], auth_setting['value']))
-                else:
-                    raise ValueError(
-                        'Authentication token must be in `query` or `header`'
-                    )
+        if 'header' in auth_settings:
+            for key, value in auth_settings['header'].items():
+                headers[key] = value
+        if 'query' in auth_settings:
+            for key, value in auth_settings['query'].items():
+                querys[key] = value
 
     def __deserialize_file(self, response):
         """Deserializes body to file
@@ -605,3 +601,12 @@ class ApiClient(object):
             if klass_name:
                 instance = self.__deserialize(data, klass_name)
         return instance
+
+    def __get_authentication_headers(self):
+        if self.configuration.token is None:
+            return None
+        return {
+            'header': {
+                'X-Authorization': self.configuration.token
+            }
+        }

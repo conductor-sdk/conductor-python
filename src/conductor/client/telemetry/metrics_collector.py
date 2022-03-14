@@ -1,4 +1,5 @@
 from conductor.client.configuration.configuration import Configuration
+from conductor.client.configuration.settings.metrics_settings import MetricsSettings
 from conductor.client.telemetry.model.metric_documentation import MetricDocumentation
 from conductor.client.telemetry.model.metric_label import MetricLabel
 from conductor.client.telemetry.model.metric_name import MetricName
@@ -19,30 +20,30 @@ logger = logging.getLogger(
 )
 
 
+def provide_metrics(settings: MetricsSettings):
+    OUTPUT_FILE_PATH = os.path.join(
+        settings.directory,
+        settings.file_name
+    )
+    registry = CollectorRegistry()
+    MultiProcessCollector(registry)
+    while True:
+        write_to_textfile(
+            OUTPUT_FILE_PATH,
+            registry
+        )
+        time.sleep(settings.update_interval)
+
+
 class MetricsCollector:
     counters = {}
     gauges = {}
     registry = CollectorRegistry()
 
-    def __init__(self):
+    def __init__(self, settings: MetricsSettings):
         # TODO improve hard coded ENV
-        os.environ["PROMETHEUS_MULTIPROC_DIR"] = Configuration.METRICS_DIRECTORY
+        os.environ["PROMETHEUS_MULTIPROC_DIR"] = settings.directory
         MultiProcessCollector(self.registry)
-
-    @staticmethod
-    def provide_metrics():
-        OUTPUT_FILE_PATH = os.path.join(
-            Configuration.METRICS_DIRECTORY,
-            Configuration.METRICS_FILE_NAME
-        )
-        registry = CollectorRegistry()
-        MultiProcessCollector(registry)
-        while True:
-            write_to_textfile(
-                OUTPUT_FILE_PATH,
-                registry
-            )
-            time.sleep(Configuration.METRICS_UPDATE_INTERVAL)
 
     def increment_task_poll(self, task_type: str) -> None:
         self.__increment_counter(

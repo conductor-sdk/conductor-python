@@ -1,5 +1,6 @@
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api_client import ApiClient
+from conductor.client.http.api.authentication_resource_api import AuthenticationResourceApi
 from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
@@ -18,8 +19,6 @@ logger = logging.getLogger(
 
 
 class TaskRunner:
-    metrics_collector = MetricsCollector()
-
     def __init__(self, worker: WorkerInterface, configuration: Configuration = None):
         if configuration != None and not isinstance(configuration, Configuration):
             raise Exception('Invalid configuration')
@@ -27,6 +26,9 @@ class TaskRunner:
             raise Exception('Invalid worker')
         self.configuration = configuration
         self.worker = worker
+        self.metrics_collector = MetricsCollector(
+            configuration.metrics_settings
+        )
 
     def run(self) -> None:
         if self.configuration != None:
@@ -35,6 +37,7 @@ class TaskRunner:
             self.run_once()
 
     def run_once(self) -> None:
+        self.__refresh_auth_token()
         task = self.__poll_task()
         if task != None:
             task_result = self.__execute_task(task)
@@ -171,3 +174,21 @@ class TaskRunner:
                 configuration=self.configuration
             )
         )
+
+    def __refresh_auth_token(self) -> None:
+        token = None
+        if self.configuration.authentication_settings is not None:
+            token = self.__get_new_token()
+        self.configuration.update_token(token)
+
+    def __get_new_token(self) -> str:
+        try:
+            auth_api = AuthenticationResourceApi(
+                ApiClient(self.configuration)
+            )
+            return auth_api.token
+        except Exception:
+            logger.debug(
+                f'Failed to get new token, reason: {traceback.format_exc()}'
+            )
+            return None
