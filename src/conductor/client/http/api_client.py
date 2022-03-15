@@ -1,19 +1,14 @@
-from __future__ import absolute_import
-
+from conductor.client.configuration.configuration import Configuration
+from conductor.client.http import rest
+from six.moves.urllib.parse import quote
+import conductor.client.http.models
 import datetime
 import json
 import mimetypes
 import os
 import re
-import tempfile
-
-# python 2 and python 3 compatibility library
 import six
-from six.moves.urllib.parse import quote
-
-from conductor.client.configuration.configuration import Configuration
-import conductor.client.http.models
-from conductor.client.http import rest
+import tempfile
 
 
 class ApiClient(object):
@@ -227,6 +222,9 @@ class ApiClient(object):
         :return: object.
         """
         if data is None:
+            return None
+
+        if data == b'':
             return None
 
         if type(klass) == str:
