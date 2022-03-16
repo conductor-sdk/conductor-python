@@ -7,8 +7,8 @@ function create_task_definition ()
         -H 'Content-Type: application/json' \
         -s \
         -d '[{
-            "name": "simple_python_worker",
-            "description": "Simple Python Worker",
+            "name": "python_task_example",
+            "description": "Python Task Example",
             "retryCount": 3,
             "retryLogic": "FIXED",
             "retryDelaySeconds": 10,
@@ -31,20 +31,20 @@ function create_workflow_definition ()
         -d '{
             "createTime": 1634021619147,
             "updateTime": 1630694890267,
-            "name": "simple_workflow_with_python_worker",
-            "description": "Simple Workflow with Python Worker",
+            "name": "workflow_with_python_task_example",
+            "description": "Workflow with Python Task example",
             "version": 1,
             "tasks": [
             {
-                "name": "simple_python_worker",
-                "taskReferenceName": "simple_python_worker_ref_1",
+                "name": "python_task_example",
+                "taskReferenceName": "python_task_example_ref_0",
                 "inputParameters": {},
                 "type": "SIMPLE"
             }
             ],
             "inputParameters": [],
             "outputParameters": {
-            "workerOutput": "${simple_python_worker_ref_1.output}"
+            "workerOutput": "${python_task_example_ref_0.output}"
             },
             "schemaVersion": 2,
             "restartable": true,
@@ -58,7 +58,7 @@ function create_workflow_definition ()
 function generate_workflow () {
     echo "generate workflow"
     workflow_id=$(curl -X 'POST' \
-        'http://localhost:8080/api/workflow/simple_workflow_with_python_worker' \
+        'http://localhost:8080/api/workflow/workflow_with_python_task_example' \
         -H 'accept: text/plain' \
         -H 'Content-Type: application/json' \
         -s \
@@ -66,12 +66,17 @@ function generate_workflow () {
     )
 }
 
+workflow_id='none';
 create_task_definition;
 create_workflow_definition;
 
-workflow_id='none'
-
-for idx in {1..100}; do
+for idx in {1..500}; do
     generate_workflow;
-    echo "workflow_id=$?";
+    echo "workflow_id=${workflow_id}";
 done
+
+echo "Delete metrics folder"
+rm -rf $METRICS_FOLDER
+
+echo "Create metrics folder"
+mkdir -p $METRICS_FOLDER
