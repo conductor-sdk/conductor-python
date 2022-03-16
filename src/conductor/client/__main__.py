@@ -1,7 +1,7 @@
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.worker.sample.faulty_execution_worker import FaultyExecutionWorker
-from conductor.client.worker.sample.simple_python_worker import SimplePythonWorker
+from conductor.client.worker.sample.python.faulty_execution_worker import FaultyExecutionWorker
+from conductor.client.worker.sample.python.simple_python_worker import SimplePythonWorker
 
 
 def main():
