@@ -1,35 +1,29 @@
+from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
+from conductor.client.configuration.settings.metrics_settings import MetricsSettings
 from six.moves import http_client as httplib
 import logging
 import multiprocessing
 import os
-import sys
-import urllib3
 
 
 class Configuration:
-    # TODO consume this variables from ENV
-    METRICS_DIRECTORY = '/Users/gardusig/orkes/conductor-python/metrics'
-    METRICS_FILE_NAME = 'latest.txt'
-    METRICS_UPDATE_INTERVAL = 0.1
+    token = None
 
-    def __init__(self, base_url="http://localhost:8080", debug=False):
-        """Constructor"""
-        # Default Base url
+    def __init__(
+            self,
+            base_url: str = "http://localhost:8080",
+            debug: bool = False,
+            metrics_settings: MetricsSettings = None,
+            authentication_settings: AuthenticationSettings = None
+    ):
         self.host = base_url
-        # Temp file folder for downloading files
         self.temp_folder_path = None
 
-        # Authentication Settings
-        # dict to store API key(s)
-        self.api_key = {}
-        # dict to store API prefix (e.g. Bearer)
-        self.api_key_prefix = {}
-        # function to refresh API key if expired
-        self.refresh_api_key_hook = None
-        # Username for HTTP basic authentication
-        self.username = ""
-        # Password for HTTP basic authentication
-        self.password = ""
+        if metrics_settings == None:
+            metrics_settings = MetricsSettings()
+        self.metrics_settings = metrics_settings
+
+        self.authentication_settings = authentication_settings
 
         # Debug switch
         self.debug = debug
@@ -109,52 +103,6 @@ class Configuration:
         """
         self.__logger_format = value
 
-    def get_api_key_with_prefix(self, identifier):
-        """Gets API key (with prefix if set).
-
-        :param identifier: The identifier of apiKey.
-        :return: The token for api key authentication.
-        """
-        if self.refresh_api_key_hook:
-            self.refresh_api_key_hook(self)
-
-        key = self.api_key.get(identifier)
-        if key:
-            prefix = self.api_key_prefix.get(identifier)
-            if prefix:
-                return "%s %s" % (prefix, key)
-            else:
-                return key
-
-    def get_basic_auth_token(self):
-        """Gets HTTP basic authentication header (string).
-
-        :return: The token for basic HTTP authentication.
-        """
-        return urllib3.util.make_headers(
-            basic_auth=self.username + ':' + self.password
-        ).get('authorization')
-
-    def auth_settings(self):
-        """Gets Auth Settings dict for api client.
-
-        :return: The Auth Settings information dict.
-        """
-        return {
-        }
-
-    def to_debug_report(self):
-        """Gets the essential information for debugging.
-
-        :return: The report for debugging.
-        """
-        return "Python SDK Debug Report:\n"\
-               "OS: {env}\n"\
-               "Python Version: {pyversion}\n"\
-               "Version of the API: v0\n"\
-               "SDK Package Version: 1.0.0".\
-               format(env=sys.platform, pyversion=sys.version)
-
     def apply_logging_config(self):
         logging.basicConfig(
             format=self.logger_format,
@@ -165,3 +113,6 @@ class Configuration:
     @staticmethod
     def get_logging_formatted_name(name):
         return f'[{os.getpid()}] {name}'
+
+    def update_token(self, token: str):
+        self.token = token

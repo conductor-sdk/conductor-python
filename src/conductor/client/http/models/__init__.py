@@ -20,6 +20,7 @@ from conductor.client.http.models.task_details import TaskDetails
 from conductor.client.http.models.task_exec_log import TaskExecLog
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_summary import TaskSummary
+from conductor.client.http.models.token import Token
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.http.models.workflow_summary import WorkflowSummary
