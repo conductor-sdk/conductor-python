@@ -1,25 +1,14 @@
 from conductor.client.automator.task_handler import TaskHandler
-from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from conductor.client.worker.sample.faulty_execution_worker import FaultyExecutionWorker
-from conductor.client.worker.sample.simple_python_worker import SimplePythonWorker
+from conductor.client.example.worker.cpp.simple_cpp_worker import SimpleCppWorker
+from conductor.client.example.worker.python.simple_python_worker import SimplePythonWorker
 
 
 def main():
-    configuration = Configuration(
-        base_url='https://play.orkes.io',
-        debug=True,
-        authentication_settings=AuthenticationSettings(
-            key_id='id',
-            key_secret='secret'
-        )
-    )
-    task_definition_name = 'python_task_example'
     workers = [
-        FaultyExecutionWorker(task_definition_name),
-        SimplePythonWorker(task_definition_name)
+        SimpleCppWorker('cpp_task_example'),
+        SimplePythonWorker('python_task_example')
     ]
-    with TaskHandler(workers, configuration) as task_handler:
+    with TaskHandler(workers) as task_handler:
         task_handler.start_processes()
         task_handler.join_processes()
 

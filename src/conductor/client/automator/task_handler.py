@@ -1,5 +1,6 @@
 from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.configuration.configuration import Configuration
+from conductor.client.configuration.settings.metrics_settings import MetricsSettings
 from conductor.client.telemetry.metrics_collector import provide_metrics
 from conductor.client.worker.worker_interface import WorkerInterface
 from multiprocessing import Process
@@ -17,12 +18,15 @@ class TaskHandler:
     def __init__(
             self,
             workers: List[WorkerInterface],
-            configuration: Configuration = None
+            configuration: Configuration = None,
+            metrics_settings: MetricsSettings = None
     ):
         if not isinstance(workers, list):
             raise Exception('Invalid worker list')
-        self.__create_metrics_provider_process(configuration)
-        self.__create_task_runner_processes(workers, configuration)
+        self.__create_metrics_provider_process(metrics_settings)
+        self.__create_task_runner_processes(
+            workers, configuration, metrics_settings
+        )
         logger.info('Created all processes')
 
     def __enter__(self):
@@ -42,21 +46,33 @@ class TaskHandler:
         self.__join_task_runner_processes()
         logger.info('Joined all processes')
 
-    def __create_metrics_provider_process(self, configuration):
+    def __create_metrics_provider_process(self, metrics_settings: MetricsSettings) -> None:
         self.metrics_provider_process = Process(
             target=provide_metrics,
-            args=(configuration.metrics_settings,)
+            args=(metrics_settings,)
         )
         logger.info('Created MetricsProvider process')
 
-    def __create_task_runner_processes(self, workers, configuration):
+    def __create_task_runner_processes(
+        self,
+        workers: List[WorkerInterface],
+        configuration: Configuration,
+        metrics_settings: MetricsSettings
+    ) -> None:
         self.task_runner_processes = []
         for worker in workers:
-            self.__create_task_runner_process(worker, configuration)
+            self.__create_task_runner_process(
+                worker, configuration, metrics_settings
+            )
         logger.info('Created TaskRunner processes')
 
-    def __create_task_runner_process(self, worker, configuration):
-        task_runner = TaskRunner(worker, configuration)
+    def __create_task_runner_process(
+        self,
+        worker: WorkerInterface,
+        configuration: Configuration,
+        metrics_settings: MetricsSettings
+    ) -> None:
+        task_runner = TaskRunner(worker, configuration, metrics_settings)
         process = Process(
             target=task_runner.run
         )

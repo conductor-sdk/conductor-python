@@ -45,27 +45,16 @@ Software Development Kit for Netflix Conductor, written on and providing support
 3. Create a main method to start polling tasks to execute with your worker. Example:
     ```python
     from conductor.client.automator.task_handler import TaskHandler
-    from conductor.client.configuration.configuration import Configuration
-    from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-    from conductor.client.worker.sample.faulty_execution_worker import FaultyExecutionWorker
-    from conductor.client.worker.sample.simple_python_worker import SimplePythonWorker
+    from conductor.client.example.worker.cpp.simple_cpp_worker import SimpleCppWorker
+    from conductor.client.example.worker.python.simple_python_worker import SimplePythonWorker
 
 
     def main():
-        configuration = Configuration(
-            base_url='https://play.orkes.io',
-            debug=True,
-            authentication_settings=AuthenticationSettings(
-                key_id='id',
-                key_secret='secret'
-            )
-        )
-        task_definition_name = 'python_task_example'
         workers = [
-            FaultyExecutionWorker(task_definition_name),
-            SimplePythonWorker(task_definition_name)
+            SimpleCppWorker('cpp_task_example'),
+            SimplePythonWorker('python_task_example')
         ]
-        with TaskHandler(workers, configuration) as task_handler:
+        with TaskHandler(workers) as task_handler:
             task_handler.start_processes()
             task_handler.join_processes()
 
@@ -74,6 +63,24 @@ Software Development Kit for Netflix Conductor, written on and providing support
         main()
     ```
     * This example contains two workers, each with a different execution method, capable of running the same `task_definition_name`
+    * You can pass a `Configuration` object to `TaskHandler`, where you can set:
+      * `base_url`: like `localhost:8000/api`
+      * `debug`: true/false
+      * `AuthenticationSettings`:
+        ```
+        authentication_settings=AuthenticationSettings(
+            key_id='id',
+            key_secret='secret'
+        )
+        ```
+    * You can pass a `MetricsSettings` object to `TaskHandler`, where you can set:
+        ```
+        metrics_settings=MetricsSettings(
+            directory='.',
+            file_name='metrics.log', 
+            update_interval=0.1
+        )
+        ```
 4. Now that you have implemented the example, you can start the Conductor server locally:
       1. Clone [Netflix Conductor repository](https://github.com/Netflix/conductor):
           ```shell
@@ -95,35 +102,23 @@ Software Development Kit for Netflix Conductor, written on and providing support
         * http://localhost:8080/swagger-ui/index.html
       * Conductor UI:
         * http://localhost:5000
-5. Create a `Task` within `Conductor`. Example:
-    ```shell
-    $ curl -X 'POST' \
-        'http://localhost:8080/api/metadata/taskdefs' \
-        -H 'accept: */*' \
-        -H 'Content-Type: application/json' \
-        -d '[
-        {
-          "name": "python_task_example",
-          "description": "Python task example",
-          "retryCount": 3,
-          "retryLogic": "FIXED",
-          "retryDelaySeconds": 10,
-          "timeoutSeconds": 300,
-          "timeoutPolicy": "TIME_OUT_WF",
-          "responseTimeoutSeconds": 180,
-          "ownerEmail": "example@example.com"
-        }
-      ]'
+5. Create a `Task` within `Conductor`:
+    ```json
+    {
+        "name": "python_task_example",
+        "description": "Python task example",
+        "retryCount": 3,
+        "retryLogic": "FIXED",
+        "retryDelaySeconds": 10,
+        "timeoutSeconds": 300,
+        "timeoutPolicy": "TIME_OUT_WF",
+        "responseTimeoutSeconds": 180,
+        "ownerEmail": "example@example.com"
+    }
     ```
-6. Create a `Workflow` within `Conductor`. Example:
-    ```shell
-    $ curl -X 'POST' \
-        'http://localhost:8080/api/metadata/workflow' \
-        -H 'accept: */*' \
-        -H 'Content-Type: application/json' \
-        -d '{
-        "createTime": 1634021619147,
-        "updateTime": 1630694890267,
+6. Create a `Workflow` within `Conductor`:
+    ```json
+    {
         "name": "workflow_with_python_task_example",
         "description": "Workflow with Python Task example",
         "version": 1,
@@ -144,26 +139,122 @@ Software Development Kit for Netflix Conductor, written on and providing support
         "ownerEmail": "example@example.com",
         "timeoutPolicy": "ALERT_ONLY",
         "timeoutSeconds": 0
-      }'
+    }
     ```
-1. Start a new workflow:
-    ```shell
-    $ curl -X 'POST' \
-        'http://localhost:8080/api/workflow/workflow_with_python_task_example' \
-        -H 'accept: text/plain' \
-        -H 'Content-Type: application/json' \
-        -d '{}'
+7. Start a new workflow of the type you just created
+8. Run your Python file with the `main` method
+
+## C/C++ Support
+
+### C++
+
+1. Export your C++ functions as `extern "C"`:
+   * C++ function example (sum two integers)
+        ```cpp
+        #include <iostream>
+
+        extern "C" int32_t get_sum(const int32_t A, const int32_t B) {
+            return A + B; 
+        }
+        ```
+2. Compile and share its library:
+   * C++ file name: `simple_cpp_lib.cpp`
+   * Library output name goal: `lib.so`
+        ```bash
+        $ g++ -c -fPIC simple_cpp_lib.cpp -o simple_cpp_lib.o
+        $ g++ -shared -Wl,-install_name,lib.so -o lib.so simple_cpp_lib.o
+        ```
+3. Create a `Task` definition:
+    ```json
+    {
+        "name": "cpp_task_example",
+        "description": "C++ Task Example",
+        "retryCount": 3,
+        "timeoutSeconds": 300,
+        "inputKeys": [],
+        "outputKeys": [],
+        "timeoutPolicy": "TIME_OUT_WF",
+        "retryLogic": "FIXED",
+        "retryDelaySeconds": 10,
+        "responseTimeoutSeconds": 180,
+        "inputTemplate": {},
+        "rateLimitPerFrequency": 0,
+        "rateLimitFrequencyInSeconds": 1,
+        "ownerEmail": "example@example.com",
+        "backoffScaleFactor": 1
+    }
     ```
-    You should receive a *Workflow ID* at the *Response body*
-    * *Workflow ID* example: `8ff0bc06-4413-4c94-b27a-b3210412a914`
-    
-    Now you must be able to see its execution through the UI.
-    * Example: `http://localhost:5000/execution/8ff0bc06-4413-4c94-b27a-b3210412a914`
-1. Run your Python file with the `main` method
+4. Create a `Workflow` definition:
+    ```json
+    {
+        "name": "workflow_with_cpp_task_example",
+        "description": "Workflow with C++ Task example",
+        "version": 1,
+        "tasks": [
+            {
+                "name": "cpp_task_example",
+                "taskReferenceName": "cpp_task_example_ref_0",
+                "inputParameters": {},
+                "type": "SIMPLE",
+                "decisionCases": {},
+                "defaultCase": [],
+                "forkTasks": [],
+                "startDelay": 0,
+                "joinOn": [],
+                "optional": false,
+                "defaultExclusiveJoinTask": [],
+                "asyncComplete": false,
+                "loopOver": []
+            }
+        ],
+        "inputParameters": [],
+        "outputParameters": {
+            "workerOutput": "${cpp_task_example_ref_0.output}"
+        },
+        "schemaVersion": 2,
+        "restartable": true,
+        "workflowStatusListenerEnabled": false,
+        "ownerEmail": "example@example.com",
+        "timeoutPolicy": "ALERT_ONLY",
+        "timeoutSeconds": 0,
+        "variables": {},
+        "inputTemplate": {}
+    }
+    ```
+5. Python Worker example:
+    ```python
+    from conductor.client.http.models.task import Task
+    from conductor.client.http.models.task_result import TaskResult
+    from conductor.client.http.models.task_result_status import TaskResultStatus
+    from conductor.client.worker.worker_interface import WorkerInterface
+    from ctypes import cdll
 
-### Unit Tests
 
-#### Simple validation
+    class CppWrapper:
+        def __init__(self, file_path='./lib.so'):
+            self.cpp_lib = cdll.LoadLibrary(file_path)
+
+        def get_sum(self, X: int, Y: int) -> int:
+            return self.cpp_lib.get_sum(X, Y)
+
+
+    class SimpleCppWorker(WorkerInterface):
+        cpp_wrapper = CppWrapper()
+
+        def execute(self, task: Task) -> TaskResult:
+            execution_result = self.cpp_wrapper.get_sum(1, 2)
+            task_result = self.get_task_result_from_task(task)
+            task_result.add_output_data(
+                'sum', execution_result
+            )
+            task_result.status = TaskResultStatus.COMPLETED
+            return task_result
+    ```
+
+
+## Unit Tests
+
+### Simple validation
 
 ```shell
 /conductor-python/src$ python3 -m unittest -v
@@ -177,7 +268,7 @@ Ran 3 tests in 0.001s
 OK
 ```
 
-#### Run with code coverage
+### Run with code coverage
 
 ```shell
 /conductor-python/src$ python3 -m coverage run --source=conductor/ -m unittest

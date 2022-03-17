@@ -1,4 +1,5 @@
 from conductor.client.configuration.configuration import Configuration
+from conductor.client.configuration.settings.metrics_settings import MetricsSettings
 from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.authentication_resource_api import AuthenticationResourceApi
 from conductor.client.http.api.task_resource_api import TaskResourceApi
@@ -19,16 +20,22 @@ logger = logging.getLogger(
 
 
 class TaskRunner:
-    def __init__(self, worker: WorkerInterface, configuration: Configuration = None):
-        if configuration != None and not isinstance(configuration, Configuration):
-            raise Exception('Invalid configuration')
+    def __init__(
+        self,
+        worker: WorkerInterface,
+        configuration: Configuration = None,
+        metrics_settings: MetricsSettings = None
+    ):
         if not isinstance(worker, WorkerInterface):
             raise Exception('Invalid worker')
-        self.configuration = configuration
+
         self.worker = worker
-        self.metrics_collector = MetricsCollector(
-            configuration.metrics_settings
-        )
+
+        if not isinstance(configuration, Configuration):
+            configuration = Configuration()
+        self.configuration = configuration
+
+        self.metrics_collector = MetricsCollector(metrics_settings)
 
     def run(self) -> None:
         if self.configuration != None:
@@ -68,9 +75,10 @@ class TaskRunner:
                 f'Failed to poll task for: {task_definition_name}, reason: {traceback.format_exc()}'
             )
             return None
-        logger.debug(
-            f'Polled task: {task_definition_name}, worker_id: {self.worker.get_identity()}'
-        )
+        if task != None:
+            logger.debug(
+                f'Polled task: {task_definition_name}, worker_id: {self.worker.get_identity()}'
+            )
         return task
 
     def __execute_task(self, task: Task) -> TaskResult:
@@ -176,19 +184,19 @@ class TaskRunner:
         )
 
     def __refresh_auth_token(self) -> None:
-        token = None
-        if self.configuration.authentication_settings is not None:
+        if (self.configuration.token == None
+                and self.configuration.authentication_settings != None):
             token = self.__get_new_token()
-        self.configuration.update_token(token)
+            self.configuration.update_token(token)
 
     def __get_new_token(self) -> str:
         try:
             auth_api = AuthenticationResourceApi(
                 ApiClient(self.configuration)
             )
-            return auth_api.token
         except Exception:
             logger.debug(
                 f'Failed to get new token, reason: {traceback.format_exc()}'
             )
             return None
+        return auth_api.token
