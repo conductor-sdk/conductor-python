@@ -45,23 +45,16 @@ Software Development Kit for Netflix Conductor, written on and providing support
 3. Create a main method to start polling tasks to execute with your worker. Example:
     ```python
     from conductor.client.automator.task_handler import TaskHandler
-    from conductor.client.configuration.configuration import Configuration
-    from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-    from conductor.client.worker.sample.faulty_execution_worker import FaultyExecutionWorker
-    from conductor.client.worker.sample.simple_python_worker import SimplePythonWorker
+    from conductor.client.example.worker.cpp.simple_cpp_worker import SimpleCppWorker
+    from conductor.client.example.worker.python.simple_python_worker import SimplePythonWorker
 
 
     def main():
-        configuration = Configuration(
-            base_url='https://play.orkes.io',
-            debug=True,
-        )
-        task_definition_name = 'python_task_example'
         workers = [
-            FaultyExecutionWorker(task_definition_name),
-            SimplePythonWorker(task_definition_name)
+            SimpleCppWorker('cpp_task_example'),
+            SimplePythonWorker('python_task_example')
         ]
-        with TaskHandler(workers, configuration) as task_handler:
+        with TaskHandler(workers) as task_handler:
             task_handler.start_processes()
             task_handler.join_processes()
 
@@ -70,15 +63,17 @@ Software Development Kit for Netflix Conductor, written on and providing support
         main()
     ```
     * This example contains two workers, each with a different execution method, capable of running the same `task_definition_name`
-    * From `Configuration`, you can also:
-      * Add `AuthenticationSettings`, like:
+    * You can pass a `Configuration` object to `TaskHandler`, where you can set:
+      * `base_url`: like `localhost:8000/api`
+      * `debug`: true/false
+      * `AuthenticationSettings`:
         ```
         authentication_settings=AuthenticationSettings(
             key_id='id',
             key_secret='secret'
         )
         ```
-      * Add `MetricsSettings`, like:
+    * You can pass a `MetricsSettings` object to `TaskHandler`, where you can set:
         ```
         metrics_settings=MetricsSettings(
             directory='.',
@@ -122,7 +117,7 @@ Software Development Kit for Netflix Conductor, written on and providing support
     }
     ```
 6. Create a `Workflow` within `Conductor`:
-    ```shell
+    ```json
     {
         "name": "workflow_with_python_task_example",
         "description": "Workflow with Python Task example",
@@ -146,54 +141,8 @@ Software Development Kit for Netflix Conductor, written on and providing support
         "timeoutSeconds": 0
     }
     ```
-7. Start a new workflow:
-    ```shell
-    $ curl -X 'POST' \
-        'http://localhost:8080/api/workflow/workflow_with_python_task_example' \
-        -H 'accept: text/plain' \
-        -H 'Content-Type: application/json' \
-        -d '{}'
-    ```
-    You should receive a *Workflow ID* at the *Response body*
-    * *Workflow ID* example: `8ff0bc06-4413-4c94-b27a-b3210412a914`
-    
-    Now you must be able to see its execution through the UI.
-    * Example: `http://localhost:5000/execution/8ff0bc06-4413-4c94-b27a-b3210412a914`
+7. Start a new workflow of the type you just created
 8. Run your Python file with the `main` method
-
-## Unit Tests
-
-### Simple validation
-
-```shell
-/conductor-python/src$ python3 -m unittest -v
-test_execute_task (tst.automator.test_task_runner.TestTaskRunner) ... ok
-test_execute_task_with_faulty_execution_worker (tst.automator.test_task_runner.TestTaskRunner) ... ok
-test_execute_task_with_invalid_task (tst.automator.test_task_runner.TestTaskRunner) ... ok
-
-----------------------------------------------------------------------
-Ran 3 tests in 0.001s
-
-OK
-```
-
-### Run with code coverage
-
-```shell
-/conductor-python/src$ python3 -m coverage run --source=conductor/ -m unittest
-```
-
-Report:
-
-```shell
-/conductor-python/src$ python3 -m coverage report
-```
-
-Visual coverage results:
-
-```shell
-/conductor-python/src$ python3 -m coverage html
-```
 
 ## C/C++ Support
 
@@ -218,8 +167,6 @@ Visual coverage results:
 3. Create a `Task` definition:
     ```json
     {
-        "createTime": 1647213211379,
-        "createdBy": "",
         "name": "cpp_task_example",
         "description": "C++ Task Example",
         "retryCount": 3,
@@ -240,26 +187,24 @@ Visual coverage results:
 4. Create a `Workflow` definition:
     ```json
     {
-        "createTime": 1634021619147,
-        "updateTime": 1647527049754,
         "name": "workflow_with_cpp_task_example",
         "description": "Workflow with C++ Task example",
         "version": 1,
         "tasks": [
             {
-            "name": "cpp_task_example",
-            "taskReferenceName": "cpp_task_example_ref_0",
-            "inputParameters": {},
-            "type": "SIMPLE",
-            "decisionCases": {},
-            "defaultCase": [],
-            "forkTasks": [],
-            "startDelay": 0,
-            "joinOn": [],
-            "optional": false,
-            "defaultExclusiveJoinTask": [],
-            "asyncComplete": false,
-            "loopOver": []
+                "name": "cpp_task_example",
+                "taskReferenceName": "cpp_task_example_ref_0",
+                "inputParameters": {},
+                "type": "SIMPLE",
+                "decisionCases": {},
+                "defaultCase": [],
+                "forkTasks": [],
+                "startDelay": 0,
+                "joinOn": [],
+                "optional": false,
+                "defaultExclusiveJoinTask": [],
+                "asyncComplete": false,
+                "loopOver": []
             }
         ],
         "inputParameters": [],
@@ -305,3 +250,38 @@ Visual coverage results:
             task_result.status = TaskResultStatus.COMPLETED
             return task_result
     ```
+
+
+## Unit Tests
+
+### Simple validation
+
+```shell
+/conductor-python/src$ python3 -m unittest -v
+test_execute_task (tst.automator.test_task_runner.TestTaskRunner) ... ok
+test_execute_task_with_faulty_execution_worker (tst.automator.test_task_runner.TestTaskRunner) ... ok
+test_execute_task_with_invalid_task (tst.automator.test_task_runner.TestTaskRunner) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+
+OK
+```
+
+### Run with code coverage
+
+```shell
+/conductor-python/src$ python3 -m coverage run --source=conductor/ -m unittest
+```
+
+Report:
+
+```shell
+/conductor-python/src$ python3 -m coverage report
+```
+
+Visual coverage results:
+
+```shell
+/conductor-python/src$ python3 -m coverage html
+```

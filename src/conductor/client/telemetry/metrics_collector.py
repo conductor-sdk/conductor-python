@@ -41,6 +41,8 @@ class MetricsCollector:
     registry = CollectorRegistry()
 
     def __init__(self, settings: MetricsSettings):
+        if settings == None:
+            settings = MetricsSettings()
         # TODO improve hard coded ENV
         os.environ["PROMETHEUS_MULTIPROC_DIR"] = settings.directory
         MultiProcessCollector(self.registry)

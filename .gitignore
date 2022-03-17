@@ -160,3 +160,4 @@ metrics/
 latest.txt
 
 *.so
+main.py
