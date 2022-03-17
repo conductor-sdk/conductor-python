@@ -1,22 +1,22 @@
-import logging
-import os
-
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.metrics_settings import MetricsSettings
-from conductor.client.worker.sample.simple_python_worker import SimplePythonWorker
-from conductor.client.http.models.task_result_status import TaskResultStatus
-from conductor.client.worker.worker_interface import WorkerInterface
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
-from pathlib import Path
+from conductor.client.http.models.task_result_status import TaskResultStatus
+from conductor.client.worker.sample.simple_python_worker import SimplePythonWorker
 from conductor.client.worker.task_worker import TaskWorker
+from conductor.client.worker.worker_interface import WorkerInterface
+from pathlib import Path
+import logging
+import os
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
         __name__
     )
 )
+
 
 class SimplePythonWorker(WorkerInterface):
     def execute(self, task: Task) -> TaskResult:
@@ -28,8 +28,8 @@ class SimplePythonWorker(WorkerInterface):
         return task_result
 
 
-def execute4(task):
-    logging.info('Executing ' + str(task.task_id))
+def execute4(task: Task) -> dict:
+    logger.info('Executing ' + str(task.task_id))
     return {'keyA': 'key1', 'keyB': 100, 'even': True}
 
 
