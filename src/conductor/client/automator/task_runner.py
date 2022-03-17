@@ -68,9 +68,10 @@ class TaskRunner:
                 f'Failed to poll task for: {task_definition_name}, reason: {traceback.format_exc()}'
             )
             return None
-        logger.debug(
-            f'Polled task: {task_definition_name}, worker_id: {self.worker.get_identity()}'
-        )
+        if task != None:
+            logger.debug(
+                f'Polled task: {task_definition_name}, worker_id: {self.worker.get_identity()}'
+            )
         return task
 
     def __execute_task(self, task: Task) -> TaskResult:
