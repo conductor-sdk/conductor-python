@@ -9,12 +9,12 @@ def main():
         base_url='https://play.orkes.io',
         debug=True,
         authentication_settings=AuthenticationSettings(
-            key_id='id',
-            key_secret='secret'
+            key_id='499f5c2e-29c8-4d10-a81c-412ec6a99819',
+            key_secret='qgK23BCMQ6ic8aipAYRwtC4JV86yQraiF0A7cThJ07uY8G5j'
         )
     )
     workers = [
-        SimpleCppWorker('simple_cpp_task')
+        SimpleCppWorker('cpp_task_example')
     ]
     with TaskHandler(workers, configuration) as task_handler:
         task_handler.start_processes()
