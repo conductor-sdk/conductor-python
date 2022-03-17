@@ -1,8 +1,7 @@
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from conductor.client.worker.sample.python.faulty_execution_worker import FaultyExecutionWorker
-from conductor.client.worker.sample.python.simple_python_worker import SimplePythonWorker
+from conductor.client.example.worker.cpp.simple_cpp_worker import SimpleCppWorker
 
 
 def main():
@@ -14,10 +13,8 @@ def main():
             key_secret='secret'
         )
     )
-    task_definition_name = 'python_task_example'
     workers = [
-        FaultyExecutionWorker(task_definition_name),
-        SimplePythonWorker(task_definition_name)
+        SimpleCppWorker('simple_cpp_task')
     ]
     with TaskHandler(workers, configuration) as task_handler:
         task_handler.start_processes()
