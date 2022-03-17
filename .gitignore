@@ -158,3 +158,5 @@ metrics/
 
 *.db
 latest.txt
+
+*.so
