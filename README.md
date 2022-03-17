@@ -227,3 +227,64 @@ Visual coverage results:
         $ g++ -c -fPIC simple_cpp_lib.cpp -o simple_cpp_lib.o
         $ g++ -shared -Wl,-install_name,lib.so -o lib.so simple_cpp_lib.o
         ```
+3. Create a `Task` definition:
+    ```json
+    {
+        "createTime": 1647213211379,
+        "createdBy": "",
+        "name": "cpp_task_example",
+        "description": "C++ Task Example",
+        "retryCount": 3,
+        "timeoutSeconds": 300,
+        "inputKeys": [],
+        "outputKeys": [],
+        "timeoutPolicy": "TIME_OUT_WF",
+        "retryLogic": "FIXED",
+        "retryDelaySeconds": 10,
+        "responseTimeoutSeconds": 180,
+        "inputTemplate": {},
+        "rateLimitPerFrequency": 0,
+        "rateLimitFrequencyInSeconds": 1,
+        "ownerEmail": "example@example.com",
+        "backoffScaleFactor": 1
+    }
+    ```
+4. Create a `Workflow` definition:
+    ```json
+    {
+        "createTime": 1634021619147,
+        "updateTime": 1647527049754,
+        "name": "workflow_with_cpp_task_example",
+        "description": "Workflow with C++ Task example",
+        "version": 1,
+        "tasks": [
+            {
+            "name": "cpp_task_example",
+            "taskReferenceName": "cpp_task_example_ref_0",
+            "inputParameters": {},
+            "type": "SIMPLE",
+            "decisionCases": {},
+            "defaultCase": [],
+            "forkTasks": [],
+            "startDelay": 0,
+            "joinOn": [],
+            "optional": false,
+            "defaultExclusiveJoinTask": [],
+            "asyncComplete": false,
+            "loopOver": []
+            }
+        ],
+        "inputParameters": [],
+        "outputParameters": {
+            "workerOutput": "${cpp_task_example_ref_0.output}"
+        },
+        "schemaVersion": 2,
+        "restartable": true,
+        "workflowStatusListenerEnabled": false,
+        "ownerEmail": "example@example.com",
+        "timeoutPolicy": "ALERT_ONLY",
+        "timeoutSeconds": 0,
+        "variables": {},
+        "inputTemplate": {}
+    }
+    ```
