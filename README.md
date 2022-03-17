@@ -107,35 +107,23 @@ Software Development Kit for Netflix Conductor, written on and providing support
         * http://localhost:8080/swagger-ui/index.html
       * Conductor UI:
         * http://localhost:5000
-5. Create a `Task` within `Conductor`. Example:
-    ```shell
-    $ curl -X 'POST' \
-        'http://localhost:8080/api/metadata/taskdefs' \
-        -H 'accept: */*' \
-        -H 'Content-Type: application/json' \
-        -d '[
-        {
-          "name": "python_task_example",
-          "description": "Python task example",
-          "retryCount": 3,
-          "retryLogic": "FIXED",
-          "retryDelaySeconds": 10,
-          "timeoutSeconds": 300,
-          "timeoutPolicy": "TIME_OUT_WF",
-          "responseTimeoutSeconds": 180,
-          "ownerEmail": "example@example.com"
-        }
-      ]'
+5. Create a `Task` within `Conductor`:
+    ```json
+    {
+        "name": "python_task_example",
+        "description": "Python task example",
+        "retryCount": 3,
+        "retryLogic": "FIXED",
+        "retryDelaySeconds": 10,
+        "timeoutSeconds": 300,
+        "timeoutPolicy": "TIME_OUT_WF",
+        "responseTimeoutSeconds": 180,
+        "ownerEmail": "example@example.com"
+    }
     ```
-6. Create a `Workflow` within `Conductor`. Example:
+6. Create a `Workflow` within `Conductor`:
     ```shell
-    $ curl -X 'POST' \
-        'http://localhost:8080/api/metadata/workflow' \
-        -H 'accept: */*' \
-        -H 'Content-Type: application/json' \
-        -d '{
-        "createTime": 1634021619147,
-        "updateTime": 1630694890267,
+    {
         "name": "workflow_with_python_task_example",
         "description": "Workflow with Python Task example",
         "version": 1,
@@ -156,7 +144,7 @@ Software Development Kit for Netflix Conductor, written on and providing support
         "ownerEmail": "example@example.com",
         "timeoutPolicy": "ALERT_ONLY",
         "timeoutSeconds": 0
-      }'
+    }
     ```
 7. Start a new workflow:
     ```shell
@@ -287,4 +275,33 @@ Visual coverage results:
         "variables": {},
         "inputTemplate": {}
     }
+    ```
+5. Python Worker example:
+    ```python
+    from conductor.client.http.models.task import Task
+    from conductor.client.http.models.task_result import TaskResult
+    from conductor.client.http.models.task_result_status import TaskResultStatus
+    from conductor.client.worker.worker_interface import WorkerInterface
+    from ctypes import cdll
+
+
+    class CppWrapper:
+        def __init__(self, file_path='./lib.so'):
+            self.cpp_lib = cdll.LoadLibrary(file_path)
+
+        def get_sum(self, X: int, Y: int) -> int:
+            return self.cpp_lib.get_sum(X, Y)
+
+
+    class SimpleCppWorker(WorkerInterface):
+        cpp_wrapper = CppWrapper()
+
+        def execute(self, task: Task) -> TaskResult:
+            execution_result = self.cpp_wrapper.get_sum(1, 2)
+            task_result = self.get_task_result_from_task(task)
+            task_result.add_output_data(
+                'sum', execution_result
+            )
+            task_result.status = TaskResultStatus.COMPLETED
+            return task_result
     ```
