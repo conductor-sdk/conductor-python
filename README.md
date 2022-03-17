@@ -55,10 +55,6 @@ Software Development Kit for Netflix Conductor, written on and providing support
         configuration = Configuration(
             base_url='https://play.orkes.io',
             debug=True,
-            authentication_settings=AuthenticationSettings(
-                key_id='id',
-                key_secret='secret'
-            )
         )
         task_definition_name = 'python_task_example'
         workers = [
@@ -74,6 +70,22 @@ Software Development Kit for Netflix Conductor, written on and providing support
         main()
     ```
     * This example contains two workers, each with a different execution method, capable of running the same `task_definition_name`
+    * From `Configuration`, you can also:
+      * Add `AuthenticationSettings`, like:
+        ```
+        authentication_settings=AuthenticationSettings(
+            key_id='id',
+            key_secret='secret'
+        )
+        ```
+      * Add `MetricsSettings`, like:
+        ```
+        metrics_settings=MetricsSettings(
+            directory='.',
+            file_name='metrics.log', 
+            update_interval=0.1
+        )
+        ```
 4. Now that you have implemented the example, you can start the Conductor server locally:
       1. Clone [Netflix Conductor repository](https://github.com/Netflix/conductor):
           ```shell
@@ -146,7 +158,7 @@ Software Development Kit for Netflix Conductor, written on and providing support
         "timeoutSeconds": 0
       }'
     ```
-1. Start a new workflow:
+7. Start a new workflow:
     ```shell
     $ curl -X 'POST' \
         'http://localhost:8080/api/workflow/workflow_with_python_task_example' \
@@ -159,11 +171,11 @@ Software Development Kit for Netflix Conductor, written on and providing support
     
     Now you must be able to see its execution through the UI.
     * Example: `http://localhost:5000/execution/8ff0bc06-4413-4c94-b27a-b3210412a914`
-1. Run your Python file with the `main` method
+8. Run your Python file with the `main` method
 
-### Unit Tests
+## Unit Tests
 
-#### Simple validation
+### Simple validation
 
 ```shell
 /conductor-python/src$ python3 -m unittest -v
@@ -177,7 +189,7 @@ Ran 3 tests in 0.001s
 OK
 ```
 
-#### Run with code coverage
+### Run with code coverage
 
 ```shell
 /conductor-python/src$ python3 -m coverage run --source=conductor/ -m unittest
@@ -194,3 +206,24 @@ Visual coverage results:
 ```shell
 /conductor-python/src$ python3 -m coverage html
 ```
+
+## C/C++ Support
+
+### C++
+
+1. Export your C++ functions as `extern "C"`:
+   * C++ function example (sum two integers)
+        ```cpp
+        #include <iostream>
+
+        extern "C" int32_t get_sum(const int32_t A, const int32_t B) {
+            return A + B; 
+        }
+        ```
+2. Compile and share its library:
+   * C++ file name: `simple_cpp_lib.cpp`
+   * Library output name goal: `lib.so`
+        ```bash
+        $ g++ -c -fPIC simple_cpp_lib.cpp -o simple_cpp_lib.o
+        $ g++ -shared -Wl,-install_name,lib.so -o lib.so simple_cpp_lib.o
+        ```
