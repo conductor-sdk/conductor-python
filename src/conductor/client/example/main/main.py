@@ -1,11 +1,11 @@
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.metrics_settings import MetricsSettings
+from conductor.client.example.worker.python.simple_python_worker import SimplePythonWorker
+from conductor.client.example.worker.python.task_worker import TaskWorker
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
-from conductor.client.worker.sample.simple_python_worker import SimplePythonWorker
-from conductor.client.worker.task_worker import TaskWorker
 from conductor.client.worker.worker_interface import WorkerInterface
 from pathlib import Path
 import logging
@@ -39,12 +39,8 @@ def main():
     if not os.path.isdir(metrics_dir):
         os.mkdir(metrics_dir)
 
-    configuration = Configuration(
-        base_url='http://localhost:8080',
-        metrics_settings=MetricsSettings(
-            directory=metrics_dir
-        ),
-        debug=False
+    metrics_settings = MetricsSettings(
+        directory=metrics_dir
     )
 
     # setup two workers task1 and task2
@@ -56,7 +52,7 @@ def main():
     ]
 
     # start the workers and wait
-    with TaskHandler(workers, configuration) as task_handler:
+    with TaskHandler(workers, metrics_settings=metrics_settings) as task_handler:
         task_handler.start_processes()
         task_handler.join_processes()
 
