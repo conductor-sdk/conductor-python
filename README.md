@@ -10,7 +10,7 @@ To find out more about Conductor visit: [https://github.com/Netflix/conductor](h
 2. [Write worker](#Write-worker)
 3. [Run workers](#Run-workers)
 4. [Worker Configurations](#Worker-Configurations)
-5. [C/C++ Support](#C/C++-Support)
+5. [C/C++ Support](#cc-support)
 
 ### Virtual Environment Setup
 
