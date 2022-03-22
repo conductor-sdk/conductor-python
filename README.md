@@ -9,6 +9,8 @@ To find out more about Conductor visit: [https://github.com/Netflix/conductor](h
 1. [Create virtual environment](#Virtual-Environment-Setup)
 2. [Write worker](#Write-worker)
 3. [Run workers](#Run-workers)
+4. [Worker Configurations](#Worker-Configurations)
+5. [C/C++ Support](#C/C++-Support)
 
 ### Virtual Environment Setup
 
@@ -189,23 +191,23 @@ curl -X 'POST' \
 ```
 
 
-### Worker Configurations
+## Worker Configurations
 Worker configuration is handled via `Configuraiton` object passed when initializing `TaskHandler`
 
-#### Server Configurations
+### Server Configurations
 * base_url : Conductor server address.  e.g. `http://localhost:8000` if running locally 
 * debug: `true` for verbose logging `false` to display only the errors
 * authentication_settings: see below
 * metrics_settings: see below
 
-#### Metrics
+### Metrics
 Conductor uses [Prometheus](https://prometheus.io/) to collect metrics.
 
 * directory: Directory where to store the metrics 
 * file_name: File where the metrics are colleted. e.g. `metrics.log`
 * update_interval: Time interval in seconds at which to collect metrics into the file
 
-#### Authentication
+### Authentication
 Use if your conductor server requires authentication
 * key_id: Key
 * key_secret: Secret for the Key 
@@ -214,7 +216,7 @@ Use if your conductor server requires authentication
 Python is great, but at times you need to call into native C/C++ code. 
 Here is an example how you can do that with Conductor SDK.
 
-#### 1.  Export your C++ functions as `extern "C"`:
+### 1.  Export your C++ functions as `extern "C"`:
    * C++ function example (sum two integers)
         ```cpp
         #include <iostream>
@@ -223,7 +225,7 @@ Here is an example how you can do that with Conductor SDK.
             return A + B; 
         }
         ```
-#### 2. Compile and share its library:
+### 2. Compile and share its library:
    * C++ file name: `simple_cpp_lib.cpp`
    * Library output name goal: `lib.so`
         ```bash
@@ -231,7 +233,7 @@ Here is an example how you can do that with Conductor SDK.
         $ g++ -shared -Wl,-install_name,lib.so -o lib.so simple_cpp_lib.o
         ```
      
-#### 3. Use the C++ library in your python worker
+### 3. Use the C++ library in your python worker
     
 ```python
 from conductor.client.http.models.task import Task
