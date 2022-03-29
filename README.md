@@ -59,10 +59,9 @@ from conductor.client.worker.worker_interface import WorkerInterface
 from conductor.client.http.models import Task, TaskResult
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from pathlib import Path
-import logging
 import os
 
-# Create a Simple Python Worker
+
 class SimplePythonWorker(WorkerInterface):
     def execute(self, task: Task) -> TaskResult:
         task_result = self.get_task_result_from_task(task)
@@ -71,9 +70,25 @@ class SimplePythonWorker(WorkerInterface):
         task_result.add_output_data('key3', False)
         task_result.status = TaskResultStatus.COMPLETED
         return task_result
-    
+
+
+class WorkerA(WorkerInterface):
+    def execute(self, task: Task) -> TaskResult:
+        task_result = self.get_task_result_from_task(task)
+        task_result.add_output_data('key', 'A')
+        task_result.status = TaskResultStatus.COMPLETED
+        return task_result
+
+
+class WorkerB(WorkerInterface):
+    def execute(self, task: Task) -> TaskResult:
+        task_result = self.get_task_result_from_task(task)
+        task_result.add_output_data('key', 'B')
+        task_result.status = TaskResultStatus.COMPLETED
+        return task_result
+
+
 def main():
-    
     # Create a temp folder for metrics logs
     metrics_dir = str(Path.home()) + '/tmp/'
     if not os.path.isdir(metrics_dir):
@@ -84,23 +99,25 @@ def main():
     )
 
     # Optionally, if you are using Conductor server that requires authentication,  setup key_id and secret
-    auth=AuthenticationSettings(
+    auth = AuthenticationSettings(
         key_id='id',
         key_secret='secret'
     )
-    
+
     # Point to the Conductor Server
     configuration = Configuration(
         base_url='http://localhost:8080',
         debug=True,
         # authentication_settings=auth      # Optional if you are using server that requires authentication
     )
-    
-    # Add two workers 
+
+    # Add three workers
     workers = [
-        SimplePythonWorker('python_task_example')
+        SimplePythonWorker('python_task_example'),
+        WorkerA('task_A'),
+        WorkerB('task_B'),
     ]
-    
+
     # Start the worker processes and wait
     with TaskHandler(workers, configuration=configuration, metrics_settings=metrics_settings) as task_handler:
         task_handler.start_processes()
