@@ -13,6 +13,9 @@ import logging
 import os
 import time
 
+from src.conductor.client.telemetry.model.metric_external_storage_operation import MetricExternalStorageOperation
+from src.conductor.client.telemetry.model.metric_external_storage_payload_type import MetricExternalStoragePayloadType
+
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
         __name__
@@ -130,7 +133,12 @@ class MetricsCollector:
             }
         )
 
-    def increment_external_payload_used(self, entity_name: str, operation: str, payload_type: str) -> None:
+    def increment_external_payload_used(
+        self,
+        entity_name: str,
+        operation: MetricExternalStorageOperation,
+        payload_type: MetricExternalStoragePayloadType
+    ) -> None:
         self.__increment_counter(
             name=MetricName.EXTERNAL_PAYLOAD_USED,
             documentation=MetricDocumentation.EXTERNAL_PAYLOAD_USED,

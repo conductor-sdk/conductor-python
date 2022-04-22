@@ -12,6 +12,10 @@ import sys
 import time
 import traceback
 
+from src.conductor.client.http.models.task_result_status import TaskResultStatus
+from src.conductor.client.telemetry.model.metric_external_storage_operation import MetricExternalStorageOperation
+from src.conductor.client.telemetry.model.metric_external_storage_payload_type import MetricExternalStoragePayloadType
+
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
         __name__
@@ -101,10 +105,6 @@ class TaskRunner:
                 task_definition_name,
                 time_spent
             )
-            self.metrics_collector.record_task_result_payload_size(
-                task_definition_name,
-                sys.getsizeof(task_result)
-            )
             logger.debug(
                 'Executed task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}'.format(
                     task_id=task.task_id,
@@ -144,6 +144,8 @@ class TaskRunner:
                 task_definition_name=task_definition_name
             )
         )
+        self.__evaluateTaskResultExternalStorage(
+            task_definition_name, task_result)
         try:
             response = self.__get_task_resource_api().update_task(
                 body=task_result
@@ -200,3 +202,37 @@ class TaskRunner:
             )
             return None
         return auth_api.token
+
+    def __evaluateTaskResultExternalStorage(self, task_definition_name: str, task_result: TaskResult) -> None:
+        size = sys.getsizeof(task_result)
+        self.metrics_collector.record_task_result_payload_size(
+            task_definition_name, size)
+        if self.configuration.external_storage_settings == None:
+            return
+        if self.__is_task_result_size_above_max_threshold(size):
+            message = 'The TaskResult payload size: {payload_size} is greater than the permissible {allowed} bytes",'.format(
+                payload_size=size,
+                allowed=self.configuration.external_storage_settings.task_output_max_payload_threshold_kb
+            )
+            logger.warn(message)
+            task_result.status = TaskResultStatus.FAILED_WITH_TERMINAL_ERROR
+            task_result.reason_for_incompletion = message
+            task_result.output_data = None
+            return
+        if self.__must_upload_task_result_to_external_storage(size):
+            self.metrics_collector.increment_external_payload_used(
+                task_definition_name,
+                MetricExternalStorageOperation.WRITE,
+                MetricExternalStoragePayloadType.TASK_OUTPUT
+            )
+            external_storage_path = self.configuration.external_storage_settings.external_storage_handler(
+                task_result.output_data
+            )
+            task_result.external_output_payload_storage_path = external_storage_path
+            task_result.output_data = None
+
+    def __is_task_result_size_above_max_threshold(self, size: int) -> bool:
+        return size > self.configuration.external_storage_settings.task_output_max_payload_threshold_kb
+
+    def __must_upload_task_result_to_external_storage(self, size: int) -> bool:
+        return size > self.configuration.external_storage_settings.task_output_payload_threshold_kb

@@ -1,9 +1,11 @@
-from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from conductor.client.configuration.settings.metrics_settings import MetricsSettings
+from conductor.client.settings.authentication_settings import AuthenticationSettings
+from conductor.client.settings.metrics_settings import MetricsSettings
 from six.moves import http_client as httplib
 import logging
 import multiprocessing
 import os
+
+from src.conductor.client.settings.external_storage_settings import ExternalStorageSettings
 
 
 class Configuration:
@@ -14,7 +16,8 @@ class Configuration:
             base_url: str = "http://localhost:8080",
             debug: bool = False,
             metrics_settings: MetricsSettings = None,
-            authentication_settings: AuthenticationSettings = None
+            authentication_settings: AuthenticationSettings = None,
+            external_storage_settings: ExternalStorageSettings = None,
     ):
         self.host = base_url
         self.temp_folder_path = None
@@ -24,6 +27,7 @@ class Configuration:
         self.metrics_settings = metrics_settings
 
         self.authentication_settings = authentication_settings
+        self.external_storage_settings = external_storage_settings
 
         # Debug switch
         self.debug = debug
