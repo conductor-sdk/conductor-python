@@ -7,7 +7,7 @@ import os
 
 
 class Configuration:
-    token = None
+    AUTH_TOKEN = None
 
     def __init__(
             self,
@@ -114,5 +114,5 @@ class Configuration:
     def get_logging_formatted_name(name):
         return f'[{os.getpid()}] {name}'
 
-    def update_token(self, token: str):
-        self.token = token
+    def update_token(self, token: str) -> None:
+        self.AUTH_TOKEN = token
