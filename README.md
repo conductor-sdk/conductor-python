@@ -7,20 +7,30 @@ To find out more about Conductor visit: [https://github.com/Netflix/conductor](h
 ## Quick Start
 
 1. [Create virtual environment](#Virtual-Environment-Setup)
-2. [Write worker](#Write-worker)
-3. [Run workers](#Run-workers)
-4. [Worker Configurations](#Worker-Configurations)
-5. [C/C++ Support](#cc-support)
+2. [Local Environment Setup](#Local-Environment-Setup)
+3. [Write worker](#Write-worker)
+4. [Run workers](#Run-workers)
+5. [Worker Configurations](#Worker-Configurations)
+6. [C/C++ Support](#cc-support)
 
 ### Virtual Environment Setup
 
- ```shell
-  $ virtualenv conductor
-  $ source conductor/bin/activate
-```
-Install conductor-python package
 ```shell
-python3 -m pip install conductor-python
+$ virtualenv conductor
+$ source conductor/bin/activate
+```
+Install `conductor-python` package
+```shell
+$ python3 -m pip install conductor-python
+```
+
+### Local Environment Setup
+
+```shell
+$ git clone https://github.com/conductor-sdk/conductor-python.git
+$ cd conductor-python/
+$ python3 -m pip install .
+$ python3 ./src/example/main/main.py
 ```
 
 ### Write worker    

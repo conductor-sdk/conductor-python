@@ -23,6 +23,8 @@ class TaskHandler:
     ):
         if not isinstance(workers, list):
             raise Exception('Invalid worker list')
+        if metrics_settings == None:
+            metrics_settings = MetricsSettings()
         self.__create_metrics_provider_process(metrics_settings)
         self.__create_task_runner_processes(
             workers, configuration, metrics_settings

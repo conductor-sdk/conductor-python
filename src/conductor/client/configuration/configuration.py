@@ -1,11 +1,10 @@
 from conductor.client.settings.authentication_settings import AuthenticationSettings
+from conductor.client.settings.external_storage_settings import ExternalStorageSettings
 from conductor.client.settings.metrics_settings import MetricsSettings
 from six.moves import http_client as httplib
 import logging
 import multiprocessing
 import os
-
-from src.conductor.client.settings.external_storage_settings import ExternalStorageSettings
 
 
 class Configuration:
@@ -20,7 +19,6 @@ class Configuration:
             external_storage_settings: ExternalStorageSettings = None,
     ):
         self.host = base_url
-        self.temp_folder_path = None
 
         if metrics_settings == None:
             metrics_settings = MetricsSettings()

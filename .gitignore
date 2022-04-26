@@ -158,6 +158,3 @@ metrics/
 
 *.db
 latest.txt
-
-*.so
-main.py

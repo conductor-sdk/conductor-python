@@ -1,20 +1,19 @@
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.metrics_settings import MetricsSettings
 from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.authentication_resource_api import AuthenticationResourceApi
 from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
+from conductor.client.http.models.task_result_status import TaskResultStatus
+from conductor.client.settings.metrics_settings import MetricsSettings
 from conductor.client.telemetry.metrics_collector import MetricsCollector
+from conductor.client.telemetry.model.metric_external_storage_operation import MetricExternalStorageOperation
+from conductor.client.telemetry.model.metric_external_storage_payload_type import MetricExternalStoragePayloadType
 from conductor.client.worker.worker_interface import WorkerInterface
 import logging
 import sys
 import time
 import traceback
-
-from src.conductor.client.http.models.task_result_status import TaskResultStatus
-from src.conductor.client.telemetry.model.metric_external_storage_operation import MetricExternalStorageOperation
-from src.conductor.client.telemetry.model.metric_external_storage_payload_type import MetricExternalStoragePayloadType
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(

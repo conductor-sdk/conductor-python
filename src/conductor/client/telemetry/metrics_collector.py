@@ -1,6 +1,8 @@
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.metrics_settings import MetricsSettings
+from conductor.client.settings.metrics_settings import MetricsSettings
 from conductor.client.telemetry.model.metric_documentation import MetricDocumentation
+from conductor.client.telemetry.model.metric_external_storage_operation import MetricExternalStorageOperation
+from conductor.client.telemetry.model.metric_external_storage_payload_type import MetricExternalStoragePayloadType
 from conductor.client.telemetry.model.metric_label import MetricLabel
 from conductor.client.telemetry.model.metric_name import MetricName
 from prometheus_client import CollectorRegistry
@@ -13,9 +15,6 @@ import logging
 import os
 import time
 
-from src.conductor.client.telemetry.model.metric_external_storage_operation import MetricExternalStorageOperation
-from src.conductor.client.telemetry.model.metric_external_storage_payload_type import MetricExternalStoragePayloadType
-
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
         __name__
@@ -23,7 +22,7 @@ logger = logging.getLogger(
 )
 
 
-def provide_metrics(settings: MetricsSettings):
+def provide_metrics(settings: MetricsSettings) -> None:
     OUTPUT_FILE_PATH = os.path.join(
         settings.directory,
         settings.file_name
