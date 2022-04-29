@@ -19,7 +19,7 @@ class TaskHandler:
             self,
             workers: List[WorkerInterface],
             configuration: Configuration = None,
-            metrics_settings: MetricsSettings = None
+            metrics_settings: MetricsSettings = MetricsSettings()
     ):
         if not isinstance(workers, list):
             raise Exception('Invalid worker list')

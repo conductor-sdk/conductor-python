@@ -1,14 +1,22 @@
+import traceback
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http import rest
 from six.moves.urllib.parse import quote
 import conductor.client.http.models
 import datetime
 import json
+import logging
 import mimetypes
 import os
 import re
 import six
 import tempfile
+
+logger = logging.getLogger(
+    Configuration.get_logging_formatted_name(
+        __name__
+    )
+)
 
 
 class ApiClient(object):
@@ -56,6 +64,8 @@ class ApiClient(object):
         self.cookie = cookie
         # Set default User-Agent.
         self.user_agent = 'Swagger-Codegen/1.0.0/python'
+
+        self.__refresh_auth_token()
 
     @property
     def user_agent(self):
@@ -601,10 +611,40 @@ class ApiClient(object):
         return instance
 
     def __get_authentication_headers(self):
-        if self.configuration.token is None:
+        if self.configuration.AUTH_TOKEN is None:
             return None
         return {
             'header': {
-                'X-Authorization': self.configuration.token
+                'X-Authorization': self.configuration.AUTH_TOKEN
             }
         }
+
+    def __refresh_auth_token(self) -> None:
+        if self.configuration.AUTH_TOKEN != None:
+            return
+        if self.configuration.authentication_settings == None:
+            return
+        token = self.__get_new_token()
+        self.configuration.update_token(token)
+
+    def __get_new_token(self) -> str:
+        try:
+
+            response = self.call_api(
+                '/api/token', 'POST',
+                header_params={
+                    'Content-Type': self.select_header_content_type(['*/*'])
+                },
+                body={
+                    'keyId': self.configuration.authentication_settings.key_id,
+                    'keySecret': self.configuration.authentication_settings.key_secret
+                },
+                _return_http_data_only=True,
+                response_type='Token'
+            )
+            return response.token
+        except Exception:
+            logger.debug(
+                f'Failed to get new token, reason: {traceback.format_exc()}'
+            )
+            return None

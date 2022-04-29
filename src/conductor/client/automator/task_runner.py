@@ -1,7 +1,6 @@
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.metrics_settings import MetricsSettings
 from conductor.client.http.api_client import ApiClient
-from conductor.client.http.api.authentication_resource_api import AuthenticationResourceApi
 from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
@@ -44,7 +43,6 @@ class TaskRunner:
             self.run_once()
 
     def run_once(self) -> None:
-        self.__refresh_auth_token()
         task = self.__poll_task()
         if task != None:
             task_result = self.__execute_task(task)
@@ -182,21 +180,3 @@ class TaskRunner:
                 configuration=self.configuration
             )
         )
-
-    def __refresh_auth_token(self) -> None:
-        if (self.configuration.token == None
-                and self.configuration.authentication_settings != None):
-            token = self.__get_new_token()
-            self.configuration.update_token(token)
-
-    def __get_new_token(self) -> str:
-        try:
-            auth_api = AuthenticationResourceApi(
-                ApiClient(self.configuration)
-            )
-        except Exception:
-            logger.debug(
-                f'Failed to get new token, reason: {traceback.format_exc()}'
-            )
-            return None
-        return auth_api.token
