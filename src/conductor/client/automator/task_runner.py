@@ -27,14 +27,16 @@ class TaskRunner:
     ):
         if not isinstance(worker, WorkerInterface):
             raise Exception('Invalid worker')
-
         self.worker = worker
-
         if not isinstance(configuration, Configuration):
             configuration = Configuration()
         self.configuration = configuration
+        self.metrics_collector = MetricsCollector(
+            metrics_settings
+        )
 
-        self.metrics_collector = MetricsCollector(metrics_settings)
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.__stop_metrics_provider_process()
 
     def run(self) -> None:
         if self.configuration != None:

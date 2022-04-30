@@ -1,5 +1,4 @@
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from conductor.client.configuration.settings.metrics_settings import MetricsSettings
 from six.moves import http_client as httplib
 import logging
 import multiprocessing
@@ -13,15 +12,10 @@ class Configuration:
             self,
             base_url: str = "http://localhost:8080",
             debug: bool = False,
-            metrics_settings: MetricsSettings = None,
             authentication_settings: AuthenticationSettings = None
     ):
         self.host = base_url
         self.temp_folder_path = None
-
-        if metrics_settings == None:
-            metrics_settings = MetricsSettings()
-        self.metrics_settings = metrics_settings
 
         self.authentication_settings = authentication_settings
 
