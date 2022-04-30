@@ -48,7 +48,13 @@ class MetricsCollector:
         else:
             # TODO improve hard coded ENV
             os.environ["PROMETHEUS_MULTIPROC_DIR"] = settings.directory
-            MultiProcessCollector(self.registry)
+            try:
+                MultiProcessCollector(self.registry)
+            except Exception as e:
+                logger.warning(e)
+                raise Exception(
+                    f'Failed to set metrics folder to: {settings.directory}, the provided folder does not exists'
+                )
             self.must_collect_metrics = True
 
     def increment_task_poll(self, task_type: str) -> None:
