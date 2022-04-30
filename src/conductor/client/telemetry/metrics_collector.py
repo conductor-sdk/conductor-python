@@ -27,7 +27,6 @@ class MetricsCollector:
     registry = CollectorRegistry()
 
     def __init__(self, settings: MetricsSettings):
-        print('settings: ', settings)
         if settings == None:
             self.must_collect_metrics = False
         else:
