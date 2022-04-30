@@ -1,6 +1,7 @@
 from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.metrics_settings import MetricsSettings
+from conductor.client.telemetry.metrics_collector import provide_metrics
 from conductor.client.worker.worker_interface import WorkerInterface
 from multiprocessing import Process
 from typing import List
@@ -14,6 +15,8 @@ logger = logging.getLogger(
 
 
 class TaskHandler:
+    metrics_provider_process = None
+
     def __init__(
             self,
             workers: List[WorkerInterface],
@@ -22,6 +25,7 @@ class TaskHandler:
     ):
         if not isinstance(workers, list):
             raise Exception('Invalid worker list')
+        self.__create_metrics_provider_process(metrics_settings)
         self.__create_task_runner_processes(
             workers, configuration, metrics_settings
         )
@@ -31,15 +35,27 @@ class TaskHandler:
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
+        self.__stop_metrics_provider_process()
         self.__stop_task_runner_processes()
 
     def start_processes(self) -> None:
+        self.__start_metrics_provider_process()
         self.__start_task_runner_processes()
         logger.info('Started all processes')
 
     def join_processes(self) -> None:
+        self.__join_metrics_provider_process()
         self.__join_task_runner_processes()
         logger.info('Joined all processes')
+
+    def __create_metrics_provider_process(self, metrics_settings: MetricsSettings) -> None:
+        if metrics_settings == None:
+            return
+        self.metrics_provider_process = Process(
+            target=provide_metrics,
+            args=(metrics_settings,)
+        )
+        logger.info('Created MetricsProvider process')
 
     def __create_task_runner_processes(
         self,
@@ -66,22 +82,36 @@ class TaskHandler:
         )
         self.task_runner_processes.append(process)
 
+    def __start_metrics_provider_process(self):
+        if self.metrics_provider_process == None:
+            return
+        self.metrics_provider_process.start()
+        logger.info('Started MetricsProvider process')
+
     def __start_task_runner_processes(self):
         for task_runner_process in self.task_runner_processes:
             task_runner_process.start()
         logger.info('Started TaskRunner processes')
+
+    def __join_metrics_provider_process(self):
+        if self.metrics_provider_process == None:
+            return
+        self.metrics_provider_process.join()
+        logger.info('Joined MetricsProvider processes')
 
     def __join_task_runner_processes(self):
         for task_runner_process in self.task_runner_processes:
             task_runner_process.join()
         logger.info('Joined TaskRunner processes')
 
+    def __stop_metrics_provider_process(self):
+        self.__stop_process(self.metrics_provider_process)
+
     def __stop_task_runner_processes(self):
         for task_runner_process in self.task_runner_processes:
             self.__stop_process(task_runner_process)
 
-    @staticmethod
-    def __stop_process(process: Process):
+    def __stop_process(self, process: Process):
         if process == None:
             return
         try:
