@@ -3,7 +3,6 @@ from conductor.client.configuration.settings.metrics_settings import MetricsSett
 from conductor.client.telemetry.model.metric_documentation import MetricDocumentation
 from conductor.client.telemetry.model.metric_label import MetricLabel
 from conductor.client.telemetry.model.metric_name import MetricName
-from multiprocessing import Process
 from prometheus_client import CollectorRegistry
 from prometheus_client import Counter
 from prometheus_client import Gauge
@@ -21,6 +20,23 @@ logger = logging.getLogger(
 )
 
 
+def provide_metrics(settings: MetricsSettings):
+    if settings == None:
+        return
+    OUTPUT_FILE_PATH = os.path.join(
+        settings.directory,
+        settings.file_name
+    )
+    registry = CollectorRegistry()
+    MultiProcessCollector(registry)
+    while True:
+        write_to_textfile(
+            OUTPUT_FILE_PATH,
+            registry
+        )
+        time.sleep(settings.update_interval)
+
+
 class MetricsCollector:
     counters = {}
     gauges = {}
@@ -34,7 +50,6 @@ class MetricsCollector:
             os.environ["PROMETHEUS_MULTIPROC_DIR"] = settings.directory
             MultiProcessCollector(self.registry)
             self.must_collect_metrics = True
-            self.__create_metrics_provider_process(settings)
 
     def increment_task_poll(self, task_type: str) -> None:
         self.__increment_counter(
@@ -261,34 +276,3 @@ class MetricsCollector:
             labelnames=labelnames,
             registry=self.registry
         )
-
-    def provide_metrics(self, settings: MetricsSettings):
-        if not self.must_collect_metrics:
-            return
-        OUTPUT_FILE_PATH = os.path.join(
-            settings.directory,
-            settings.file_name
-        )
-        registry = CollectorRegistry()
-        MultiProcessCollector(registry)
-        while True:
-            write_to_textfile(
-                OUTPUT_FILE_PATH,
-                registry
-            )
-            time.sleep(settings.update_interval)
-
-    def __create_metrics_provider_process(self, settings: MetricsSettings) -> None:
-        if not self.must_collect_metrics:
-            return
-        self.metrics_provider_process = Process(
-            target=self.provide_metrics,
-            args=(settings,)
-        )
-        logger.info('Created MetricsProvider process')
-
-    def join_metrics_provider_process(self):
-        if not self.must_collect_metrics:
-            return
-        self.metrics_provider_process.join()
-        logger.info('Joined MetricsProvider process')
