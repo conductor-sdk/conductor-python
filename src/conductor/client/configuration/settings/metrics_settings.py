@@ -17,7 +17,7 @@ def get_default_temporary_folder() -> str:
             os.mkdir(metrics_dir)
         return metrics_dir
     except Exception as e:
-        logger.warning('failed to create metrics temporary folder')
+        logger.warning('Failed to create metrics temporary folder')
 
 
 class MetricsSettings:
@@ -28,6 +28,10 @@ class MetricsSettings:
             update_interval: float = 0.1):
         if directory == None:
             directory = get_default_temporary_folder()
+        if not os.path.isdir(directory):
+            raise Exception(
+                f'Failed to set metrics directory to: {directory}, reason: folder does not exists'
+            )
         self.directory = directory
         self.file_name = file_name
         self.update_interval = update_interval
