@@ -1,7 +1,7 @@
 from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.metrics_settings import MetricsSettings
-from conductor.client.telemetry.metrics_collector import provide_metrics
+from conductor.client.telemetry.metrics_collector import MetricsCollector
 from conductor.client.worker.worker_interface import WorkerInterface
 from multiprocessing import Process
 from typing import List
@@ -25,9 +25,11 @@ class TaskHandler:
     ):
         if not isinstance(workers, list):
             raise Exception('Invalid worker list')
-        self.__create_metrics_provider_process(metrics_settings)
         self.__create_task_runner_processes(
             workers, configuration, metrics_settings
+        )
+        self.__create_metrics_provider_process(
+            metrics_settings
         )
         logger.info('Created all processes')
 
@@ -35,24 +37,24 @@ class TaskHandler:
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self.__stop_metrics_provider_process()
         self.__stop_task_runner_processes()
+        self.__stop_metrics_provider_process()
 
     def start_processes(self) -> None:
-        self.__start_metrics_provider_process()
         self.__start_task_runner_processes()
+        self.__start_metrics_provider_process()
         logger.info('Started all processes')
 
     def join_processes(self) -> None:
-        self.__join_metrics_provider_process()
         self.__join_task_runner_processes()
+        self.__join_metrics_provider_process()
         logger.info('Joined all processes')
 
     def __create_metrics_provider_process(self, metrics_settings: MetricsSettings) -> None:
         if metrics_settings == None:
             return
         self.metrics_provider_process = Process(
-            target=provide_metrics,
+            target=MetricsCollector.provide_metrics,
             args=(metrics_settings,)
         )
         logger.info('Created MetricsProvider process')

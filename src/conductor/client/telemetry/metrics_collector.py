@@ -20,42 +20,34 @@ logger = logging.getLogger(
 )
 
 
-def provide_metrics(settings: MetricsSettings):
-    if settings == None:
-        return
-    OUTPUT_FILE_PATH = os.path.join(
-        settings.directory,
-        settings.file_name
-    )
-    registry = CollectorRegistry()
-    MultiProcessCollector(registry)
-    while True:
-        write_to_textfile(
-            OUTPUT_FILE_PATH,
-            registry
-        )
-        time.sleep(settings.update_interval)
-
-
 class MetricsCollector:
     counters = {}
     gauges = {}
     registry = CollectorRegistry()
+    must_collect_metrics = False
 
     def __init__(self, settings: MetricsSettings):
-        if settings == None:
-            self.must_collect_metrics = False
-        else:
-            # TODO improve hard coded ENV
+        if settings != None:
             os.environ["PROMETHEUS_MULTIPROC_DIR"] = settings.directory
-            try:
-                MultiProcessCollector(self.registry)
-            except Exception as e:
-                logger.warning(e)
-                raise Exception(
-                    f'Failed to set metrics folder to: {settings.directory}, the provided folder does not exists'
-                )
+            MultiProcessCollector(self.registry)
             self.must_collect_metrics = True
+
+    @staticmethod
+    def provide_metrics(settings: MetricsSettings) -> None:
+        if settings == None:
+            return
+        OUTPUT_FILE_PATH = os.path.join(
+            settings.directory,
+            settings.file_name
+        )
+        registry = CollectorRegistry()
+        MultiProcessCollector(registry)
+        while True:
+            write_to_textfile(
+                OUTPUT_FILE_PATH,
+                registry
+            )
+            time.sleep(settings.update_interval)
 
     def increment_task_poll(self, task_type: str) -> None:
         self.__increment_counter(
