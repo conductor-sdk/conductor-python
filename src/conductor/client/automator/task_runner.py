@@ -166,7 +166,7 @@ class TaskRunner:
                 task_id=task_result.task_id,
                 workflow_instance_id=task_result.workflow_instance_id,
                 task_definition_name=task_definition_name,
-                response=str(response)
+                response=response
             )
         )
         return response
