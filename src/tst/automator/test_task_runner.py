@@ -36,7 +36,7 @@ class TestTaskRunner(unittest.TestCase):
         expected_exception = Exception('Invalid worker')
         with self.assertRaises(Exception) as context:
             TaskRunner(
-                configuration=Configuration(),
+                configuration=Configuration("http://localhost:8080/api"),
                 worker=None
             )
             self.assertEqual(expected_exception, context.exception)
