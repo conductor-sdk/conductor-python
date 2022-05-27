@@ -18,7 +18,7 @@ class Configuration:
         if server_api_url != None:
             self.host = server_api_url
         else:
-            self.host = base_url
+            self.host = base_url + '/api/'
 
         self.temp_folder_path = None
 
