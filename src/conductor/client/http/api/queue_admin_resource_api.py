@@ -90,7 +90,7 @@ class QueueAdminResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/queue/', 'GET',
+            '/queue/', 'GET',
             path_params,
             query_params,
             header_params,
@@ -175,7 +175,7 @@ class QueueAdminResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/queue/size', 'GET',
+            '/queue/size', 'GET',
             path_params,
             query_params,
             header_params,
@@ -292,7 +292,7 @@ class QueueAdminResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/queue/update/{workflowId}/{taskRefName}/{status}', 'POST',
+            '/queue/update/{workflowId}/{taskRefName}/{status}', 'POST',
             path_params,
             query_params,
             header_params,
@@ -409,7 +409,7 @@ class QueueAdminResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/queue/update/{workflowId}/task/{taskId}/{status}', 'POST',
+            '/queue/update/{workflowId}/task/{taskId}/{status}', 'POST',
             path_params,
             query_params,
             header_params,

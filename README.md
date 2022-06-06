@@ -77,7 +77,7 @@ for more details on how to use Playground environment for testing.
 Worker configuration is handled via `Configuration` object passed when initializing `TaskHandler`
 
 ### Server Configurations
-* base_url : Conductor server address.  e.g. `http://localhost:8000` if running locally 
+* server_api_url : Conductor server address.  e.g. `http://localhost:8000` if running locally 
 * debug: `true` for verbose logging `false` to display only the errors
 * authentication_settings: see below
 * metrics_settings: see below

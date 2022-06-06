@@ -94,7 +94,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/decide/{workflowId}', 'PUT',
+            '/workflow/decide/{workflowId}', 'PUT',
             path_params,
             query_params,
             header_params,
@@ -187,7 +187,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/{workflowId}/remove', 'DELETE',
+            '/workflow/{workflowId}/remove', 'DELETE',
             path_params,
             query_params,
             header_params,
@@ -284,7 +284,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/{workflowId}', 'GET',
+            '/workflow/{workflowId}', 'GET',
             path_params,
             query_params,
             header_params,
@@ -393,7 +393,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/externalstoragelocation', 'GET',
+            '/workflow/externalstoragelocation', 'GET',
             path_params,
             query_params,
             header_params,
@@ -498,7 +498,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/running/{name}', 'GET',
+            '/workflow/running/{name}', 'GET',
             path_params,
             query_params,
             header_params,
@@ -611,7 +611,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/{name}/correlated', 'POST',
+            '/workflow/{name}/correlated', 'POST',
             path_params,
             query_params,
             header_params,
@@ -720,7 +720,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/{name}/correlated/{correlationId}', 'GET',
+            '/workflow/{name}/correlated/{correlationId}', 'GET',
             path_params,
             query_params,
             header_params,
@@ -809,7 +809,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/{workflowId}/pause', 'PUT',
+            '/workflow/{workflowId}/pause', 'PUT',
             path_params,
             query_params,
             header_params,
@@ -914,7 +914,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/{workflowId}/rerun', 'POST',
+            '/workflow/{workflowId}/rerun', 'POST',
             path_params,
             query_params,
             header_params,
@@ -1003,7 +1003,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/{workflowId}/resetcallbacks', 'POST',
+            '/workflow/{workflowId}/resetcallbacks', 'POST',
             path_params,
             query_params,
             header_params,
@@ -1096,7 +1096,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/{workflowId}/restart', 'POST',
+            '/workflow/{workflowId}/restart', 'POST',
             path_params,
             query_params,
             header_params,
@@ -1185,7 +1185,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/{workflowId}/resume', 'PUT',
+            '/workflow/{workflowId}/resume', 'PUT',
             path_params,
             query_params,
             header_params,
@@ -1278,7 +1278,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/{workflowId}/retry', 'POST',
+            '/workflow/{workflowId}/retry', 'POST',
             path_params,
             query_params,
             header_params,
@@ -1385,7 +1385,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/search', 'GET',
+            '/workflow/search', 'GET',
             path_params,
             query_params,
             header_params,
@@ -1492,7 +1492,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/search-v2', 'GET',
+            '/workflow/search-v2', 'GET',
             path_params,
             query_params,
             header_params,
@@ -1599,7 +1599,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/search-by-tasks', 'GET',
+            '/workflow/search-by-tasks', 'GET',
             path_params,
             query_params,
             header_params,
@@ -1706,7 +1706,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/search-by-tasks-v2', 'GET',
+            '/workflow/search-by-tasks-v2', 'GET',
             path_params,
             query_params,
             header_params,
@@ -1811,7 +1811,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/{workflowId}/skiptask/{taskReferenceName}', 'PUT',
+            '/workflow/{workflowId}/skiptask/{taskReferenceName}', 'PUT',
             path_params,
             query_params,
             header_params,
@@ -1928,7 +1928,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/{name}', 'POST',
+            '/workflow/{name}', 'POST',
             path_params,
             query_params,
             header_params,
@@ -2025,7 +2025,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow', 'POST',
+            '/workflow', 'POST',
             path_params,
             query_params,
             header_params,
@@ -2118,7 +2118,7 @@ class WorkflowResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/workflow/{workflowId}', 'DELETE',
+            '/workflow/{workflowId}', 'DELETE',
             path_params,
             query_params,
             header_params,

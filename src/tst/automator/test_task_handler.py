@@ -1,7 +1,7 @@
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.worker.sample.simple_python_worker import SimplePythonWorker
+from src.example.worker.python.simple_python_worker import SimplePythonWorker
 from unittest.mock import Mock
 from unittest.mock import patch
 import multiprocessing

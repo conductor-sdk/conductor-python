@@ -98,7 +98,7 @@ class EventResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/event', 'POST',
+            '/event', 'POST',
             path_params,
             query_params,
             header_params,
@@ -183,7 +183,7 @@ class EventResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/event', 'GET',
+            '/event', 'GET',
             path_params,
             query_params,
             header_params,
@@ -280,7 +280,7 @@ class EventResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/event/{event}', 'GET',
+            '/event/{event}', 'GET',
             path_params,
             query_params,
             header_params,
@@ -369,7 +369,7 @@ class EventResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/event/{name}', 'DELETE',
+            '/event/{name}', 'DELETE',
             path_params,
             query_params,
             header_params,
@@ -462,7 +462,7 @@ class EventResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/event', 'PUT',
+            '/event', 'PUT',
             path_params,
             query_params,
             header_params,

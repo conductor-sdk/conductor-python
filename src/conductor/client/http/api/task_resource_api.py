@@ -91,7 +91,7 @@ class TaskResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/tasks/queue/all', 'GET',
+            '/tasks/queue/all', 'GET',
             path_params,
             query_params,
             header_params,
@@ -176,7 +176,7 @@ class TaskResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/tasks/queue/all/verbose', 'GET',
+            '/tasks/queue/all/verbose', 'GET',
             path_params,
             query_params,
             header_params,
@@ -285,7 +285,7 @@ class TaskResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/tasks/poll/batch/{tasktype}', 'GET',
+            '/tasks/poll/batch/{tasktype}', 'GET',
             path_params,
             query_params,
             header_params,
@@ -370,7 +370,7 @@ class TaskResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/tasks/queue/polldata/all', 'GET',
+            '/tasks/queue/polldata/all', 'GET',
             path_params,
             query_params,
             header_params,
@@ -479,7 +479,7 @@ class TaskResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/tasks/externalstoragelocation', 'GET',
+            '/tasks/externalstoragelocation', 'GET',
             path_params,
             query_params,
             header_params,
@@ -572,7 +572,7 @@ class TaskResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/tasks/queue/polldata', 'GET',
+            '/tasks/queue/polldata', 'GET',
             path_params,
             query_params,
             header_params,
@@ -665,7 +665,7 @@ class TaskResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/tasks/{taskId}', 'GET',
+            '/tasks/{taskId}', 'GET',
             path_params,
             query_params,
             header_params,
@@ -758,7 +758,7 @@ class TaskResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/tasks/{taskId}/log', 'GET',
+            '/tasks/{taskId}/log', 'GET',
             path_params,
             query_params,
             header_params,
@@ -859,7 +859,7 @@ class TaskResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/tasks/{taskId}/log', 'POST',
+            '/tasks/{taskId}/log', 'POST',
             path_params,
             query_params,
             header_params,
@@ -960,7 +960,7 @@ class TaskResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/tasks/poll/{tasktype}', 'GET',
+            '/tasks/poll/{tasktype}', 'GET',
             path_params,
             query_params,
             header_params,
@@ -1053,7 +1053,7 @@ class TaskResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/tasks/queue/requeue/{taskType}', 'POST',
+            '/tasks/queue/requeue/{taskType}', 'POST',
             path_params,
             query_params,
             header_params,
@@ -1160,7 +1160,7 @@ class TaskResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/tasks/search', 'GET',
+            '/tasks/search', 'GET',
             path_params,
             query_params,
             header_params,
@@ -1267,7 +1267,7 @@ class TaskResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/tasks/search-v2', 'GET',
+            '/tasks/search-v2', 'GET',
             path_params,
             query_params,
             header_params,
@@ -1357,7 +1357,7 @@ class TaskResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/tasks/queue/sizes', 'GET',
+            '/tasks/queue/sizes', 'GET',
             path_params,
             query_params,
             header_params,
@@ -1454,7 +1454,7 @@ class TaskResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/tasks', 'POST',
+            '/tasks', 'POST',
             path_params,
             query_params,
             header_params,
@@ -1575,7 +1575,7 @@ class TaskResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/tasks/{workflowId}/{taskRefName}/{status}', 'POST',
+            '/tasks/{workflowId}/{taskRefName}/{status}', 'POST',
             path_params,
             query_params,
             header_params,

@@ -90,7 +90,7 @@ class AdminResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/admin/config', 'GET',
+            '/admin/config', 'GET',
             path_params,
             query_params,
             header_params,
@@ -179,7 +179,7 @@ class AdminResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/admin/queues', 'GET',
+            '/admin/queues', 'GET',
             path_params,
             query_params,
             header_params,
@@ -272,7 +272,7 @@ class AdminResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/admin/sweep/requeue/{workflowId}', 'POST',
+            '/admin/sweep/requeue/{workflowId}', 'POST',
             path_params,
             query_params,
             header_params,
@@ -365,7 +365,7 @@ class AdminResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/admin/consistency/verifyAndRepair/{workflowId}', 'POST',
+            '/admin/consistency/verifyAndRepair/{workflowId}', 'POST',
             path_params,
             query_params,
             header_params,
@@ -466,7 +466,7 @@ class AdminResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/admin/task/{tasktype}', 'GET',
+            '/admin/task/{tasktype}', 'GET',
             path_params,
             query_params,
             header_params,

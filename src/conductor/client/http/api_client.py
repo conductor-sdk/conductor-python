@@ -636,7 +636,7 @@ class ApiClient(object):
         try:
 
             response = self.call_api(
-                '/api/token', 'POST',
+                '/token', 'POST',
                 header_params={
                     'Content-Type': self.select_header_content_type(['*/*'])
                 },

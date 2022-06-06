@@ -12,9 +12,14 @@ class Configuration:
             self,
             base_url: str = "http://localhost:8080",
             debug: bool = False,
-            authentication_settings: AuthenticationSettings = None
+            authentication_settings: AuthenticationSettings = None,
+            server_api_url: str = None,
     ):
-        self.host = base_url
+        if server_api_url != None:
+            self.host = server_api_url
+        else:
+            self.host = base_url + '/api/'
+
         self.temp_folder_path = None
 
         self.authentication_settings = authentication_settings
