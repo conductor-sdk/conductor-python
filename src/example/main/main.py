@@ -38,7 +38,7 @@ class WorkerB(WorkerInterface):
 def main():
     # Point to the Conductor Server
     configuration = Configuration(
-        base_url='https://play.orkes.io',
+        server_api_url='https://play.orkes.io/api',
         debug=True,
         authentication_settings=AuthenticationSettings(  # Optional if you are using a server that requires authentication
             key_id='key',
