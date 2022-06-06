@@ -1,6 +1,8 @@
 from conductor.client.configuration.configuration import Configuration
 import unittest
 
+from importlib_metadata import Deprecated
+
 
 class TestConfiguration(unittest.TestCase):
     def setUp(self):
