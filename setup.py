@@ -14,7 +14,7 @@ setup(
     name='conductor-python',
     version=VERSION,
     description='Netflix Conductor Python SDK',
-    long_description='file: README.md',
+    long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/conductor-sdk/conductor-python',
     packages=find_packages(),
