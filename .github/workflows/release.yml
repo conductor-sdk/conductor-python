@@ -1,0 +1,30 @@
+name: Publish a release
+
+on:
+  release:
+    types:
+      - released
+      - prereleased
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up release version
+        run: |
+          export VERSION=${{github.ref_name}}
+          export REL_VER=`echo ${VERSION:1}`
+          echo "Release version is $REL_VER"
+          echo "RELEASE_VERSION=$REL_VER" >> $GITHUB_ENV
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.x"
+      - name: Install build dependencies
+        run: python3 -m pip install -U setuptools wheel
+      - name: Build
+        run: CONDUCTOR_PYTHON_VERSION=$RELEASE_VERSION python3 setup.py sdist bdist_wheel
+      - name: Publish at pypi
+        run: python3 -m twine upload dist/* -u ${{ secrets.pypi_user }} -p ${{ secrets.pypi_pass }}
