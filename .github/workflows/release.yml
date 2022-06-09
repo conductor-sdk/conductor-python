@@ -23,7 +23,7 @@ jobs:
         with:
           python-version: "3.x"
       - name: Install build dependencies
-        run: python3 -m pip install -U setuptools wheel
+        run: python3 -m pip install -U setuptools wheel build
       - name: Build
         run: CONDUCTOR_PYTHON_VERSION=$RELEASE_VERSION python3 -m build
       - name: Install publish dependencies
