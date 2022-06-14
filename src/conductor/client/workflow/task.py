@@ -1,30 +1,42 @@
 from __future__ import annotations
-from typing import Any
-from src.conductor.client.workflow.task_type import TaskType
 from src.conductor.client.http.models.workflow_task import WorkflowTask
+from src.conductor.client.workflow.task_type import TaskType
+from typing import Any, Dict
 import abc
 
 
 class TaskInterface(abc.ABC):
+    _name: str
+    _task_reference_name: str
+    _description: str
+    _task_type: TaskType
+    _optional: bool
+    _input_parameters: Dict[str, Any]
+
     def __init__(self, task_reference_name: str, task_type: TaskType) -> TaskInterface:
         self._name = task_reference_name
-        self.task_reference_name = task_reference_name
-        self.task_type = task_type
-        self.description = ''
-        self.optional = False
-        self.start_delay = None
-        self.input = {}
+        self._task_reference_name = task_reference_name
+        self._task_type = task_type
+        self._description = ''
+        self._optional = False
+        self._input = {}
 
-    def Name(self, name: str) -> TaskInterface:
-        self.name = name
+    def name(self, name: str) -> TaskInterface:
+        if not isinstance(name, str):
+            raise Exception('invalid type')
+        self._name = name
         return self
 
-    def Description(self, description: str) -> TaskInterface:
-        self.description = description
+    def description(self, description: str) -> TaskInterface:
+        if not isinstance(description, str):
+            raise Exception('invalid type')
+        self._description = description
         return self
 
-    def Input(self, input: Any) -> TaskInterface:
-        self.input = input
+    def input(self, input: Dict[str, Any]) -> TaskInterface:
+        if not isinstance(input, dict):
+            raise Exception('invalid type')
+        self._input = input
         return self
 
     def to_workflow_task(self) -> WorkflowTask:
