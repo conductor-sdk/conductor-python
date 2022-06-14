@@ -1,0 +1,26 @@
+from enum import Enum, auto
+
+
+class TaskType(Enum):
+    SIMPLE = auto()
+    DYNAMIC = auto()
+    FORK_JOIN = auto()
+    FORK_JOIN_DYNAMIC = auto()
+    DECISION = auto()
+    SWITCH = auto()
+    JOIN = auto()
+    DO_WHILE = auto()
+    SUB_WORKFLOW = auto()
+    START_WORKFLOW = auto()
+    EVENT = auto()
+    WAIT = auto()
+    HUMAN = auto()
+    USER_DEFINED = auto()
+    HTTP = auto()
+    LAMBDA = auto()
+    INLINE = auto()
+    EXCLUSIVE_JOIN = auto()
+    TERMINATE = auto()
+    KAFKA_PUBLISH = auto()
+    JSON_JQ_TRANSFORM = auto()
+    SET_VARIABLE = auto()
