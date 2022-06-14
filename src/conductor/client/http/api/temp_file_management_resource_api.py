@@ -17,7 +17,7 @@ import re  # noqa: F401
 # python 2 and python 3 compatibility library
 import six
 
-from swagger_client.api_client import ApiClient
+from conductor.client.http.api_client import ApiClient
 
 
 class TempFileManagementResourceApi(object):
@@ -32,12 +32,12 @@ class TempFileManagementResourceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def delete_config1(self, name, **kwargs):  # noqa: E501
+    def delete_config(self, name, **kwargs):  # noqa: E501
         """Delete a file in temp dir by name  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.delete_config1(name, async_req=True)
+        >>> thread = api.delete_config(name, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -48,17 +48,17 @@ class TempFileManagementResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.delete_config1_with_http_info(name, **kwargs)  # noqa: E501
+            return self.delete_config_with_http_info(name, **kwargs)  # noqa: E501
         else:
-            (data) = self.delete_config1_with_http_info(name, **kwargs)  # noqa: E501
+            (data) = self.delete_config_with_http_info(name, **kwargs)  # noqa: E501
             return data
 
-    def delete_config1_with_http_info(self, name, **kwargs):  # noqa: E501
+    def delete_config_with_http_info(self, name, **kwargs):  # noqa: E501
         """Delete a file in temp dir by name  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.delete_config1_with_http_info(name, async_req=True)
+        >>> thread = api.delete_config_with_http_info(name, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -79,14 +79,14 @@ class TempFileManagementResourceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method delete_config1" % key
+                    " to method delete_config" % key
                 )
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'name' is set
         if ('name' not in params or
                 params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `delete_config1`")  # noqa: E501
+            raise ValueError("Missing the required parameter `name` when calling `delete_config`")  # noqa: E501
 
         collection_formats = {}
 
@@ -107,7 +107,7 @@ class TempFileManagementResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/files/{name}', 'DELETE',
@@ -125,12 +125,12 @@ class TempFileManagementResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def download_config1(self, name, **kwargs):  # noqa: E501
+    def download_config(self, name, **kwargs):  # noqa: E501
         """Get a file from temp dir by name  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.download_config1(name, async_req=True)
+        >>> thread = api.download_config(name, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -141,17 +141,17 @@ class TempFileManagementResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.download_config1_with_http_info(name, **kwargs)  # noqa: E501
+            return self.download_config_with_http_info(name, **kwargs)  # noqa: E501
         else:
-            (data) = self.download_config1_with_http_info(name, **kwargs)  # noqa: E501
+            (data) = self.download_config_with_http_info(name, **kwargs)  # noqa: E501
             return data
 
-    def download_config1_with_http_info(self, name, **kwargs):  # noqa: E501
+    def download_config_with_http_info(self, name, **kwargs):  # noqa: E501
         """Get a file from temp dir by name  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.download_config1_with_http_info(name, async_req=True)
+        >>> thread = api.download_config_with_http_info(name, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -172,14 +172,14 @@ class TempFileManagementResourceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method download_config1" % key
+                    " to method download_config" % key
                 )
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'name' is set
         if ('name' not in params or
                 params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `download_config1`")  # noqa: E501
+            raise ValueError("Missing the required parameter `name` when calling `download_config`")  # noqa: E501
 
         collection_formats = {}
 
@@ -200,7 +200,7 @@ class TempFileManagementResourceApi(object):
             ['application/octet-stream'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/files/{name}', 'GET',
@@ -218,12 +218,12 @@ class TempFileManagementResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def list_all_configs1(self, **kwargs):  # noqa: E501
+    def list_all_configs(self, **kwargs):  # noqa: E501
         """Get all filenames in temp dir  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.list_all_configs1(async_req=True)
+        >>> thread = api.list_all_configs(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -233,17 +233,17 @@ class TempFileManagementResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.list_all_configs1_with_http_info(**kwargs)  # noqa: E501
+            return self.list_all_configs_with_http_info(**kwargs)  # noqa: E501
         else:
-            (data) = self.list_all_configs1_with_http_info(**kwargs)  # noqa: E501
+            (data) = self.list_all_configs_with_http_info(**kwargs)  # noqa: E501
             return data
 
-    def list_all_configs1_with_http_info(self, **kwargs):  # noqa: E501
+    def list_all_configs_with_http_info(self, **kwargs):  # noqa: E501
         """Get all filenames in temp dir  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.list_all_configs1_with_http_info(async_req=True)
+        >>> thread = api.list_all_configs_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -263,7 +263,7 @@ class TempFileManagementResourceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method list_all_configs1" % key
+                    " to method list_all_configs" % key
                 )
             params[key] = val
         del params['kwargs']
@@ -285,7 +285,7 @@ class TempFileManagementResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/files', 'GET',
@@ -303,12 +303,12 @@ class TempFileManagementResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def upload_config(self, body, name, **kwargs):  # noqa: E501
+    def upload_config1(self, body, name, **kwargs):  # noqa: E501
         """Put a file into temp dir with name  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.upload_config(body, name, async_req=True)
+        >>> thread = api.upload_config1(body, name, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -320,17 +320,17 @@ class TempFileManagementResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.upload_config_with_http_info(body, name, **kwargs)  # noqa: E501
+            return self.upload_config1_with_http_info(body, name, **kwargs)  # noqa: E501
         else:
-            (data) = self.upload_config_with_http_info(body, name, **kwargs)  # noqa: E501
+            (data) = self.upload_config1_with_http_info(body, name, **kwargs)  # noqa: E501
             return data
 
-    def upload_config_with_http_info(self, body, name, **kwargs):  # noqa: E501
+    def upload_config1_with_http_info(self, body, name, **kwargs):  # noqa: E501
         """Put a file into temp dir with name  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.upload_config_with_http_info(body, name, async_req=True)
+        >>> thread = api.upload_config1_with_http_info(body, name, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -352,18 +352,18 @@ class TempFileManagementResourceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method upload_config" % key
+                    " to method upload_config1" % key
                 )
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'body' is set
         if ('body' not in params or
                 params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `upload_config`")  # noqa: E501
+            raise ValueError("Missing the required parameter `body` when calling `upload_config1`")  # noqa: E501
         # verify the required parameter 'name' is set
         if ('name' not in params or
                 params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `upload_config`")  # noqa: E501
+            raise ValueError("Missing the required parameter `name` when calling `upload_config1`")  # noqa: E501
 
         collection_formats = {}
 
@@ -390,7 +390,7 @@ class TempFileManagementResourceApi(object):
             ['application/octet-stream'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/files/{name}', 'PUT',

@@ -17,7 +17,7 @@ import re  # noqa: F401
 # python 2 and python 3 compatibility library
 import six
 
-from swagger_client.api_client import ApiClient
+from conductor.client.http.api_client import ApiClient
 
 
 class SecretResourceApi(object):
@@ -107,7 +107,7 @@ class SecretResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/secrets/{key}', 'DELETE',
@@ -125,45 +125,43 @@ class SecretResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def get_secret(self, key, user, **kwargs):  # noqa: E501
+    def get_secret(self, key, **kwargs):  # noqa: E501
         """Get secret value by key  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.get_secret(key, user, async_req=True)
+        >>> thread = api.get_secret(key, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param str key: (required)
-        :param ConductorUser user: (required)
         :return: object
                  If the method is called asynchronously,
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.get_secret_with_http_info(key, user, **kwargs)  # noqa: E501
+            return self.get_secret_with_http_info(key, **kwargs)  # noqa: E501
         else:
-            (data) = self.get_secret_with_http_info(key, user, **kwargs)  # noqa: E501
+            (data) = self.get_secret_with_http_info(key, **kwargs)  # noqa: E501
             return data
 
-    def get_secret_with_http_info(self, key, user, **kwargs):  # noqa: E501
+    def get_secret_with_http_info(self, key, **kwargs):  # noqa: E501
         """Get secret value by key  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.get_secret_with_http_info(key, user, async_req=True)
+        >>> thread = api.get_secret_with_http_info(key, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param str key: (required)
-        :param ConductorUser user: (required)
         :return: object
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['key', 'user']  # noqa: E501
+        all_params = ['key']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -182,10 +180,6 @@ class SecretResourceApi(object):
         if ('key' not in params or
                 params['key'] is None):
             raise ValueError("Missing the required parameter `key` when calling `get_secret`")  # noqa: E501
-        # verify the required parameter 'user' is set
-        if ('user' not in params or
-                params['user'] is None):
-            raise ValueError("Missing the required parameter `user` when calling `get_secret`")  # noqa: E501
 
         collection_formats = {}
 
@@ -194,8 +188,6 @@ class SecretResourceApi(object):
             path_params['key'] = params['key']  # noqa: E501
 
         query_params = []
-        if 'user' in params:
-            query_params.append(('user', params['user']))  # noqa: E501
 
         header_params = {}
 
@@ -208,7 +200,7 @@ class SecretResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/secrets/{key}', 'GET',
@@ -293,7 +285,7 @@ class SecretResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/secrets', 'POST',
@@ -378,7 +370,7 @@ class SecretResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/secrets', 'GET',
@@ -405,7 +397,7 @@ class SecretResourceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param SecretsKeyBody body: (required)
+        :param str body: (required)
         :param str key: (required)
         :return: object
                  If the method is called asynchronously,
@@ -427,7 +419,7 @@ class SecretResourceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param SecretsKeyBody body: (required)
+        :param str body: (required)
         :param str key: (required)
         :return: object
                  If the method is called asynchronously,
@@ -483,7 +475,7 @@ class SecretResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/secrets/{key}', 'PUT',
@@ -576,7 +568,7 @@ class SecretResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/secrets/{key}/exists', 'GET',

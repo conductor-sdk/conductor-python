@@ -17,7 +17,7 @@ import re  # noqa: F401
 # python 2 and python 3 compatibility library
 import six
 
-from swagger_client.api_client import ApiClient
+from conductor.client.http.api_client import ApiClient
 
 
 class HealthCheckResourceApi(object):
@@ -99,7 +99,7 @@ class HealthCheckResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/health', 'GET',

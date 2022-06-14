@@ -17,7 +17,7 @@ import re  # noqa: F401
 # python 2 and python 3 compatibility library
 import six
 
-from swagger_client.api_client import ApiClient
+from conductor.client.http.api_client import ApiClient
 
 
 class TaskResourceApi(object):
@@ -99,7 +99,7 @@ class TaskResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/tasks/queue/all', 'GET',
@@ -184,7 +184,7 @@ class TaskResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/tasks/queue/all/verbose', 'GET',
@@ -202,17 +202,16 @@ class TaskResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def batch_poll(self, tasktype, user, **kwargs):  # noqa: E501
+    def batch_poll(self, tasktype, **kwargs):  # noqa: E501
         """Batch poll for a task of a certain type  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.batch_poll(tasktype, user, async_req=True)
+        >>> thread = api.batch_poll(tasktype, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param str tasktype: (required)
-        :param ConductorUser user: (required)
         :param str workerid:
         :param str domain:
         :param int count:
@@ -223,22 +222,21 @@ class TaskResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.batch_poll_with_http_info(tasktype, user, **kwargs)  # noqa: E501
+            return self.batch_poll_with_http_info(tasktype, **kwargs)  # noqa: E501
         else:
-            (data) = self.batch_poll_with_http_info(tasktype, user, **kwargs)  # noqa: E501
+            (data) = self.batch_poll_with_http_info(tasktype, **kwargs)  # noqa: E501
             return data
 
-    def batch_poll_with_http_info(self, tasktype, user, **kwargs):  # noqa: E501
+    def batch_poll_with_http_info(self, tasktype, **kwargs):  # noqa: E501
         """Batch poll for a task of a certain type  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.batch_poll_with_http_info(tasktype, user, async_req=True)
+        >>> thread = api.batch_poll_with_http_info(tasktype, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param str tasktype: (required)
-        :param ConductorUser user: (required)
         :param str workerid:
         :param str domain:
         :param int count:
@@ -248,7 +246,7 @@ class TaskResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['tasktype', 'user', 'workerid', 'domain', 'count', 'timeout']  # noqa: E501
+        all_params = ['tasktype', 'workerid', 'domain', 'count', 'timeout']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -267,10 +265,6 @@ class TaskResourceApi(object):
         if ('tasktype' not in params or
                 params['tasktype'] is None):
             raise ValueError("Missing the required parameter `tasktype` when calling `batch_poll`")  # noqa: E501
-        # verify the required parameter 'user' is set
-        if ('user' not in params or
-                params['user'] is None):
-            raise ValueError("Missing the required parameter `user` when calling `batch_poll`")  # noqa: E501
 
         collection_formats = {}
 
@@ -287,8 +281,6 @@ class TaskResourceApi(object):
             query_params.append(('count', params['count']))  # noqa: E501
         if 'timeout' in params:
             query_params.append(('timeout', params['timeout']))  # noqa: E501
-        if 'user' in params:
-            query_params.append(('user', params['user']))  # noqa: E501
 
         header_params = {}
 
@@ -301,7 +293,7 @@ class TaskResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/tasks/poll/batch/{tasktype}', 'GET',
@@ -386,7 +378,7 @@ class TaskResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/tasks/queue/polldata/all', 'GET',
@@ -495,7 +487,7 @@ class TaskResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/tasks/externalstoragelocation', 'GET',
@@ -588,7 +580,7 @@ class TaskResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/tasks/queue/polldata', 'GET',
@@ -681,7 +673,7 @@ class TaskResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/tasks/{taskId}', 'GET',
@@ -774,7 +766,7 @@ class TaskResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/tasks/{taskId}/log', 'GET',
@@ -875,7 +867,7 @@ class TaskResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/tasks/{taskId}/log', 'POST',
@@ -893,17 +885,16 @@ class TaskResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def poll(self, tasktype, user, **kwargs):  # noqa: E501
+    def poll(self, tasktype, **kwargs):  # noqa: E501
         """Poll for a task of a certain type  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.poll(tasktype, user, async_req=True)
+        >>> thread = api.poll(tasktype, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param str tasktype: (required)
-        :param ConductorUser user: (required)
         :param str workerid:
         :param str domain:
         :return: Task
@@ -912,22 +903,21 @@ class TaskResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.poll_with_http_info(tasktype, user, **kwargs)  # noqa: E501
+            return self.poll_with_http_info(tasktype, **kwargs)  # noqa: E501
         else:
-            (data) = self.poll_with_http_info(tasktype, user, **kwargs)  # noqa: E501
+            (data) = self.poll_with_http_info(tasktype, **kwargs)  # noqa: E501
             return data
 
-    def poll_with_http_info(self, tasktype, user, **kwargs):  # noqa: E501
+    def poll_with_http_info(self, tasktype, **kwargs):  # noqa: E501
         """Poll for a task of a certain type  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.poll_with_http_info(tasktype, user, async_req=True)
+        >>> thread = api.poll_with_http_info(tasktype, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
         :param str tasktype: (required)
-        :param ConductorUser user: (required)
         :param str workerid:
         :param str domain:
         :return: Task
@@ -935,7 +925,7 @@ class TaskResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['tasktype', 'user', 'workerid', 'domain']  # noqa: E501
+        all_params = ['tasktype', 'workerid', 'domain']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -954,10 +944,6 @@ class TaskResourceApi(object):
         if ('tasktype' not in params or
                 params['tasktype'] is None):
             raise ValueError("Missing the required parameter `tasktype` when calling `poll`")  # noqa: E501
-        # verify the required parameter 'user' is set
-        if ('user' not in params or
-                params['user'] is None):
-            raise ValueError("Missing the required parameter `user` when calling `poll`")  # noqa: E501
 
         collection_formats = {}
 
@@ -970,8 +956,6 @@ class TaskResourceApi(object):
             query_params.append(('workerid', params['workerid']))  # noqa: E501
         if 'domain' in params:
             query_params.append(('domain', params['domain']))  # noqa: E501
-        if 'user' in params:
-            query_params.append(('user', params['user']))  # noqa: E501
 
         header_params = {}
 
@@ -984,7 +968,7 @@ class TaskResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/tasks/poll/{tasktype}', 'GET',
@@ -1077,7 +1061,7 @@ class TaskResourceApi(object):
             ['text/plain'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/tasks/queue/requeue/{taskType}', 'POST',
@@ -1095,13 +1079,13 @@ class TaskResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def search1(self, **kwargs):  # noqa: E501
+    def search(self, **kwargs):  # noqa: E501
         """Search for tasks based in payload and other parameters  # noqa: E501
 
         use sort options as sort=<field>:ASC|DESC e.g. sort=name&sort=workflowId:DESC. If order is not specified, defaults to ASC  # noqa: E501
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.search1(async_req=True)
+        >>> thread = api.search(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -1116,18 +1100,18 @@ class TaskResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.search1_with_http_info(**kwargs)  # noqa: E501
+            return self.search_with_http_info(**kwargs)  # noqa: E501
         else:
-            (data) = self.search1_with_http_info(**kwargs)  # noqa: E501
+            (data) = self.search_with_http_info(**kwargs)  # noqa: E501
             return data
 
-    def search1_with_http_info(self, **kwargs):  # noqa: E501
+    def search_with_http_info(self, **kwargs):  # noqa: E501
         """Search for tasks based in payload and other parameters  # noqa: E501
 
         use sort options as sort=<field>:ASC|DESC e.g. sort=name&sort=workflowId:DESC. If order is not specified, defaults to ASC  # noqa: E501
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.search1_with_http_info(async_req=True)
+        >>> thread = api.search_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -1152,7 +1136,7 @@ class TaskResourceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method search1" % key
+                    " to method search" % key
                 )
             params[key] = val
         del params['kwargs']
@@ -1184,7 +1168,7 @@ class TaskResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/tasks/search', 'GET',
@@ -1202,13 +1186,13 @@ class TaskResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def search_v2(self, **kwargs):  # noqa: E501
+    def search_v22(self, **kwargs):  # noqa: E501
         """Search for tasks based in payload and other parameters  # noqa: E501
 
         use sort options as sort=<field>:ASC|DESC e.g. sort=name&sort=workflowId:DESC. If order is not specified, defaults to ASC  # noqa: E501
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.search_v2(async_req=True)
+        >>> thread = api.search_v22(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -1223,18 +1207,18 @@ class TaskResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.search_v2_with_http_info(**kwargs)  # noqa: E501
+            return self.search_v22_with_http_info(**kwargs)  # noqa: E501
         else:
-            (data) = self.search_v2_with_http_info(**kwargs)  # noqa: E501
+            (data) = self.search_v22_with_http_info(**kwargs)  # noqa: E501
             return data
 
-    def search_v2_with_http_info(self, **kwargs):  # noqa: E501
+    def search_v22_with_http_info(self, **kwargs):  # noqa: E501
         """Search for tasks based in payload and other parameters  # noqa: E501
 
         use sort options as sort=<field>:ASC|DESC e.g. sort=name&sort=workflowId:DESC. If order is not specified, defaults to ASC  # noqa: E501
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.search_v2_with_http_info(async_req=True)
+        >>> thread = api.search_v22_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -1259,7 +1243,7 @@ class TaskResourceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method search_v2" % key
+                    " to method search_v22" % key
                 )
             params[key] = val
         del params['kwargs']
@@ -1291,7 +1275,7 @@ class TaskResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/tasks/search-v2', 'GET',
@@ -1309,12 +1293,12 @@ class TaskResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def size(self, **kwargs):  # noqa: E501
+    def size1(self, **kwargs):  # noqa: E501
         """Get Task type queue sizes  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.size(async_req=True)
+        >>> thread = api.size1(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -1325,17 +1309,17 @@ class TaskResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.size_with_http_info(**kwargs)  # noqa: E501
+            return self.size1_with_http_info(**kwargs)  # noqa: E501
         else:
-            (data) = self.size_with_http_info(**kwargs)  # noqa: E501
+            (data) = self.size1_with_http_info(**kwargs)  # noqa: E501
             return data
 
-    def size_with_http_info(self, **kwargs):  # noqa: E501
+    def size1_with_http_info(self, **kwargs):  # noqa: E501
         """Get Task type queue sizes  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.size_with_http_info(async_req=True)
+        >>> thread = api.size1_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -1356,7 +1340,7 @@ class TaskResourceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method size" % key
+                    " to method size1" % key
                 )
             params[key] = val
         del params['kwargs']
@@ -1381,7 +1365,7 @@ class TaskResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/tasks/queue/sizes', 'GET',
@@ -1502,7 +1486,7 @@ class TaskResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/tasks/{workflowId}/{taskRefName}/{status}', 'POST',
@@ -1599,7 +1583,7 @@ class TaskResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/tasks', 'POST',

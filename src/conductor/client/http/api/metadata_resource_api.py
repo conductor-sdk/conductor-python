@@ -17,7 +17,7 @@ import re  # noqa: F401
 # python 2 and python 3 compatibility library
 import six
 
-from swagger_client.api_client import ApiClient
+from conductor.client.http.api_client import ApiClient
 
 
 class MetadataResourceApi(object):
@@ -41,7 +41,7 @@ class MetadataResourceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MetadataWorkflowBody1 body: (required)
+        :param WorkflowDef body: (required)
         :param bool overwrite:
         :return: object
                  If the method is called asynchronously,
@@ -63,7 +63,7 @@ class MetadataResourceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MetadataWorkflowBody1 body: (required)
+        :param WorkflowDef body: (required)
         :param bool overwrite:
         :return: object
                  If the method is called asynchronously,
@@ -115,7 +115,7 @@ class MetadataResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/workflow', 'POST',
@@ -220,7 +220,7 @@ class MetadataResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/tags/workflow/{name}', 'POST',
@@ -317,7 +317,7 @@ class MetadataResourceApi(object):
 
         body_params = None
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/tags/workflow/{name}', 'DELETE',
@@ -414,7 +414,7 @@ class MetadataResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/workflow/{name}', 'GET',
@@ -503,7 +503,7 @@ class MetadataResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/workflow', 'GET',
@@ -596,7 +596,7 @@ class MetadataResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/taskdefs/{tasktype}', 'GET',
@@ -685,7 +685,7 @@ class MetadataResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/taskdefs', 'GET',
@@ -782,7 +782,7 @@ class MetadataResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/tags/workflow/{name}', 'GET',
@@ -809,7 +809,7 @@ class MetadataResourceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MetadataTaskdefsBody1 body: (required)
+        :param list[TaskDef] body: (required)
         :return: object
                  If the method is called asynchronously,
                  returns the request thread.
@@ -830,7 +830,7 @@ class MetadataResourceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MetadataTaskdefsBody1 body: (required)
+        :param list[TaskDef] body: (required)
         :return: object
                  If the method is called asynchronously,
                  returns the request thread.
@@ -879,7 +879,7 @@ class MetadataResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/taskdefs', 'POST',
@@ -968,7 +968,7 @@ class MetadataResourceApi(object):
 
         body_params = None
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/taskdefs/{tasktype}', 'DELETE',
@@ -1065,7 +1065,7 @@ class MetadataResourceApi(object):
 
         body_params = None
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/workflow/{name}/{version}', 'DELETE',
@@ -1083,16 +1083,16 @@ class MetadataResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def update1(self, body, **kwargs):  # noqa: E501
+    def update(self, body, **kwargs):  # noqa: E501
         """Create or update workflow definition(s)  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.update1(body, async_req=True)
+        >>> thread = api.update(body, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param MetadataWorkflowBody body: (required)
+        :param list[WorkflowDef] body: (required)
         :param bool overwrite:
         :return: object
                  If the method is called asynchronously,
@@ -1100,21 +1100,21 @@ class MetadataResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.update1_with_http_info(body, **kwargs)  # noqa: E501
+            return self.update_with_http_info(body, **kwargs)  # noqa: E501
         else:
-            (data) = self.update1_with_http_info(body, **kwargs)  # noqa: E501
+            (data) = self.update_with_http_info(body, **kwargs)  # noqa: E501
             return data
 
-    def update1_with_http_info(self, body, **kwargs):  # noqa: E501
+    def update_with_http_info(self, body, **kwargs):  # noqa: E501
         """Create or update workflow definition(s)  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.update1_with_http_info(body, async_req=True)
+        >>> thread = api.update_with_http_info(body, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
-        :param MetadataWorkflowBody body: (required)
+        :param list[WorkflowDef] body: (required)
         :param bool overwrite:
         :return: object
                  If the method is called asynchronously,
@@ -1132,14 +1132,14 @@ class MetadataResourceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method update1" % key
+                    " to method update" % key
                 )
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'body' is set
         if ('body' not in params or
                 params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `update1`")  # noqa: E501
+            raise ValueError("Missing the required parameter `body` when calling `update`")  # noqa: E501
 
         collection_formats = {}
 
@@ -1166,7 +1166,7 @@ class MetadataResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/workflow', 'PUT',
@@ -1193,7 +1193,7 @@ class MetadataResourceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MetadataTaskdefsBody body: (required)
+        :param TaskDef body: (required)
         :return: object
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1214,7 +1214,7 @@ class MetadataResourceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param MetadataTaskdefsBody body: (required)
+        :param TaskDef body: (required)
         :return: object
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1263,7 +1263,7 @@ class MetadataResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/taskdefs', 'PUT',

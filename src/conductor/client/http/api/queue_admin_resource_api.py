@@ -17,7 +17,7 @@ import re  # noqa: F401
 # python 2 and python 3 compatibility library
 import six
 
-from swagger_client.api_client import ApiClient
+from conductor.client.http.api_client import ApiClient
 
 
 class QueueAdminResourceApi(object):
@@ -99,7 +99,7 @@ class QueueAdminResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/queue/', 'GET',
@@ -117,12 +117,12 @@ class QueueAdminResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def size1(self, **kwargs):  # noqa: E501
+    def size(self, **kwargs):  # noqa: E501
         """Get the queue length  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.size1(async_req=True)
+        >>> thread = api.size(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -132,17 +132,17 @@ class QueueAdminResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.size1_with_http_info(**kwargs)  # noqa: E501
+            return self.size_with_http_info(**kwargs)  # noqa: E501
         else:
-            (data) = self.size1_with_http_info(**kwargs)  # noqa: E501
+            (data) = self.size_with_http_info(**kwargs)  # noqa: E501
             return data
 
-    def size1_with_http_info(self, **kwargs):  # noqa: E501
+    def size_with_http_info(self, **kwargs):  # noqa: E501
         """Get the queue length  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.size1_with_http_info(async_req=True)
+        >>> thread = api.size_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -162,7 +162,7 @@ class QueueAdminResourceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method size1" % key
+                    " to method size" % key
                 )
             params[key] = val
         del params['kwargs']
@@ -184,7 +184,7 @@ class QueueAdminResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/queue/size', 'GET',
@@ -202,12 +202,12 @@ class QueueAdminResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def update(self, body, workflow_id, task_ref_name, status, **kwargs):  # noqa: E501
+    def update1(self, body, workflow_id, task_ref_name, status, **kwargs):  # noqa: E501
         """Publish a message in queue to mark a wait task as completed.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.update(body, workflow_id, task_ref_name, status, async_req=True)
+        >>> thread = api.update1(body, workflow_id, task_ref_name, status, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -221,17 +221,17 @@ class QueueAdminResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.update_with_http_info(body, workflow_id, task_ref_name, status, **kwargs)  # noqa: E501
+            return self.update1_with_http_info(body, workflow_id, task_ref_name, status, **kwargs)  # noqa: E501
         else:
-            (data) = self.update_with_http_info(body, workflow_id, task_ref_name, status, **kwargs)  # noqa: E501
+            (data) = self.update1_with_http_info(body, workflow_id, task_ref_name, status, **kwargs)  # noqa: E501
             return data
 
-    def update_with_http_info(self, body, workflow_id, task_ref_name, status, **kwargs):  # noqa: E501
+    def update1_with_http_info(self, body, workflow_id, task_ref_name, status, **kwargs):  # noqa: E501
         """Publish a message in queue to mark a wait task as completed.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.update_with_http_info(body, workflow_id, task_ref_name, status, async_req=True)
+        >>> thread = api.update1_with_http_info(body, workflow_id, task_ref_name, status, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -255,26 +255,26 @@ class QueueAdminResourceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method update" % key
+                    " to method update1" % key
                 )
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'body' is set
         if ('body' not in params or
                 params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `update`")  # noqa: E501
+            raise ValueError("Missing the required parameter `body` when calling `update1`")  # noqa: E501
         # verify the required parameter 'workflow_id' is set
         if ('workflow_id' not in params or
                 params['workflow_id'] is None):
-            raise ValueError("Missing the required parameter `workflow_id` when calling `update`")  # noqa: E501
+            raise ValueError("Missing the required parameter `workflow_id` when calling `update1`")  # noqa: E501
         # verify the required parameter 'task_ref_name' is set
         if ('task_ref_name' not in params or
                 params['task_ref_name'] is None):
-            raise ValueError("Missing the required parameter `task_ref_name` when calling `update`")  # noqa: E501
+            raise ValueError("Missing the required parameter `task_ref_name` when calling `update1`")  # noqa: E501
         # verify the required parameter 'status' is set
         if ('status' not in params or
                 params['status'] is None):
-            raise ValueError("Missing the required parameter `status` when calling `update`")  # noqa: E501
+            raise ValueError("Missing the required parameter `status` when calling `update1`")  # noqa: E501
 
         collection_formats = {}
 
@@ -301,7 +301,7 @@ class QueueAdminResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/queue/update/{workflowId}/{taskRefName}/{status}', 'POST',
@@ -418,7 +418,7 @@ class QueueAdminResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = []  # noqa: E501
+        auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
             '/queue/update/{workflowId}/task/{taskId}/{status}', 'POST',
