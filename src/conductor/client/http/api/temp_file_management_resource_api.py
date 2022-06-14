@@ -107,7 +107,7 @@ class TempFileManagementResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/files/{name}', 'DELETE',
@@ -200,7 +200,7 @@ class TempFileManagementResourceApi(object):
             ['application/octet-stream'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/files/{name}', 'GET',
@@ -285,7 +285,7 @@ class TempFileManagementResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/files', 'GET',
@@ -390,7 +390,7 @@ class TempFileManagementResourceApi(object):
             ['application/octet-stream'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/files/{name}', 'PUT',

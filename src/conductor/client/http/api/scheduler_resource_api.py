@@ -107,7 +107,7 @@ class SchedulerResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/scheduler/schedules/{name}', 'DELETE',
@@ -196,7 +196,7 @@ class SchedulerResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/scheduler/schedules', 'GET',
@@ -301,7 +301,7 @@ class SchedulerResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/scheduler/nextFewSchedules', 'GET',
@@ -394,7 +394,7 @@ class SchedulerResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/scheduler/schedules/{name}', 'GET',
@@ -479,7 +479,7 @@ class SchedulerResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/scheduler/admin/pause', 'GET',
@@ -572,7 +572,7 @@ class SchedulerResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/scheduler/schedules/{name}/pause', 'GET',
@@ -657,7 +657,7 @@ class SchedulerResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/scheduler/admin/requeue', 'GET',
@@ -742,7 +742,7 @@ class SchedulerResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/scheduler/admin/resume', 'GET',
@@ -835,7 +835,7 @@ class SchedulerResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/scheduler/schedules/{name}/resume', 'GET',
@@ -932,7 +932,7 @@ class SchedulerResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/scheduler/schedules', 'POST',
@@ -1039,7 +1039,7 @@ class SchedulerResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/scheduler/search/executions', 'GET',
@@ -1120,7 +1120,7 @@ class SchedulerResourceApi(object):
 
         body_params = None
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/scheduler/test/timeout', 'GET',

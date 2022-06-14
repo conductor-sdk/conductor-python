@@ -111,7 +111,7 @@ class WorkflowBulkResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/bulk/pause', 'PUT',
@@ -212,7 +212,7 @@ class WorkflowBulkResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/bulk/restart', 'POST',
@@ -309,7 +309,7 @@ class WorkflowBulkResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/bulk/resume', 'PUT',
@@ -406,7 +406,7 @@ class WorkflowBulkResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/bulk/retry', 'POST',
@@ -507,7 +507,7 @@ class WorkflowBulkResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/bulk/terminate', 'POST',

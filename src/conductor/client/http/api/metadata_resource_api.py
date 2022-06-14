@@ -115,7 +115,7 @@ class MetadataResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/workflow', 'POST',
@@ -220,7 +220,7 @@ class MetadataResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/tags/workflow/{name}', 'POST',
@@ -317,7 +317,7 @@ class MetadataResourceApi(object):
 
         body_params = None
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/tags/workflow/{name}', 'DELETE',
@@ -414,7 +414,7 @@ class MetadataResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/workflow/{name}', 'GET',
@@ -503,7 +503,7 @@ class MetadataResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/workflow', 'GET',
@@ -596,7 +596,7 @@ class MetadataResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/taskdefs/{tasktype}', 'GET',
@@ -685,7 +685,7 @@ class MetadataResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/taskdefs', 'GET',
@@ -782,7 +782,7 @@ class MetadataResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/tags/workflow/{name}', 'GET',
@@ -879,7 +879,7 @@ class MetadataResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/taskdefs', 'POST',
@@ -968,7 +968,7 @@ class MetadataResourceApi(object):
 
         body_params = None
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/taskdefs/{tasktype}', 'DELETE',
@@ -1065,7 +1065,7 @@ class MetadataResourceApi(object):
 
         body_params = None
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/workflow/{name}/{version}', 'DELETE',
@@ -1166,7 +1166,7 @@ class MetadataResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/workflow', 'PUT',
@@ -1263,7 +1263,7 @@ class MetadataResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/metadata/taskdefs', 'PUT',

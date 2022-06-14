@@ -103,7 +103,7 @@ class WorkflowResourceApi(object):
 
         body_params = None
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/decide/{workflowId}', 'PUT',
@@ -196,7 +196,7 @@ class WorkflowResourceApi(object):
 
         body_params = None
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/{workflowId}/remove', 'DELETE',
@@ -293,7 +293,7 @@ class WorkflowResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/{workflowId}', 'GET',
@@ -402,7 +402,7 @@ class WorkflowResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/externalstoragelocation', 'GET',
@@ -507,7 +507,7 @@ class WorkflowResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/running/{name}', 'GET',
@@ -608,7 +608,7 @@ class WorkflowResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/{workflowId}/status', 'GET',
@@ -717,7 +717,7 @@ class WorkflowResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/{name}/correlated/{correlationId}', 'GET',
@@ -830,7 +830,7 @@ class WorkflowResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/{name}/correlated', 'POST',
@@ -919,7 +919,7 @@ class WorkflowResourceApi(object):
 
         body_params = None
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/{workflowId}/pause', 'PUT',
@@ -1024,7 +1024,7 @@ class WorkflowResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/{workflowId}/rerun', 'POST',
@@ -1113,7 +1113,7 @@ class WorkflowResourceApi(object):
 
         body_params = None
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/{workflowId}/resetcallbacks', 'POST',
@@ -1206,7 +1206,7 @@ class WorkflowResourceApi(object):
 
         body_params = None
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/{workflowId}/restart', 'POST',
@@ -1295,7 +1295,7 @@ class WorkflowResourceApi(object):
 
         body_params = None
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/{workflowId}/resume', 'PUT',
@@ -1388,7 +1388,7 @@ class WorkflowResourceApi(object):
 
         body_params = None
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/{workflowId}/retry', 'POST',
@@ -1503,7 +1503,7 @@ class WorkflowResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/search', 'GET',
@@ -1610,7 +1610,7 @@ class WorkflowResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/search-v2', 'GET',
@@ -1717,7 +1717,7 @@ class WorkflowResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/search-by-tasks', 'GET',
@@ -1824,7 +1824,7 @@ class WorkflowResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/search-by-tasks-v2', 'GET',
@@ -1929,7 +1929,7 @@ class WorkflowResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/{workflowId}/skiptask/{taskReferenceName}', 'PUT',
@@ -2026,7 +2026,7 @@ class WorkflowResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow', 'POST',
@@ -2143,7 +2143,7 @@ class WorkflowResourceApi(object):
             ['application/json'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/{name}', 'POST',
@@ -2236,7 +2236,7 @@ class WorkflowResourceApi(object):
 
         body_params = None
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/workflow/{workflowId}', 'DELETE',

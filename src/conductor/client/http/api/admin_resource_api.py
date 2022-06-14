@@ -172,7 +172,7 @@ class AdminResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/admin/queues', 'GET',
@@ -257,7 +257,7 @@ class AdminResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/admin/redisUsage', 'GET',
@@ -350,7 +350,7 @@ class AdminResourceApi(object):
             ['text/plain'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/admin/sweep/requeue/{workflowId}', 'POST',
@@ -443,7 +443,7 @@ class AdminResourceApi(object):
             ['text/plain'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/admin/consistency/verifyAndRepair/{workflowId}', 'POST',
@@ -544,7 +544,7 @@ class AdminResourceApi(object):
             ['*/*'])  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
             '/admin/task/{tasktype}', 'GET',
