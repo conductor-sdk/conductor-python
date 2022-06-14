@@ -6,8 +6,8 @@ import abc
 
 
 class TaskInterface(abc.ABC):
-    def __init__(self, task_reference_name: str, task_type: TaskType):
-        self.name = task_reference_name
+    def __init__(self, task_reference_name: str, task_type: TaskType) -> TaskInterface:
+        self._name = task_reference_name
         self.task_reference_name = task_reference_name
         self.task_type = task_type
         self.description = ''
