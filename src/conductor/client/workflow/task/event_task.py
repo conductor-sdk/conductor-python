@@ -1,7 +1,7 @@
 from __future__ import annotations
-from src.conductor.client.http.models.workflow_task import WorkflowTask
-from src.conductor.client.workflow.task import TaskInterface
-from src.conductor.client.workflow.task_type import TaskType
+from conductor.client.http.models.workflow_task import WorkflowTask
+from conductor.client.workflow.task.task import TaskInterface
+from conductor.client.workflow.task.task_type import TaskType
 import abc
 
 

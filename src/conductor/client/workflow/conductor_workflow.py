@@ -1,8 +1,8 @@
 from __future__ import annotations
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from conductor.client.workflow.task import TaskInterface
-from conductor.client.workflow.timeout_policy import TimeoutPolicy
+from conductor.client.workflow.task.task import TaskInterface
+from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
 from typing import Any, Dict, List
 
 

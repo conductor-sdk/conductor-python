@@ -1,5 +1,5 @@
 from __future__ import annotations
-from src.conductor.client.workflow.task_type import TaskType
+from conductor.client.workflow.task.task_type import TaskType
 from task import TaskInterface
 
 
