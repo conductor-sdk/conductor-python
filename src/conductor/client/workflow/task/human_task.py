@@ -3,6 +3,6 @@ from conductor.client.workflow.task.task_type import TaskType
 from task import TaskInterface
 
 
-class SetVariableTask(TaskInterface):
-    def __init__(self, task_ref_name: str) -> SetVariableTask:
+class HumanTask(TaskInterface):
+    def __init__(self, task_ref_name: str) -> HumanTask:
         super().__init__(task_ref_name, TaskType.HUMAN)
