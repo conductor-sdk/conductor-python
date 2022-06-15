@@ -30,11 +30,6 @@ def main():
 
     workflow_executor = WorkflowExecutor(configuration)
 
-    simple_task = SimpleTask(
-        'python_task_example_from_code',
-        'python_task_example_from_code',
-    )
-
     workflow = ConductorWorkflow(
         workflow_executor,
     ).name(
@@ -42,10 +37,14 @@ def main():
     ).description(
         "Python workflow example from code",
     ).version(
-        1,
-    ).add(
-        simple_task,
+        2,
     )
+
+    for id in range(5):
+        workflow >> SimpleTask(
+            'python_task_example_from_code',
+            f'python_task_example_from_code_{id}',
+        )
 
     response = workflow.register(True)
     print(response)

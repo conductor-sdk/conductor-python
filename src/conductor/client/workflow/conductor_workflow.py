@@ -123,12 +123,6 @@ class ConductorWorkflow:
         self._input_parameters = input_parameters
         return self
 
-    def add(self, task: TaskInterface) -> ConductorWorkflow:
-        if not issubclass(type(task), TaskInterface):
-            raise Exception('invalid type')
-        self._tasks.append(task)
-        return self
-
     # Register the workflow definition with the server. If overwrite is set, the definition on the server will be overwritten.
     # When not set, the call fails if there is any change in the workflow definition between the server and what is being registered.
     def register(self, overwrite: bool):
@@ -160,3 +154,9 @@ class ConductorWorkflow:
         for task in self._tasks:
             tasks.append(task.to_workflow_task())
         return tasks
+
+    def __rshift__(self, task: TaskInterface) -> ConductorWorkflow:
+        if not issubclass(type(task), TaskInterface):
+            raise Exception('invalid type')
+        self._tasks.append(task)
+        return self
