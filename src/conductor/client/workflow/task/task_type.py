@@ -1,26 +1,26 @@
-from enum import Enum, auto
+from enum import Enum
 
 
-class TaskType(Enum):
-    SIMPLE = auto()
-    DYNAMIC = auto()
-    FORK_JOIN = auto()
-    FORK_JOIN_DYNAMIC = auto()
-    DECISION = auto()
-    SWITCH = auto()
-    JOIN = auto()
-    DO_WHILE = auto()
-    SUB_WORKFLOW = auto()
-    START_WORKFLOW = auto()
-    EVENT = auto()
-    WAIT = auto()
-    HUMAN = auto()
-    USER_DEFINED = auto()
-    HTTP = auto()
-    LAMBDA = auto()
-    INLINE = auto()
-    EXCLUSIVE_JOIN = auto()
-    TERMINATE = auto()
-    KAFKA_PUBLISH = auto()
-    JSON_JQ_TRANSFORM = auto()
-    SET_VARIABLE = auto()
+class TaskType(str, Enum):
+    SIMPLE = 'SIMPLE'
+    DYNAMIC = 'DYNAMIC'
+    FORK_JOIN = 'FORK_JOIN'
+    FORK_JOIN_DYNAMIC = 'FORK_JOIN_DYNAMIC'
+    DECISION = 'DECISION'
+    SWITCH = 'SWITCH'
+    JOIN = 'JOIN'
+    DO_WHILE = 'DO_WHILE'
+    SUB_WORKFLOW = 'SUB_WORKFLOW'
+    START_WORKFLOW = 'START_WORKFLOW'
+    EVENT = 'EVENT'
+    WAIT = 'WAIT'
+    HUMAN = 'HUMAN'
+    USER_DEFINED = 'USER_DEFINED'
+    HTTP = 'HTTP'
+    LAMBDA = 'LAMBDA'
+    INLINE = 'INLINE'
+    EXCLUSIVE_JOIN = 'EXCLUSIVE_JOIN'
+    TERMINATE = 'TERMINATE'
+    KAFKA_PUBLISH = 'KAFKA_PUBLISH'
+    JSON_JQ_TRANSFORM = 'JSON_JQ_TRANSFORM'
+    SET_VARIABLE = 'SET_VARIABLE'

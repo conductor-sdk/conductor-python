@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Dict, List
 from conductor.client.workflow.task.task_type import TaskType
 from conductor.client.http.models.workflow_task import WorkflowTask
-from task import TaskInterface
+from conductor.client.workflow.task.task import TaskInterface
 
 
 class EvaluatorType(str, Enum):

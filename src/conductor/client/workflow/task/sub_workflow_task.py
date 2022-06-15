@@ -5,7 +5,7 @@ from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.http.models.sub_workflow_params import SubWorkflowParams
-from task import TaskInterface
+from conductor.client.workflow.task.task import TaskInterface
 
 
 class SubWorkflowTask(TaskInterface):

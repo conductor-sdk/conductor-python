@@ -1,7 +1,7 @@
 from __future__ import annotations
 from conductor.client.workflow.task.http_input import HttpInput
 from conductor.client.workflow.task.task_type import TaskType
-from task import TaskInterface
+from conductor.client.workflow.task.task import TaskInterface
 
 
 class HttpTask(TaskInterface):

@@ -1,6 +1,7 @@
 from __future__ import annotations
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
+from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
 from typing import Any, Dict, List
@@ -26,7 +27,19 @@ class ConductorWorkflow:
 
     def __init__(self, executor: WorkflowExecutor) -> ConductorWorkflow:
         self.executor = executor
-        self.tasks = []
+        self._name = ''
+        self._version = None
+        self._description = ''
+        self._owner_email = ''
+        self._tasks = []
+        self._timeout_policy = None
+        self._timeout_seconds = 60
+        self._failure_workflow = ''
+        self._input_parameters = []
+        self._output_parameters = {}
+        self._input_template = {}
+        self._variables = {}
+        self._restartable = True
 
     def name(self, name: str) -> ConductorWorkflow:
         if not isinstance(name, str):
@@ -35,7 +48,7 @@ class ConductorWorkflow:
         return self
 
     def version(self, version: int) -> ConductorWorkflow:
-        if not isinstance(version, str):
+        if not isinstance(version, int):
             raise Exception('invalid type')
         self._version = version
         return self
@@ -111,9 +124,9 @@ class ConductorWorkflow:
         return self
 
     def add(self, task: TaskInterface) -> ConductorWorkflow:
-        if not issubclass(task, TaskInterface):
+        if not issubclass(type(task), TaskInterface):
             raise Exception('invalid type')
-        self.tasks.append(task)
+        self._tasks.append(task)
         return self
 
     # Register the workflow definition with the server. If overwrite is set, the definition on the server will be overwritten.
@@ -130,7 +143,7 @@ class ConductorWorkflow:
             name=self._name,
             description=self._description,
             version=self._version,
-            tasks=self.tasks,
+            tasks=self.__get_workflow_task_list(),
             input_parameters=self._input_parameters,
             output_parameters=self._output_parameters,
             failure_workflow=self._failure_workflow,
@@ -141,3 +154,9 @@ class ConductorWorkflow:
             variables=self._variables,
             input_template=self._input_template,
         )
+
+    def __get_workflow_task_list(self) -> List[WorkflowTask]:
+        tasks = []
+        for task in self._tasks:
+            tasks.append(task.to_workflow_task())
+        return tasks
