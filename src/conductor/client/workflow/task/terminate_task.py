@@ -1,7 +1,7 @@
 from __future__ import annotations
+from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.task_type import TaskType
-from src.conductor.client.workflow.task.workflow_status import WorkflowStatus
-from task import TaskInterface
+from conductor.client.workflow.task.workflow_status import WorkflowStatus
 
 
 class TerminateTask(TaskInterface):
