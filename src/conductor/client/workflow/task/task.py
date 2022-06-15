@@ -54,3 +54,8 @@ class TaskInterface(abc.ABC):
             input_parameters=self._input_parameters,
             optional=self._optional,
         )
+
+    def output_ref(self, path: str) -> str:
+        if path == '':
+            return "${%s.output}" % self._task_reference_name
+        return "${%s.output.%s}" % self._task_reference_name, path
