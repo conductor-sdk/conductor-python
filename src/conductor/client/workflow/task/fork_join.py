@@ -10,8 +10,8 @@ class ForkedTask(TaskInterface):
     _forked_tasks: List[List[TaskInterface]]
     _join_task: JoinTask
 
-    def __init__(self, task_ref_name: str, forked_tasks: List[TaskInterface]) -> ForkedTask:
-        super().__init__(task_ref_name, TaskType.INLINE)
+    def __init__(self, task_ref_name: str, forked_tasks: List[List[TaskInterface]]) -> ForkedTask:
+        super().__init__(task_ref_name, TaskType.FORK_JOIN)
         self._forked_tasks = forked_tasks
         self._join_task = JoinTask(task_ref_name + '_join')
 
