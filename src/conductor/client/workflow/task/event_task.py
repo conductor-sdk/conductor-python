@@ -9,9 +9,8 @@ class EventTaskInterface(TaskInterface, abc.ABC):
     _sink: str
 
     def __init__(self, task_ref_name: str, event_prefix: str, event_suffix: str) -> EventTaskInterface:
-        task = super().__init__(task_ref_name, TaskType.EVENT)
-        task._sink = event_prefix + ':' + event_suffix
-        return task
+        super().__init__(task_ref_name, TaskType.EVENT)
+        self._sink = event_prefix + ':' + event_suffix
 
     def to_workflow_task(self) -> WorkflowTask:
         workflow_task = super().to_workflow_task()
