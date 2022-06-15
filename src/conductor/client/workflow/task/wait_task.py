@@ -11,7 +11,7 @@ class WaitTask(TaskInterface):
 class WaitForDurationTask(WaitTask):
     def __init__(self, task_ref_name: str, duration_time_seconds: int) -> WaitForDurationTask:
         super().__init__(task_ref_name)
-        self._input = {
+        self._input_parameters = {
             "duration": str(duration_time_seconds)
         }
 
@@ -19,6 +19,6 @@ class WaitForDurationTask(WaitTask):
 class WaitUntilTask(WaitTask):
     def __init__(self, task_ref_name: str, date_time: str) -> WaitForDurationTask:
         super().__init__(task_ref_name)
-        self._input = {
+        self._input_parameters = {
             "until": date_time
         }

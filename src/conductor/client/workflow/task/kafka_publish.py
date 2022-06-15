@@ -8,6 +8,6 @@ from task import TaskInterface
 class KafkaPublishTask(TaskInterface):
     def __init__(self, task_ref_name: str, kafka_publish_input: KafkaPublishInput = None) -> KafkaPublishTask:
         super().__init__(task_ref_name, TaskType.KAFKA_PUBLISH)
-        self._input = {
+        self._input_parameters = {
             "kafka_request": kafka_publish_input
         }

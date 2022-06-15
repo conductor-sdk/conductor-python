@@ -7,7 +7,7 @@ from task import TaskInterface
 class TerminateTask(TaskInterface):
     def __init__(self, task_ref_name: str, status: WorkflowStatus, termination_reason: str) -> TerminateTask:
         super().__init__(task_ref_name, TaskType.TERMINATE)
-        self._input = {
+        self._input_parameters = {
             "terminationStatus": status,
             "terminationReason": termination_reason
         }
