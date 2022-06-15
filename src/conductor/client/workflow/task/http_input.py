@@ -22,6 +22,8 @@ class HttpInput:
     _read_timeout: int
     _body: Any
 
+    # TODO add json serializer param names
+
     def __init__(self,
                  method: HttpMethod = HttpMethod.GET,
                  uri: str = None,
