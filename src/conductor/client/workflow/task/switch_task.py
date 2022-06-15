@@ -43,12 +43,6 @@ class SwitchTask(TaskInterface):
         workflow.decision_cases = {}
         for case_value, tasks in self._decision_cases.items():
             workflow.decision_cases[case_value] = self.__get_converted(tasks)
-        workflow.default_case = self.__get_converted(self._default_case)
+        workflow.default_case = self.get_task_interface_list_as_workflow_task_list(
+            self._default_case)
         return workflow
-
-    @staticmethod
-    def __get_converted(tasks: List[TaskInterface]) -> List[WorkflowTask]:
-        converted_tasks = []
-        for task in tasks:
-            converted_tasks.append(task.to_workflow_task())
-        return converted_tasks

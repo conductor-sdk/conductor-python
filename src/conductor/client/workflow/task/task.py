@@ -1,7 +1,7 @@
 from __future__ import annotations
 from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.task.task_type import TaskType
-from typing import Any, Dict
+from typing import Any, Dict, List
 import abc
 
 
@@ -59,3 +59,10 @@ class TaskInterface(abc.ABC):
         if path == '':
             return "${%s.output}" % self._task_reference_name
         return "${%s.output.%s}" % self._task_reference_name, path
+
+    @staticmethod
+    def get_task_interface_list_as_workflow_task_list(tasks: List[TaskInterface]) -> List[WorkflowTask]:
+        converted_tasks = []
+        for task in tasks:
+            converted_tasks.append(task.to_workflow_task())
+        return converted_tasks
