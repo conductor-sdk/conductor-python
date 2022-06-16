@@ -25,13 +25,17 @@ class ConductorWorkflow:
     _variables: Dict[str, Any]
     _restartable: bool
 
-    def __init__(self, executor: WorkflowExecutor) -> ConductorWorkflow:
+    def __init__(self,
+                 executor: WorkflowExecutor,
+                 name: str,
+                 version: int = None,
+                 description: str = None) -> ConductorWorkflow:
         self.executor = executor
-        self._name = ''
-        self._version = None
-        self._description = ''
-        self._owner_email = ''
+        self.name = name
+        self.version = version
+        self.description = description
         self._tasks = []
+        self._owner_email = None
         self._timeout_policy = None
         self._timeout_seconds = 60
         self._failure_workflow = ''
@@ -41,42 +45,58 @@ class ConductorWorkflow:
         self._variables = {}
         self._restartable = True
 
-    def name(self, name: str) -> ConductorWorkflow:
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @name.setter
+    def name(self, name: str) -> None:
         if not isinstance(name, str):
             raise Exception('invalid type')
         self._name = name
-        return self
 
-    def version(self, version: int) -> ConductorWorkflow:
-        if not isinstance(version, int):
+    @property
+    def version(self) -> int:
+        return self._version
+
+    @version.setter
+    def version(self, version: int) -> None:
+        if version != None and not isinstance(version, int):
             raise Exception('invalid type')
         self._version = version
-        return self
 
-    def description(self, description: str) -> ConductorWorkflow:
-        if not isinstance(description, str):
+    @property
+    def description(self) -> str:
+        return self._description
+
+    @description.setter
+    def description(self, description: str) -> None:
+        if description != None and not isinstance(description, str):
             raise Exception('invalid type')
         self._description = description
-        return self
 
+    # TODO add property
     def timeout_policy(self, timeout_policy: TimeoutPolicy) -> ConductorWorkflow:
         if not isinstance(timeout_policy, TimeoutPolicy):
             raise Exception('invalid type')
         self._timeout_policy = timeout_policy
         return self
 
+    # TODO add property
     def timeout_seconds(self, timeout_seconds: int) -> ConductorWorkflow:
         if not isinstance(timeout_seconds, int):
             raise Exception('invalid type')
         self._timeout_seconds = timeout_seconds
         return self
 
+    # TODO add property
     def owner_email(self, owner_email: str) -> ConductorWorkflow:
         if not isinstance(owner_email, str):
             raise Exception('invalid type')
         self._owner_email = owner_email
         return self
 
+    # TODO add property
     # Name of the workflow to execute when this workflow fails.
     # Failure workflows can be used for handling compensation logic
     def failure_workflow(self, failure_workflow: str) -> ConductorWorkflow:
@@ -85,6 +105,7 @@ class ConductorWorkflow:
         self._failure_workflow = failure_workflow
         return self
 
+    # TODO add property
     # If the workflow can be restarted after it has reached terminal state.
     # Set this to false if restarting workflow can have side effects
     def restartable(self, restartable: bool) -> ConductorWorkflow:
@@ -93,6 +114,7 @@ class ConductorWorkflow:
         self._restartable = restartable
         return self
 
+    # TODO add property
     # Workflow output follows similar structure as task input
     # See https://conductor.netflix.com/how-tos/Tasks/task-inputs.html for more details
     def output_parameters(self, output_parameters: Dict[str, Any]) -> ConductorWorkflow:
@@ -100,12 +122,14 @@ class ConductorWorkflow:
         self._output_parameters = output_parameters
         return self
 
+    # TODO add property
     # InputTemplate template input to the workflow.  Can have combination of variables (e.g. ${workflow.input.abc}) and static values
     def input_template(self, input_template: Dict[str, Any]) -> ConductorWorkflow:
         # TODO validate dict type
         self._input_template = input_template
         return self
 
+    # TODO add property
     # Variables are set using SET_VARIABLE task. Excellent way to maintain business state
     # e.g. Variables can maintain business/user specific states which can be queried and inspected to find out the state of the workflow
     def variables(self, variables: Dict[str, Any]) -> ConductorWorkflow:
@@ -113,6 +137,7 @@ class ConductorWorkflow:
         self._variables = variables
         return self
 
+    # TODO add property
     # List of the input parameters to the workflow. Usage: documentation ONLY
     def input_parameters(self, input_parameters: List[str]) -> ConductorWorkflow:
         if not isinstance(input_parameters, list):
@@ -155,6 +180,7 @@ class ConductorWorkflow:
             tasks.append(task.to_workflow_task())
         return tasks
 
+    # Append task with the right shift operator `>>`
     def __rshift__(self, task: TaskInterface) -> ConductorWorkflow:
         if not issubclass(type(task), TaskInterface):
             raise Exception('invalid type')

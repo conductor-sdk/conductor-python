@@ -7,6 +7,7 @@ from conductor.client.worker.worker_interface import WorkerInterface
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.simple_task import SimpleTask
+from conductor.client.workflow.task.sub_workflow_task import InlineSubWorkflowTask
 import os
 
 
@@ -30,21 +31,24 @@ def main():
 
     workflow_executor = WorkflowExecutor(configuration)
 
-    workflow = ConductorWorkflow(
-        workflow_executor,
-    ).name(
-        "python_workflow_example_from_code",
-    ).description(
-        "Python workflow example from code",
-    ).version(
-        2,
+    simple_workflow = ConductorWorkflow(
+        executor=workflow_executor,
+        name='python_simple_workflow',
+    )
+    simple_workflow >> SimpleTask('simple_task', 'simple_task_0')
+
+    sub_workflow_inline = InlineSubWorkflowTask(
+        task_ref_name="sub_flow_inline",
+        workflow=simple_workflow,
     )
 
-    for id in range(5):
-        workflow >> SimpleTask(
-            'python_task_example_from_code',
-            f'python_task_example_from_code_{id}',
-        )
+    workflow = ConductorWorkflow(
+        executor=workflow_executor,
+        name='python_kitchensink_workflow_example_from_code',
+        description='Python kitchensink workflow example from code',
+    )
+
+    workflow >> sub_workflow_inline
 
     response = workflow.register(True)
     print(response)
