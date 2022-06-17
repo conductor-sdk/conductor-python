@@ -1,12 +1,11 @@
-from __future__ import annotations
 from abc import ABC
-from typing_extensions import Self
 from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.task.task_type import TaskType
 from typing import Any, Dict, List
+from typing_extensions import Self
 
 
-def get_task_interface_list_as_workflow_task_list(*tasks: TaskInterface) -> List[WorkflowTask]:
+def get_task_interface_list_as_workflow_task_list(*tasks: Self) -> List[WorkflowTask]:
     converted_tasks = []
     for task in tasks:
         converted_tasks.append(task.to_workflow_task())
@@ -27,7 +26,7 @@ class TaskInterface(ABC):
                  task_def_name: str = None,
                  description: str = None,
                  optional: bool = False,
-                 input_parameters: Dict[str, Any] = {}) -> TaskInterface:
+                 input_parameters: Dict[str, Any] = {}) -> Self:
         self._task_reference_name = task_reference_name
         self._task_type = task_type
         if task_def_name == None:
@@ -56,16 +55,6 @@ class TaskInterface(ABC):
         if not isinstance(name, str):
             raise Exception('invalid type')
         self._name = name
-
-    @property
-    def version(self) -> int:
-        return self._version
-
-    @version.setter
-    def version(self, version: int) -> None:
-        if version != None and not isinstance(version, int):
-            raise Exception('invalid type')
-        self._version = version
 
     @property
     def description(self) -> str:

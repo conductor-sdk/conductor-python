@@ -1,5 +1,5 @@
-from __future__ import annotations
 from typing import Any, Dict
+from typing_extensions import Self
 
 
 class KafkaPublishInput:
@@ -22,7 +22,7 @@ class KafkaPublishInput:
                  request_timeout_ms: str = None,
                  max_block_ms: str = None,
                  headers: Dict[str, Any] = None,
-                 topic: str = None) -> KafkaPublishInput:
+                 topic: str = None) -> Self:
         self._bootstrap_servers = bootstrap_servers
         self._key = key
         self._key_serializer = key_serializer

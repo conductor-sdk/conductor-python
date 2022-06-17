@@ -1,16 +1,16 @@
-from __future__ import annotations
-from typing import List
+from conductor.client.http.models.workflow_task import WorkflowTask
+from conductor.client.workflow.task.join_task import JoinTask
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.task_type import TaskType
-from conductor.client.workflow.task.join_task import JoinTask
-from conductor.client.http.models.workflow_task import WorkflowTask
+from typing import List
+from typing_extensions import Self
 
 
 class ForkedTask(TaskInterface):
     _forked_tasks: List[List[TaskInterface]]
     _join_task: JoinTask
 
-    def __init__(self, task_ref_name: str, forked_tasks: List[List[TaskInterface]]) -> ForkedTask:
+    def __init__(self, task_ref_name: str, forked_tasks: List[List[TaskInterface]]) -> Self:
         super().__init__(task_ref_name, TaskType.FORK_JOIN)
         self._forked_tasks = forked_tasks
         self._join_task = JoinTask(task_ref_name + '_join')

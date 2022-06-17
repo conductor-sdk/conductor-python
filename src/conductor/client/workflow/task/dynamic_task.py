@@ -1,13 +1,13 @@
-from __future__ import annotations
-from conductor.client.workflow.task.task_type import TaskType
 from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.task.task import TaskInterface
+from conductor.client.workflow.task.task_type import TaskType
+from typing_extensions import Self
 
 
 class DynamicTask(TaskInterface):
     DYNAMIC_TASK_PARAM = 'taskToExecute'
 
-    def __init__(self, task_ref_name: str, task_name_parameter: str) -> DynamicTask:
+    def __init__(self, task_ref_name: str, task_name_parameter: str) -> Self:
         super().__init__(task_ref_name, TaskType.DYNAMIC)
         self._input_parameters = {
             DynamicTask.DYNAMIC_TASK_PARAM: task_name_parameter,

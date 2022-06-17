@@ -1,17 +1,8 @@
-from __future__ import annotations
-from conductor.client.workflow.task.http_input import HttpInput
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.task_type import TaskType
 from enum import Enum
 from typing import Any, Dict, List
-
-
-class HttpTask(TaskInterface):
-    def __init__(self, task_ref_name: str, http_input: HttpInput) -> HttpTask:
-        super().__init__(task_ref_name, TaskType.HTTP)
-        self._input_parameters = {
-            "http_request": http_input
-        }
+from typing_extensions import Self
 
 
 class HttpMethod(str, Enum):
@@ -43,7 +34,7 @@ class HttpInput:
                  content_type: str = None,
                  connection_time_out: int = None,
                  read_timeout: int = None,
-                 body: Any = None) -> HttpInput:
+                 body: Any = None) -> Self:
         self._method = method
         self._method = method
         self._uri = uri
@@ -53,3 +44,11 @@ class HttpInput:
         self._connection_time_out = connection_time_out
         self._read_timeout = read_timeout
         self._body = body
+
+
+class HttpTask(TaskInterface):
+    def __init__(self, task_ref_name: str, http_input: HttpInput) -> Self:
+        super().__init__(task_ref_name, TaskType.HTTP)
+        self._input_parameters = {
+            "http_request": http_input
+        }

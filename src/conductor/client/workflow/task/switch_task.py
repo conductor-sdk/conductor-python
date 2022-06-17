@@ -1,9 +1,9 @@
-from __future__ import annotations
 from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.task.task import TaskInterface, get_task_interface_list_as_workflow_task_list
 from conductor.client.workflow.task.task_type import TaskType
 from enum import Enum
 from typing import Dict, List
+from typing_extensions import Self
 
 
 class EvaluatorType(str, Enum):
@@ -18,7 +18,7 @@ class SwitchTask(TaskInterface):
     _use_javascript: bool
     _evaluator_type: EvaluatorType
 
-    def __init__(self, task_ref_name: str, case_expression: str, use_javascript: bool = False) -> SwitchTask:
+    def __init__(self, task_ref_name: str, case_expression: str, use_javascript: bool = False) -> Self:
         super().__init__(
             task_reference_name=task_ref_name,
             task_type=TaskType.SWITCH,
@@ -27,11 +27,11 @@ class SwitchTask(TaskInterface):
         self._expression = case_expression
         self._use_javascript = use_javascript
 
-    def switch_case(self, case_name: str, tasks: List[TaskInterface]) -> SwitchTask:
+    def switch_case(self, case_name: str, tasks: List[TaskInterface]) -> Self:
         self._decision_cases[case_name] = tasks
         return self
 
-    def default_case(self, tasks: List[TaskInterface]) -> SwitchTask:
+    def default_case(self, tasks: List[TaskInterface]) -> Self:
         self._default_case = tasks
         return self
 

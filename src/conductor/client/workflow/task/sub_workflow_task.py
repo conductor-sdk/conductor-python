@@ -1,10 +1,10 @@
-from __future__ import annotations
 from conductor.client.http.models.sub_workflow_params import SubWorkflowParams
 from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.task_type import TaskType
 from typing import Dict
+from typing_extensions import Self
 
 
 class SubWorkflowTask(TaskInterface):
@@ -12,7 +12,7 @@ class SubWorkflowTask(TaskInterface):
     _version: int
     _task_to_domain_map: Dict[str, str]
 
-    def __init__(self, task_ref_name: str, workflow_name: str, version: int = None, task_to_domain_map: Dict[str, str] = None) -> SubWorkflowTask:
+    def __init__(self, task_ref_name: str, workflow_name: str, version: int = None, task_to_domain_map: Dict[str, str] = None) -> Self:
         super().__init__(
             task_reference_name=task_ref_name,
             task_type=TaskType.SUB_WORKFLOW
@@ -34,7 +34,7 @@ class SubWorkflowTask(TaskInterface):
 class InlineSubWorkflowTask(TaskInterface):
     _workflow: ConductorWorkflow
 
-    def __init__(self, task_ref_name: str, workflow: ConductorWorkflow) -> InlineSubWorkflowTask:
+    def __init__(self, task_ref_name: str, workflow: ConductorWorkflow) -> Self:
         super().__init__(
             task_reference_name=task_ref_name,
             task_type=TaskType.SUB_WORKFLOW,

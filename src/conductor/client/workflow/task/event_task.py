@@ -1,14 +1,14 @@
-from __future__ import annotations
 from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.task_type import TaskType
+from typing_extensions import Self
 import abc
 
 
 class EventTaskInterface(TaskInterface, abc.ABC):
     _sink: str
 
-    def __init__(self, task_ref_name: str, event_prefix: str, event_suffix: str) -> EventTaskInterface:
+    def __init__(self, task_ref_name: str, event_prefix: str, event_suffix: str) -> Self:
         super().__init__(task_ref_name, TaskType.EVENT)
         self._sink = event_prefix + ':' + event_suffix
 
@@ -19,10 +19,10 @@ class EventTaskInterface(TaskInterface, abc.ABC):
 
 
 class SqsEventTask(EventTaskInterface):
-    def __init__(self, task_ref_name: str, queue_name: str) -> SqsEventTask:
+    def __init__(self, task_ref_name: str, queue_name: str) -> Self:
         super().__init__(task_ref_name, 'sqs', queue_name)
 
 
 class ConductorEventTask(EventTaskInterface):
-    def __init__(self, task_ref_name: str, event_name: str) -> SqsEventTask:
+    def __init__(self, task_ref_name: str, event_name: str) -> Self:
         super().__init__(task_ref_name, 'conductor', event_name)
