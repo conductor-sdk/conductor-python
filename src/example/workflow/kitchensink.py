@@ -51,7 +51,7 @@ def main():
         use_javascript=True,
     ).input(
         key='number',
-        value='${get_data.output.number}',
+        value='${workflow.input.number}',
     ).switch_case(
         case_name='LONG',
         tasks=[
@@ -80,6 +80,7 @@ def main():
         executor=workflow_executor,
         name='python_kitchensink_workflow_example_from_code',
         description='Python kitchensink workflow example from code',
+        version=4,
     )
     workflow >> sub_workflow_inline >> do_while_task
 
