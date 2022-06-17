@@ -182,6 +182,13 @@ class ConductorWorkflow:
 
     # Append task with the right shift operator `>>`
     def __rshift__(self, task: TaskInterface) -> ConductorWorkflow:
+        return self.__add_task(task)
+
+    # Append task
+    def add(self, task: TaskInterface) -> ConductorWorkflow:
+        return self.__add_task(task)
+
+    def __add_task(self, task: TaskInterface) -> ConductorWorkflow:
         if not issubclass(type(task), TaskInterface):
             raise Exception('invalid type')
         self._tasks.append(task)
