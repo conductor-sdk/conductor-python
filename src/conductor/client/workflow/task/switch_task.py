@@ -49,6 +49,6 @@ class SwitchTask(TaskInterface):
                 *tasks,
             )
         workflow.default_case = get_task_interface_list_as_workflow_task_list(
-            self._default_case
+            *self._default_case
         )
         return workflow
