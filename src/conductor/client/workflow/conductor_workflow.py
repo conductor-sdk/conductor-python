@@ -1,10 +1,10 @@
-from __future__ import annotations
 from conductor.client.http.models.workflow_def import WorkflowDef
-from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.http.models.workflow_task import WorkflowTask
+from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
 from typing import Any, Dict, List
+from typing_extensions import Self
 
 
 class ConductorWorkflow:
@@ -29,8 +29,8 @@ class ConductorWorkflow:
                  executor: WorkflowExecutor,
                  name: str,
                  version: int = None,
-                 description: str = None) -> ConductorWorkflow:
-        self.executor = executor
+                 description: str = None) -> Self:
+        self._executor = executor
         self.name = name
         self.version = version
         self.description = description
@@ -76,21 +76,21 @@ class ConductorWorkflow:
         self._description = description
 
     # TODO add property
-    def timeout_policy(self, timeout_policy: TimeoutPolicy) -> ConductorWorkflow:
+    def timeout_policy(self, timeout_policy: TimeoutPolicy) -> Self:
         if not isinstance(timeout_policy, TimeoutPolicy):
             raise Exception('invalid type')
         self._timeout_policy = timeout_policy
         return self
 
     # TODO add property
-    def timeout_seconds(self, timeout_seconds: int) -> ConductorWorkflow:
+    def timeout_seconds(self, timeout_seconds: int) -> Self:
         if not isinstance(timeout_seconds, int):
             raise Exception('invalid type')
         self._timeout_seconds = timeout_seconds
         return self
 
     # TODO add property
-    def owner_email(self, owner_email: str) -> ConductorWorkflow:
+    def owner_email(self, owner_email: str) -> Self:
         if not isinstance(owner_email, str):
             raise Exception('invalid type')
         self._owner_email = owner_email
@@ -99,7 +99,7 @@ class ConductorWorkflow:
     # TODO add property
     # Name of the workflow to execute when this workflow fails.
     # Failure workflows can be used for handling compensation logic
-    def failure_workflow(self, failure_workflow: str) -> ConductorWorkflow:
+    def failure_workflow(self, failure_workflow: str) -> Self:
         if not isinstance(failure_workflow, str):
             raise Exception('invalid type')
         self._failure_workflow = failure_workflow
@@ -108,7 +108,7 @@ class ConductorWorkflow:
     # TODO add property
     # If the workflow can be restarted after it has reached terminal state.
     # Set this to false if restarting workflow can have side effects
-    def restartable(self, restartable: bool) -> ConductorWorkflow:
+    def restartable(self, restartable: bool) -> Self:
         if not isinstance(restartable, bool):
             raise Exception('invalid type')
         self._restartable = restartable
@@ -117,14 +117,14 @@ class ConductorWorkflow:
     # TODO add property
     # Workflow output follows similar structure as task input
     # See https://conductor.netflix.com/how-tos/Tasks/task-inputs.html for more details
-    def output_parameters(self, output_parameters: Dict[str, Any]) -> ConductorWorkflow:
+    def output_parameters(self, output_parameters: Dict[str, Any]) -> Self:
         # TODO validate dict type
         self._output_parameters = output_parameters
         return self
 
     # TODO add property
     # InputTemplate template input to the workflow.  Can have combination of variables (e.g. ${workflow.input.abc}) and static values
-    def input_template(self, input_template: Dict[str, Any]) -> ConductorWorkflow:
+    def input_template(self, input_template: Dict[str, Any]) -> Self:
         # TODO validate dict type
         self._input_template = input_template
         return self
@@ -132,14 +132,14 @@ class ConductorWorkflow:
     # TODO add property
     # Variables are set using SET_VARIABLE task. Excellent way to maintain business state
     # e.g. Variables can maintain business/user specific states which can be queried and inspected to find out the state of the workflow
-    def variables(self, variables: Dict[str, Any]) -> ConductorWorkflow:
+    def variables(self, variables: Dict[str, Any]) -> Self:
         # TODO validate dict type
         self._variables = variables
         return self
 
     # TODO add property
     # List of the input parameters to the workflow. Usage: documentation ONLY
-    def input_parameters(self, input_parameters: List[str]) -> ConductorWorkflow:
+    def input_parameters(self, input_parameters: List[str]) -> Self:
         if not isinstance(input_parameters, list):
             raise Exception('invalid type')
         for input_parameter in input_parameters:
@@ -151,7 +151,7 @@ class ConductorWorkflow:
     # Register the workflow definition with the server. If overwrite is set, the definition on the server will be overwritten.
     # When not set, the call fails if there is any change in the workflow definition between the server and what is being registered.
     def register(self, overwrite: bool):
-        return self.executor.register_workflow(
+        return self._executor.register_workflow(
             overwrite=overwrite,
             workflow=self.to_workflow_def(),
         )
@@ -181,14 +181,14 @@ class ConductorWorkflow:
         return tasks
 
     # Append task with the right shift operator `>>`
-    def __rshift__(self, task: TaskInterface) -> ConductorWorkflow:
+    def __rshift__(self, task: TaskInterface) -> Self:
         return self.__add_task(task)
 
     # Append task
-    def add(self, task: TaskInterface) -> ConductorWorkflow:
+    def add(self, task: TaskInterface) -> Self:
         return self.__add_task(task)
 
-    def __add_task(self, task: TaskInterface) -> ConductorWorkflow:
+    def __add_task(self, task: TaskInterface) -> Self:
         if not issubclass(type(task), TaskInterface):
             raise Exception('invalid type')
         self._tasks.append(task)
