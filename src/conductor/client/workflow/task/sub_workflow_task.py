@@ -12,8 +12,11 @@ class SubWorkflowTask(TaskInterface):
     _version: int
     _task_to_domain_map: Dict[str, str]
 
-    def __init__(self, task_ref_name: str, workflow_name: str = None, version: int = None, task_to_domain_map: Dict[str, str] = None) -> SubWorkflowTask:
-        super().__init__(task_ref_name, TaskType.SUB_WORKFLOW)
+    def __init__(self, task_ref_name: str, workflow_name: str, version: int = None, task_to_domain_map: Dict[str, str] = None) -> SubWorkflowTask:
+        super().__init__(
+            task_reference_name=task_ref_name,
+            task_type=TaskType.SUB_WORKFLOW
+        )
         self._workflow_name = workflow_name
         self._version = version
         self._task_to_domain_map = task_to_domain_map
@@ -32,7 +35,10 @@ class InlineSubWorkflowTask(TaskInterface):
     _workflow: ConductorWorkflow
 
     def __init__(self, task_ref_name: str, workflow: ConductorWorkflow) -> InlineSubWorkflowTask:
-        super().__init__(task_ref_name, TaskType.SUB_WORKFLOW)
+        super().__init__(
+            task_reference_name=task_ref_name,
+            task_type=TaskType.SUB_WORKFLOW,
+        )
         self._workflow = workflow
 
     def to_workflow_task(self) -> WorkflowTask:
