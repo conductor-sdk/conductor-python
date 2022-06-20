@@ -10,7 +10,7 @@ class DynamicForkTask(TaskInterface):
     _join_task: JoinTask
 
     def __init__(self, task_ref_name: str, pre_fork_task: TaskInterface, join_task: JoinTask = None) -> Self:
-        super().__init__(task_ref_name, TaskType.INLINE)
+        super().__init__(task_ref_name, TaskType.FORK_JOIN_DYNAMIC)
         self._pre_fork_task = pre_fork_task
         self._join_task = join_task
 

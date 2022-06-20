@@ -6,7 +6,7 @@ from typing import List
 from typing_extensions import Self
 
 
-class ForkedTask(TaskInterface):
+class ForkTask(TaskInterface):
     _forked_tasks: List[List[TaskInterface]]
     _join_task: JoinTask
 

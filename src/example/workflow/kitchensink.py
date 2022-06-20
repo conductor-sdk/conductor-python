@@ -10,6 +10,7 @@ from conductor.client.workflow.task.do_while_task import LoopTask
 from conductor.client.workflow.task.simple_task import SimpleTask
 from conductor.client.workflow.task.sub_workflow_task import InlineSubWorkflowTask
 from conductor.client.workflow.task.switch_task import SwitchTask
+from conductor.client.workflow.task.fork_task import ForkTask
 from conductor.client.workflow.task.terminate_task import TerminateTask, WorkflowStatus
 import os
 
@@ -22,8 +23,8 @@ class Worker(WorkerInterface):
         return task_result
 
 
-def main():
-    configuration = Configuration(
+def generate_configuration():
+    return Configuration(
         server_api_url="https://pg-staging.orkesconductor.com/api",
         debug=True,
         authentication_settings=AuthenticationSettings(
@@ -32,20 +33,21 @@ def main():
         )
     )
 
-    workflow_executor = WorkflowExecutor(configuration)
 
-    simple_workflow = ConductorWorkflow(
-        executor=workflow_executor,
-        name='python_simple_workflow',
-    )
-    simple_workflow >> SimpleTask('simple_task', 'simple_task_0')
-
-    sub_workflow_inline = InlineSubWorkflowTask(
+def generate_sub_workflow_inline_task(workflow_executor: WorkflowExecutor) -> InlineSubWorkflowTask:
+    return InlineSubWorkflowTask(
         task_ref_name='sub_flow_inline',
-        workflow=simple_workflow,
+        workflow=ConductorWorkflow(
+            executor=workflow_executor,
+            name='python_simple_workflow'
+        ).add(
+            SimpleTask('simple_task', 'simple_task_0')
+        )
     )
 
-    switch_task = SwitchTask(
+
+def generate_switch_task() -> SwitchTask:
+    return SwitchTask(
         task_ref_name='fact_length',
         case_expression="$.number < 15 ? 'LONG':'LONG'",
         use_javascript=True,
@@ -70,12 +72,33 @@ def main():
         ],
     )
 
-    do_while_task = LoopTask(
+
+def generate_do_while_task() -> LoopTask:
+    return LoopTask(
         task_ref_name="loop_until_success",
         iterations=2,
-        tasks=switch_task,
+        tasks=generate_switch_task(),
     )
 
+
+def generate_fork_task() -> ForkTask:
+    return ForkTask(
+        'fork',
+        [
+            [
+                generate_do_while_task(),
+                generate_sub_workflow_inline_task(),
+            ],
+            [
+                SimpleTask('simple_task_fork', 'simple_task_fork')
+            ]
+        ]
+    )
+
+
+def main():
+    configuration = generate_configuration()
+    workflow_executor = WorkflowExecutor(configuration)
     workflow = ConductorWorkflow(
         executor=workflow_executor,
         name='python_kitchensink_workflow_example_from_code',
@@ -83,7 +106,6 @@ def main():
         version=4,
     )
     workflow >> sub_workflow_inline >> do_while_task
-
     response = workflow.register(True)
     print(response)
 
