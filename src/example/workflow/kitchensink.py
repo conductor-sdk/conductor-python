@@ -1,26 +1,16 @@
-from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from conductor.client.http.models import Task, TaskResult
-from conductor.client.http.models.task_result_status import TaskResultStatus
-from conductor.client.worker.worker_interface import WorkerInterface
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.do_while_task import LoopTask
-from conductor.client.workflow.task.simple_task import SimpleTask
-from conductor.client.workflow.task.sub_workflow_task import InlineSubWorkflowTask
-from conductor.client.workflow.task.switch_task import SwitchTask
+from conductor.client.workflow.task.dynamic_fork_task import DynamicForkTask
 from conductor.client.workflow.task.fork_task import ForkTask
+from conductor.client.workflow.task.set_variable_task import SetVariableTask
+from conductor.client.workflow.task.simple_task import SimpleTask
+from conductor.client.workflow.task.sub_workflow_task import SubWorkflowTask, InlineSubWorkflowTask
+from conductor.client.workflow.task.switch_task import SwitchTask
 from conductor.client.workflow.task.terminate_task import TerminateTask, WorkflowStatus
 import os
-
-
-class Worker(WorkerInterface):
-    def execute(self, task: Task) -> TaskResult:
-        task_result = self.get_task_result_from_task(task)
-        task_result.add_output_data('key', 'A')
-        task_result.status = TaskResultStatus.COMPLETED
-        return task_result
 
 
 def generate_configuration():
@@ -34,14 +24,21 @@ def generate_configuration():
     )
 
 
+def generate_simple_task(id: int):
+    return SimpleTask(
+        task_def_name='python_simple_task_from_code',
+        task_reference_name=f'python_simple_task_from_code{id}'
+    )
+
+
 def generate_sub_workflow_inline_task(workflow_executor: WorkflowExecutor) -> InlineSubWorkflowTask:
     return InlineSubWorkflowTask(
-        task_ref_name='sub_flow_inline',
+        task_ref_name='python_sub_flow_inline_from_code',
         workflow=ConductorWorkflow(
             executor=workflow_executor,
             name='python_simple_workflow'
         ).add(
-            SimpleTask('simple_task', 'simple_task_0')
+            task=generate_simple_task(0)
         )
     )
 
@@ -56,12 +53,7 @@ def generate_switch_task() -> SwitchTask:
         value='${workflow.input.number}',
     ).switch_case(
         case_name='LONG',
-        tasks=[
-            SimpleTask(
-                'simple_long_switch_case',
-                'simple_long_switch_case',
-            ),
-        ],
+        tasks=[generate_simple_task(i) for i in range(1, 3)],
     ).default_case(
         tasks=[
             TerminateTask(
@@ -81,18 +73,40 @@ def generate_do_while_task() -> LoopTask:
     )
 
 
-def generate_fork_task() -> ForkTask:
+def generate_fork_task(workflow_executor: WorkflowExecutor) -> ForkTask:
     return ForkTask(
-        'fork',
-        [
+        task_ref_name='fork',
+        forked_tasks=[
             [
                 generate_do_while_task(),
-                generate_sub_workflow_inline_task(),
+                generate_sub_workflow_inline_task(workflow_executor)
             ],
-            [
-                SimpleTask('simple_task_fork', 'simple_task_fork')
-            ]
+            [generate_simple_task(i) for i in range(3, 5)]
         ]
+    )
+
+
+def generate_sub_workflow_task() -> SubWorkflowTask:
+    return SubWorkflowTask(
+        task_ref_name='sub_workflow',
+        workflow_name='PopulationMinMax'
+    )
+
+
+def generate_set_variable_task() -> SetVariableTask:
+    return SetVariableTask(
+        task_ref_name='set_state'
+    ).input(
+        key='call_made', value=True
+    ).input(
+        key='number', value='value'
+    )
+
+
+def generate_dynamic_fork_task() -> DynamicForkTask:
+    return DynamicForkTask(
+        task_ref_name='dynamic_fork',
+        pre_fork_task=generate_simple_task(10)
     )
 
 
@@ -104,8 +118,14 @@ def main():
         name='python_kitchensink_workflow_example_from_code',
         description='Python kitchensink workflow example from code',
         version=4,
+    ).add(
+        task=generate_simple_task(0)
+    ).add(
+        task=generate_set_variable_task()
+    ).add(
+        task=generate_fork_task(workflow_executor)
     )
-    workflow >> sub_workflow_inline >> do_while_task
+    workflow >> generate_sub_workflow_task() >> generate_dynamic_fork_task()
     response = workflow.register(True)
     print(response)
 
