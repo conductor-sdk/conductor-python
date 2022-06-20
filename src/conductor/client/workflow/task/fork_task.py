@@ -8,12 +8,10 @@ from typing_extensions import Self
 
 class ForkTask(TaskInterface):
     _forked_tasks: List[List[TaskInterface]]
-    _join_task: JoinTask
 
     def __init__(self, task_ref_name: str, forked_tasks: List[List[TaskInterface]]) -> Self:
         super().__init__(task_ref_name, TaskType.FORK_JOIN)
         self._forked_tasks = forked_tasks
-        self._join_task = JoinTask(task_ref_name + '_join')
 
     def to_workflow_task(self) -> WorkflowTask:
         workflow = super().to_workflow_task()
@@ -25,5 +23,4 @@ class ForkTask(TaskInterface):
                     inner_forked_task.to_workflow_task()
                 )
             workflow.fork_tasks.append(converted_inner_forked_tasks)
-        workflow.join_on = self._join_task.to_workflow_task()
         return workflow

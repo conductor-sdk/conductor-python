@@ -27,7 +27,7 @@ def generate_configuration():
 def generate_simple_task(id: int):
     return SimpleTask(
         task_def_name='python_simple_task_from_code',
-        task_reference_name=f'python_simple_task_from_code{id}'
+        task_reference_name=f'python_simple_task_from_code_{id}'
     )
 
 

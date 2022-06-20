@@ -107,5 +107,5 @@ class TaskInterface(ABC):
 
     def output_ref(self, path: str) -> str:
         if path == '':
-            return "${%s.output}" % self._task_reference_name
-        return "${%s.output.%s}" % self._task_reference_name, path
+            return f"${{{self._task_reference_name}.output}}"
+        return f"${{{self._task_reference_name}.output.{path}}}"
