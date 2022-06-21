@@ -3,23 +3,21 @@ from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.task_type import TaskType
+from copy import deepcopy
 from typing import Dict
 from typing_extensions import Self
 
 
 class SubWorkflowTask(TaskInterface):
-    _workflow_name: str
-    _version: int
-    _task_to_domain_map: Dict[str, str]
-
+    # TODO add properties for constructor params
     def __init__(self, task_ref_name: str, workflow_name: str, version: int = None, task_to_domain_map: Dict[str, str] = None) -> Self:
         super().__init__(
             task_reference_name=task_ref_name,
             task_type=TaskType.SUB_WORKFLOW
         )
-        self._workflow_name = workflow_name
-        self._version = version
-        self._task_to_domain_map = task_to_domain_map
+        self._workflow_name = deepcopy(workflow_name)
+        self._version = deepcopy(version)
+        self._task_to_domain_map = deepcopy(task_to_domain_map)
 
     def to_workflow_task(self) -> WorkflowTask:
         workflow = super().to_workflow_task()
@@ -32,14 +30,13 @@ class SubWorkflowTask(TaskInterface):
 
 
 class InlineSubWorkflowTask(TaskInterface):
-    _workflow: ConductorWorkflow
-
+    # TODO add properties for constructor params
     def __init__(self, task_ref_name: str, workflow: ConductorWorkflow) -> Self:
         super().__init__(
             task_reference_name=task_ref_name,
             task_type=TaskType.SUB_WORKFLOW,
         )
-        self._workflow = workflow
+        self._workflow = deepcopy(workflow)
 
     def to_workflow_task(self) -> WorkflowTask:
         workflow = super().to_workflow_task()

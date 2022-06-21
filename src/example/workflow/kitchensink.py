@@ -24,7 +24,7 @@ def generate_configuration():
     )
 
 
-def generate_simple_task(id: int):
+def generate_simple_task(id: int) -> SimpleTask:
     return SimpleTask(
         task_def_name='python_simple_task_from_code',
         task_reference_name=f'python_simple_task_from_code_{id}'
@@ -111,23 +111,30 @@ def generate_dynamic_fork_task() -> DynamicForkTask:
 
 
 def main():
-    configuration = generate_configuration()
-    workflow_executor = WorkflowExecutor(configuration)
-    workflow = ConductorWorkflow(
-        executor=workflow_executor,
-        name='python_kitchensink_workflow_example_from_code',
-        description='Python kitchensink workflow example from code',
-        version=4,
-    ).add(
-        task=generate_simple_task(0)
-    ).add(
-        task=generate_set_variable_task()
-    ).add(
-        task=generate_fork_task(workflow_executor)
-    )
-    workflow >> generate_sub_workflow_task() >> generate_dynamic_fork_task()
-    response = workflow.register(True)
-    print(response)
+    simple_task = generate_simple_task(0)
+    print('simple_task:', simple_task.input_parameters)
+    set_variable_task = generate_set_variable_task()
+    print('simple_task:', simple_task.input_parameters)
+    print('set_variable_task:', set_variable_task.input_parameters)
+    # configuration = generate_configuration()
+    # workflow_executor = WorkflowExecutor(configuration)
+    # workflow = ConductorWorkflow(
+    #     executor=workflow_executor,
+    #     name='python_kitchensink_workflow_example_from_code',
+    #     description='Python kitchensink workflow example from code',
+    #     version=4,
+    # ).add(
+    #     task=generate_simple_task(0)
+    # )
+    # workflow.add(
+    #     task=generate_set_variable_task()
+    # )
+    # .add(
+    #     task=generate_fork_task(workflow_executor)
+    # )
+    # workflow >> generate_sub_workflow_task() >> generate_dynamic_fork_task()
+    # response = workflow.register(True)
+    # print(response)
 
 
 if __name__ == '__main__':

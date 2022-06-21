@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import Any, Dict
 from typing_extensions import Self
 
@@ -12,6 +13,7 @@ class KafkaPublishInput:
     _headers: Dict[str, Any]
     _topic: str
 
+    # TODO add properties for constructor params
     # TODO add json serializer param names
 
     def __init__(self,
@@ -23,11 +25,11 @@ class KafkaPublishInput:
                  max_block_ms: str = None,
                  headers: Dict[str, Any] = None,
                  topic: str = None) -> Self:
-        self._bootstrap_servers = bootstrap_servers
-        self._key = key
-        self._key_serializer = key_serializer
-        self._value = value
-        self._request_timeout_ms = request_timeout_ms
-        self._max_block_ms = max_block_ms
-        self. _headers = headers
-        self._topic = topic
+        self._bootstrap_servers = deepcopy(bootstrap_servers)
+        self._key = deepcopy(key)
+        self._key_serializer = deepcopy(key_serializer)
+        self._value = deepcopy(value)
+        self._request_timeout_ms = deepcopy(request_timeout_ms)
+        self._max_block_ms = deepcopy(max_block_ms)
+        self. _headers = deepcopy(headers)
+        self._topic = deepcopy(topic)

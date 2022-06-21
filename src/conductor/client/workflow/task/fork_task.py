@@ -1,5 +1,5 @@
+from copy import deepcopy
 from conductor.client.http.models.workflow_task import WorkflowTask
-from conductor.client.workflow.task.join_task import JoinTask
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.task_type import TaskType
 from typing import List
@@ -7,11 +7,13 @@ from typing_extensions import Self
 
 
 class ForkTask(TaskInterface):
-    _forked_tasks: List[List[TaskInterface]]
-
+    # TODO add properties for constructor params
     def __init__(self, task_ref_name: str, forked_tasks: List[List[TaskInterface]]) -> Self:
-        super().__init__(task_ref_name, TaskType.FORK_JOIN)
-        self._forked_tasks = forked_tasks
+        super().__init__(
+            task_reference_name=task_ref_name,
+            task_type=TaskType.FORK_JOIN
+        )
+        self._forked_tasks = deepcopy(forked_tasks)
 
     def to_workflow_task(self) -> WorkflowTask:
         workflow = super().to_workflow_task()

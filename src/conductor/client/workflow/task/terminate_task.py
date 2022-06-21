@@ -14,6 +14,7 @@ class WorkflowStatus(str, Enum):
 
 
 class TerminateTask(TaskInterface):
+    # TODO add properties for constructor params
     def __init__(self, task_ref_name: str, status: WorkflowStatus, termination_reason: str) -> Self:
         super().__init__(
             task_reference_name=task_ref_name,

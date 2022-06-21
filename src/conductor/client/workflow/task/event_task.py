@@ -1,16 +1,18 @@
+from copy import deepcopy
 from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.task_type import TaskType
 from typing_extensions import Self
-import abc
 
 
-class EventTaskInterface(TaskInterface, abc.ABC):
-    _sink: str
-
+class EventTaskInterface(TaskInterface):
+    # TODO add properties for constructor params
     def __init__(self, task_ref_name: str, event_prefix: str, event_suffix: str) -> Self:
-        super().__init__(task_ref_name, TaskType.EVENT)
-        self._sink = event_prefix + ':' + event_suffix
+        super().__init__(
+            task_reference_name=task_ref_name,
+            task_type=TaskType.EVENT
+        )
+        self._sink = deepcopy(event_prefix) + ':' + deepcopy(event_suffix)
 
     def to_workflow_task(self) -> WorkflowTask:
         workflow_task = super().to_workflow_task()

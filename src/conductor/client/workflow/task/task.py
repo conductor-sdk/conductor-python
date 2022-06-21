@@ -1,6 +1,7 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.task.task_type import TaskType
+from copy import deepcopy
 from typing import Any, Dict, List
 from typing_extensions import Self
 
@@ -13,25 +14,17 @@ def get_task_interface_list_as_workflow_task_list(*tasks: Self) -> List[Workflow
 
 
 class TaskInterface(ABC):
-    _task_reference_name: str
-    _task_type: TaskType
-    _name: str
-    _description: str
-    _optional: bool
-    _input_parameters: Dict[str, Any]
-
+    @abstractmethod
     def __init__(self,
                  task_reference_name: str,
                  task_type: TaskType,
-                 task_def_name: str = None,
+                 task_name: str = None,
                  description: str = None,
-                 optional: bool = False,
-                 input_parameters: Dict[str, Any] = {}) -> Self:
-        self._task_reference_name = task_reference_name
-        self._task_type = task_type
-        if task_def_name == None:
-            task_def_name = task_reference_name
-        self.name = task_def_name
+                 optional: bool = None,
+                 input_parameters: Dict[str, Any] = None) -> Self:
+        self.task_reference_name = task_reference_name
+        self.task_type = task_type
+        self.name = task_name or task_reference_name
         self.description = description
         self.optional = optional
         self.input_parameters = input_parameters
@@ -44,7 +37,17 @@ class TaskInterface(ABC):
     def task_reference_name(self, task_reference_name: str) -> None:
         if not isinstance(task_reference_name, str):
             raise Exception('invalid type')
-        self._task_reference_name = task_reference_name
+        self._task_reference_name = deepcopy(task_reference_name)
+
+    @property
+    def task_type(self) -> TaskType:
+        return self._task_type
+
+    @task_type.setter
+    def task_type(self, task_type: TaskType) -> None:
+        if not isinstance(task_type, TaskType):
+            raise Exception('invalid type')
+        self._task_type = deepcopy(task_type)
 
     @property
     def name(self) -> str:
@@ -64,7 +67,7 @@ class TaskInterface(ABC):
     def description(self, description: str) -> None:
         if description != None and not isinstance(description, str):
             raise Exception('invalid type')
-        self._description = description
+        self._description = deepcopy(description)
 
     @property
     def optional(self) -> bool:
@@ -72,9 +75,9 @@ class TaskInterface(ABC):
 
     @optional.setter
     def optional(self, optional: bool) -> None:
-        if not isinstance(optional, bool):
+        if optional != None and not isinstance(optional, bool):
             raise Exception('invalid type')
-        self._optional = optional
+        self._optional = deepcopy(optional)
 
     @property
     def input_parameters(self) -> Dict[str, Any]:
@@ -82,17 +85,20 @@ class TaskInterface(ABC):
 
     @input_parameters.setter
     def input_parameters(self, input_parameters: Dict[str, Any]) -> None:
+        if input_parameters == None:
+            self._input_parameters = {}
+            return
         if not isinstance(input_parameters, dict):
             raise Exception('invalid type')
         for key in input_parameters.keys():
             if not isinstance(key, str):
                 raise Exception('invalid type')
-        self._input_parameters = input_parameters
+        self._input_parameters = deepcopy(input_parameters)
 
     def input(self, key: str, value: Any) -> Self:
         if not isinstance(key, str):
             raise Exception('invalid type')
-        self._input_parameters[key] = value
+        self._input_parameters[key] = deepcopy(value)
         return self
 
     def to_workflow_task(self) -> WorkflowTask:
@@ -107,5 +113,5 @@ class TaskInterface(ABC):
 
     def output_ref(self, path: str) -> str:
         if path == '':
-            return f"${{{self._task_reference_name}.output}}"
-        return f"${{{self._task_reference_name}.output.{path}}}"
+            return f'${{{self._task_reference_name}.output}}'
+        return f'${{{self._task_reference_name}.output.{path}}}'

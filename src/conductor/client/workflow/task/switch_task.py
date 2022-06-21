@@ -1,6 +1,7 @@
 from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.task.task import TaskInterface, get_task_interface_list_as_workflow_task_list
 from conductor.client.workflow.task.task_type import TaskType
+from copy import deepcopy
 from enum import Enum
 from typing import Dict, List
 from typing_extensions import Self
@@ -24,15 +25,15 @@ class SwitchTask(TaskInterface):
             task_type=TaskType.SWITCH,
         )
         self._decision_cases = {}
-        self._expression = case_expression
-        self._use_javascript = use_javascript
+        self._expression = deepcopy(case_expression)
+        self._use_javascript = deepcopy(use_javascript)
 
     def switch_case(self, case_name: str, tasks: List[TaskInterface]) -> Self:
-        self._decision_cases[case_name] = tasks
+        self._decision_cases[case_name] = deepcopy(tasks)
         return self
 
     def default_case(self, tasks: List[TaskInterface]) -> Self:
-        self._default_case = tasks
+        self._default_case = deepcopy(tasks)
         return self
 
     def to_workflow_task(self) -> WorkflowTask:

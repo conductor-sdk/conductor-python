@@ -5,13 +5,17 @@ from typing_extensions import Self
 
 
 class StartWorkflowTask(TaskInterface):
-    def __init__(self, task_ref_name: str, workflow_name: str, version: int = None, start_workflow_request: StartWorkflowRequest = None) -> Self:
-        super().__init__(task_ref_name, TaskType.START_WORKFLOW)
-        self._input_parameters = {
-            "startWorkflow": {
-                "name":          workflow_name,
-                "version":       version,
-                "input":         start_workflow_request.input,
-                "correlationId": start_workflow_request.correlation_id,
-            },
-        }
+    # TODO add properties for constructor params
+    def __init__(self, task_ref_name: str, workflow_name: str, start_workflow_request: StartWorkflowRequest, version: int = None) -> Self:
+        super().__init__(
+            task_reference_name=task_ref_name,
+            task_type=TaskType.START_WORKFLOW,
+            input_parameters={
+                "startWorkflow": {
+                    "name":          workflow_name,
+                    "version":       version,
+                    "input":         start_workflow_request.input,
+                    "correlationId": start_workflow_request.correlation_id,
+                },
+            }
+        )
