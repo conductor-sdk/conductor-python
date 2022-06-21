@@ -36,13 +36,15 @@ class InlineSubWorkflowTask(TaskInterface):
             task_reference_name=task_ref_name,
             task_type=TaskType.SUB_WORKFLOW,
         )
-        self._workflow = deepcopy(workflow)
+        self._workflow_name = deepcopy(workflow.name)
+        self._workflow_version = deepcopy(workflow.version)
+        self._workflow_definition = deepcopy(workflow.to_workflow_def())
 
     def to_workflow_task(self) -> WorkflowTask:
         workflow = super().to_workflow_task()
         workflow.sub_workflow_param = SubWorkflowParams(
-            name=self._workflow.name,
-            version=self._workflow.version,
-            workflow_definition=self._workflow.to_workflow_def(),
+            name=self._workflow_name,
+            version=self._workflow_version,
+            workflow_definition=self._workflow_definition,
         )
         return workflow
