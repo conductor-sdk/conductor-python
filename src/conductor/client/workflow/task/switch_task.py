@@ -40,6 +40,7 @@ class SwitchTask(TaskInterface):
         workflow = super().to_workflow_task()
         if self._use_javascript:
             workflow.evaluator_type = EvaluatorType.JAVASCRIPT
+            workflow.expression = self._expression
         else:
             workflow.evaluator_type = EvaluatorType.VALUE_PARAM
             workflow.input_parameters['switchCaseValue'] = self._expression

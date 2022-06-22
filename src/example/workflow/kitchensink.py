@@ -117,7 +117,7 @@ def main():
         executor=workflow_executor,
         name='python_workflow_example_from_code',
         description='Python workflow example from code',
-        version=6,
+        version=14,
     ).add(
         generate_simple_task(0)
     ).add(
@@ -125,9 +125,8 @@ def main():
     ).add(
         generate_fork_task(workflow_executor)
     )
-    # workflow >> generate_sub_workflow_task() >> generate_dynamic_fork_task()
-    response = workflow.register(True)
-    print(response)
+    workflow >> generate_sub_workflow_task()
+    print('register workflow response:', workflow.register(True))
 
 
 if __name__ == '__main__':
