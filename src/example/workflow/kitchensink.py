@@ -75,7 +75,7 @@ def generate_do_while_task() -> LoopTask:
 
 def generate_fork_task(workflow_executor: WorkflowExecutor) -> ForkTask:
     return ForkTask(
-        task_ref_name='fork',
+        task_ref_name='forked',
         forked_tasks=[
             [
                 generate_do_while_task(),
@@ -115,9 +115,9 @@ def main():
     workflow_executor = WorkflowExecutor(configuration)
     workflow = ConductorWorkflow(
         executor=workflow_executor,
-        name='python_kitchensink_workflow_example_from_code',
-        description='Python kitchensink workflow example from code',
-        version=5,
+        name='python_workflow_example_from_code',
+        description='Python workflow example from code',
+        version=6,
     ).add(
         generate_simple_task(0)
     ).add(
@@ -125,7 +125,7 @@ def main():
     ).add(
         generate_fork_task(workflow_executor)
     )
-    workflow >> generate_sub_workflow_task() >> generate_dynamic_fork_task()
+    # workflow >> generate_sub_workflow_task() >> generate_dynamic_fork_task()
     response = workflow.register(True)
     print(response)
 
