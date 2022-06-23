@@ -5,6 +5,7 @@ from conductor.client.workflow.executor.workflow_executor import WorkflowExecuto
 from conductor.client.workflow.task.do_while_task import LoopTask
 from conductor.client.workflow.task.dynamic_fork_task import DynamicForkTask
 from conductor.client.workflow.task.fork_task import ForkTask
+from conductor.client.workflow.task.json_jq_task import JsonJQTask
 from conductor.client.workflow.task.set_variable_task import SetVariableTask
 from conductor.client.workflow.task.simple_task import SimpleTask
 from conductor.client.workflow.task.sub_workflow_task import SubWorkflowTask, InlineSubWorkflowTask
@@ -110,6 +111,17 @@ def generate_dynamic_fork_task() -> DynamicForkTask:
     )
 
 
+def generate_json_jq_task() -> JsonJQTask:
+    return JsonJQTask(
+        task_ref_name='jq',
+        script='{ key3: (.key1.value1 + .key2.value2) }'
+    ).input(
+        key='value1', value=['a', 'b'],
+    ).input(
+        key='value2', value=['d', 'e'],
+    )
+
+
 def main():
     configuration = generate_configuration()
     workflow_executor = WorkflowExecutor(configuration)
@@ -117,7 +129,7 @@ def main():
         executor=workflow_executor,
         name='python_workflow_example_from_code',
         description='Python workflow example from code',
-        version=14,
+        version=15,
     ).add(
         generate_simple_task(0)
     ).add(
@@ -125,7 +137,7 @@ def main():
     ).add(
         generate_fork_task(workflow_executor)
     )
-    workflow >> generate_sub_workflow_task()
+    workflow >> generate_sub_workflow_task() >> generate_json_jq_task()
     print('register workflow response:', workflow.register(True))
 
 
