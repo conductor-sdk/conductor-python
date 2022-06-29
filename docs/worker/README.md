@@ -110,3 +110,5 @@ class SimpleCppWorker(WorkerInterface):
         task_result.status = TaskResultStatus.COMPLETED
         return task_result
 ```
+
+### Next: [Create workflows using Code](docs/workflow/README.md)
