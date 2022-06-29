@@ -1,18 +1,25 @@
-# Netflix Conductor Client SDK
-
-To find out more about Conductor visit: [https://github.com/Netflix/conductor](https://github.com/Netflix/conductor)
+# Netflix Conductor SDK
 
 `conductor-python` repository provides the client SDKs to build Task Workers in Python
 
-### Setup Virtual Environment
+## Quick Start
 
+1. [Setup conductor-python package](#Setup-conductor-python-package)
+2. [Create and run Task Workers](docs/worker/README.md)
+3. [Create workflows using Code](docs/workflow/README.md)
+4. [API Documentation](docs/api/README.md)
+
+### Setup conductor python package
+
+Create a virtual environment to build your package:
 ```shell
-$ virtualenv conductor
-$ source conductor/bin/activate
+virtualenv conductor
+source conductor/bin/activate
 ```
-Install `conductor-python` package
+
+Get Conductor Python SDK
 ```shell
-$ python3 -m pip install conductor-python
+python3 -m pip install conductor-python
 ```
 
 ### Write a simple worker
