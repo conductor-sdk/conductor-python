@@ -36,13 +36,19 @@ configuration = Configuration(
 * debug: `true` for verbose logging `false` to display only the errors
 
 #### Authentication settings (optional)
-Use if your conductor server requires authentication
+Use if your conductor server requires authentication.
+
+##### Access Control Setup
+See [Access Control](https://orkes.io/content/docs/getting-started/concepts/access-control) for more details on role based access control with Conductor and generating API keys for your environment.
+
+```python
 configuration = Configuration(
     authentication_settings=AuthenticationSettings(
         key_id='key',
         key_secret='secret'
     )
 )
+```
 
 ### Metrics settings (optional)
 Conductor uses [Prometheus](https://prometheus.io/) to collect metrics.
