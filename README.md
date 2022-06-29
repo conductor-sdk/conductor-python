@@ -22,20 +22,44 @@ Get Conductor Python SDK
 python3 -m pip install conductor-python
 ```
 
-### Server Configurations
+### Server settings
+Everything related to server settings should be done within `Configuration` class, by setting the required parameter when initializing an object, like this:
+
+```python
+configuration = Configuration(
+    server_api_url='https://play.orkes.io/api',
+    debug=True
+)
+```
+
 * server_api_url : Conductor server address.  e.g. `http://localhost:8000/api` if running locally 
 * debug: `true` for verbose logging `false` to display only the errors
-* authentication_settings: see below
-* metrics_settings: see below
 
-### Metrics
+#### Authentication settings (optional)
+Use if your conductor server requires authentication
+configuration = Configuration(
+    authentication_settings=AuthenticationSettings(
+        key_id='key',
+        key_secret='secret'
+    )
+)
+
+### Metrics settings (optional)
 Conductor uses [Prometheus](https://prometheus.io/) to collect metrics.
 
-* directory: Directory where to store the metrics 
-* file_name: File where the metrics are colleted. e.g. `metrics.log`
-* update_interval: Time interval in seconds at which to collect metrics into the file
+```python
+metrics_settings = MetricsSettings(
+    directory='/path/to/folder',
+    file_name='metrics_file_name.extension',
+    update_interval=0.1,
+)
+```
 
-### Authentication
-Use if your conductor server requires authentication
-* key_id: Key
-* key_secret: Secret for the Key 
+* `directory`: Directory where to store the metrics
+  * make sure that you have created this folder before, or the program have permission to create it for you
+* `file_name`: File where the metrics are colleted.
+  * example: `metrics.log`
+* `update_interval`: Time interval in seconds at which to collect metrics into the file. 
+  * example: `0.1` means metrics are updated every 0.1s, or 100ms
+
+### Next: [Create and run Task Workers](docs/worker/README.md)
