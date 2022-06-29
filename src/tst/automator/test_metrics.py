@@ -19,19 +19,16 @@ class TestMetricsCollection(unittest.TestCase):
         expected_directory = '/a/b'
         expected_file_name = 'some_name.txt'
         expected_update_interval = 0.5
-        expected_exception = Exception()
-        with self.assertRaises(Exception) as context:
-            metrics_settings = MetricsSettings(
-                directory=expected_directory,
-                file_name=expected_file_name,
-                update_interval=expected_update_interval,
-            )
-            self.assertEqual(expected_exception, context.exception)
-            self.assertEqual(
-                metrics_settings.file_name,
-                expected_file_name
-            )
-            self.assertEqual(
-                metrics_settings.update_interval,
-                expected_update_interval
-            )
+        metrics_settings = MetricsSettings(
+            directory=expected_directory,
+            file_name=expected_file_name,
+            update_interval=expected_update_interval,
+        )
+        self.assertEqual(
+            metrics_settings.file_name,
+            expected_file_name
+        )
+        self.assertEqual(
+            metrics_settings.update_interval,
+            expected_update_interval
+        )
