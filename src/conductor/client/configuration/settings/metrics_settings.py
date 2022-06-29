@@ -24,8 +24,8 @@ class MetricsSettings:
     def __init__(
             self,
             directory: str = None,
-            file_name: str = 'metrics.log',
-            update_interval: float = 0.1):
+            file_name: str = None,
+            update_interval: float = None):
         if directory == None:
             directory = get_default_temporary_folder()
         if not os.path.isdir(directory):
@@ -33,5 +33,9 @@ class MetricsSettings:
                 f'Failed to set metrics directory to: {directory}, reason: folder does not exists'
             )
         self.directory = directory
+        if file_name == None:
+            file_name = 'metrics.log'
         self.file_name = file_name
+        if update_interval == None:
+            update_interval = 0.1
         self.update_interval = update_interval
