@@ -11,31 +11,26 @@ logger = logging.getLogger(
 
 
 def get_default_temporary_folder() -> str:
-    try:
-        metrics_dir = str(Path.home()) + '/tmp/'
-        if not os.path.isdir(metrics_dir):
-            os.mkdir(metrics_dir)
-        return metrics_dir
-    except Exception as e:
-        logger.warning('Failed to create metrics temporary folder')
+    return f'{str(Path.home())}/tmp/'
 
 
 class MetricsSettings:
     def __init__(
             self,
             directory: str = None,
-            file_name: str = None,
-            update_interval: float = None):
+            file_name: str = 'metrics.log',
+            update_interval: float = 0.1):
         if directory == None:
             directory = get_default_temporary_folder()
-        if not os.path.isdir(directory):
-            raise Exception(
-                f'Failed to set metrics directory to: {directory}, reason: folder does not exists'
-            )
-        self.directory = directory
-        if file_name == None:
-            file_name = 'metrics.log'
+        self.__set_dir(directory)
         self.file_name = file_name
-        if update_interval == None:
-            update_interval = 0.1
         self.update_interval = update_interval
+
+    def __set_dir(self, dir: str) -> None:
+        if not os.path.isdir(dir):
+            try:
+                os.mkdir(dir)
+            except Exception as e:
+                logger.warning(
+                    'Failed to create metrics temporary folder, reason: ', e)
+        self.directory = dir
