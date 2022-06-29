@@ -111,4 +111,4 @@ class SimpleCppWorker(WorkerInterface):
         return task_result
 ```
 
-### Next: [Create workflows using Code](docs/workflow/README.md)
+### Next: [Create workflows using Code](../workflow/README.md)
