@@ -72,9 +72,9 @@ Here is an example how you can do that with Conductor SDK.
 ### 2. Compile and share its library:
    * C++ file name: `simple_cpp_lib.cpp`
    * Library output name goal: `lib.so`
-        ```bash
-        $ g++ -c -fPIC simple_cpp_lib.cpp -o simple_cpp_lib.o
-        $ g++ -shared -Wl,-install_name,lib.so -o lib.so simple_cpp_lib.o
+        ```shell
+        g++ -c -fPIC simple_cpp_lib.cpp -o simple_cpp_lib.o
+        g++ -shared -Wl,-install_name,lib.so -o lib.so simple_cpp_lib.o
         ```
      
 ### 3. Use the C++ library in your python worker
