@@ -37,11 +37,8 @@ workflow >> simple_task_2
 You should be able to register your workflow at the Conductor Server:
 
 ```python
-workflow.register()
+workflow.register(true)
 ```
-
-//Register the workflow with server
-conductorWorkflow.Register(true)        //Overwrite the existing definition with the new one
 
 ### Execute Workflow
 
