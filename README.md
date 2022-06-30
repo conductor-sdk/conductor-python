@@ -63,9 +63,9 @@ metrics_settings = MetricsSettings(
 
 * `directory`: Directory where to store the metrics
   * make sure that you have created this folder before, or the program have permission to create it for you
-* `file_name`: File where the metrics are colleted.
+* `file_name`: File where the metrics are stored
   * example: `metrics.log`
-* `update_interval`: Time interval in seconds at which to collect metrics into the file. 
+* `update_interval`: Time interval in seconds to refresh metrics into the file 
   * example: `0.1` means metrics are updated every 0.1s, or 100ms
 
 ### Next: [Create and run Task Workers](docs/worker/README.md)
