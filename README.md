@@ -7,7 +7,6 @@
 1. [Setup conductor-python package](#Setup-conductor-python-package)
 2. [Create and run Task Workers](docs/worker/README.md)
 3. [Create workflows using Code](docs/workflow/README.md)
-4. [API Documentation](docs/api/README.md)
 
 ### Setup conductor python package
 
