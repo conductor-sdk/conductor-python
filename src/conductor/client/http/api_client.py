@@ -487,19 +487,12 @@ class ApiClient(object):
         if not auth_settings:
             return
 
-        for auth in auth_settings:
-            auth_setting = self.configuration.auth_settings().get(auth)
-            if auth_setting:
-                if not auth_setting['value']:
-                    continue
-                elif auth_setting['in'] == 'header':
-                    headers[auth_setting['key']] = auth_setting['value']
-                elif auth_setting['in'] == 'query':
-                    querys.append((auth_setting['key'], auth_setting['value']))
-                else:
-                    raise ValueError(
-                        'Authentication token must be in `query` or `header`'
-                    )
+        if 'header' in auth_settings:
+            for key, value in auth_settings['header'].items():
+                headers[key] = value
+        if 'query' in auth_settings:
+            for key, value in auth_settings['query'].items():
+                querys[key] = value
 
     def __deserialize_file(self, response):
         """Deserializes body to file
