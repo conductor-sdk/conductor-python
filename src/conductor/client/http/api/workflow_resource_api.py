@@ -299,12 +299,12 @@ class WorkflowResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def get_external_storage_location1(self, path, operation, payload_type, **kwargs):  # noqa: E501
+    def get_external_storage_location(self, path, operation, payload_type, **kwargs):  # noqa: E501
         """Get the uri and path of the external storage where the workflow payload is to be stored  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.get_external_storage_location1(path, operation, payload_type, async_req=True)
+        >>> thread = api.get_external_storage_location(path, operation, payload_type, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -317,17 +317,17 @@ class WorkflowResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.get_external_storage_location1_with_http_info(path, operation, payload_type, **kwargs)  # noqa: E501
+            return self.get_external_storage_location_with_http_info(path, operation, payload_type, **kwargs)  # noqa: E501
         else:
-            (data) = self.get_external_storage_location1_with_http_info(path, operation, payload_type, **kwargs)  # noqa: E501
+            (data) = self.get_external_storage_location_with_http_info(path, operation, payload_type, **kwargs)  # noqa: E501
             return data
 
-    def get_external_storage_location1_with_http_info(self, path, operation, payload_type, **kwargs):  # noqa: E501
+    def get_external_storage_location_with_http_info(self, path, operation, payload_type, **kwargs):  # noqa: E501
         """Get the uri and path of the external storage where the workflow payload is to be stored  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.get_external_storage_location1_with_http_info(path, operation, payload_type, async_req=True)
+        >>> thread = api.get_external_storage_location_with_http_info(path, operation, payload_type, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -350,22 +350,22 @@ class WorkflowResourceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method get_external_storage_location1" % key
+                    " to method get_external_storage_location" % key
                 )
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'path' is set
         if ('path' not in params or
                 params['path'] is None):
-            raise ValueError("Missing the required parameter `path` when calling `get_external_storage_location1`")  # noqa: E501
+            raise ValueError("Missing the required parameter `path` when calling `get_external_storage_location`")  # noqa: E501
         # verify the required parameter 'operation' is set
         if ('operation' not in params or
                 params['operation'] is None):
-            raise ValueError("Missing the required parameter `operation` when calling `get_external_storage_location1`")  # noqa: E501
+            raise ValueError("Missing the required parameter `operation` when calling `get_external_storage_location`")  # noqa: E501
         # verify the required parameter 'payload_type' is set
         if ('payload_type' not in params or
                 params['payload_type'] is None):
-            raise ValueError("Missing the required parameter `payload_type` when calling `get_external_storage_location1`")  # noqa: E501
+            raise ValueError("Missing the required parameter `payload_type` when calling `get_external_storage_location`")  # noqa: E501
 
         collection_formats = {}
 
@@ -614,121 +614,12 @@ class WorkflowResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def get_workflows(self, name, correlation_id, **kwargs):  # noqa: E501
-        """Lists workflows for the given correlation id  # noqa: E501
-
-        This method makes a synchronous HTTP request by default. To make an
-        asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.get_workflows(name, correlation_id, async_req=True)
-        >>> result = thread.get()
-
-        :param async_req bool
-        :param str name: (required)
-        :param str correlation_id: (required)
-        :param bool include_closed:
-        :param bool include_tasks:
-        :return: list[Workflow]
-                 If the method is called asynchronously,
-                 returns the request thread.
-        """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.get_workflows_with_http_info(name, correlation_id, **kwargs)  # noqa: E501
-        else:
-            (data) = self.get_workflows_with_http_info(name, correlation_id, **kwargs)  # noqa: E501
-            return data
-
-    def get_workflows_with_http_info(self, name, correlation_id, **kwargs):  # noqa: E501
-        """Lists workflows for the given correlation id  # noqa: E501
-
-        This method makes a synchronous HTTP request by default. To make an
-        asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.get_workflows_with_http_info(name, correlation_id, async_req=True)
-        >>> result = thread.get()
-
-        :param async_req bool
-        :param str name: (required)
-        :param str correlation_id: (required)
-        :param bool include_closed:
-        :param bool include_tasks:
-        :return: list[Workflow]
-                 If the method is called asynchronously,
-                 returns the request thread.
-        """
-
-        all_params = ['name', 'correlation_id', 'include_closed', 'include_tasks']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
-
-        params = locals()
-        for key, val in six.iteritems(params['kwargs']):
-            if key not in all_params:
-                raise TypeError(
-                    "Got an unexpected keyword argument '%s'"
-                    " to method get_workflows" % key
-                )
-            params[key] = val
-        del params['kwargs']
-        # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `get_workflows`")  # noqa: E501
-        # verify the required parameter 'correlation_id' is set
-        if ('correlation_id' not in params or
-                params['correlation_id'] is None):
-            raise ValueError("Missing the required parameter `correlation_id` when calling `get_workflows`")  # noqa: E501
-
-        collection_formats = {}
-
-        path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
-        if 'correlation_id' in params:
-            path_params['correlationId'] = params['correlation_id']  # noqa: E501
-
-        query_params = []
-        if 'include_closed' in params:
-            query_params.append(('includeClosed', params['include_closed']))  # noqa: E501
-        if 'include_tasks' in params:
-            query_params.append(('includeTasks', params['include_tasks']))  # noqa: E501
-
-        header_params = {}
-
-        form_params = []
-        local_var_files = {}
-
-        body_params = None
-        # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['*/*'])  # noqa: E501
-
-        # Authentication setting
-        auth_settings = []  # noqa: E501
-
-        return self.api_client.call_api(
-            '/workflow/{name}/correlated/{correlationId}', 'GET',
-            path_params,
-            query_params,
-            header_params,
-            body=body_params,
-            post_params=form_params,
-            files=local_var_files,
-            response_type='list[Workflow]',  # noqa: E501
-            auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
-
-    def get_workflows1(self, body, name, **kwargs):  # noqa: E501
+    def get_workflows(self, body, name, **kwargs):  # noqa: E501
         """Lists workflows for the given correlation id list  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.get_workflows1(body, name, async_req=True)
+        >>> thread = api.get_workflows(body, name, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -742,17 +633,17 @@ class WorkflowResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.get_workflows1_with_http_info(body, name, **kwargs)  # noqa: E501
+            return self.get_workflows_with_http_info(body, name, **kwargs)  # noqa: E501
         else:
-            (data) = self.get_workflows1_with_http_info(body, name, **kwargs)  # noqa: E501
+            (data) = self.get_workflows_with_http_info(body, name, **kwargs)  # noqa: E501
             return data
 
-    def get_workflows1_with_http_info(self, body, name, **kwargs):  # noqa: E501
+    def get_workflows_with_http_info(self, body, name, **kwargs):  # noqa: E501
         """Lists workflows for the given correlation id list  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.get_workflows1_with_http_info(body, name, async_req=True)
+        >>> thread = api.get_workflows_with_http_info(body, name, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -776,18 +667,18 @@ class WorkflowResourceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method get_workflows1" % key
+                    " to method get_workflows" % key
                 )
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'body' is set
         if ('body' not in params or
                 params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `get_workflows1`")  # noqa: E501
+            raise ValueError("Missing the required parameter `body` when calling `get_workflows`")  # noqa: E501
         # verify the required parameter 'name' is set
         if ('name' not in params or
                 params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `get_workflows1`")  # noqa: E501
+            raise ValueError("Missing the required parameter `name` when calling `get_workflows`")  # noqa: E501
 
         collection_formats = {}
 
@@ -836,12 +727,121 @@ class WorkflowResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def pause_workflow(self, workflow_id, **kwargs):  # noqa: E501
+    def get_workflows1(self, name, correlation_id, **kwargs):  # noqa: E501
+        """Lists workflows for the given correlation id  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.get_workflows1(name, correlation_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str name: (required)
+        :param str correlation_id: (required)
+        :param bool include_closed:
+        :param bool include_tasks:
+        :return: list[Workflow]
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.get_workflows1_with_http_info(name, correlation_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.get_workflows1_with_http_info(name, correlation_id, **kwargs)  # noqa: E501
+            return data
+
+    def get_workflows1_with_http_info(self, name, correlation_id, **kwargs):  # noqa: E501
+        """Lists workflows for the given correlation id  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.get_workflows1_with_http_info(name, correlation_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str name: (required)
+        :param str correlation_id: (required)
+        :param bool include_closed:
+        :param bool include_tasks:
+        :return: list[Workflow]
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['name', 'correlation_id', 'include_closed', 'include_tasks']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method get_workflows1" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'name' is set
+        if ('name' not in params or
+                params['name'] is None):
+            raise ValueError("Missing the required parameter `name` when calling `get_workflows1`")  # noqa: E501
+        # verify the required parameter 'correlation_id' is set
+        if ('correlation_id' not in params or
+                params['correlation_id'] is None):
+            raise ValueError("Missing the required parameter `correlation_id` when calling `get_workflows1`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'name' in params:
+            path_params['name'] = params['name']  # noqa: E501
+        if 'correlation_id' in params:
+            path_params['correlationId'] = params['correlation_id']  # noqa: E501
+
+        query_params = []
+        if 'include_closed' in params:
+            query_params.append(('includeClosed', params['include_closed']))  # noqa: E501
+        if 'include_tasks' in params:
+            query_params.append(('includeTasks', params['include_tasks']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['*/*'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/workflow/{name}/correlated/{correlationId}', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='list[Workflow]',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def pause_workflow1(self, workflow_id, **kwargs):  # noqa: E501
         """Pauses the workflow  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.pause_workflow(workflow_id, async_req=True)
+        >>> thread = api.pause_workflow1(workflow_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -852,17 +852,17 @@ class WorkflowResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.pause_workflow_with_http_info(workflow_id, **kwargs)  # noqa: E501
+            return self.pause_workflow1_with_http_info(workflow_id, **kwargs)  # noqa: E501
         else:
-            (data) = self.pause_workflow_with_http_info(workflow_id, **kwargs)  # noqa: E501
+            (data) = self.pause_workflow1_with_http_info(workflow_id, **kwargs)  # noqa: E501
             return data
 
-    def pause_workflow_with_http_info(self, workflow_id, **kwargs):  # noqa: E501
+    def pause_workflow1_with_http_info(self, workflow_id, **kwargs):  # noqa: E501
         """Pauses the workflow  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.pause_workflow_with_http_info(workflow_id, async_req=True)
+        >>> thread = api.pause_workflow1_with_http_info(workflow_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -883,14 +883,14 @@ class WorkflowResourceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method pause_workflow" % key
+                    " to method pause_workflow1" % key
                 )
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'workflow_id' is set
         if ('workflow_id' not in params or
                 params['workflow_id'] is None):
-            raise ValueError("Missing the required parameter `workflow_id` when calling `pause_workflow`")  # noqa: E501
+            raise ValueError("Missing the required parameter `workflow_id` when calling `pause_workflow1`")  # noqa: E501
 
         collection_formats = {}
 
@@ -1119,12 +1119,12 @@ class WorkflowResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def restart(self, workflow_id, **kwargs):  # noqa: E501
+    def restart1(self, workflow_id, **kwargs):  # noqa: E501
         """Restarts a completed workflow  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.restart(workflow_id, async_req=True)
+        >>> thread = api.restart1(workflow_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -1136,17 +1136,17 @@ class WorkflowResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.restart_with_http_info(workflow_id, **kwargs)  # noqa: E501
+            return self.restart1_with_http_info(workflow_id, **kwargs)  # noqa: E501
         else:
-            (data) = self.restart_with_http_info(workflow_id, **kwargs)  # noqa: E501
+            (data) = self.restart1_with_http_info(workflow_id, **kwargs)  # noqa: E501
             return data
 
-    def restart_with_http_info(self, workflow_id, **kwargs):  # noqa: E501
+    def restart1_with_http_info(self, workflow_id, **kwargs):  # noqa: E501
         """Restarts a completed workflow  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.restart_with_http_info(workflow_id, async_req=True)
+        >>> thread = api.restart1_with_http_info(workflow_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -1168,14 +1168,14 @@ class WorkflowResourceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method restart" % key
+                    " to method restart1" % key
                 )
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'workflow_id' is set
         if ('workflow_id' not in params or
                 params['workflow_id'] is None):
-            raise ValueError("Missing the required parameter `workflow_id` when calling `restart`")  # noqa: E501
+            raise ValueError("Missing the required parameter `workflow_id` when calling `restart1`")  # noqa: E501
 
         collection_formats = {}
 
@@ -1301,12 +1301,12 @@ class WorkflowResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def retry(self, workflow_id, **kwargs):  # noqa: E501
+    def retry1(self, workflow_id, **kwargs):  # noqa: E501
         """Retries the last failed task  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.retry(workflow_id, async_req=True)
+        >>> thread = api.retry1(workflow_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -1318,17 +1318,17 @@ class WorkflowResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.retry_with_http_info(workflow_id, **kwargs)  # noqa: E501
+            return self.retry1_with_http_info(workflow_id, **kwargs)  # noqa: E501
         else:
-            (data) = self.retry_with_http_info(workflow_id, **kwargs)  # noqa: E501
+            (data) = self.retry1_with_http_info(workflow_id, **kwargs)  # noqa: E501
             return data
 
-    def retry_with_http_info(self, workflow_id, **kwargs):  # noqa: E501
+    def retry1_with_http_info(self, workflow_id, **kwargs):  # noqa: E501
         """Retries the last failed task  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.retry_with_http_info(workflow_id, async_req=True)
+        >>> thread = api.retry1_with_http_info(workflow_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -1350,14 +1350,14 @@ class WorkflowResourceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method retry" % key
+                    " to method retry1" % key
                 )
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'workflow_id' is set
         if ('workflow_id' not in params or
                 params['workflow_id'] is None):
-            raise ValueError("Missing the required parameter `workflow_id` when calling `retry`")  # noqa: E501
+            raise ValueError("Missing the required parameter `workflow_id` when calling `retry1`")  # noqa: E501
 
         collection_formats = {}
 
@@ -1394,13 +1394,13 @@ class WorkflowResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def search1(self, **kwargs):  # noqa: E501
+    def search(self, **kwargs):  # noqa: E501
         """Search for workflows based on payload and other parameters  # noqa: E501
 
         use sort options as sort=<field>:ASC|DESC e.g. sort=name&sort=workflowId:DESC. If order is not specified, defaults to ASC.  # noqa: E501
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.search1(async_req=True)
+        >>> thread = api.search(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -1417,18 +1417,18 @@ class WorkflowResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.search1_with_http_info(**kwargs)  # noqa: E501
+            return self.search_with_http_info(**kwargs)  # noqa: E501
         else:
-            (data) = self.search1_with_http_info(**kwargs)  # noqa: E501
+            (data) = self.search_with_http_info(**kwargs)  # noqa: E501
             return data
 
-    def search1_with_http_info(self, **kwargs):  # noqa: E501
+    def search_with_http_info(self, **kwargs):  # noqa: E501
         """Search for workflows based on payload and other parameters  # noqa: E501
 
         use sort options as sort=<field>:ASC|DESC e.g. sort=name&sort=workflowId:DESC. If order is not specified, defaults to ASC.  # noqa: E501
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.search1_with_http_info(async_req=True)
+        >>> thread = api.search_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -1455,7 +1455,7 @@ class WorkflowResourceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method search1" % key
+                    " to method search" % key
                 )
             params[key] = val
         del params['kwargs']
@@ -1509,13 +1509,13 @@ class WorkflowResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def search_v2(self, **kwargs):  # noqa: E501
+    def search_v22(self, **kwargs):  # noqa: E501
         """Search for workflows based on payload and other parameters  # noqa: E501
 
         use sort options as sort=<field>:ASC|DESC e.g. sort=name&sort=workflowId:DESC. If order is not specified, defaults to ASC.  # noqa: E501
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.search_v2(async_req=True)
+        >>> thread = api.search_v22(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -1530,18 +1530,18 @@ class WorkflowResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.search_v2_with_http_info(**kwargs)  # noqa: E501
+            return self.search_v22_with_http_info(**kwargs)  # noqa: E501
         else:
-            (data) = self.search_v2_with_http_info(**kwargs)  # noqa: E501
+            (data) = self.search_v22_with_http_info(**kwargs)  # noqa: E501
             return data
 
-    def search_v2_with_http_info(self, **kwargs):  # noqa: E501
+    def search_v22_with_http_info(self, **kwargs):  # noqa: E501
         """Search for workflows based on payload and other parameters  # noqa: E501
 
         use sort options as sort=<field>:ASC|DESC e.g. sort=name&sort=workflowId:DESC. If order is not specified, defaults to ASC.  # noqa: E501
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.search_v2_with_http_info(async_req=True)
+        >>> thread = api.search_v22_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -1566,7 +1566,7 @@ class WorkflowResourceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method search_v2" % key
+                    " to method search_v22" % key
                 )
             params[key] = val
         del params['kwargs']
@@ -2149,12 +2149,12 @@ class WorkflowResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def terminate(self, workflow_id, **kwargs):  # noqa: E501
+    def terminate1(self, workflow_id, **kwargs):  # noqa: E501
         """Terminate workflow execution  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.terminate(workflow_id, async_req=True)
+        >>> thread = api.terminate1(workflow_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -2166,17 +2166,17 @@ class WorkflowResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.terminate_with_http_info(workflow_id, **kwargs)  # noqa: E501
+            return self.terminate1_with_http_info(workflow_id, **kwargs)  # noqa: E501
         else:
-            (data) = self.terminate_with_http_info(workflow_id, **kwargs)  # noqa: E501
+            (data) = self.terminate1_with_http_info(workflow_id, **kwargs)  # noqa: E501
             return data
 
-    def terminate_with_http_info(self, workflow_id, **kwargs):  # noqa: E501
+    def terminate1_with_http_info(self, workflow_id, **kwargs):  # noqa: E501
         """Terminate workflow execution  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.terminate_with_http_info(workflow_id, async_req=True)
+        >>> thread = api.terminate1_with_http_info(workflow_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -2198,14 +2198,14 @@ class WorkflowResourceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method terminate" % key
+                    " to method terminate1" % key
                 )
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'workflow_id' is set
         if ('workflow_id' not in params or
                 params['workflow_id'] is None):
-            raise ValueError("Missing the required parameter `workflow_id` when calling `terminate`")  # noqa: E501
+            raise ValueError("Missing the required parameter `workflow_id` when calling `terminate1`")  # noqa: E501
 
         collection_formats = {}
 
