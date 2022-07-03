@@ -619,3 +619,42 @@ class ApiClient(object):
             if klass_name:
                 instance = self.__deserialize(data, klass_name)
         return instance
+
+    def __get_authentication_headers(self):
+        if self.configuration.AUTH_TOKEN is None:
+            return None
+        return {
+            'header': {
+                'X-Authorization': self.configuration.AUTH_TOKEN
+            }
+        }
+
+    def __refresh_auth_token(self) -> None:
+        if self.configuration.AUTH_TOKEN != None:
+            return
+        if self.configuration.authentication_settings == None:
+            return
+        token = self.__get_new_token()
+        self.configuration.update_token(token)
+
+    def __get_new_token(self) -> str:
+        try:
+
+            response = self.call_api(
+                '/token', 'POST',
+                header_params={
+                    'Content-Type': self.select_header_content_type(['*/*'])
+                },
+                body={
+                    'keyId': self.configuration.authentication_settings.key_id,
+                    'keySecret': self.configuration.authentication_settings.key_secret
+                },
+                _return_http_data_only=True,
+                response_type='Token'
+            )
+            return response.token
+        except Exception:
+            logger.debug(
+                f'Failed to get new token, reason: {traceback.format_exc()}'
+            )
+            return None
