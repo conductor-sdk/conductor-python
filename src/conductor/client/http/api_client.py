@@ -1,8 +1,8 @@
-import traceback
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http import rest
+from multiprocessing.pool import ThreadPool
 from six.moves.urllib.parse import quote
-import conductor.client.http.models
+import conductor.client.http.models as http_models
 import datetime
 import json
 import logging
@@ -11,6 +11,7 @@ import os
 import re
 import six
 import tempfile
+import traceback
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -57,15 +58,16 @@ class ApiClient(object):
             configuration = Configuration()
         self.configuration = configuration
 
+        self.pool = ThreadPool()
         self.rest_client = rest.RESTClientObject(configuration)
         self.default_headers = {}
         if header_name is not None:
             self.default_headers[header_name] = header_value
         self.cookie = cookie
-        # Set default User-Agent.
-        self.user_agent = 'Swagger-Codegen/1.0.0/python'
 
-        self.__refresh_auth_token()
+    def __del__(self):
+        self.pool.close()
+        self.pool.join()
 
     @property
     def user_agent(self):
@@ -85,6 +87,7 @@ class ApiClient(object):
             files=None, response_type=None, auth_settings=None,
             _return_http_data_only=None, collection_formats=None,
             _preload_content=True, _request_timeout=None):
+
         config = self.configuration
 
         # header parameters
@@ -123,11 +126,7 @@ class ApiClient(object):
                                                     collection_formats)
 
         # auth setting
-        self.update_params_for_auth(
-            header_params,
-            query_params,
-            self.__get_authentication_headers()
-        )
+        self.update_params_for_auth(header_params, query_params, auth_settings)
 
         # body
         if body:
@@ -234,9 +233,6 @@ class ApiClient(object):
         if data is None:
             return None
 
-        if data == b'':
-            return None
-
         if type(klass) == str:
             if klass.startswith('list['):
                 sub_kls = re.match(r'list\[(.*)\]', klass).group(1)
@@ -252,7 +248,7 @@ class ApiClient(object):
             if klass in self.NATIVE_TYPES_MAPPING:
                 klass = self.NATIVE_TYPES_MAPPING[klass]
             else:
-                klass = getattr(conductor.client.http.models, klass)
+                klass = getattr(http_models, klass)
 
         if klass in self.PRIMITIVE_TYPES:
             return self.__deserialize_primitive(data, klass)
@@ -307,15 +303,23 @@ class ApiClient(object):
             If parameter async_req is False or missing,
             then the method will return the response directly.
         """
-        if async_req:
-            raise NotImplementedError
-
-        return self.__call_api(resource_path, method,
-                               path_params, query_params, header_params,
-                               body, post_params, files,
-                               response_type, auth_settings,
-                               _return_http_data_only, collection_formats,
-                               _preload_content, _request_timeout)
+        if not async_req:
+            return self.__call_api(resource_path, method,
+                                   path_params, query_params, header_params,
+                                   body, post_params, files,
+                                   response_type, auth_settings,
+                                   _return_http_data_only, collection_formats,
+                                   _preload_content, _request_timeout)
+        else:
+            thread = self.pool.apply_async(self.__call_api, (resource_path,
+                                           method, path_params, query_params,
+                                           header_params, body,
+                                           post_params, files,
+                                           response_type, auth_settings,
+                                           _return_http_data_only,
+                                           collection_formats,
+                                           _preload_content, _request_timeout))
+        return thread
 
     def request(self, method, url, query_params=None, headers=None,
                 post_params=None, body=None, _preload_content=True,
@@ -475,14 +479,22 @@ class ApiClient(object):
         :param querys: Query parameters tuple list to be updated.
         :param auth_settings: Authentication setting identifiers list.
         """
-        if auth_settings is None:
+        if not auth_settings:
             return
-        if 'header' in auth_settings:
-            for key, value in auth_settings['header'].items():
-                headers[key] = value
-        if 'query' in auth_settings:
-            for key, value in auth_settings['query'].items():
-                querys[key] = value
+
+        for auth in auth_settings:
+            auth_setting = self.configuration.auth_settings().get(auth)
+            if auth_setting:
+                if not auth_setting['value']:
+                    continue
+                elif auth_setting['in'] == 'header':
+                    headers[auth_setting['key']] = auth_setting['value']
+                elif auth_setting['in'] == 'query':
+                    querys.append((auth_setting['key'], auth_setting['value']))
+                else:
+                    raise ValueError(
+                        'Authentication token must be in `query` or `header`'
+                    )
 
     def __deserialize_file(self, response):
         """Deserializes body to file
@@ -521,16 +533,11 @@ class ApiClient(object):
         :return: int, long, float, str, bool.
         """
         try:
-            if klass == str and type(data) == bytes:
-                return self.__deserialize_bytes_to_str(data)
             return klass(data)
         except UnicodeEncodeError:
             return six.text_type(data)
         except TypeError:
             return data
-
-    def __deserialize_bytes_to_str(self, data):
-        return data.decode('utf-8')
 
     def __deserialize_object(self, value):
         """Return a original value.
@@ -614,42 +621,3 @@ class ApiClient(object):
             if klass_name:
                 instance = self.__deserialize(data, klass_name)
         return instance
-
-    def __get_authentication_headers(self):
-        if self.configuration.AUTH_TOKEN is None:
-            return None
-        return {
-            'header': {
-                'X-Authorization': self.configuration.AUTH_TOKEN
-            }
-        }
-
-    def __refresh_auth_token(self) -> None:
-        if self.configuration.AUTH_TOKEN != None:
-            return
-        if self.configuration.authentication_settings == None:
-            return
-        token = self.__get_new_token()
-        self.configuration.update_token(token)
-
-    def __get_new_token(self) -> str:
-        try:
-
-            response = self.call_api(
-                '/token', 'POST',
-                header_params={
-                    'Content-Type': self.select_header_content_type(['*/*'])
-                },
-                body={
-                    'keyId': self.configuration.authentication_settings.key_id,
-                    'keySecret': self.configuration.authentication_settings.key_secret
-                },
-                _return_http_data_only=True,
-                response_type='Token'
-            )
-            return response.token
-        except Exception:
-            logger.debug(
-                f'Failed to get new token, reason: {traceback.format_exc()}'
-            )
-            return None
