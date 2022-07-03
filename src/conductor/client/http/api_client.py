@@ -127,7 +127,11 @@ class ApiClient(object):
                                                     collection_formats)
 
         # auth setting
-        self.update_params_for_auth(header_params, query_params, auth_settings)
+        self.update_params_for_auth(
+            header_params,
+            query_params,
+            self.__get_authentication_headers()
+        )
 
         # body
         if body:
