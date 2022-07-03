@@ -64,6 +64,7 @@ class ApiClient(object):
         if header_name is not None:
             self.default_headers[header_name] = header_value
         self.cookie = cookie
+        self.__refresh_auth_token()
 
     def __del__(self):
         self.pool.close()
