@@ -531,11 +531,16 @@ class ApiClient(object):
         :return: int, long, float, str, bool.
         """
         try:
+            if klass == str and type(data) == bytes:
+                return self.__deserialize_bytes_to_str(data)
             return klass(data)
         except UnicodeEncodeError:
             return six.text_type(data)
         except TypeError:
             return data
+
+    def __deserialize_bytes_to_str(self, data):
+        return data.decode('utf-8')
 
     def __deserialize_object(self, value):
         """Return a original value.
