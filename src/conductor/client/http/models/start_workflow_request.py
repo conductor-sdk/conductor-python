@@ -23,7 +23,8 @@ class StartWorkflowRequest(object):
         'task_to_domain': 'dict(str, str)',
         'workflow_def': 'WorkflowDef',
         'external_input_payload_storage_path': 'str',
-        'priority': 'int'
+        'priority': 'int',
+        'created_by': 'str'
     }
 
     attribute_map = {
@@ -34,10 +35,11 @@ class StartWorkflowRequest(object):
         'task_to_domain': 'taskToDomain',
         'workflow_def': 'workflowDef',
         'external_input_payload_storage_path': 'externalInputPayloadStoragePath',
-        'priority': 'priority'
+        'priority': 'priority',
+        'created_by': 'createdBy'
     }
 
-    def __init__(self, name=None, version=None, correlation_id=None, input=None, task_to_domain=None, workflow_def=None, external_input_payload_storage_path=None, priority=None):  # noqa: E501
+    def __init__(self, name=None, version=None, correlation_id=None, input=None, task_to_domain=None, workflow_def=None, external_input_payload_storage_path=None, priority=None, created_by=None):  # noqa: E501
         """StartWorkflowRequest - a model defined in Swagger"""  # noqa: E501
         self._name = None
         self._version = None
@@ -47,6 +49,7 @@ class StartWorkflowRequest(object):
         self._workflow_def = None
         self._external_input_payload_storage_path = None
         self._priority = None
+        self._created_by = None
         self.discriminator = None
         self.name = name
         if version is not None:
@@ -63,6 +66,8 @@ class StartWorkflowRequest(object):
             self.external_input_payload_storage_path = external_input_payload_storage_path
         if priority is not None:
             self.priority = priority
+        if created_by is not None:
+            self.created_by = created_by
 
     @property
     def name(self):
@@ -233,6 +238,27 @@ class StartWorkflowRequest(object):
         """
 
         self._priority = priority
+
+    @property
+    def created_by(self):
+        """Gets the created_by of this StartWorkflowRequest.  # noqa: E501
+
+
+        :return: The created_by of this StartWorkflowRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._created_by
+
+    @created_by.setter
+    def created_by(self, created_by):
+        """Sets the created_by of this StartWorkflowRequest.
+
+
+        :param created_by: The created_by of this StartWorkflowRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._created_by = created_by
 
     def to_dict(self):
         """Returns the model properties as a dict"""
