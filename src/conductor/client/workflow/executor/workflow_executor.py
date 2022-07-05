@@ -4,7 +4,6 @@ from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
 from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
-from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.http.models import *
 
 
@@ -52,19 +51,19 @@ class WorkflowExecutor:
         """
         return self.workflow_client.get_execution_status(workflow_id, include_tasks)
 
-    # def get_workflow_status(self, workflow_id: str, include_output: bool, include_variables: bool) -> Workflow:
-    #     """Gets the workflow by workflow id
+    def get_workflow_status(self, workflow_id: str, include_output: bool, include_variables: bool) -> WorkflowStatus:
+        """Gets the workflow by workflow id
 
-    #     :param async_req bool
-    #     :param str workflow_id: (required)
-    #     :param bool include_output:
-    #     :param bool include_variables:
-    #     :return: WorkflowStatus
-    #              If the method is called asynchronously,
-    #              returns the request thread.
-    #     """
-    #     return self.workflow_client.get_workflow_status_summary(
-    #         workflow_id,
-    #         include_output,
-    #         include_variables,
-    #     )
+        :param async_req bool
+        :param str workflow_id: (required)
+        :param bool include_output:
+        :param bool include_variables:
+        :return: WorkflowStatus
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        return self.workflow_client.get_workflow_status_summary(
+            workflow_id,
+            include_output,
+            include_variables,
+        )
