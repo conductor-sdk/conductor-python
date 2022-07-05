@@ -15,24 +15,56 @@ class WorkflowExecutor:
         self.task_client = TaskResourceApi(api_client)
         self.workflow_client = WorkflowResourceApi(api_client)
 
-    def register_workflow(self, overwrite: bool, workflow):
-        # TODO parse response
-        # TODO add overwrite to request
-        return self.metadata_client.create(workflow)
+    def register_workflow(self, workflow: WorkflowDef, overwrite: bool) -> object:
+        """Create a new workflow definition
 
-    def start_workflow(self, start_workflow_request: StartWorkflowRequest):
-        # TODO parse response
-        return self.workflow_client.start_workflow1(start_workflow_request)
+        :param WorkflowDef body: (required)
+        :param bool overwrite:
+        :return: object
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        return self.metadata_client.create(
+            body=workflow,
+            overwrite=overwrite,
+        )
+
+    def start_workflow(self, start_workflow_request: StartWorkflowRequest) -> str:
+        """Start a new workflow with StartWorkflowRequest, which allows task to be executed in a domain 
+
+        :param StartWorkflowRequest body: (required)
+        :return: str
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        return self.workflow_client.start_workflow(
+            body=start_workflow_request,
+        )
 
     def get_workflow(self, workflow_id: str, include_tasks: bool) -> Workflow:
-        # TODO parse response
-        # TODO add include_tasks to request
-        return self.workflow_client.get_execution_status(workflow_id)
+        """Gets the workflow by workflow id
 
-    # TODO add return type guide
-    def get_workflow_status(self, workflow_id: str, include_output: bool, include_variables: bool):
-        # TODO add call to new get workflow status api
-        # TODO parse response
-        pass
+        :param str workflow_id: (required)
+        :param bool include_tasks:
+        :return: Workflow
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        return self.workflow_client.get_execution_status(workflow_id, include_tasks)
 
-    # TODO add remaining methods, equivalent here: https://github.dev/conductor-sdk/conductor-go/blob/main/sdk/workflow/executor/executor.go
+    # def get_workflow_status(self, workflow_id: str, include_output: bool, include_variables: bool) -> Workflow:
+    #     """Gets the workflow by workflow id
+
+    #     :param async_req bool
+    #     :param str workflow_id: (required)
+    #     :param bool include_output:
+    #     :param bool include_variables:
+    #     :return: WorkflowStatus
+    #              If the method is called asynchronously,
+    #              returns the request thread.
+    #     """
+    #     return self.workflow_client.get_workflow_status_summary(
+    #         workflow_id,
+    #         include_output,
+    #         include_variables,
+    #     )
