@@ -139,7 +139,7 @@ class WorkflowExecutor:
         )
 
     def retry(self, workflow_id: str, resume_subworkflow_tasks: bool) -> None:
-        """Retries the last failed task  # noqa: E501
+        """Retries the last failed task  
 
         :param str workflow_id: (required)
         :param bool resume_subworkflow_tasks:
@@ -198,7 +198,7 @@ class WorkflowExecutor:
         )
 
     def update_task_by_ref_name(self, task_output: Dict[str, Any], workflow_id: str, task_reference_name: str, status: str) -> str:
-        """Update a task By Ref Name  # noqa: E501
+        """Update a task By Ref Name  
 
         :param dict(str, object) body: (required)
         :param str workflow_id: (required)
