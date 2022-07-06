@@ -1,11 +1,11 @@
 from __future__ import annotations
-from typing import Any, Dict, List
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
 from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
 from conductor.client.http.models import *
+from typing import Any, Dict, List
 
 
 class WorkflowExecutor:
@@ -21,8 +21,6 @@ class WorkflowExecutor:
         :param WorkflowDef body: (required)
         :param bool overwrite:
         :return: object
-                 If the method is called asynchronously,
-                 returns the request thread.
         """
         return self.metadata_client.create(
             body=workflow,
@@ -34,8 +32,6 @@ class WorkflowExecutor:
 
         :param StartWorkflowRequest body: (required)
         :return: str
-                 If the method is called asynchronously,
-                 returns the request thread.
         """
         return self.workflow_client.start_workflow(
             body=start_workflow_request,
@@ -47,8 +43,6 @@ class WorkflowExecutor:
         :param str workflow_id: (required)
         :param bool include_tasks:
         :return: Workflow
-                 If the method is called asynchronously,
-                 returns the request thread.
         """
         return self.workflow_client.get_execution_status(workflow_id, include_tasks)
 
@@ -59,8 +53,6 @@ class WorkflowExecutor:
         :param bool include_output:
         :param bool include_variables:
         :return: WorkflowStatus
-                 If the method is called asynchronously,
-                 returns the request thread.
         """
         return self.workflow_client.get_workflow_status_summary(
             workflow_id,
@@ -76,8 +68,6 @@ class WorkflowExecutor:
         :param bool include_closed:
         :param bool include_tasks:
         :return: dict(str, list[Workflow])
-                 If the method is called asynchronously,
-                 returns the request thread.
         """
         return self.workflow_client.get_workflows(
             body=correlation_ids,
@@ -91,8 +81,6 @@ class WorkflowExecutor:
 
         :param str workflow_id: (required)
         :return: None
-                 If the method is called asynchronously,
-                 returns the request thread.
         """
         return self.workflow_client.pause_workflow1(
             workflow_id=workflow_id
@@ -103,8 +91,6 @@ class WorkflowExecutor:
 
         :param str workflow_id: (required)
         :return: None
-                 If the method is called asynchronously,
-                 returns the request thread.
         """
         return self.workflow_client.resume_workflow1(
             workflow_id=workflow_id
@@ -116,8 +102,6 @@ class WorkflowExecutor:
         :param str workflow_id: (required)
         :param str reason:
         :return: None
-                 If the method is called asynchronously,
-                 returns the request thread.
         """
         return self.workflow_client.terminate1(
             workflow_id=workflow_id,
@@ -130,8 +114,6 @@ class WorkflowExecutor:
         :param str workflow_id: (required)
         :param bool use_latest_definitions:
         :return: None
-                 If the method is called asynchronously,
-                 returns the request thread.
         """
         return self.workflow_client.restart1(
             workflow_id=workflow_id,
@@ -144,8 +126,6 @@ class WorkflowExecutor:
         :param str workflow_id: (required)
         :param bool resume_subworkflow_tasks:
         :return: None
-                 If the method is called asynchronously,
-                 returns the request thread.
         """
         return self.workflow_client.retry1(
             workflow_id=workflow_id,
@@ -158,8 +138,6 @@ class WorkflowExecutor:
         :param RerunWorkflowRequest body: (required)
         :param str workflow_id: (required)
         :return: str
-                 If the method is called asynchronously,
-                 returns the request thread.
         """
         return self.workflow_client.rerun(
             body=rerun_workflow_request,
@@ -173,8 +151,6 @@ class WorkflowExecutor:
         :param str task_reference_name: (required)
         :param SkipTaskRequest body:
         :return: None
-                 If the method is called asynchronously,
-                 returns the request thread.
         """
         return self.workflow_client.skip_task_from_workflow(
             workflow_id=workflow_id,
@@ -187,8 +163,6 @@ class WorkflowExecutor:
 
         :param TaskResult body: (required)
         :return: str
-                 If the method is called asynchronously,
-                 returns the request thread.
         """
         task_result = self.__get_task_result(
             task_id, workflow_id, task_output, status
@@ -205,8 +179,6 @@ class WorkflowExecutor:
         :param str task_ref_name: (required)
         :param str status: (required)
         :return: str
-                 If the method is called asynchronously,
-                 returns the request thread.
         """
         return self.task_client.update_task1(
             body=task_output,
@@ -220,8 +192,6 @@ class WorkflowExecutor:
 
         :param str task_id: (required)
         :return: Task
-                 If the method is called asynchronously,
-                 returns the request thread.
         """
         return self.task_client.get_task(
             task_id=task_id
