@@ -644,7 +644,6 @@ class ApiClient(object):
 
     def __get_new_token(self) -> str:
         try:
-
             response = self.call_api(
                 '/token', 'POST',
                 header_params={
