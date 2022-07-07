@@ -11,7 +11,6 @@ from typing_extensions import Self
 class ConductorWorkflow:
     SCHEMA_VERSION = 2
 
-    # TODO add properties for constructor params
     def __init__(self,
                  executor: WorkflowExecutor,
                  name: str,
