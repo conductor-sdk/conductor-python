@@ -1,4 +1,3 @@
-from __future__ import annotations
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
@@ -6,10 +5,11 @@ from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
 from conductor.client.http.models import *
 from typing import Any, Dict, List
+from typing_extensions import Self
 
 
 class WorkflowExecutor:
-    def __init__(self, configuration: Configuration) -> WorkflowExecutor:
+    def __init__(self, configuration: Configuration) -> Self:
         api_client = ApiClient(configuration)
         self.metadata_client = MetadataResourceApi(api_client)
         self.task_client = TaskResourceApi(api_client)
