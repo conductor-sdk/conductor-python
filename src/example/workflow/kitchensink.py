@@ -1,5 +1,6 @@
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
+from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.do_while_task import LoopTask
@@ -122,14 +123,12 @@ def generate_json_jq_task() -> JsonJQTask:
     )
 
 
-def main():
-    configuration = generate_configuration()
-    workflow_executor = WorkflowExecutor(configuration)
+def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
     workflow = ConductorWorkflow(
         executor=workflow_executor,
         name='python_workflow_example_from_code',
         description='Python workflow example from code',
-        version=15,
+        version=1234,
     ).add(
         generate_simple_task(0)
     ).add(
@@ -138,7 +137,20 @@ def main():
         generate_fork_task(workflow_executor)
     )
     workflow >> generate_sub_workflow_task() >> generate_json_jq_task()
+    return workflow
+
+
+def main():
+    configuration = generate_configuration()
+    workflow_executor = WorkflowExecutor(configuration)
+    workflow = generate_workflow(workflow_executor)
     print('register workflow response:', workflow.register(True))
+    workflow_id = workflow_executor.start_workflow(
+        start_workflow_request=StartWorkflowRequest(
+            name=workflow.name
+        )
+    )
+    print('workflow_id:', workflow_id)
 
 
 if __name__ == '__main__':
