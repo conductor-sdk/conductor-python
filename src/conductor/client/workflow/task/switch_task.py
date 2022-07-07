@@ -3,7 +3,7 @@ from conductor.client.workflow.task.task import TaskInterface, get_task_interfac
 from conductor.client.workflow.task.task_type import TaskType
 from copy import deepcopy
 from enum import Enum
-from typing import Dict, List
+from typing import List
 from typing_extensions import Self
 
 
@@ -13,12 +13,6 @@ class EvaluatorType(str, Enum):
 
 
 class SwitchTask(TaskInterface):
-    _decision_cases: Dict[str, List[TaskInterface]]
-    _default_case: List[TaskInterface]
-    _expression: str
-    _use_javascript: bool
-    _evaluator_type: EvaluatorType
-
     def __init__(self, task_ref_name: str, case_expression: str, use_javascript: bool = False) -> Self:
         super().__init__(
             task_reference_name=task_ref_name,

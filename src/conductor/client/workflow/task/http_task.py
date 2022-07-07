@@ -16,8 +16,6 @@ class HttpMethod(str, Enum):
 
 
 class HttpInput:
-    # TODO add properties for constructor params
-    # TODO add json serializer for param names
     def __init__(self,
                  method: HttpMethod = HttpMethod.GET,
                  uri: str = None,
@@ -38,7 +36,6 @@ class HttpInput:
 
 
 class HttpTask(TaskInterface):
-    # TODO add properties for constructor params
     def __init__(self, task_ref_name: str, http_input: HttpInput) -> Self:
         super().__init__(
             task_reference_name=task_ref_name,

@@ -5,7 +5,6 @@ from typing_extensions import Self
 
 
 class WaitTask(TaskInterface, ABC):
-    # TODO add properties for constructor params
     @abstractmethod
     def __init__(self, task_ref_name: str) -> Self:
         super().__init__(
@@ -15,7 +14,6 @@ class WaitTask(TaskInterface, ABC):
 
 
 class WaitForDurationTask(WaitTask):
-    # TODO add properties for constructor params
     def __init__(self, task_ref_name: str, duration_time_seconds: int) -> Self:
         super().__init__(task_ref_name)
         self.input_parameters = {
@@ -24,7 +22,6 @@ class WaitForDurationTask(WaitTask):
 
 
 class WaitUntilTask(WaitTask):
-    # TODO add properties for constructor params
     def __init__(self, task_ref_name: str, date_time: str) -> Self:
         super().__init__(task_ref_name)
         self.input_parameters = {

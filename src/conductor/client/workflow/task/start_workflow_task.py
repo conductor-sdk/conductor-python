@@ -5,7 +5,6 @@ from typing_extensions import Self
 
 
 class StartWorkflowTask(TaskInterface):
-    # TODO add properties for constructor params
     def __init__(self, task_ref_name: str, workflow_name: str, start_workflow_request: StartWorkflowRequest, version: int = None) -> Self:
         super().__init__(
             task_reference_name=task_ref_name,

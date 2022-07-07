@@ -7,7 +7,6 @@ from typing_extensions import Self
 
 
 class DynamicForkTask(TaskInterface):
-    # TODO add properties for constructor params
     def __init__(self, task_ref_name: str, pre_fork_task: TaskInterface, join_task: JoinTask = None) -> Self:
         super().__init__(
             task_reference_name=task_ref_name,

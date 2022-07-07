@@ -4,18 +4,6 @@ from typing_extensions import Self
 
 
 class KafkaPublishInput:
-    _bootstrap_servers: str
-    _key: str
-    _key_serializer: str
-    _value: str
-    _request_timeout_ms: str
-    _max_block_ms: str
-    _headers: Dict[str, Any]
-    _topic: str
-
-    # TODO add properties for constructor params
-    # TODO add json serializer param names
-
     def __init__(self,
                  bootstrap_servers: str = None,
                  key: str = None,

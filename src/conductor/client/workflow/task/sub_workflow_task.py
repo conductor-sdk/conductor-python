@@ -9,7 +9,6 @@ from typing_extensions import Self
 
 
 class SubWorkflowTask(TaskInterface):
-    # TODO add properties for constructor params
     def __init__(self, task_ref_name: str, workflow_name: str, version: int = None, task_to_domain_map: Dict[str, str] = None) -> Self:
         super().__init__(
             task_reference_name=task_ref_name,
@@ -30,7 +29,6 @@ class SubWorkflowTask(TaskInterface):
 
 
 class InlineSubWorkflowTask(TaskInterface):
-    # TODO add properties for constructor params
     def __init__(self, task_ref_name: str, workflow: ConductorWorkflow) -> Self:
         super().__init__(
             task_reference_name=task_ref_name,

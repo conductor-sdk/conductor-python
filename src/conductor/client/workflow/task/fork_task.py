@@ -11,7 +11,6 @@ def get_join_task(task_reference_name: str) -> str:
 
 
 class ForkTask(TaskInterface):
-    # TODO add properties for constructor params
     def __init__(self, task_ref_name: str, forked_tasks: List[List[TaskInterface]]) -> Self:
         super().__init__(
             task_reference_name=task_ref_name,
