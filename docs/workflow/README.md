@@ -48,10 +48,6 @@ workflow.register(true)
 ```
 
 
-Using struct instance as workflow input
-```python
-# TODO
-```
 ### Workflow Management APIs
 See [Docs](docs/executor.md) for APIs to start, pause, resume, terminate, search and get workflow execution status.
 
