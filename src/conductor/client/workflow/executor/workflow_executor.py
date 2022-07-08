@@ -60,6 +60,26 @@ class WorkflowExecutor:
             include_variables,
         )
 
+    def search(self, start: int, size: int, query: str, free_text: str) -> ScrollableSearchResultWorkflowSummary:
+        """Search for workflows based on payload and other parameters
+
+        :param async_req bool
+        :param str query_id:
+        :param int start:
+        :param int size:
+        :param str sort:
+        :param str free_text:
+        :param str query:
+        :param bool skip_cache:
+        :return: ScrollableSearchResultWorkflowSummary
+        """
+        return self.workflow_client.search(
+            start=start,
+            size=size,
+            query=query,
+            free_text=free_text
+        )
+
     def get_by_correlation_ids(self, workflow_name: str, include_closed: bool, include_tasks: bool, correlation_ids: List[str]) -> Dict[str, List[WorkflowDef]]:
         """Lists workflows for the given correlation id list
 
