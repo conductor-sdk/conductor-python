@@ -18,7 +18,7 @@ class WorkflowExecutor:
     def register_workflow(self, workflow: WorkflowDef, overwrite: bool) -> object:
         """Create a new workflow definition
 
-        :param WorkflowDef body: (required)
+        :param WorkflowDef body:
         :param bool overwrite:
         :return: object
         """
@@ -30,7 +30,7 @@ class WorkflowExecutor:
     def start_workflow(self, start_workflow_request: StartWorkflowRequest) -> str:
         """Start a new workflow with StartWorkflowRequest, which allows task to be executed in a domain 
 
-        :param StartWorkflowRequest body: (required)
+        :param StartWorkflowRequest body:
         :return: str
         """
         return self.workflow_client.start_workflow(
@@ -40,7 +40,7 @@ class WorkflowExecutor:
     def get_workflow(self, workflow_id: str, include_tasks: bool) -> Workflow:
         """Gets the workflow by workflow id
 
-        :param str workflow_id: (required)
+        :param str workflow_id:
         :param bool include_tasks:
         :return: Workflow
         """
@@ -49,7 +49,7 @@ class WorkflowExecutor:
     def get_workflow_status(self, workflow_id: str, include_output: bool, include_variables: bool) -> WorkflowStatus:
         """Gets the workflow by workflow id
 
-        :param str workflow_id: (required)
+        :param str workflow_id:
         :param bool include_output:
         :param bool include_variables:
         :return: WorkflowStatus
@@ -63,8 +63,8 @@ class WorkflowExecutor:
     def get_by_correlation_ids(self, workflow_name: str, include_closed: bool, include_tasks: bool, correlation_ids: List[str]) -> Dict[str, List[WorkflowDef]]:
         """Lists workflows for the given correlation id list
 
-        :param list[str] body: (required)
-        :param str name: (required)
+        :param list[str] body:
+        :param str name:
         :param bool include_closed:
         :param bool include_tasks:
         :return: dict(str, list[Workflow])
@@ -79,7 +79,7 @@ class WorkflowExecutor:
     def pause(self, workflow_id: str) -> None:
         """Pauses the workflow
 
-        :param str workflow_id: (required)
+        :param str workflow_id:
         :return: None
         """
         return self.workflow_client.pause_workflow1(
@@ -89,7 +89,7 @@ class WorkflowExecutor:
     def resume(self, workflow_id: str) -> None:
         """Resumes the workflow
 
-        :param str workflow_id: (required)
+        :param str workflow_id:
         :return: None
         """
         return self.workflow_client.resume_workflow1(
@@ -99,7 +99,7 @@ class WorkflowExecutor:
     def terminate(self, workflow_id: str, reason: str) -> None:
         """Terminate workflow execution
 
-        :param str workflow_id: (required)
+        :param str workflow_id:
         :param str reason:
         :return: None
         """
@@ -111,7 +111,7 @@ class WorkflowExecutor:
     def restart(self, workflow_id: str, use_latest_definitions: bool) -> None:
         """Restarts a completed workflow
 
-        :param str workflow_id: (required)
+        :param str workflow_id:
         :param bool use_latest_definitions:
         :return: None
         """
@@ -123,7 +123,7 @@ class WorkflowExecutor:
     def retry(self, workflow_id: str, resume_subworkflow_tasks: bool) -> None:
         """Retries the last failed task  
 
-        :param str workflow_id: (required)
+        :param str workflow_id:
         :param bool resume_subworkflow_tasks:
         :return: None
         """
@@ -135,8 +135,8 @@ class WorkflowExecutor:
     def rerun(self, rerun_workflow_request: RerunWorkflowRequest, workflow_id: str) -> str:
         """Reruns the workflow from a specific task
 
-        :param RerunWorkflowRequest body: (required)
-        :param str workflow_id: (required)
+        :param RerunWorkflowRequest body:
+        :param str workflow_id:
         :return: str
         """
         return self.workflow_client.rerun(
@@ -147,8 +147,8 @@ class WorkflowExecutor:
     def skip_task_from_workflow(self, workflow_id: str, task_reference_name: str, skip_task_request: SkipTaskRequest) -> None:
         """Skips a given task from a current running workflow
 
-        :param str workflow_id: (required)
-        :param str task_reference_name: (required)
+        :param str workflow_id:
+        :param str task_reference_name:
         :param SkipTaskRequest body:
         :return: None
         """
@@ -161,7 +161,7 @@ class WorkflowExecutor:
     def update_task(self, task_id: str, workflow_id: str, task_output: Dict[str, Any], status: str) -> str:
         """Update a task
 
-        :param TaskResult body: (required)
+        :param TaskResult body:
         :return: str
         """
         task_result = self.__get_task_result(
@@ -174,10 +174,10 @@ class WorkflowExecutor:
     def update_task_by_ref_name(self, task_output: Dict[str, Any], workflow_id: str, task_reference_name: str, status: str) -> str:
         """Update a task By Ref Name  
 
-        :param dict(str, object) body: (required)
-        :param str workflow_id: (required)
-        :param str task_ref_name: (required)
-        :param str status: (required)
+        :param dict(str, object) body:
+        :param str workflow_id:
+        :param str task_ref_name:
+        :param str status:
         :return: str
         """
         return self.task_client.update_task1(
@@ -190,7 +190,7 @@ class WorkflowExecutor:
     def get_task(self, task_id: str) -> str:
         """Get task by Id 
 
-        :param str task_id: (required)
+        :param str task_id:
         :return: Task
         """
         return self.task_client.get_task(
