@@ -129,13 +129,8 @@ def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
         name='python_workflow_example_from_code',
         description='Python workflow example from code',
         version=1234,
-    ).add(
-        generate_simple_task(0)
-    ).add(
-        generate_set_variable_task()
-    ).add(
-        generate_fork_task(workflow_executor)
-    )
+    ).add(generate_simple_task(0)).add(generate_set_variable_task()).add(generate_fork_task(workflow_executor))
+
     workflow >> generate_sub_workflow_task() >> generate_json_jq_task()
     return workflow
 
