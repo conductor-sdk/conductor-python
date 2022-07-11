@@ -804,7 +804,7 @@ class WorkflowTask(object):
         :param workflow_task_type: The workflow_task_type of this WorkflowTask.  # noqa: E501
         :type: str
         """
-        allowed_values = ["SIMPLE", "DYNAMIC", "FORK_JOIN", "FORK_JOIN_DYNAMIC", "DECISION", "SWITCH", "JOIN", "DO_WHILE", "SUB_WORKFLOW", "EVENT", "WAIT", "USER_DEFINED", "HTTP", "LAMBDA", "INLINE", "EXCLUSIVE_JOIN", "TERMINATE", "KAFKA_PUBLISH", "JSON_JQ_TRANSFORM", "SET_VARIABLE"]  # noqa: E501
+        allowed_values = ["SIMPLE", "DYNAMIC", "FORK_JOIN", "FORK_JOIN_DYNAMIC", "DECISION", "SWITCH", "JOIN", "DO_WHILE", "SUB_WORKFLOW", "START_WORKFLOW", "EVENT", "WAIT", "HUMAN", "USER_DEFINED", "HTTP", "LAMBDA", "INLINE", "EXCLUSIVE_JOIN", "TERMINATE", "KAFKA_PUBLISH", "JSON_JQ_TRANSFORM", "SET_VARIABLE"]  # noqa: E501
         if workflow_task_type not in allowed_values:
             raise ValueError(
                 "Invalid value for `workflow_task_type` ({0}), must be one of {1}"  # noqa: E501

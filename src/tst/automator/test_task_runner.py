@@ -4,8 +4,8 @@ from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
-from src.example.worker.python.faulty_execution_worker import FaultyExecutionWorker
-from src.example.worker.python.simple_python_worker import SimplePythonWorker
+from example.worker.python.faulty_execution_worker import FaultyExecutionWorker
+from example.worker.python.simple_python_worker import SimplePythonWorker
 from unittest.mock import patch
 import logging
 import time

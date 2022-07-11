@@ -160,3 +160,6 @@ metrics/
 latest.txt
 
 *.so
+
+
+.vscode/

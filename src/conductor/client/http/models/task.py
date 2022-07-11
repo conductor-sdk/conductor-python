@@ -54,8 +54,8 @@ class Task(object):
         'iteration': 'int',
         'sub_workflow_id': 'str',
         'subworkflow_changed': 'bool',
-        'task_definition': 'TaskDef',
         'loop_over_task': 'bool',
+        'task_definition': 'TaskDef',
         'queue_wait_time': 'int'
     }
 
@@ -98,12 +98,12 @@ class Task(object):
         'iteration': 'iteration',
         'sub_workflow_id': 'subWorkflowId',
         'subworkflow_changed': 'subworkflowChanged',
-        'task_definition': 'taskDefinition',
         'loop_over_task': 'loopOverTask',
+        'task_definition': 'taskDefinition',
         'queue_wait_time': 'queueWaitTime'
     }
 
-    def __init__(self, task_type=None, status=None, input_data=None, reference_task_name=None, retry_count=None, seq=None, correlation_id=None, poll_count=None, task_def_name=None, scheduled_time=None, start_time=None, end_time=None, update_time=None, start_delay_in_seconds=None, retried_task_id=None, retried=None, executed=None, callback_from_worker=None, response_timeout_seconds=None, workflow_instance_id=None, workflow_type=None, task_id=None, reason_for_incompletion=None, callback_after_seconds=None, worker_id=None, output_data=None, workflow_task=None, domain=None, rate_limit_per_frequency=None, rate_limit_frequency_in_seconds=None, external_input_payload_storage_path=None, external_output_payload_storage_path=None, workflow_priority=None, execution_name_space=None, isolation_group_id=None, iteration=None, sub_workflow_id=None, subworkflow_changed=None, task_definition=None, loop_over_task=None, queue_wait_time=None):  # noqa: E501
+    def __init__(self, task_type=None, status=None, input_data=None, reference_task_name=None, retry_count=None, seq=None, correlation_id=None, poll_count=None, task_def_name=None, scheduled_time=None, start_time=None, end_time=None, update_time=None, start_delay_in_seconds=None, retried_task_id=None, retried=None, executed=None, callback_from_worker=None, response_timeout_seconds=None, workflow_instance_id=None, workflow_type=None, task_id=None, reason_for_incompletion=None, callback_after_seconds=None, worker_id=None, output_data=None, workflow_task=None, domain=None, rate_limit_per_frequency=None, rate_limit_frequency_in_seconds=None, external_input_payload_storage_path=None, external_output_payload_storage_path=None, workflow_priority=None, execution_name_space=None, isolation_group_id=None, iteration=None, sub_workflow_id=None, subworkflow_changed=None, loop_over_task=None, task_definition=None, queue_wait_time=None):  # noqa: E501
         """Task - a model defined in Swagger"""  # noqa: E501
         self._task_type = None
         self._status = None
@@ -143,8 +143,8 @@ class Task(object):
         self._iteration = None
         self._sub_workflow_id = None
         self._subworkflow_changed = None
-        self._task_definition = None
         self._loop_over_task = None
+        self._task_definition = None
         self._queue_wait_time = None
         self.discriminator = None
         if task_type is not None:
@@ -223,10 +223,10 @@ class Task(object):
             self.sub_workflow_id = sub_workflow_id
         if subworkflow_changed is not None:
             self.subworkflow_changed = subworkflow_changed
-        if task_definition is not None:
-            self.task_definition = task_definition
         if loop_over_task is not None:
             self.loop_over_task = loop_over_task
+        if task_definition is not None:
+            self.task_definition = task_definition
         if queue_wait_time is not None:
             self.queue_wait_time = queue_wait_time
 
@@ -1035,27 +1035,6 @@ class Task(object):
         self._subworkflow_changed = subworkflow_changed
 
     @property
-    def task_definition(self):
-        """Gets the task_definition of this Task.  # noqa: E501
-
-
-        :return: The task_definition of this Task.  # noqa: E501
-        :rtype: TaskDef
-        """
-        return self._task_definition
-
-    @task_definition.setter
-    def task_definition(self, task_definition):
-        """Sets the task_definition of this Task.
-
-
-        :param task_definition: The task_definition of this Task.  # noqa: E501
-        :type: TaskDef
-        """
-
-        self._task_definition = task_definition
-
-    @property
     def loop_over_task(self):
         """Gets the loop_over_task of this Task.  # noqa: E501
 
@@ -1075,6 +1054,27 @@ class Task(object):
         """
 
         self._loop_over_task = loop_over_task
+
+    @property
+    def task_definition(self):
+        """Gets the task_definition of this Task.  # noqa: E501
+
+
+        :return: The task_definition of this Task.  # noqa: E501
+        :rtype: TaskDef
+        """
+        return self._task_definition
+
+    @task_definition.setter
+    def task_definition(self, task_definition):
+        """Sets the task_definition of this Task.
+
+
+        :param task_definition: The task_definition of this Task.  # noqa: E501
+        :type: TaskDef
+        """
+
+        self._task_definition = task_definition
 
     @property
     def queue_wait_time(self):

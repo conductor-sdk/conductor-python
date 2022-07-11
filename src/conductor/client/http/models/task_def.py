@@ -38,7 +38,8 @@ class TaskDef(object):
         'isolation_group_id': 'str',
         'execution_name_space': 'str',
         'owner_email': 'str',
-        'poll_timeout_seconds': 'int'
+        'poll_timeout_seconds': 'int',
+        'backoff_scale_factor': 'int'
     }
 
     attribute_map = {
@@ -64,10 +65,11 @@ class TaskDef(object):
         'isolation_group_id': 'isolationGroupId',
         'execution_name_space': 'executionNameSpace',
         'owner_email': 'ownerEmail',
-        'poll_timeout_seconds': 'pollTimeoutSeconds'
+        'poll_timeout_seconds': 'pollTimeoutSeconds',
+        'backoff_scale_factor': 'backoffScaleFactor'
     }
 
-    def __init__(self, owner_app=None, create_time=None, update_time=None, created_by=None, updated_by=None, name=None, description=None, retry_count=None, timeout_seconds=None, input_keys=None, output_keys=None, timeout_policy=None, retry_logic=None, retry_delay_seconds=None, response_timeout_seconds=None, concurrent_exec_limit=None, input_template=None, rate_limit_per_frequency=None, rate_limit_frequency_in_seconds=None, isolation_group_id=None, execution_name_space=None, owner_email=None, poll_timeout_seconds=None):  # noqa: E501
+    def __init__(self, owner_app=None, create_time=None, update_time=None, created_by=None, updated_by=None, name=None, description=None, retry_count=None, timeout_seconds=None, input_keys=None, output_keys=None, timeout_policy=None, retry_logic=None, retry_delay_seconds=None, response_timeout_seconds=None, concurrent_exec_limit=None, input_template=None, rate_limit_per_frequency=None, rate_limit_frequency_in_seconds=None, isolation_group_id=None, execution_name_space=None, owner_email=None, poll_timeout_seconds=None, backoff_scale_factor=None):  # noqa: E501
         """TaskDef - a model defined in Swagger"""  # noqa: E501
         self._owner_app = None
         self._create_time = None
@@ -92,6 +94,7 @@ class TaskDef(object):
         self._execution_name_space = None
         self._owner_email = None
         self._poll_timeout_seconds = None
+        self._backoff_scale_factor = None
         self.discriminator = None
         if owner_app is not None:
             self.owner_app = owner_app
@@ -137,6 +140,8 @@ class TaskDef(object):
             self.owner_email = owner_email
         if poll_timeout_seconds is not None:
             self.poll_timeout_seconds = poll_timeout_seconds
+        if backoff_scale_factor is not None:
+            self.backoff_scale_factor = backoff_scale_factor
 
     @property
     def owner_app(self):
@@ -418,7 +423,7 @@ class TaskDef(object):
         :param retry_logic: The retry_logic of this TaskDef.  # noqa: E501
         :type: str
         """
-        allowed_values = ["FIXED", "EXPONENTIAL_BACKOFF"]  # noqa: E501
+        allowed_values = ["FIXED", "EXPONENTIAL_BACKOFF", "LINEAR_BACKOFF"]  # noqa: E501
         if retry_logic not in allowed_values:
             raise ValueError(
                 "Invalid value for `retry_logic` ({0}), must be one of {1}"  # noqa: E501
@@ -636,6 +641,27 @@ class TaskDef(object):
         """
 
         self._poll_timeout_seconds = poll_timeout_seconds
+
+    @property
+    def backoff_scale_factor(self):
+        """Gets the backoff_scale_factor of this TaskDef.  # noqa: E501
+
+
+        :return: The backoff_scale_factor of this TaskDef.  # noqa: E501
+        :rtype: int
+        """
+        return self._backoff_scale_factor
+
+    @backoff_scale_factor.setter
+    def backoff_scale_factor(self, backoff_scale_factor):
+        """Sets the backoff_scale_factor of this TaskDef.
+
+
+        :param backoff_scale_factor: The backoff_scale_factor of this TaskDef.  # noqa: E501
+        :type: int
+        """
+
+        self._backoff_scale_factor = backoff_scale_factor
 
     def to_dict(self):
         """Returns the model properties as a dict"""

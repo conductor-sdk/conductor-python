@@ -33,6 +33,7 @@ class WorkflowSummary(object):
         'external_input_payload_storage_path': 'str',
         'external_output_payload_storage_path': 'str',
         'priority': 'int',
+        'created_by': 'str',
         'output_size': 'int',
         'input_size': 'int'
     }
@@ -55,11 +56,12 @@ class WorkflowSummary(object):
         'external_input_payload_storage_path': 'externalInputPayloadStoragePath',
         'external_output_payload_storage_path': 'externalOutputPayloadStoragePath',
         'priority': 'priority',
+        'created_by': 'createdBy',
         'output_size': 'outputSize',
         'input_size': 'inputSize'
     }
 
-    def __init__(self, workflow_type=None, version=None, workflow_id=None, correlation_id=None, start_time=None, update_time=None, end_time=None, status=None, input=None, output=None, reason_for_incompletion=None, execution_time=None, event=None, failed_reference_task_names=None, external_input_payload_storage_path=None, external_output_payload_storage_path=None, priority=None, output_size=None, input_size=None):  # noqa: E501
+    def __init__(self, workflow_type=None, version=None, workflow_id=None, correlation_id=None, start_time=None, update_time=None, end_time=None, status=None, input=None, output=None, reason_for_incompletion=None, execution_time=None, event=None, failed_reference_task_names=None, external_input_payload_storage_path=None, external_output_payload_storage_path=None, priority=None, created_by=None, output_size=None, input_size=None):  # noqa: E501
         """WorkflowSummary - a model defined in Swagger"""  # noqa: E501
         self._workflow_type = None
         self._version = None
@@ -78,6 +80,7 @@ class WorkflowSummary(object):
         self._external_input_payload_storage_path = None
         self._external_output_payload_storage_path = None
         self._priority = None
+        self._created_by = None
         self._output_size = None
         self._input_size = None
         self.discriminator = None
@@ -115,6 +118,8 @@ class WorkflowSummary(object):
             self.external_output_payload_storage_path = external_output_payload_storage_path
         if priority is not None:
             self.priority = priority
+        if created_by is not None:
+            self.created_by = created_by
         if output_size is not None:
             self.output_size = output_size
         if input_size is not None:
@@ -482,6 +487,27 @@ class WorkflowSummary(object):
         """
 
         self._priority = priority
+
+    @property
+    def created_by(self):
+        """Gets the created_by of this WorkflowSummary.  # noqa: E501
+
+
+        :return: The created_by of this WorkflowSummary.  # noqa: E501
+        :rtype: str
+        """
+        return self._created_by
+
+    @created_by.setter
+    def created_by(self, created_by):
+        """Sets the created_by of this WorkflowSummary.
+
+
+        :param created_by: The created_by of this WorkflowSummary.  # noqa: E501
+        :type: str
+        """
+
+        self._created_by = created_by
 
     @property
     def output_size(self):
