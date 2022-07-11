@@ -53,7 +53,7 @@ workflow_id = workflow_executor.start_workflow(
 
 
 ### Workflow Management APIs
-See [Docs](./workflow_executor.html) for APIs to start, pause, resume, terminate, search and get workflow execution status.
+See [Docs](./../api/conductor.client.workflow.executor.workflow_executor.md) for APIs to start, pause, resume, terminate, search and get workflow execution status.
 
 ### More Examples
 You can find more examples at the following GitHub repository:
