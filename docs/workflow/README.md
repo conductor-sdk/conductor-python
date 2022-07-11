@@ -54,8 +54,3 @@ workflow_id = workflow_executor.start_workflow(
 
 ### Workflow Management APIs
 See [Docs](./../api/conductor.client.workflow.executor.workflow_executor.md) for APIs to start, pause, resume, terminate, search and get workflow execution status.
-
-### More Examples
-You can find more examples at the following GitHub repository:
-
-https://github.com/conductor-sdk/conductor-examples/tree/main/python-samples
