@@ -70,18 +70,6 @@ class ApiClient(object):
         self.pool.close()
         self.pool.join()
 
-    @property
-    def user_agent(self):
-        """User agent for this API client"""
-        return self.default_headers['User-Agent']
-
-    @user_agent.setter
-    def user_agent(self, value):
-        self.default_headers['User-Agent'] = value
-
-    def set_default_header(self, header_name, header_value):
-        self.default_headers[header_name] = header_value
-
     def __call_api(
             self, resource_path, method, path_params=None,
             query_params=None, header_params=None, body=None, post_params=None,
