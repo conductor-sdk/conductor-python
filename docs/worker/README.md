@@ -2,10 +2,10 @@
 
 Considering real use cases, the goal is to run multiple workers in parallel. Due to some limitations with Python, a multiprocessing architecture was chosen in order to enable real parallelization.
 
-You should basically write your workers and append them to a list. The `TaskHandler` class will spawn a unique and independent process for each worker, making sure it will behave as expected, by running a loop that:
+You should basically write your workers and append them to a list. The `TaskHandler` class will spawn a unique and independent process for each worker, making sure it will behave as expected, by running an infinite loop like this:
 * Poll for a `Task` at Conductor Server
 * Generate `TaskResult` from given `Task`
-* Update `Task` with `TaskResult` at Conductor Server
+* Update given `Task` with `TaskResult` at Conductor Server
 
 ## Write workers
 
