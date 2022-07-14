@@ -1,5 +1,12 @@
 # Worker
 
+Considering real use cases, the goal is to run multiple workers in parallel. Due to some limitations with Python, a multiprocessing architecture was chosen in order to enable real parallelization.
+
+You should basically write your workers and append them to a list. The `TaskHandler` class will spawn a unique and independent process for each worker, making sure it will behave as expected, by running a loop that:
+* Poll for a `Task` at Conductor Server
+* Generate `TaskResult` from given `Task`
+* Update `Task` with `TaskResult` at Conductor Server
+
 ## Write workers
 
 Currently, there are two ways of writing a Python worker:
@@ -77,8 +84,9 @@ with TaskHandler(workers, configuration) as task_handler:
 python3 main.py
 ```
 
-See [Using Conductor Playground](https://orkes.io/content/docs/getting-started/playground/using-conductor-playground)
-for more details on how to use Playground environment for testing.
+See [Using Conductor Playground](https://orkes.io/content/docs/getting-started/playground/using-conductor-playground) for more details on how to use Playground environment for testing.
+
+Check out more examples, like this general usage: [main.py](../../src/example/main/main.py)
 
 
 ## C/C++ Support
