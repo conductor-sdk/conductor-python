@@ -8,8 +8,8 @@ ExecuteTaskFunction = Callable[[Task], TaskResult]
 
 
 class Worker(WorkerInterface):
-    def __init__(self, task_type: str, execute_function: ExecuteTaskFunction,  poll_interval: float) -> Self:
-        super().__init__(task_type)
+    def __init__(self, task_definition_name: str, execute_function: ExecuteTaskFunction,  poll_interval: float) -> Self:
+        super().__init__(task_definition_name)
         self.execute_function = execute_function
         self.poll_interval = poll_interval
 

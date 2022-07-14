@@ -84,10 +84,10 @@ def main():
         print('started workflow:', workflow_id)
     workers = [
         SimplePythonWorker(
-            'python_task_example'
+            task_definition_name='python_task_example'
         ),
         Worker(
-            task_type='python_task_example',
+            task_definition_name='python_task_example',
             execute_function=execute,
             poll_interval=0.25,
         )
