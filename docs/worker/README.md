@@ -1,55 +1,80 @@
-## Write a simple worker
+# Worker
+
+## Write workers
+
+Currently, there are two ways of writing a Python worker:
+1. [Worker as a function](#worker-as-a-function)
+2. [Worker as a class](#worker-as-a-class)
+
+
+### Worker as a function
+
+The function must receive a `Task` as input and produce `TaskResult` as output, example:
+
 ```python
-from conductor.client.automator.task_handler import TaskHandler
-from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
+from conductor.client.http.models import Task, TaskResult
+from conductor.client.http.models.task_result_status import TaskResultStatus
+
+def execute(task: Task) -> TaskResult:
+    task_result = TaskResult(
+        task_id=task.task_id,
+        workflow_instance_id=task.workflow_instance_id,
+        worker_id='your_custom_id'
+    )
+    task_result.add_output_data('worker_style', 'function')
+    task_result.status = TaskResultStatus.COMPLETED
+    return task_result
+```
+
+### Worker as a class
+
+The class must implement `WorkerInterface` class, which requires `execute` method. The remaining ones are inherited, but can be easily overridden. Example:
+
+```python
 from conductor.client.http.models import Task, TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.worker.worker_interface import WorkerInterface
 
-
 class SimplePythonWorker(WorkerInterface):
     def execute(self, task: Task) -> TaskResult:
         task_result = self.get_task_result_from_task(task)
-        task_result.add_output_data('key1', 'value')
-        task_result.add_output_data('key2', 42)
-        task_result.add_output_data('key3', False)
+        task_result.add_output_data('worker_style', 'class')
+        task_result.add_output_data('secret_number', 1234)
+        task_result.add_output_data('is_it_true', False)
         task_result.status = TaskResultStatus.COMPLETED
         return task_result
 
     def get_polling_interval_in_seconds(self) -> float:
-        return 1
-
-
-def main():
-    # Point to the Conductor Server
-    configuration = Configuration(
-        server_api_url='https://play.orkes.io/api',
-        debug=True,
-        authentication_settings=AuthenticationSettings(  # Optional if you are using a server that requires authentication
-            key_id='KEY',
-            key_secret='SECRET'
-        )
-    )
-
-    # Add three workers
-    workers = [
-        SimplePythonWorker('python_task_example'),        
-    ]
-
-    # Start the worker processes and wait for their completion
-    with TaskHandler(workers, configuration) as task_handler:
-        task_handler.start_processes()
-        task_handler.join_processes()
-
-if __name__ == '__main__':
-    main()
+        # poll every 500ms
+        return 0.5
 ```
 
-Start polling for the work
+## Run Workers
+
+Now you can use your workers by calling a `TaskHandler`, example:
+
+```python
+from conductor.client.automator.task_handler import TaskHandler
+from conductor.client.worker.worker import Worker
+
+workers = [
+    SimplePythonWorker(
+        task_definition_name='python_task_example'
+    ),
+    Worker(
+        task_definition_name='python_task_example',
+        execute_function=execute,
+        poll_interval=0.25,
+    )
+]
+
+with TaskHandler(workers, configuration) as task_handler:
+    task_handler.start_processes()
+    task_handler.join_processes()
+```
 
 ```shell
-python main.py
+python3 main.py
 ```
 
 See [Using Conductor Playground](https://orkes.io/content/docs/getting-started/playground/using-conductor-playground)
