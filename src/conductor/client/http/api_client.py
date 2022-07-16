@@ -60,7 +60,9 @@ class ApiClient(object):
 
         self.pool = ThreadPool()
         self.rest_client = rest.RESTClientObject(configuration)
-        self.default_headers = {}
+        self.default_headers = {
+            'Accept-Encoding': 'gzip',
+        }
         if header_name is not None:
             self.default_headers[header_name] = header_value
         self.cookie = cookie
@@ -69,18 +71,6 @@ class ApiClient(object):
     def __del__(self):
         self.pool.close()
         self.pool.join()
-
-    @property
-    def user_agent(self):
-        """User agent for this API client"""
-        return self.default_headers['User-Agent']
-
-    @user_agent.setter
-    def user_agent(self, value):
-        self.default_headers['User-Agent'] = value
-
-    def set_default_header(self, header_name, header_value):
-        self.default_headers[header_name] = header_value
 
     def __call_api(
             self, resource_path, method, path_params=None,
