@@ -3,12 +3,6 @@ import unittest
 
 
 class TestConfiguration(unittest.TestCase):
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
     def test_initialization_default(self):
         configuration = Configuration()
         self.assertEqual(
