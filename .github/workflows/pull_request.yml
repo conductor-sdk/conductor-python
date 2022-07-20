@@ -12,5 +12,9 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: "3.x"
+      - name: Install and build dependencies
+        run: |
+          export CONDUCTOR_PYTHON_VERSION=v1.0.0
+          python3 -m pip install .
       - name: Unit Tests
         run: python3 -m unittest -v
