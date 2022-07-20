@@ -14,13 +14,6 @@ class PickableMock(Mock):
 
 
 class TestTaskHandler(unittest.TestCase):
-
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
     def test_initialization_with_invalid_workers(self):
         expected_exception = Exception('Invalid worker list')
         with self.assertRaises(Exception) as context:
