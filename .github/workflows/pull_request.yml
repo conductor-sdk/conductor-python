@@ -1,4 +1,4 @@
-name: Test
+name: Tests
 
 on: pull_request
 
@@ -19,8 +19,8 @@ jobs:
       - name: Unit Tests
         run: python3 -m unittest discover --verbose --start-directory=./tests/unit
       - name: Integration Tests
-        run: |
-          export PYTHON_INTEGRATION_TESTS_SERVER_API_URL=https://pg-staging.orkesconductor.com/api
-          export PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID=88659b04-acab-47a8-a876-2b19619a2587
-          export PYTHON_INTEGRATION_TESTS_SERVER_KEY_SECRET=6LSlOPLSh8bQFxR26kjGt6j6OM6zGynlHuQ6N5qzLenmH39i
-          python3 ./tests/integration/main.py
+        run: python3 ./tests/integration/main.py
+        env:
+          PYTHON_INTEGRATION_TESTS_SERVER_API_URL: https://pg-staging.orkesconductor.com/api
+          PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID: 88659b04-acab-47a8-a876-2b19619a2587
+          PYTHON_INTEGRATION_TESTS_SERVER_KEY_SECRET: 6LSlOPLSh8bQFxR26kjGt6j6OM6zGynlHuQ6N5qzLenmH39i
