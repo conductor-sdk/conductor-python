@@ -9,13 +9,18 @@ from conductor.client.workflow.task.simple_task import SimpleTask
 from resources.worker.python.python_worker import SimplePythonWorker, execute
 from time import sleep
 from typing import List
-import os
+
+workflow_quantity = 15
 
 
 def test_workflow_execution(configuration: Configuration, workflow_executor: WorkflowExecutor) -> None:
     workflow = generate_workflow(workflow_executor)
     assert workflow.register(overwrite=True) == None
-    workflow_id_list = start_workflows(5, workflow, workflow_executor)
+    workflow_id_list = start_workflows(
+        workflow_quantity,
+        workflow,
+        workflow_executor
+    )
     workers = [
         SimplePythonWorker(
             task_definition_name='python_task_example'
@@ -28,7 +33,10 @@ def test_workflow_execution(configuration: Configuration, workflow_executor: Wor
     ]
     with TaskHandler(workers, configuration) as task_handler:
         task_handler.start_processes()
-        # task_handler.join_processes()
+        sleep(workflow_quantity)
+        for workflow_id in workflow_id_list:
+            workflow = workflow_executor.get_workflow(workflow_id, False)
+            assert workflow.status == 'COMPLETED'
 
 
 def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
