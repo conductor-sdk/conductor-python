@@ -17,4 +17,6 @@ jobs:
           export CONDUCTOR_PYTHON_VERSION=v1.0.0
           python3 -m pip install .
       - name: Unit Tests
-        run: python3 -m unittest -v
+        run: python3 -m unittest discover --verbose --start-directory=./tests/unit
+      - name: Integration Tests
+        run: python3 ./tests/integration/main.py

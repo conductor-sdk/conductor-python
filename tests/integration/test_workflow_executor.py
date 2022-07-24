@@ -9,6 +9,7 @@ from conductor.client.worker.worker_interface import WorkerInterface
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.simple_task import SimpleTask
+from time import sleep
 from typing import List
 import os
 
@@ -75,13 +76,10 @@ def start_workflows(qty: int, workflow: ConductorWorkflow, workflow_executor: Wo
     return workflow_id_list
 
 
-def main():
-    configuration = get_configuration()
-    workflow_executor = WorkflowExecutor(configuration)
+def test_workflow_execution(configuration: Configuration, workflow_executor: WorkflowExecutor) -> None:
     workflow = generate_workflow(workflow_executor)
-    print('register workflow:', workflow.register(overwrite=True))
-    for workflow_id in start_workflows(5, workflow, workflow_executor):
-        print('started workflow:', workflow_id)
+    assert workflow.register(overwrite=True) == None
+    workflow_id_list = start_workflows(5, workflow, workflow_executor)
     workers = [
         SimplePythonWorker(
             task_definition_name='python_task_example'
@@ -94,8 +92,6 @@ def main():
     ]
     with TaskHandler(workers, configuration) as task_handler:
         task_handler.start_processes()
+        sleep()
+
         task_handler.join_processes()
-
-
-if __name__ == '__main__':
-    main()

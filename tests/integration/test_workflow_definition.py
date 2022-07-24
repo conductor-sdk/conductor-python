@@ -1,5 +1,3 @@
-from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
@@ -12,18 +10,17 @@ from conductor.client.workflow.task.simple_task import SimpleTask
 from conductor.client.workflow.task.sub_workflow_task import SubWorkflowTask, InlineSubWorkflowTask
 from conductor.client.workflow.task.switch_task import SwitchTask
 from conductor.client.workflow.task.terminate_task import TerminateTask, WorkflowStatus
-import os
 
 
-def generate_configuration():
-    return Configuration(
-        server_api_url="https://pg-staging.orkesconductor.com/api",
-        debug=True,
-        authentication_settings=AuthenticationSettings(
-            key_id=os.getenv('KEY'),
-            key_secret=os.getenv('SECRET'),
+def test_kitchensink_workflow_registration(workflow_executor: WorkflowExecutor) -> None:
+    workflow = generate_workflow(workflow_executor)
+    assert workflow.register(True) == None
+    workflow_id = workflow_executor.start_workflow(
+        start_workflow_request=StartWorkflowRequest(
+            name=workflow.name
         )
     )
+    assert type(workflow_id) == str
 
 
 def generate_simple_task(id: int) -> SimpleTask:
@@ -138,20 +135,3 @@ def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
     )
     workflow >> generate_sub_workflow_task() >> generate_json_jq_task()
     return workflow
-
-
-def main():
-    configuration = generate_configuration()
-    workflow_executor = WorkflowExecutor(configuration)
-    workflow = generate_workflow(workflow_executor)
-    print('register workflow response:', workflow.register(True))
-    workflow_id = workflow_executor.start_workflow(
-        start_workflow_request=StartWorkflowRequest(
-            name=workflow.name
-        )
-    )
-    print('workflow_id:', workflow_id)
-
-
-if __name__ == '__main__':
-    main()
