@@ -1,7 +1,7 @@
-from .test_workflow_definition import test_kitchensink_workflow_registration
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
+from test_workflow_definition import test_kitchensink_workflow_registration
 import os
 
 
@@ -10,7 +10,7 @@ def generate_configuration():
         server_api_url="https://pg-staging.orkesconductor.com/api",
         debug=True,
         authentication_settings=AuthenticationSettings(
-            key_id=os.getenv('KEY'),
+            key_id=os.getenv('KE'),
             key_secret=os.getenv('SECRET'),
         )
     )

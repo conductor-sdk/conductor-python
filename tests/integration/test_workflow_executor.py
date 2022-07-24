@@ -92,6 +92,4 @@ def test_workflow_execution(configuration: Configuration, workflow_executor: Wor
     ]
     with TaskHandler(workers, configuration) as task_handler:
         task_handler.start_processes()
-        sleep()
-
         task_handler.join_processes()
