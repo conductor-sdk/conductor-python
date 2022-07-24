@@ -6,7 +6,7 @@ from conductor.client.worker.worker import Worker
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.simple_task import SimpleTask
-from tests.unit.worker.python.python_worker import SimplePythonWorker, execute
+from tests.resources.worker.python.python_worker import SimplePythonWorker, execute
 from time import sleep
 from typing import List
 import os

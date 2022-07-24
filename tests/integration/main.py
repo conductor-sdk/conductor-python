@@ -2,6 +2,7 @@ from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from test_workflow_definition import test_kitchensink_workflow_registration
+# from test_workflow_executor import test_workflow_execution
 import os
 
 KEY_ID = os.getenv('PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID')
@@ -25,6 +26,8 @@ def main():
     workflow_executor = WorkflowExecutor(configuration)
     test_kitchensink_workflow_registration(workflow_executor)
     print('passed kitchensink workflow registration')
+    # test_workflow_execution(configuration, workflow_executor)
+    print('passed workflow execution')
 
 
 if __name__ == '__main__':
