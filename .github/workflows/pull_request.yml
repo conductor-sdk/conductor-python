@@ -19,7 +19,7 @@ jobs:
       - name: Unit Tests
         run: python3 -m unittest discover --verbose --start-directory=./tests/unit
       - name: Integration Tests
-        run: python3 ./tests/integration/main.py
+        run: python3 ./tests/main.py
         env:
           PYTHON_INTEGRATION_TESTS_SERVER_API_URL: https://pg-staging.orkesconductor.com/api
           PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID: 88659b04-acab-47a8-a876-2b19619a2587
