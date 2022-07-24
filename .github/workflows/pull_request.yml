@@ -13,9 +13,9 @@ jobs:
         with:
           python-version: "3.x"
       - name: Install and build dependencies
-        run: |
-          export CONDUCTOR_PYTHON_VERSION=v1.0.0
-          python3 -m pip install .
+        run: python3 -m pip install .
+        env:
+          CONDUCTOR_PYTHON_VERSION: v1.0.0
       - name: Unit Tests
         run: python3 -m unittest discover --verbose --start-directory=./tests/unit
       - name: Integration Tests
