@@ -15,7 +15,7 @@ class WorkflowExecutor:
         self.task_client = TaskResourceApi(api_client)
         self.workflow_client = WorkflowResourceApi(api_client)
 
-    def register_workflow(self, workflow: WorkflowDef, overwrite: bool) -> object:
+    def register_workflow(self, workflow: WorkflowDef, overwrite: bool = None) -> object:
         """Create a new workflow definition
 
         :param WorkflowDef body:
@@ -37,16 +37,19 @@ class WorkflowExecutor:
             body=start_workflow_request,
         )
 
-    def get_workflow(self, workflow_id: str, include_tasks: bool) -> Workflow:
+    def get_workflow(self, workflow_id: str, include_tasks: bool = None) -> Workflow:
         """Gets the workflow by workflow id
 
         :param str workflow_id:
         :param bool include_tasks:
         :return: Workflow
         """
-        return self.workflow_client.get_execution_status(workflow_id, include_tasks)
+        return self.workflow_client.get_execution_status(
+            workflow_id=workflow_id,
+            include_tasks=include_tasks
+        )
 
-    def get_workflow_status(self, workflow_id: str, include_output: bool, include_variables: bool) -> WorkflowStatus:
+    def get_workflow_status(self, workflow_id: str, include_output: bool = None, include_variables: bool = None) -> WorkflowStatus:
         """Gets the workflow by workflow id
 
         :param str workflow_id:
@@ -55,12 +58,21 @@ class WorkflowExecutor:
         :return: WorkflowStatus
         """
         return self.workflow_client.get_workflow_status_summary(
-            workflow_id,
-            include_output,
-            include_variables,
+            workflow_id=workflow_id,
+            include_output=include_output,
+            include_variables=include_variables,
         )
 
-    def search(self, start: int, size: int, query: str, free_text: str) -> ScrollableSearchResultWorkflowSummary:
+    def search(
+        self,
+        query_id: str = None,
+        start: int = None,
+        size: int = None,
+        sort: str = None,
+        free_text: str = None,
+        query: str = None,
+        skip_cache: bool = None,
+    ) -> ScrollableSearchResultWorkflowSummary:
         """Search for workflows based on payload and other parameters
 
         :param async_req bool
@@ -74,13 +86,16 @@ class WorkflowExecutor:
         :return: ScrollableSearchResultWorkflowSummary
         """
         return self.workflow_client.search(
+            query_id=query_id,
             start=start,
             size=size,
+            sort=sort,
+            free_text=free_text,
             query=query,
-            free_text=free_text
+            skip_cache=skip_cache,
         )
 
-    def get_by_correlation_ids(self, workflow_name: str, include_closed: bool, include_tasks: bool, correlation_ids: List[str]) -> Dict[str, List[WorkflowDef]]:
+    def get_by_correlation_ids(self, workflow_name: str, correlation_ids: List[str], include_closed: bool = None, include_tasks: bool = None) -> Dict[str, List[WorkflowDef]]:
         """Lists workflows for the given correlation id list
 
         :param list[str] body:
@@ -116,7 +131,7 @@ class WorkflowExecutor:
             workflow_id=workflow_id
         )
 
-    def terminate(self, workflow_id: str, reason: str) -> None:
+    def terminate(self, workflow_id: str, reason: str = None) -> None:
         """Terminate workflow execution
 
         :param str workflow_id:
@@ -128,7 +143,7 @@ class WorkflowExecutor:
             reason=reason
         )
 
-    def restart(self, workflow_id: str, use_latest_definitions: bool) -> None:
+    def restart(self, workflow_id: str, use_latest_definitions: bool = None) -> None:
         """Restarts a completed workflow
 
         :param str workflow_id:
@@ -140,7 +155,7 @@ class WorkflowExecutor:
             use_latest_definitions=use_latest_definitions
         )
 
-    def retry(self, workflow_id: str, resume_subworkflow_tasks: bool) -> None:
+    def retry(self, workflow_id: str, resume_subworkflow_tasks: bool = None) -> None:
         """Retries the last failed task  
 
         :param str workflow_id:
@@ -164,7 +179,7 @@ class WorkflowExecutor:
             workflow_id=workflow_id,
         )
 
-    def skip_task_from_workflow(self, workflow_id: str, task_reference_name: str, skip_task_request: SkipTaskRequest) -> None:
+    def skip_task_from_workflow(self, workflow_id: str, task_reference_name: str, skip_task_request: SkipTaskRequest = None) -> None:
         """Skips a given task from a current running workflow
 
         :param str workflow_id:

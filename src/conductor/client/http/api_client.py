@@ -225,7 +225,7 @@ class ApiClient(object):
 
         :return: object.
         """
-        if data is None:
+        if data is b'' or data is None:
             return None
 
         if type(klass) == str:

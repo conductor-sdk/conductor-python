@@ -1,7 +1,7 @@
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.configuration.configuration import Configuration
-from example.worker.python.simple_python_worker import SimplePythonWorker
+from tests.resources.worker.python.python_worker import SimplePythonWorker
 from unittest.mock import Mock
 from unittest.mock import patch
 import multiprocessing
@@ -14,13 +14,6 @@ class PickableMock(Mock):
 
 
 class TestTaskHandler(unittest.TestCase):
-
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
     def test_initialization_with_invalid_workers(self):
         expected_exception = Exception('Invalid worker list')
         with self.assertRaises(Exception) as context:

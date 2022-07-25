@@ -4,8 +4,7 @@ from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
-from example.worker.python.faulty_execution_worker import FaultyExecutionWorker
-from example.worker.python.simple_python_worker import SimplePythonWorker
+from tests.resources.worker.python.python_worker import SimplePythonWorker, FaultyExecutionWorker
 from unittest.mock import patch
 import logging
 import time
@@ -187,7 +186,9 @@ class TestTaskRunner(unittest.TestCase):
             worker_id=self.__get_valid_worker().get_identity(),
             status=TaskResultStatus.COMPLETED,
             output_data={
-                'key': 'value'
+                'worker_style': 'class',
+                'secret_number': 1234,
+                'is_it_true': False,
             }
         )
 
