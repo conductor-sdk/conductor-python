@@ -42,3 +42,7 @@ jobs:
           CONDUCTOR_PYTHON_VERSION: ${{ github.ref_name }}
       - name: Run Integration Tests
         run: python3 ./tests/main.py
+        env:
+          PYTHON_INTEGRATION_TESTS_SERVER_API_URL: ${{ secrets.PYTHON_INTEGRATION_TESTS_SERVER_API_URL }}
+          PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID: ${{ secrets.PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID }}
+          PYTHON_INTEGRATION_TESTS_SERVER_KEY_SECRET: ${{ secrets.PYTHON_INTEGRATION_TESTS_SERVER_KEY_SECRET }}
