@@ -15,12 +15,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set up release version
-        run: |
-          export VERSION=${{github.ref_name}}
-          export REL_VER=`echo ${VERSION:1}`
-          echo "Release version is $REL_VER"
-          echo "RELEASE_VERSION=$REL_VER" >> $GITHUB_ENV
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
@@ -30,7 +24,7 @@ jobs:
       - name: Build
         run: python3 -m build
         env:
-          CONDUCTOR_PYTHON_VERSION: ${{ RELEASE_VERSION }}
+          CONDUCTOR_PYTHON_VERSION: ${{ github.ref_name }}
       - name: Install publish dependencies
         run: python3 -m pip install -U twine
       - name: Publish at pypi
