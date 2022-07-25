@@ -35,16 +35,15 @@ jobs:
         run: python3 -m pip install -U twine
       - name: Publish at pypi
         run: python3 -m twine upload dist/* -u ${{ secrets.pypi_user }} -p ${{ secrets.pypi_pass }}
-  validate-release:
-    needs: build-and-publish
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Set up release version
-        run: |
-          export VERSION=${{github.ref_name}}
-          export REL_VER=`echo ${VERSION:1}`
-          echo "Release version is $REL_VER"
-          echo "RELEASE_VERSION=$REL_VER" >> $GITHUB_ENV
-      - name: I
+  # validate-release:
+  #   needs: build-and-publish
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #     - name: Set up release version
+  #       run: |
+  #         export VERSION=${{github.ref_name}}
+  #         export REL_VER=`echo ${VERSION:1}`
+  #         echo "Release version is $REL_VER"
+  #         echo "RELEASE_VERSION=$REL_VER" >> $GITHUB_ENV
