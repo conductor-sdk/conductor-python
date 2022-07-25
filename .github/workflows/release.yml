@@ -16,9 +16,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Set up release version
-        run: echo "RELEASE_VERSION=${VERSION:1}" >> $GITHUB_ENV
-        env:
-          VERSION: ${{github.ref_name}}
+        run: |
+          export VERSION=${{github.ref_name}}
+          export REL_VER=`echo ${VERSION:1}`
+          echo "Release version is $REL_VER"
+          echo "RELEASE_VERSION=$REL_VER" >> $GITHUB_ENV
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
@@ -34,11 +36,14 @@ jobs:
       - name: Publish at pypi
         run: python3 -m twine upload dist/* -u ${{ secrets.pypi_user }} -p ${{ secrets.pypi_pass }}
   validate-release:
+    needs: build-and-publish
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Set up release version
-        run: echo "RELEASE_VERSION=${VERSION:1}" >> $GITHUB_ENV
-        env:
-          VERSION: ${{github.ref_name}}
+        run: |
+          export VERSION=${{github.ref_name}}
+          export REL_VER=`echo ${VERSION:1}`
+          echo "Release version is $REL_VER"
+          echo "RELEASE_VERSION=$REL_VER" >> $GITHUB_ENV
