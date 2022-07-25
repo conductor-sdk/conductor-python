@@ -30,7 +30,7 @@ jobs:
       - name: Build
         run: python3 -m build
         env:
-          CONDUCTOR_PYTHON_VERSION: $RELEASE_VERSION
+          CONDUCTOR_PYTHON_VERSION: ${{ RELEASE_VERSION }}
       - name: Install publish dependencies
         run: python3 -m pip install -U twine
       - name: Publish at pypi
@@ -47,3 +47,4 @@ jobs:
           export REL_VER=`echo ${VERSION:1}`
           echo "Release version is $REL_VER"
           echo "RELEASE_VERSION=$REL_VER" >> $GITHUB_ENV
+      - name: I

@@ -12,13 +12,13 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: "3.x"
-      - name: Install and build dependencies
+      - name: Instal package
         run: python3 -m pip install .
         env:
           CONDUCTOR_PYTHON_VERSION: v1.0.0
-      - name: Unit Tests
+      - name: Run Unit Tests
         run: python3 -m unittest discover --verbose --start-directory=./tests/unit
-      - name: Integration Tests
+      - name: Run Integration Tests
         run: python3 ./tests/main.py
         env:
           PYTHON_INTEGRATION_TESTS_SERVER_API_URL: https://pg-staging.orkesconductor.com/api
