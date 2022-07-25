@@ -29,15 +29,23 @@ jobs:
         run: python3 -m pip install -U twine
       - name: Publish at pypi
         run: python3 -m twine upload dist/* -u ${{ secrets.pypi_user }} -p ${{ secrets.pypi_pass }}
-  # validate-release:
-  #   needs: build-and-publish
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #     - name: Set up release version
-  #       run: |
-  #         export VERSION=${{github.ref_name}}
-  #         export REL_VER=`echo ${VERSION:1}`
-  #         echo "Release version is $REL_VER"
-  #         echo "RELEASE_VERSION=$REL_VER" >> $GITHUB_ENV
+  validate-release:
+    needs: build-and-publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.x"
+      - name: Install package from remote files
+        run: python3 -m pip install conductor-python==$CONDUCTOR_PYTHON_VERSION
+        env:
+          CONDUCTOR_PYTHON_VERSION: ${{ github.ref_name }}
+      - name: Run Integration Tests
+        run: python3 ./tests/main.py
+        env:
+          PYTHON_INTEGRATION_TESTS_SERVER_API_URL: https://pg-staging.orkesconductor.com/api
+          PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID: 88659b04-acab-47a8-a876-2b19619a2587
+          PYTHON_INTEGRATION_TESTS_SERVER_KEY_SECRET: 6LSlOPLSh8bQFxR26kjGt6j6OM6zGynlHuQ6N5qzLenmH39i

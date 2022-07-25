@@ -12,7 +12,7 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: "3.x"
-      - name: Instal package
+      - name: Instal package from local files
         run: python3 -m pip install .
         env:
           CONDUCTOR_PYTHON_VERSION: v1.0.0
