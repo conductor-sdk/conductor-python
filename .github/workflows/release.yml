@@ -7,7 +7,7 @@ on:
       - prereleased
   push:
     tags:
-      - '*'
+      - "*"
 
 jobs:
   build-and-publish:
@@ -16,9 +16,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Set up release version
-        run: echo "RELEASE_VERSION=${VERSION}" >> $GITHUB_ENV
+        run: echo "RELEASE_VERSION=${VERSION:1}" >> $GITHUB_ENV
         env:
-          VERSION: ${{github.ref_name:1}}
+          VERSION: ${{github.ref_name}}
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
@@ -39,6 +39,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Set up release version
-        run: echo "RELEASE_VERSION=${VERSION}" >> $GITHUB_ENV
+        run: echo "RELEASE_VERSION=${VERSION:1}" >> $GITHUB_ENV
         env:
-          VERSION: ${{github.ref_name:1}}
+          VERSION: ${{github.ref_name}}
