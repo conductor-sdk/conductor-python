@@ -60,7 +60,7 @@ class TaskRunner:
         try:
             start_time = time.time()
             task = self.__get_task_resource_api().poll(
-                tasktype=task_definition_name
+                tasktype=task_definition_name, workerid=self.worker.get_identity()
             )
             finish_time = time.time()
             time_spent = finish_time - start_time
