@@ -41,5 +41,5 @@ def worker_with_generic_return(task: Task) -> Any:
     return {
         'worker_style': 'function',
         'worker_input': 'Task',
-        'worker_output': 'TaskResult'
+        'worker_output': 'Any'
     }

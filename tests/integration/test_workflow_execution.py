@@ -1,68 +1,65 @@
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.worker.worker import Worker
+from conductor.client.worker.worker_interface import WorkerInterface
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.simple_task import SimpleTask
 from resources.worker.python.python_worker import SimplePythonWorker
+from resources.worker.python.python_worker import worker_with_generic_return
 from resources.worker.python.python_worker import worker_with_task_result
 from time import sleep
+from typing import List
 
-WORKFLOW_EXECUTION_WAIT_TIME_IN_SECONDS = 10
-WORKFLOW_QUANTITY = 5
+
 WORKFLOW_NAME = 'python_integration_test_workflow'
 TASK_NAME = 'python_integration_test_task'
 
 
-def test_workflow_registration(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
-    workflow = generate_workflow(workflow_executor)
-    assert workflow.register(overwrite=True) == None
-    return workflow
-
-
-def test_single_workflow_execution(workflow: ConductorWorkflow, configuration: Configuration, workflow_executor: WorkflowExecutor) -> None:
-    workflow_id = workflow_executor.start_workflow(
-        start_workflow_request=StartWorkflowRequest(
-            name=workflow.name,
-        )
+def run_workflow_execution_tests(configuration: Configuration, workflow_executor: WorkflowExecutor):
+    test_workflow_registration(
+        workflow_executor,
     )
-    task_handler = TaskHandler(
-        configuration=configuration,
+    test_workflow_execution(
+        quantity=5,
+        workflow_name=WORKFLOW_NAME,
         workers=[
+            SimplePythonWorker(TASK_NAME),
             Worker(
                 task_definition_name=TASK_NAME,
                 execute_function=worker_with_task_result,
-                poll_interval=0.1,
+            ),
+            Worker(
+                task_definition_name=TASK_NAME,
+                execute_function=worker_with_generic_return,
             )
-        ]
+        ],
+        configuration=configuration,
+        workflow_executor=workflow_executor,
+        workflow_completion_timeout=10
     )
+
+
+def test_workflow_registration(workflow_executor: WorkflowExecutor):
+    workflow = generate_workflow(workflow_executor)
+    assert workflow.register(overwrite=True) == None
+
+
+def test_workflow_execution(
+    quantity: int,
+    workflow_name: str,
+    workers: List[WorkerInterface],
+    configuration: Configuration,
+    workflow_executor: WorkflowExecutor,
+    workflow_completion_timeout: float,
+) -> None:
+    workflow_ids = workflow_executor.start_workflows(quantity, workflow_name)
+    task_handler = TaskHandler(workers, configuration)
     task_handler.start_processes()
-    sleep(WORKFLOW_EXECUTION_WAIT_TIME_IN_SECONDS)
-    validate_workflow_status(workflow_id, workflow_executor)
+    sleep(workflow_completion_timeout)
+    for workflow_id in workflow_ids:
+        validate_workflow_status(workflow_id, workflow_executor)
     task_handler.stop_processes()
-
-
-def test_workflow_execution(workflow: ConductorWorkflow, configuration: Configuration, workflow_executor: WorkflowExecutor) -> None:
-    workflow_id_list = workflow_executor.start_workflows(
-        quantity=WORKFLOW_QUANTITY,
-        workflow_name=workflow.name
-    )
-    workers = [
-        SimplePythonWorker(
-            task_definition_name=TASK_NAME,
-        ),
-        Worker(
-            task_definition_name=TASK_NAME,
-            execute_function=worker_with_task_result,
-            poll_interval=0.1,
-        )
-    ]
-    with TaskHandler(workers, configuration) as task_handler:
-        task_handler.start_processes()
-        sleep(WORKFLOW_EXECUTION_WAIT_TIME_IN_SECONDS)
-        for workflow_id in workflow_id_list:
-            validate_workflow_status(workflow_id, workflow_executor)
 
 
 def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:

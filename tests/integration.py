@@ -1,9 +1,8 @@
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from time import sleep
-import integration.test_workflow_definition
-import integration.test_workflow_execution
+from integration.test_workflow_definition import run_workflow_definition_tests
+from integration.test_workflow_execution import run_workflow_execution_tests
 import os
 
 KEY_ID = os.getenv('PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID')
@@ -19,24 +18,6 @@ def generate_configuration():
             key_id=KEY_ID,
             key_secret=KEY_SECRET,
         )
-    )
-
-
-def run_workflow_definition_tests(workflow_executor: WorkflowExecutor) -> None:
-    integration.test_workflow_definition.test_kitchensink_workflow_registration(
-        workflow_executor
-    )
-
-
-def run_workflow_execution_tests(configuration: Configuration, workflow_executor: WorkflowExecutor) -> None:
-    workflow = integration.test_workflow_execution.test_workflow_registration(
-        workflow_executor
-    )
-    integration.test_workflow_execution.test_single_workflow_execution(
-        workflow, configuration, workflow_executor
-    )
-    integration.test_workflow_execution.test_workflow_execution(
-        workflow, configuration, workflow_executor
     )
 
 
