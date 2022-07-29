@@ -9,12 +9,12 @@ import inspect
 ExecuteTaskFunction = Callable[[Task], Any]
 
 
-def is_callable_input_parameter_a_task(callable: ExecuteTaskFunction, ) -> bool:
+def is_callable_input_parameter_a_task(callable: ExecuteTaskFunction, object_type: Any) -> bool:
     parameters = inspect.signature(callable).parameters
     if len(parameters) != 1:
         return False
     parameter = parameters[list(parameters.keys())[0]]
-    return parameter.annotation == Task
+    return parameter.annotation == object_type
 
 
 def is_callable_return_value_of_type(callable: ExecuteTaskFunction, object_type: Any) -> bool:
@@ -23,7 +23,7 @@ def is_callable_return_value_of_type(callable: ExecuteTaskFunction, object_type:
 
 
 class Worker(WorkerInterface):
-    def __init__(self, task_definition_name: str, execute_function: ExecuteTaskFunction,  poll_interval: float) -> Self:
+    def __init__(self, task_definition_name: str, execute_function: ExecuteTaskFunction, poll_interval: float) -> Self:
         super().__init__(task_definition_name)
         self.poll_interval = poll_interval
         self.execute_function = execute_function
@@ -47,9 +47,10 @@ class Worker(WorkerInterface):
     def execute_function(self, execute_function: ExecuteTaskFunction) -> None:
         self._execute_function = execute_function
         self._is_execute_function_input_parameter_a_task = is_callable_input_parameter_a_task(
-            execute_function
+            callable=execute_function,
+            object_type=Task,
         )
         self._is_execute_function_return_value_a_task_result = is_callable_return_value_of_type(
-            execute_function=execute_function,
+            callable=execute_function,
             object_type=TaskResult,
         )

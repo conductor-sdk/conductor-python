@@ -9,8 +9,8 @@ from resources.worker.python.python_worker import SimplePythonWorker
 from resources.worker.python.python_worker import worker_with_task_result
 from time import sleep
 
-
-WORKFLOW_QUANTITY = 10
+WORKFLOW_EXECUTION_WAIT_TIME_IN_SECONDS = 10
+WORKFLOW_QUANTITY = 5
 WORKFLOW_NAME = 'python_integration_test_workflow'
 TASK_NAME = 'python_integration_test_task'
 
@@ -21,23 +21,26 @@ def test_workflow_registration(workflow_executor: WorkflowExecutor) -> Conductor
     return workflow
 
 
-def test_single_workflow_execution(workflow: ConductorWorkflow, workflow_executor: WorkflowExecutor) -> None:
+def test_single_workflow_execution(workflow: ConductorWorkflow, configuration: Configuration, workflow_executor: WorkflowExecutor) -> None:
     workflow_id = workflow_executor.start_workflow(
         start_workflow_request=StartWorkflowRequest(
             name=workflow.name,
         )
     )
     task_handler = TaskHandler(
-        configuration=Configuration,
+        configuration=configuration,
         workers=[
-            SimplePythonWorker(
+            Worker(
                 task_definition_name=TASK_NAME,
+                execute_function=worker_with_task_result,
+                poll_interval=0.1,
             )
         ]
     )
     task_handler.start_processes()
-    sleep(5)
-    validate_workflow_status(workflow_id)
+    sleep(WORKFLOW_EXECUTION_WAIT_TIME_IN_SECONDS)
+    validate_workflow_status(workflow_id, workflow_executor)
+    task_handler.stop_processes()
 
 
 def test_workflow_execution(workflow: ConductorWorkflow, configuration: Configuration, workflow_executor: WorkflowExecutor) -> None:
@@ -47,19 +50,19 @@ def test_workflow_execution(workflow: ConductorWorkflow, configuration: Configur
     )
     workers = [
         SimplePythonWorker(
-            task_definition_name='python_task_example'
+            task_definition_name=TASK_NAME,
         ),
         Worker(
-            task_definition_name='python_task_example',
+            task_definition_name=TASK_NAME,
             execute_function=worker_with_task_result,
             poll_interval=0.1,
         )
     ]
     with TaskHandler(workers, configuration) as task_handler:
         task_handler.start_processes()
-        sleep(WORKFLOW_QUANTITY * 3)
+        sleep(WORKFLOW_EXECUTION_WAIT_TIME_IN_SECONDS)
         for workflow_id in workflow_id_list:
-            workflow = workflow_executor.get_workflow(workflow_id, False)
+            validate_workflow_status(workflow_id, workflow_executor)
 
 
 def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
@@ -79,11 +82,5 @@ def validate_workflow_status(workflow_id: str, workflow_executor: WorkflowExecut
     workflow = workflow_executor.get_workflow(
         workflow_id=workflow_id,
         include_tasks=False,
-    )
-    print(
-        'checking status of workflow',
-        'name:', workflow.workflow_id,
-        'workflow_id:', workflow.workflow_id,
-        'status:', workflow.status
     )
     assert workflow.status == 'COMPLETED'
