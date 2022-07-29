@@ -35,9 +35,6 @@ class TaskRunner:
             metrics_settings
         )
 
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.__stop_metrics_provider_process()
-
     def run(self) -> None:
         if self.configuration != None:
             self.configuration.apply_logging_config()
