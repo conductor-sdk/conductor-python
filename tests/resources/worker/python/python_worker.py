@@ -23,6 +23,9 @@ class SimplePythonWorker(WorkerInterface):
         # poll every 500ms
         return 0.5
 
+    def get_domain(self) -> str:
+        return 'simple_python_worker'
+
 
 def worker_with_task_result(task: Task) -> TaskResult:
     task_result = TaskResult(

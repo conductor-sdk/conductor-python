@@ -28,11 +28,12 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
             Worker(
                 task_definition_name=TASK_NAME,
                 execute_function=worker_with_task_result,
+                domain='functional_worker_with_task_result'
             ),
             Worker(
                 task_definition_name=TASK_NAME,
                 execute_function=worker_with_generic_return,
-                poll_interval=0.1,
+                poll_interval=0.05,
             )
         ],
         configuration=configuration,

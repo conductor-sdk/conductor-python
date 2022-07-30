@@ -23,11 +23,19 @@ def is_callable_return_value_of_type(callable: ExecuteTaskFunction, object_type:
 
 
 class Worker(WorkerInterface):
-    def __init__(self, task_definition_name: str, execute_function: ExecuteTaskFunction, poll_interval: float = None) -> Self:
+    def __init__(self,
+                 task_definition_name: str,
+                 execute_function: ExecuteTaskFunction,
+                 poll_interval: float = None,
+                 domain: str = None,
+                 ) -> Self:
         super().__init__(task_definition_name)
         if poll_interval == None:
             poll_interval = super().get_polling_interval_in_seconds()
         self.poll_interval = poll_interval
+        if domain == None:
+            domain = super().get_domain()
+        self.domain = domain
         self.execute_function = execute_function
 
     def execute(self, task: Task) -> TaskResult:
@@ -40,6 +48,9 @@ class Worker(WorkerInterface):
 
     def get_polling_interval_in_seconds(self) -> float:
         return self.poll_interval
+
+    def get_domain(self) -> str:
+        return self.domain
 
     @property
     def execute_function(self) -> ExecuteTaskFunction:
