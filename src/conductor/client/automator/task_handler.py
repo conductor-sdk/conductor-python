@@ -15,8 +15,6 @@ logger = logging.getLogger(
 
 
 class TaskHandler:
-    metrics_provider_process = None
-
     def __init__(
             self,
             workers: List[WorkerInterface],
@@ -37,6 +35,9 @@ class TaskHandler:
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
+        self.stop_processes()
+
+    def stop_processes(self) -> None:
         self.__stop_task_runner_processes()
         self.__stop_metrics_provider_process()
 
@@ -52,6 +53,7 @@ class TaskHandler:
 
     def __create_metrics_provider_process(self, metrics_settings: MetricsSettings) -> None:
         if metrics_settings == None:
+            self.metrics_provider_process = None
             return
         self.metrics_provider_process = Process(
             target=MetricsCollector.provide_metrics,

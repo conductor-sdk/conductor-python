@@ -12,6 +12,10 @@ from conductor.client.workflow.task.switch_task import SwitchTask
 from conductor.client.workflow.task.terminate_task import TerminateTask, WorkflowStatus
 
 
+def run_workflow_definition_tests(workflow_executor: WorkflowExecutor) -> None:
+    test_kitchensink_workflow_registration(workflow_executor)
+
+
 def test_kitchensink_workflow_registration(workflow_executor: WorkflowExecutor) -> None:
     workflow = generate_workflow(workflow_executor)
     assert workflow.register(True) == None

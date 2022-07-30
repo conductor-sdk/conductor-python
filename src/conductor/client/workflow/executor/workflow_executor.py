@@ -37,6 +37,21 @@ class WorkflowExecutor:
             body=start_workflow_request,
         )
 
+    def start_workflows(self, quantity: int, workflow_name: str) -> List[str]:
+        """Start `quantity` instances of given workflow name 
+
+        :param StartWorkflowRequest body:
+        :return: str
+        """
+        workflow_id_list = [''] * quantity
+        for i in range(quantity):
+            workflow_id_list[i] = self.start_workflow(
+                start_workflow_request=StartWorkflowRequest(
+                    name=workflow_name
+                )
+            )
+        return workflow_id_list
+
     def get_workflow(self, workflow_id: str, include_tasks: bool = None) -> Workflow:
         """Gets the workflow by workflow id
 

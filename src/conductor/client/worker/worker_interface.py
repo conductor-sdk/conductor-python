@@ -56,3 +56,11 @@ class WorkerInterface(abc.ABC):
             workflow_instance_id=task.workflow_instance_id,
             worker_id=self.get_identity()
         )
+
+    def get_domain(self) -> str:
+        """
+        Retrieve the domain of the worker.
+
+        :return: str
+        """
+        return None

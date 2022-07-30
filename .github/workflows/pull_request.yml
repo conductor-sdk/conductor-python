@@ -1,9 +1,22 @@
-name: Tests
+name: Continuous Integration
 
 on: pull_request
 
 jobs:
-  run-tests:
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.x"
+      - name: Instal pylint from local files
+        run: python3 -m pip install pylint==2.14.5
+      - name: Run Pylint
+        run: python3 -m pylint --disable=all ./src
+  unit-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -18,8 +31,21 @@ jobs:
           CONDUCTOR_PYTHON_VERSION: v1.0.0
       - name: Run Unit Tests
         run: python3 -m unittest discover --verbose --start-directory=./tests/unit
+  integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.x"
+      - name: Instal package from local files
+        run: python3 -m pip install .
+        env:
+          CONDUCTOR_PYTHON_VERSION: v1.0.0
       - name: Run Integration Tests
-        run: python3 ./tests/main.py
+        run: python3 ./tests/integration.py
         env:
           PYTHON_INTEGRATION_TESTS_SERVER_API_URL: ${{ secrets.PYTHON_INTEGRATION_TESTS_SERVER_API_URL }}
           PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID: ${{ secrets.PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID }}
