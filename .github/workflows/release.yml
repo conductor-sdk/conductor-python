@@ -1,6 +1,8 @@
 name: Continuous Delivery
 
-on: release
+on:
+  release:
+    types: [published]
 
 jobs:
   build-package-and-publish-release-at-pypi:
