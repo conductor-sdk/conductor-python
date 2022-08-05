@@ -10,6 +10,7 @@ from conductor.client.workflow.task.simple_task import SimpleTask
 from conductor.client.workflow.task.sub_workflow_task import SubWorkflowTask, InlineSubWorkflowTask
 from conductor.client.workflow.task.switch_task import SwitchTask
 from conductor.client.workflow.task.terminate_task import TerminateTask, WorkflowStatus
+import resources.workflow.properties as test_properties
 
 
 def run_workflow_definition_tests(workflow_executor: WorkflowExecutor) -> None:
@@ -29,8 +30,8 @@ def test_kitchensink_workflow_registration(workflow_executor: WorkflowExecutor) 
 
 def generate_simple_task(id: int) -> SimpleTask:
     return SimpleTask(
-        task_def_name='python_simple_task_from_code',
-        task_reference_name=f'python_simple_task_from_code_{id}'
+        task_def_name=test_properties.TASK_NAME,
+        task_reference_name=f'{test_properties.TASK_NAME}_{id}'
     )
 
 
@@ -127,7 +128,7 @@ def generate_json_jq_task() -> JsonJQTask:
 def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
     workflow = ConductorWorkflow(
         executor=workflow_executor,
-        name='python_workflow_example_from_code',
+        name=test_properties.WORKFLOW_NAME,
         description='Python workflow example from code',
         version=1234,
     ).add(

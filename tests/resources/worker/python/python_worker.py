@@ -2,7 +2,6 @@ from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.worker.worker_interface import WorkerInterface
-from typing import Any
 
 
 class FaultyExecutionWorker(WorkerInterface):
@@ -10,7 +9,7 @@ class FaultyExecutionWorker(WorkerInterface):
         raise Exception('faulty execution')
 
 
-class SimplePythonWorker(WorkerInterface):
+class ClassWorker(WorkerInterface):
     def execute(self, task: Task) -> TaskResult:
         task_result = self.get_task_result_from_task(task)
         task_result.add_output_data('worker_style', 'class')
@@ -20,14 +19,28 @@ class SimplePythonWorker(WorkerInterface):
         return task_result
 
     def get_polling_interval_in_seconds(self) -> float:
-        # poll every 500ms
-        return 0.5
+        # poll every 50ms
+        return 0.05
+
+
+class ClassWorkerWithDomain(WorkerInterface):
+    def execute(self, task: Task) -> TaskResult:
+        task_result = self.get_task_result_from_task(task)
+        task_result.add_output_data('worker_style', 'class')
+        task_result.add_output_data('secret_number', 1234)
+        task_result.add_output_data('is_it_true', False)
+        task_result.status = TaskResultStatus.COMPLETED
+        return task_result
+
+    def get_polling_interval_in_seconds(self) -> float:
+        # poll every 50ms
+        return 0.05
 
     def get_domain(self) -> str:
         return 'simple_python_worker'
 
 
-def worker_with_task_result(task: Task) -> TaskResult:
+def worker_with_task_input_and_task_result_output(task: Task) -> TaskResult:
     task_result = TaskResult(
         task_id=task.task_id,
         workflow_instance_id=task.workflow_instance_id,
@@ -40,9 +53,33 @@ def worker_with_task_result(task: Task) -> TaskResult:
     return task_result
 
 
-def worker_with_generic_return(task: Task) -> Any:
+def worker_with_task_input_and_generic_output(task: Task) -> object:
     return {
         'worker_style': 'function',
         'worker_input': 'Task',
-        'worker_output': 'Any'
+        'worker_output': 'object',
+        'task_id': task.task_id,
+        'task_input': task.input_data,
+    }
+
+
+def worker_with_generic_input_and_task_result_output(obj: object) -> TaskResult:
+    task_result = TaskResult(
+        task_id='',
+        workflow_instance_id='',
+        worker_id=''
+    )
+    task_result.add_output_data('worker_style', 'function')
+    task_result.add_output_data('worker_input', 'object')
+    task_result.add_output_data('worker_output', 'TaskResult')
+    task_result.status = TaskResultStatus.COMPLETED
+    return task_result
+
+
+def worker_with_generic_input_and_generic_output(obj: object) -> object:
+    return {
+        'worker_style': 'function',
+        'worker_input': 'object',
+        'worker_output': 'object',
+        'input': obj,
     }

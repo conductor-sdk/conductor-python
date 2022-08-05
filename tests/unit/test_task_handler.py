@@ -1,7 +1,7 @@
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.configuration.configuration import Configuration
-from tests.resources.worker.python.python_worker import SimplePythonWorker
+from tests.resources.worker.python.python_worker import ClassWorker
 from unittest.mock import Mock
 from unittest.mock import patch
 import multiprocessing
@@ -19,7 +19,7 @@ class TestTaskHandler(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             TaskHandler(
                 configuration=Configuration(),
-                workers=SimplePythonWorker()
+                workers=ClassWorker()
             )
             self.assertEqual(expected_exception, context.exception)
 
@@ -37,6 +37,6 @@ class TestTaskHandler(unittest.TestCase):
         return TaskHandler(
             configuration=Configuration(),
             workers=[
-                SimplePythonWorker('task')
+                ClassWorker('task')
             ]
         )

@@ -4,7 +4,8 @@ from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
-from tests.resources.worker.python.python_worker import SimplePythonWorker, FaultyExecutionWorker
+from tests.resources.worker.python.python_worker import ClassWorker
+from tests.resources.worker.python.python_worker import FaultyExecutionWorker
 from unittest.mock import patch
 import logging
 import time
@@ -149,7 +150,7 @@ class TestTaskRunner(unittest.TestCase):
             "Failed to get polling interval"
         )
         with patch.object(
-            SimplePythonWorker,
+            ClassWorker,
             'get_polling_interval_in_seconds',
             side_effect=expected_exception
         ):
@@ -193,4 +194,4 @@ class TestTaskRunner(unittest.TestCase):
         )
 
     def __get_valid_worker(self):
-        return SimplePythonWorker('task')
+        return ClassWorker('task')
