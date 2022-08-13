@@ -1,8 +1,7 @@
-import base64
-import unittest
-
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api_client import ApiClient
+import base64
+import unittest
 
 
 class TestConfiguration(unittest.TestCase):
@@ -36,8 +35,12 @@ class TestConfiguration(unittest.TestCase):
             server_api_url="https://user:password@play.orkes.io/api/"
         )
         basic_auth = "user:password"
-        self.assertEqual(configuration.host, f"https://{basic_auth}@play.orkes.io/api/")
-        token = "Basic " + base64.b64encode(bytes(basic_auth, "utf-8")).decode("utf-8")
+        expected_host = f"https://{basic_auth}@play.orkes.io/api/"
+        self.assertEqual(
+            configuration.host, expected_host,
+        )
+        token = "Basic " + \
+            base64.b64encode(bytes(basic_auth, "utf-8")).decode("utf-8")
         api_client = ApiClient(configuration)
         self.assertEqual(
             api_client.default_headers,
