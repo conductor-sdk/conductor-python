@@ -21,12 +21,37 @@ logger = logging.getLogger(
 
 
 def run(
-    configuration: Configuration = None,
+    configuration: Configuration,
+    task_name: str,
+    poll_interval_in_seconds: float,
+    execute_function,
+    worker_id: str = None,
+    domain: str = None,
+    metrics_collector: MetricsCollector = None,
 ) -> None:
-    if configuration != None:
-        configuration.apply_logging_config()
+    configuration.apply_logging_config()
     while True:
-        run_once()
+        try:
+            run_once(
+                configuration=configuration,
+                task_name=task_name,
+                poll_interval_in_seconds=poll_interval_in_seconds,
+                execute_function=execute_function,
+                worker_id=worker_id,
+                domain=domain,
+                metrics_collector=metrics_collector
+            )
+        except Exception as e:
+            if metrics_collector != None:
+                metrics_collector.increment_uncaught_exception()
+            logger.warning(
+                'Failed to run once. Reason: {}, task_name: {}, poll_interval: {}, worker_id: {}'.format(
+                    str(e),
+                    task_name,
+                    poll_interval_in_seconds,
+                    worker_id,
+                )
+            )
 
 
 def run_once(
