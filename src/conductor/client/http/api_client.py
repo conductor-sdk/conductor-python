@@ -12,6 +12,7 @@ import re
 import six
 import tempfile
 import traceback
+import urllib3
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -65,6 +66,13 @@ class ApiClient(object):
         }
         if header_name is not None:
             self.default_headers[header_name] = header_value
+
+        parsed = urllib3.util.parse_url(self.configuration.host)
+        if parsed.auth is not None:
+            self.default_headers.update(
+                urllib3.util.make_headers(basic_auth=parsed.auth)
+            )
+
         self.cookie = cookie
         self.__refresh_auth_token()
 
