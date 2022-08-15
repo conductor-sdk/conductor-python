@@ -58,10 +58,10 @@ def test_workflow_execution(
 ) -> None:
     requests = []
     for i in range(quantity):
-        requests[i] = StartWorkflowRequest(
+        requests.append(StartWorkflowRequest(
         name=workflow_name,
         input={}
-    )
+    ))
     workflow_ids = workflow_executor.start_workflows(requests)
     task_handler = TaskHandler(workers, configuration)
     task_handler.start_processes()
