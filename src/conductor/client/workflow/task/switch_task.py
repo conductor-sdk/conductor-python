@@ -31,7 +31,10 @@ class SwitchTask(TaskInterface):
         return self
 
     def default_case(self, tasks: List[TaskInterface]) -> Self:
-        self._default_case = deepcopy(tasks)
+        if isinstance(tasks, List):
+            self._default_case = deepcopy(tasks)
+        else:
+            self._default_case = [deepcopy(tasks)]
         return self
 
     def to_workflow_task(self) -> WorkflowTask:
