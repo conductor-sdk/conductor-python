@@ -37,7 +37,7 @@ class WorkflowExecutor:
             body=start_workflow_request,
         )
 
-    def start_workflows(self, start_workflow_request: []) -> List[str]:
+    def start_workflows(self, start_workflow_request: [StartWorkflowRequest]) -> List[str]:
         """Start multiple instances of workflows.  Note, there is no parallelism implemented in starting so giving a
         very large number can impact the latencies and performance
 
@@ -46,7 +46,6 @@ class WorkflowExecutor:
         """
         workflow_id_list = [''] * len(start_workflow_request)
         for i in range(len(start_workflow_request)):
-            print(start_workflow_request[i])
             workflow_id_list[i] = self.start_workflow(
                 start_workflow_request=start_workflow_request[i]
             )
