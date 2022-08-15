@@ -52,6 +52,14 @@ class WorkflowExecutor:
             )
         return workflow_id_list
 
+    def remove_workflow(self, workflow_id: str):
+        """Removes the workflow permenantly from the system
+        :param str workflow_id:
+        """
+        return self.workflow_client.delete(
+            workflow_id=workflow_id,
+        )
+
     def get_workflow(self, workflow_id: str, include_tasks: bool = None) -> Workflow:
         """Gets the workflow by workflow id
 
