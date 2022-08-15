@@ -37,18 +37,18 @@ class WorkflowExecutor:
             body=start_workflow_request,
         )
 
-    def start_workflows(self, quantity: int, workflow_name: str) -> List[str]:
-        """Start `quantity` instances of given workflow name 
+    def start_workflows(self, start_workflow_request: []) -> List[str]:
+        """Start multiple instances of workflows.  Note, there is no parallelism implemented in starting so giving a
+        very large number can impact the latencies and performance
 
-        :param StartWorkflowRequest body:
-        :return: str
+        :param start_workflow_request: list of StartWorkflowRequest:
+        :return: ids of the workflows
         """
-        workflow_id_list = [''] * quantity
-        for i in range(quantity):
+        workflow_id_list = [''] * len(start_workflow_request)
+        for i in range(len(start_workflow_request)):
+            print(start_workflow_request[i])
             workflow_id_list[i] = self.start_workflow(
-                start_workflow_request=StartWorkflowRequest(
-                    name=workflow_name
-                )
+                start_workflow_request=start_workflow_request[i]
             )
         return workflow_id_list
 
