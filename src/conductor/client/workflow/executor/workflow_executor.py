@@ -58,6 +58,7 @@ class WorkflowExecutor:
         """
         return self.workflow_client.delete(
             workflow_id=workflow_id,
+            archive_workflow=False
         )
 
     def get_workflow(self, workflow_id: str, include_tasks: bool = None) -> Workflow:
