@@ -1,5 +1,6 @@
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
+from conductor.client.http.models import StartWorkflowRequest
 from conductor.client.worker.worker import Worker
 from conductor.client.worker.worker_interface import WorkerInterface
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
@@ -55,7 +56,13 @@ def test_workflow_execution(
     workflow_executor: WorkflowExecutor,
     workflow_completion_timeout: float,
 ) -> None:
-    workflow_ids = workflow_executor.start_workflows(quantity, workflow_name)
+    requests = []
+    for i in range(quantity):
+        requests.append(StartWorkflowRequest(
+        name=workflow_name,
+        input={}
+    ))
+    workflow_ids = workflow_executor.start_workflows(requests)
     task_handler = TaskHandler(workers, configuration)
     task_handler.start_processes()
     sleep(workflow_completion_timeout)
