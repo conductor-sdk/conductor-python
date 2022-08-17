@@ -2,6 +2,7 @@ from conductor.client.configuration.configuration import Configuration
 from conductor.client.http import rest
 from multiprocessing.pool import ThreadPool
 from six.moves.urllib.parse import quote
+from typing import Dict
 import conductor.client.http.models as http_models
 import datetime
 import json
@@ -12,6 +13,7 @@ import re
 import six
 import tempfile
 import traceback
+import urllib3
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -52,19 +54,24 @@ class ApiClient(object):
         'object': object,
     }
 
-    def __init__(self, configuration=None, header_name=None, header_value=None,
-                 cookie=None):
+    def __init__(
+            self,
+            configuration=None,
+            header_name=None,
+            header_value=None,
+            cookie=None
+    ):
         if configuration is None:
             configuration = Configuration()
         self.configuration = configuration
 
         self.pool = ThreadPool()
         self.rest_client = rest.RESTClientObject(configuration)
-        self.default_headers = {
-            'Accept-Encoding': 'gzip',
-        }
-        if header_name is not None:
-            self.default_headers[header_name] = header_value
+
+        self.default_headers = self.__get_default_headers(
+            header_name, header_value
+        )
+
         self.cookie = cookie
         self.__refresh_auth_token()
 
@@ -652,3 +659,18 @@ class ApiClient(object):
                 f'Failed to get new token, reason: {traceback.format_exc()}'
             )
             return None
+
+    def __get_default_headers(self, header_name: str, header_value: object) -> Dict[str, object]:
+        headers = {
+            'Accept-Encoding': 'gzip',
+        }
+        if header_name is not None:
+            headers[header_name] = header_value
+        parsed = urllib3.util.parse_url(self.configuration.host)
+        if parsed.auth is not None:
+            encrypted_headers = urllib3.util.make_headers(
+                basic_auth=parsed.auth
+            )
+            for key, value in encrypted_headers.items():
+                headers[key] = value
+        return headers
