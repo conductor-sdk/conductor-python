@@ -1,12 +1,14 @@
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
+from typing_extensions import Self
 import abc
 import socket
 
 
 class WorkerInterface(abc.ABC):
-    def __init__(self, task_definition_name: str):
+    def __init__(self, task_definition_name: str, batch_size: int = None) -> Self:
         self.task_definition_name = task_definition_name
+        self.batch_size = batch_size
 
     @abc.abstractmethod
     def execute(self, task: Task) -> TaskResult:
@@ -64,3 +66,29 @@ class WorkerInterface(abc.ABC):
         :return: str
         """
         return None
+
+    @property
+    def batch_size(self) -> int:
+        return self._batch_size
+
+    @batch_size.setter
+    def batch_size(self, batch_size: int) -> None:
+        if batch_size == None:
+            batch_size = 1
+        if not isinstance(batch_size, int):
+            raise Exception('Batch size must be of integer type')
+        if batch_size < 1:
+            raise Exception('Batch size must be have a positive value')
+        self._batch_size = batch_size
+
+    @property
+    def task_definition_name(self) -> str:
+        return self._task_definition_name
+
+    @task_definition_name.setter
+    def task_definition_name(self, task_definition_name: str) -> None:
+        if not isinstance(task_definition_name, str):
+            raise Exception('Task definition name must be of string type')
+        if task_definition_name is None or task_definition_name == '':
+            raise Exception('Task definition name must not be empty')
+        self._task_definition_name = task_definition_name
