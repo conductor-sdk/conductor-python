@@ -1,4 +1,4 @@
-from conductor.client.automator.task_runner import TaskRunner
+from conductor.client.automator.task_runner import run
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.metrics_settings import MetricsSettings
 from conductor.client.telemetry.metrics_collector import MetricsCollector
@@ -80,9 +80,17 @@ class TaskHandler:
         configuration: Configuration,
         metrics_settings: MetricsSettings
     ) -> None:
-        task_runner = TaskRunner(worker, configuration, metrics_settings)
         process = Process(
-            target=task_runner.run
+            target=run,
+            args=(
+                configuration,
+                worker.get_task_definition_name(),
+                worker.get_polling_interval_in_seconds(),
+                worker.execute,
+                worker.get_identity(),
+                worker.get_domain(),
+                None,
+            )
         )
         self.task_runner_processes.append(process)
 

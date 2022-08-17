@@ -1,14 +1,21 @@
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
+from copy import deepcopy
 from typing_extensions import Self
 import abc
 import socket
 
 
 class WorkerInterface(abc.ABC):
-    def __init__(self, task_definition_name: str, batch_size: int = None) -> Self:
+    def __init__(
+        self,
+        task_definition_name: str,
+        batch_size: int = None,
+        polling_interval: float = None,
+    ) -> Self:
         self.task_definition_name = task_definition_name
         self.batch_size = batch_size
+        self.polling_interval = polling_interval
 
     @abc.abstractmethod
     def execute(self, task: Task) -> TaskResult:
@@ -36,7 +43,7 @@ class WorkerInterface(abc.ABC):
         :return: float
                  Default: 100ms
         """
-        return 0.1
+        return self.polling_interval
 
     def get_task_definition_name(self) -> str:
         """
@@ -72,7 +79,7 @@ class WorkerInterface(abc.ABC):
         return self._batch_size
 
     @batch_size.setter
-    def batch_size(self, batch_size: int) -> None:
+    def batch_size(self, batch_size: int = None) -> None:
         if batch_size == None:
             batch_size = 1
         if not isinstance(batch_size, int):
@@ -91,4 +98,16 @@ class WorkerInterface(abc.ABC):
             raise Exception('Task definition name must be of string type')
         if task_definition_name is None or task_definition_name == '':
             raise Exception('Task definition name must not be empty')
-        self._task_definition_name = task_definition_name
+        self._task_definition_name = deepcopy(task_definition_name)
+
+    @property
+    def polling_interval(self) -> float:
+        return self._polling_interval
+
+    @polling_interval.setter
+    def polling_interval(self, polling_interval: float = None) -> None:
+        if polling_interval == None:
+            polling_interval = 0.1
+        if not isinstance(polling_interval, (int, float)):
+            raise Exception('Polling interval must be a number')
+        self._polling_interval = deepcopy(polling_interval)

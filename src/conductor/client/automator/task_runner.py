@@ -160,7 +160,7 @@ def get_tasks_in_batches(
 ) -> List[Task]:
     kwargs = {
         'count': batch_size,
-        'timeout': timeout
+        # TODO 'timeout': timeout
     }
     if worker_id != None:
         kwargs['workerid'] = worker_id
@@ -171,7 +171,7 @@ def get_tasks_in_batches(
     task_resource_api = get_task_resource_api(configuration)
     try:
         start_time = time.time()
-        tasks = task_resource_api.batch_poll(task_name, *kwargs)
+        tasks = task_resource_api.batch_poll(task_name, **kwargs)
         finish_time = time.time()
         time_spent = finish_time - start_time
         if metrics_collector != None:
