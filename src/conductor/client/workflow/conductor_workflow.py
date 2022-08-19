@@ -183,7 +183,12 @@ class ConductorWorkflow:
     def __get_workflow_task_list(self) -> List[WorkflowTask]:
         workflow_task_list = []
         for task in self._tasks:
-            workflow_task_list.append(task.to_workflow_task())
+            converted_task = task.to_workflow_task()
+            if isinstance(converted_task, list):
+                for subtask in converted_task:
+                    workflow_task_list.append(subtask)
+            else:
+                workflow_task_list.append(converted_task)
         return workflow_task_list
 
     # Append task with the right shift operator `>>`
