@@ -56,12 +56,7 @@ def test_workflow_execution(
     workflow_executor: WorkflowExecutor,
     workflow_completion_timeout: float,
 ) -> None:
-    requests = []
-    for i in range(quantity):
-        requests.append(StartWorkflowRequest(
-        name=workflow_name,
-        input={}
-    ))
+    requests = [StartWorkflowRequest(name=workflow_name)]*quantity
     workflow_ids = workflow_executor.start_workflows(requests)
     task_handler = TaskHandler(workers, configuration)
     task_handler.start_processes()

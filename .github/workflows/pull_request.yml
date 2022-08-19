@@ -28,7 +28,7 @@ jobs:
       - name: Instal package from local files
         run: python3 -m pip install .
         env:
-          CONDUCTOR_PYTHON_VERSION: v1.0.0
+          CONDUCTOR_PYTHON_VERSION: v0.0.0+test.unit
       - name: Run Unit Tests
         run: python3 -m unittest discover --verbose --start-directory=./tests/unit
   integration-tests:
@@ -43,7 +43,7 @@ jobs:
       - name: Instal package from local files
         run: python3 -m pip install .
         env:
-          CONDUCTOR_PYTHON_VERSION: v1.0.0
+          CONDUCTOR_PYTHON_VERSION: v0.0.0+test.integration
       - name: Run Integration Tests
         run: python3 ./tests/integration.py
         env:

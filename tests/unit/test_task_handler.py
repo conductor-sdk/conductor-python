@@ -1,16 +1,7 @@
 from conductor.client.automator.task_handler import TaskHandler
-from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.configuration.configuration import Configuration
 from tests.resources.worker.python.python_worker import SimplePythonWorker
-from unittest.mock import Mock
-from unittest.mock import patch
-import multiprocessing
 import unittest
-
-
-class PickableMock(Mock):
-    def __reduce__(self):
-        return (Mock, ())
 
 
 class TestTaskHandler(unittest.TestCase):
@@ -24,19 +15,11 @@ class TestTaskHandler(unittest.TestCase):
             self.assertEqual(expected_exception, context.exception)
 
     def test_start_processes(self):
-        with patch.object(TaskRunner, 'run', PickableMock(return_value=None)):
-            with self.__get_valid_task_handler() as task_handler:
-                task_handler.start_processes()
-                self.assertEqual(len(task_handler.task_runner_processes), 1)
-                for process in task_handler.task_runner_processes:
-                    self.assertTrue(
-                        isinstance(process, multiprocessing.Process)
-                    )
-
-    def __get_valid_task_handler(self):
-        return TaskHandler(
+        task_handler = TaskHandler(
             configuration=Configuration(),
             workers=[
                 SimplePythonWorker('task')
             ]
         )
+        self.assertIsNotNone(task_handler)
+        task_handler.start_processes()

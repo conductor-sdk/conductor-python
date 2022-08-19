@@ -35,7 +35,7 @@ jobs:
         with:
           python-version: "3.x"
       - name: Wait for package to be available at pypi
-        run: sleep 30
+        run: sleep 60
       - name: Install package from remote files
         run: python3 -m pip install conductor-python==$CONDUCTOR_PYTHON_VERSION
         env:

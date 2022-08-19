@@ -1,17 +1,14 @@
 from conductor.client.automator.task_runner import run
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.metrics_settings import MetricsSettings
-from conductor.client.telemetry.metrics_collector import MetricsCollector
+from conductor.client.http.api_client import ApiClient
+from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.worker.worker_interface import WorkerInterface
-from multiprocessing import Process
 from typing import List
 import logging
+import threading
 
-logger = logging.getLogger(
-    Configuration.get_logging_formatted_name(
-        __name__
-    )
-)
+_logger = logging.getLogger(__name__)
 
 
 class TaskHandler:
@@ -19,17 +16,23 @@ class TaskHandler:
             self,
             workers: List[WorkerInterface],
             configuration: Configuration = None,
-            metrics_settings: MetricsSettings = None
+            metrics_settings: MetricsSettings = None,
     ):
+        self.configuration = configuration
+        self.metrics_configuration = metrics_settings
+
+        self._task_resource_api = TaskResourceApi(
+            ApiClient(
+                configuration
+            )
+        )
+
+        self._running_workers = {}
+        self._running_workers_mutex = threading.Lock()
+
         if not isinstance(workers, list):
             workers = [workers]
-        self.__create_task_runner_processes(
-            workers, configuration, metrics_settings
-        )
-        self.__create_metrics_provider_process(
-            metrics_settings
-        )
-        logger.info('Created all processes')
+        self.start_worker(*workers)
 
     def __enter__(self):
         return self
@@ -38,52 +41,39 @@ class TaskHandler:
         self.stop_processes()
 
     def stop_processes(self) -> None:
-        self.__stop_task_runner_processes()
-        self.__stop_metrics_provider_process()
+        _logger.info('Stopped all processes')
 
     def start_processes(self) -> None:
-        self.__start_task_runner_processes()
-        self.__start_metrics_provider_process()
-        logger.info('Started all processes')
+        _logger.info('Started all processes')
 
     def join_processes(self) -> None:
-        self.__join_task_runner_processes()
-        self.__join_metrics_provider_process()
-        logger.info('Joined all processes')
+        _logger.info('Joined all processes')
 
-    def __create_metrics_provider_process(self, metrics_settings: MetricsSettings) -> None:
-        if metrics_settings == None:
-            self.metrics_provider_process = None
-            return
-        self.metrics_provider_process = Process(
-            target=MetricsCollector.provide_metrics,
-            args=(metrics_settings,)
-        )
-        logger.info('Created MetricsProvider process')
-
-    def __create_task_runner_processes(
-        self,
-        workers: List[WorkerInterface],
-        configuration: Configuration,
-        metrics_settings: MetricsSettings
-    ) -> None:
-        self.task_runner_processes = []
+    def start_worker(self, *workers: WorkerInterface) -> None:
         for worker in workers:
-            self.__create_task_runner_process(
-                worker, configuration, metrics_settings
-            )
-        logger.info('Created TaskRunner processes')
+            self.__start_worker(worker)
+        _logger.info(f'Started {len(workers)} workers')
 
-    def __create_task_runner_process(
-        self,
-        worker: WorkerInterface,
-        configuration: Configuration,
-        metrics_settings: MetricsSettings
-    ) -> None:
-        process = Process(
+    def __start_worker(self, worker: WorkerInterface) -> None:
+        if not isinstance(worker, WorkerInterface):
+            _logger.warning(
+                'Failed to start worker, object must be of WorkerInterface type'
+            )
+            return
+        with self._running_workers_mutex:
+            if worker.task_definition_name in self._running_workers:
+                _logger.warning(
+                    f'Worker already started for {worker.task_definition_name}, you must stop a worker before attempting to start it again'
+                )
+                return
+            worker_thread = self.__generate_worker_thread(worker)
+            self._running_workers[worker.task_definition_name] = worker_thread
+
+    def __generate_worker_thread(self, worker: WorkerInterface) -> threading.Thread:
+        return threading.Thread(
             target=run,
             args=(
-                configuration,
+                self.configuration,
                 worker.get_task_definition_name(),
                 worker.get_polling_interval_in_seconds(),
                 worker.execute,
@@ -92,44 +82,3 @@ class TaskHandler:
                 None,
             )
         )
-        self.task_runner_processes.append(process)
-
-    def __start_metrics_provider_process(self):
-        if self.metrics_provider_process == None:
-            return
-        self.metrics_provider_process.start()
-        logger.info('Started MetricsProvider process')
-
-    def __start_task_runner_processes(self):
-        for task_runner_process in self.task_runner_processes:
-            task_runner_process.start()
-        logger.info('Started TaskRunner processes')
-
-    def __join_metrics_provider_process(self):
-        if self.metrics_provider_process == None:
-            return
-        self.metrics_provider_process.join()
-        logger.info('Joined MetricsProvider processes')
-
-    def __join_task_runner_processes(self):
-        for task_runner_process in self.task_runner_processes:
-            task_runner_process.join()
-        logger.info('Joined TaskRunner processes')
-
-    def __stop_metrics_provider_process(self):
-        self.__stop_process(self.metrics_provider_process)
-
-    def __stop_task_runner_processes(self):
-        for task_runner_process in self.task_runner_processes:
-            self.__stop_process(task_runner_process)
-
-    def __stop_process(self, process: Process):
-        if process == None:
-            return
-        try:
-            process.kill()
-            logger.info(f'Killed process: {process}')
-        except Exception as e:
-            logger.debug(f'Failed to kill process: {process}, reason: {e}')
-            process.terminate()
-            logger.info('Terminated process: {process}')

@@ -1,8 +1,5 @@
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from six.moves import http_client as httplib
 import logging
-import multiprocessing
-import os
 
 
 class Configuration:
@@ -27,7 +24,12 @@ class Configuration:
         # Debug switch
         self.debug = debug
         # Log format
-        self.logger_format = '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
+        self._logger_format = '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
+        # Apply logging settings
+        logging.basicConfig(
+            format=self._logger_format,
+            level=self.__log_level
+        )
 
         # SSL/TLS verification
         # Set this to false to skip verifying SSL certificate when calling API
@@ -39,15 +41,6 @@ class Configuration:
         self.cert_file = None
         # client key file
         self.key_file = None
-        # Set this to True/False to enable/disable SSL hostname verification.
-        self.assert_hostname = None
-
-        # urllib3 connection pool's maximum number of connections saved
-        # per pool. urllib3 uses 1 connection as default value, but this is
-        # not the best value when you are making a lot of possibly parallel
-        # requests to the same host, which is often the case here.
-        # cpu_count * 5 is used as default value to increase performance.
-        self.connection_pool_maxsize = multiprocessing.cpu_count() * 5
 
         # Proxy URL
         self.proxy = None
@@ -72,46 +65,31 @@ class Configuration:
         """
         self.__debug = value
         if self.__debug:
-            # turn on httplib debug
-            httplib.HTTPConnection.debuglevel = 1
             self.__log_level = logging.DEBUG
         else:
-            # turn off httplib debug
-            httplib.HTTPConnection.debuglevel = 0
             self.__log_level = logging.INFO
 
     @property
-    def logger_format(self):
-        """The logger format.
+    def _logger_format(self):
+        """The _logger format.
 
-        The logger_formatter will be updated when sets logger_format.
-
-        :param value: The format string.
-        :type: str
-        """
-        return self.__logger_format
-
-    @logger_format.setter
-    def logger_format(self, value):
-        """The logger format.
-
-        The logger_formatter will be updated when sets logger_format.
+        The _logger_formatter will be updated when sets _logger_format.
 
         :param value: The format string.
         :type: str
         """
-        self.__logger_format = value
+        return self.___logger_format
 
-    def apply_logging_config(self):
-        logging.basicConfig(
-            format=self.logger_format,
-            level=self.__log_level
-        )
-        logging.getLogger('urllib3').setLevel(logging.WARNING)
+    @_logger_format.setter
+    def _logger_format(self, value):
+        """The _logger format.
 
-    @staticmethod
-    def get_logging_formatted_name(name):
-        return f'[{os.getpid()}] {name}'
+        The _logger_formatter will be updated when sets _logger_format.
+
+        :param value: The format string.
+        :type: str
+        """
+        self.___logger_format = value
 
     def update_token(self, token: str) -> None:
         self.AUTH_TOKEN = token

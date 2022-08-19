@@ -1,4 +1,3 @@
-from conductor.client.configuration.configuration import Configuration
 from six.moves.urllib.parse import urlencode
 import certifi
 import io
@@ -9,11 +8,7 @@ import six
 import ssl
 import urllib3
 
-logger = logging.getLogger(
-    Configuration.get_logging_formatted_name(
-        __name__
-    )
-)
+_logger = logging.getLogger(__name__)
 
 
 class RESTResponse(io.IOBase):
@@ -34,7 +29,6 @@ class RESTResponse(io.IOBase):
 
 
 class RESTClientObject(object):
-
     def __init__(self, configuration, pools_size=4, maxsize=None):
         # urllib3.PoolManager will pass all kw parameters to connectionpool
         # https://github.com/shazow/urllib3/blob/f9409436f83aeb79fbaf090181cd81b784f1b8ce/urllib3/poolmanager.py#L75  # noqa: E501
@@ -55,38 +49,24 @@ class RESTClientObject(object):
             # if not set certificate file, use Mozilla's root certificates.
             ca_certs = certifi.where()
 
-        addition_pool_args = {}
-        if configuration.assert_hostname is not None:
-            addition_pool_args['assert_hostname'] = configuration.assert_hostname  # noqa: E501
-
         if maxsize is None:
-            if configuration.connection_pool_maxsize is not None:
-                maxsize = configuration.connection_pool_maxsize
-            else:
-                maxsize = 4
+            maxsize = 4
+
+        args = {
+            'num_pools': pools_size,
+            'maxsize': maxsize,
+            'cert_reqs': cert_reqs,
+            'ca_certs': ca_certs,
+            'cert_file': configuration.cert_file,
+            'key_file': configuration.key_file,
+        }
 
         # https pool manager
         if configuration.proxy:
-            self.pool_manager = urllib3.ProxyManager(
-                num_pools=pools_size,
-                maxsize=maxsize,
-                cert_reqs=cert_reqs,
-                ca_certs=ca_certs,
-                cert_file=configuration.cert_file,
-                key_file=configuration.key_file,
-                proxy_url=configuration.proxy,
-                **addition_pool_args
-            )
+            args['proxy_url'] = configuration.proxy
+            self.pool_manager = urllib3.ProxyManager(**args)
         else:
-            self.pool_manager = urllib3.PoolManager(
-                num_pools=pools_size,
-                maxsize=maxsize,
-                cert_reqs=cert_reqs,
-                ca_certs=ca_certs,
-                cert_file=configuration.cert_file,
-                key_file=configuration.key_file,
-                **addition_pool_args
-            )
+            self.pool_manager = urllib3.PoolManager(**args)
 
     def request(self, method, url, query_params=None, headers=None,
                 body=None, post_params=None, _preload_content=True,
@@ -200,7 +180,7 @@ class RESTClientObject(object):
             r = RESTResponse(r)
 
             # log response body
-            logger.debug("response body: %s", r.data)
+            _logger.debug("response body: %s", r.data)
 
         if not 200 <= r.status <= 299:
             raise ApiException(http_resp=r)
