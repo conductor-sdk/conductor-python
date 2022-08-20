@@ -4,6 +4,7 @@ from conductor.client.workflow.executor.workflow_executor import WorkflowExecuto
 from conductor.client.workflow.task.do_while_task import LoopTask
 from conductor.client.workflow.task.dynamic_fork_task import DynamicForkTask
 from conductor.client.workflow.task.fork_task import ForkTask
+from conductor.client.workflow.task.join_task import JoinTask
 from conductor.client.workflow.task.json_jq_task import JsonJQTask
 from conductor.client.workflow.task.set_variable_task import SetVariableTask
 from conductor.client.workflow.task.simple_task import SimpleTask
@@ -110,7 +111,10 @@ def generate_set_variable_task() -> SetVariableTask:
 def generate_dynamic_fork_task() -> DynamicForkTask:
     return DynamicForkTask(
         task_ref_name='dynamic_fork',
-        pre_fork_task=generate_simple_task(10)
+        pre_fork_task=generate_simple_task(10),
+        join_task=JoinTask(
+            'join'
+        ),
     )
 
 
@@ -132,11 +136,14 @@ def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
         description='Python workflow example from code',
         version=1234,
     ).add(
-        generate_simple_task(0)
+        generate_simple_task(12)
     ).add(
         generate_set_variable_task()
     ).add(
         generate_fork_task(workflow_executor)
+
+    ).add(
+        generate_dynamic_fork_task()
     )
     workflow >> generate_sub_workflow_task() >> generate_json_jq_task()
     return workflow

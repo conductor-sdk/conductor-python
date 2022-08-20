@@ -3,6 +3,7 @@ from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
+from conductor.client.http.models import *
 from copy import deepcopy
 from typing import Any, Dict, List
 from typing_extensions import Self
@@ -146,13 +147,20 @@ class ConductorWorkflow:
         self._input_parameters = deepcopy(input_parameters)
         return self
 
-    # Register the workflow definition with the server. If overwrite is set, the definition on the server will be overwritten.
-    # When not set, the call fails if there is any change in the workflow definition between the server and what is being registered.
+    # Register the workflow definition with the server. If overwrite is set, the definition on the server will be
+    # overwritten. When not set, the call fails if there is any change in the workflow definition between the server
+    # and what is being registered.
     def register(self, overwrite: bool):
         return self._executor.register_workflow(
             overwrite=overwrite,
             workflow=self.to_workflow_def(),
         )
+
+    # Executes the workflow inline without registering with the server.  Useful for one-off workflows that need not
+    # be registered.
+    def start_workflow(self, start_workflow_request: StartWorkflowRequest):
+        start_workflow_request.workflow_def = self.to_workflow_def()
+        return self._executor.start_workflow(start_workflow_request)
 
     # Converts the workflow to the JSON serializable format
     def to_workflow_def(self) -> WorkflowDef:
@@ -175,7 +183,12 @@ class ConductorWorkflow:
     def __get_workflow_task_list(self) -> List[WorkflowTask]:
         workflow_task_list = []
         for task in self._tasks:
-            workflow_task_list.append(task.to_workflow_task())
+            converted_task = task.to_workflow_task()
+            if isinstance(converted_task, list):
+                for subtask in converted_task:
+                    workflow_task_list.append(subtask)
+            else:
+                workflow_task_list.append(converted_task)
         return workflow_task_list
 
     # Append task with the right shift operator `>>`

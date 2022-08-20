@@ -7,7 +7,7 @@ from typing_extensions import Self
 
 
 class JoinTask(TaskInterface):
-    def __init__(self, task_ref_name: str, join_on: List[str]) -> Self:
+    def __init__(self, task_ref_name: str, join_on: List[str] = None) -> Self:
         super().__init__(
             task_reference_name=task_ref_name,
             task_type=TaskType.JOIN
