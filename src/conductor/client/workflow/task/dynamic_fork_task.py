@@ -1,3 +1,4 @@
+from typing import List
 from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.task.join_task import JoinTask
 from conductor.client.workflow.task.task import TaskInterface
