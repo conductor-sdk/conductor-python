@@ -1,7 +1,7 @@
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.configuration.configuration import Configuration
-from tests.resources.worker.python.python_worker import ClassWorker
+from tests.unit.resources.workers import ClassWorker
 from unittest.mock import Mock
 from unittest.mock import patch
 import multiprocessing
@@ -25,7 +25,7 @@ class TestTaskHandler(unittest.TestCase):
 
     def test_start_processes(self):
         with patch.object(TaskRunner, 'run', PickableMock(return_value=None)):
-            with self.__get_valid_task_handler() as task_handler:
+            with _get_valid_task_handler() as task_handler:
                 task_handler.start_processes()
                 self.assertEqual(len(task_handler.task_runner_processes), 1)
                 for process in task_handler.task_runner_processes:
@@ -33,10 +33,11 @@ class TestTaskHandler(unittest.TestCase):
                         isinstance(process, multiprocessing.Process)
                     )
 
-    def __get_valid_task_handler(self):
-        return TaskHandler(
-            configuration=Configuration(),
-            workers=[
-                ClassWorker('task')
-            ]
-        )
+
+def _get_valid_task_handler():
+    return TaskHandler(
+        configuration=Configuration(),
+        workers=[
+            ClassWorker('task')
+        ]
+    )

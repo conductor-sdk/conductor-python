@@ -1,7 +1,8 @@
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.worker.worker import ExecuteTaskFunction
 from conductor.client.http.models import StartWorkflowRequest
+from conductor.client.http.models import TaskDef
+from conductor.client.worker.worker import ExecuteTaskFunction
 from conductor.client.worker.worker import Worker
 from conductor.client.worker.worker_interface import WorkerInterface
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
@@ -15,7 +16,11 @@ from resources.worker.python.python_worker import worker_with_task_input_and_gen
 from resources.worker.python.python_worker import worker_with_task_input_and_task_result_output
 from time import sleep
 from typing import List
-import resources.workflow.properties as test_properties
+
+WORKFLOW_NAME = "python_integration_test_workflow"
+TASK_NAME = "python_integration_test_task"
+WORKFLOW_VERSION = 1234
+WORKFLOW_OWNER_EMAIL = "test@test"
 
 
 def run_workflow_execution_tests(configuration: Configuration, workflow_executor: WorkflowExecutor):
@@ -24,10 +29,10 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
     )
     test_workflow_execution(
         workflow_quantity=15,
-        workflow_name=test_properties.WORKFLOW_NAME,
+        workflow_name=WORKFLOW_NAME,
         workers=[
-            ClassWorker(test_properties.TASK_NAME),
-            ClassWorkerWithDomain(test_properties.TASK_NAME),
+            ClassWorker(TASK_NAME),
+            ClassWorkerWithDomain(TASK_NAME),
             generate_worker(worker_with_generic_input_and_generic_output),
             generate_worker(worker_with_generic_input_and_task_result_output),
             generate_worker(worker_with_task_input_and_generic_output),
@@ -39,8 +44,29 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
     )
 
 
+def generate_tasks_defs():
+    python_simple_task_from_code = TaskDef(
+        description="desc python_simple_task_from_code",
+        owner_app="python_integration_test_app",
+        timeout_seconds=3,
+        response_timeout_seconds=2,
+        created_by=WORKFLOW_OWNER_EMAIL,
+        name=TASK_NAME,
+        input_keys=["input1"],
+        output_keys=[],
+        owner_email=WORKFLOW_OWNER_EMAIL,
+    )
+    return [python_simple_task_from_code]
+
+
 def test_workflow_registration(workflow_executor: WorkflowExecutor):
     workflow = generate_workflow(workflow_executor)
+    try:
+        workflow_executor.metadata_client.unregister_workflow_def_with_http_info(
+            workflow.name, workflow.version
+        )
+    except:
+        pass
     assert workflow.register(overwrite=True) == None
 
 
@@ -55,7 +81,10 @@ def test_workflow_execution(
     start_workflow_requests = [None] * workflow_quantity
     for i in range(workflow_quantity):
         start_workflow_requests[i] = StartWorkflowRequest(name=workflow_name)
-    workflow_ids = workflow_executor.start_workflows(start_workflow_requests)
+    workflow_ids = []
+    for i in range(workflow_quantity):
+        workflow_ids.append(workflow_executor.start_workflow(
+            StartWorkflowRequest(name=workflow_name, input={})))
     task_handler = TaskHandler(workers, configuration)
     task_handler.start_processes()
     sleep(workflow_completion_timeout)
@@ -67,12 +96,12 @@ def test_workflow_execution(
 def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
     return ConductorWorkflow(
         executor=workflow_executor,
-        name=test_properties.WORKFLOW_NAME,
+        name=WORKFLOW_NAME,
         version=12345,
-    ).add(
+    ).owner_email(WORKFLOW_OWNER_EMAIL).add(
         SimpleTask(
-            task_def_name=test_properties.TASK_NAME,
-            task_reference_name=test_properties.TASK_NAME,
+            task_def_name=TASK_NAME,
+            task_reference_name=TASK_NAME,
         )
     )
 
@@ -87,7 +116,7 @@ def validate_workflow_status(workflow_id: str, workflow_executor: WorkflowExecut
 
 def generate_worker(execute_function: ExecuteTaskFunction) -> Worker:
     return Worker(
-        task_definition_name=test_properties.TASK_NAME,
+        task_definition_name=TASK_NAME,
         execute_function=execute_function,
         poll_interval=0.05
     )

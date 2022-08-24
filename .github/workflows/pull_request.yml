@@ -12,7 +12,7 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: "3.x"
-      - name: Instal pylint from local files
+      - name: Instal pylint
         run: python3 -m pip install pylint==2.14.5
       - name: Run Pylint
         run: python3 -m pylint --disable=all ./src
@@ -28,7 +28,7 @@ jobs:
       - name: Instal package from local files
         run: python3 -m pip install .
         env:
-          CONDUCTOR_PYTHON_VERSION: v1.0.0
+          CONDUCTOR_PYTHON_VERSION: v0.0.0+test.unit
       - name: Run Unit Tests
         run: python3 -m unittest discover --verbose --start-directory=./tests/unit
   integration-tests:
@@ -43,9 +43,9 @@ jobs:
       - name: Instal package from local files
         run: python3 -m pip install .
         env:
-          CONDUCTOR_PYTHON_VERSION: v1.0.0
+          CONDUCTOR_PYTHON_VERSION: v0.0.0+test.integration
       - name: Run Integration Tests
-        run: python3 ./tests/integration.py
+        run: python3 ./tests/integration/main.py
         env:
           PYTHON_INTEGRATION_TESTS_SERVER_API_URL: ${{ secrets.PYTHON_INTEGRATION_TESTS_SERVER_API_URL }}
           PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID: ${{ secrets.PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID }}
