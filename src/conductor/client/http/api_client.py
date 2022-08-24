@@ -1,3 +1,4 @@
+from time import sleep
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http import rest
 from multiprocessing.pool import ThreadPool
@@ -312,6 +313,7 @@ class ApiClient(object):
                 auth_settings,
                 _return_http_data_only,
                 collection_formats,
+                _preload_content,
                 _request_timeout
             )
         else:
@@ -645,15 +647,13 @@ class ApiClient(object):
         try:
             response = self.call_api(
                 '/token', 'POST',
-                header_params={
-                    'Content-Type': self.select_header_content_type(['*/*'])
-                },
                 body={
                     'keyId': self.configuration.authentication_settings.key_id,
                     'keySecret': self.configuration.authentication_settings.key_secret
                 },
                 _return_http_data_only=True,
-                response_type='Token'
+                response_type='Token',
+                _preload_content=True
             )
             return response.token
         except Exception:
