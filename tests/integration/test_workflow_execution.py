@@ -19,7 +19,6 @@ WORKFLOW_VERSION = 1234
 WORKFLOW_OWNER_EMAIL = "test@test"
 
 
-
 def run_workflow_execution_tests(configuration: Configuration, workflow_executor: WorkflowExecutor):
     test_workflow_registration(
         workflow_executor,
@@ -83,7 +82,8 @@ def test_workflow_execution(
 ) -> None:
     workflow_ids = []
     for i in range(quantity):
-        workflow_ids.append( workflow_executor.start_workflow( StartWorkflowRequest(name=workflow_name, input={}) ) )
+        workflow_ids.append(workflow_executor.start_workflow(
+            StartWorkflowRequest(name=workflow_name, input={})))
 
     task_handler = TaskHandler(workers, configuration)
     task_handler.start_processes()

@@ -5,6 +5,27 @@ from conductor.client.worker.worker_interface import WorkerInterface
 from typing import Any
 
 
+def worker_with_task_result(task: Task) -> TaskResult:
+    task_result = TaskResult(
+        task_id=task.task_id,
+        workflow_instance_id=task.workflow_instance_id,
+        worker_id='your_custom_id'
+    )
+    task_result.add_output_data('worker_style', 'function')
+    task_result.add_output_data('worker_input', 'Task')
+    task_result.add_output_data('worker_output', 'TaskResult')
+    task_result.status = TaskResultStatus.COMPLETED
+    return task_result
+
+
+def worker_with_generic_return(task: Task) -> Any:
+    return {
+        'worker_style': 'function',
+        'worker_input': 'Task',
+        'worker_output': 'Any'
+    }
+
+
 class FaultyExecutionWorker(WorkerInterface):
     def execute(self, task: Task) -> TaskResult:
         raise Exception('faulty execution')
@@ -25,24 +46,3 @@ class SimplePythonWorker(WorkerInterface):
 
     def get_domain(self) -> str:
         return 'simple_python_worker'
-
-
-def worker_with_task_result(task: Task) -> TaskResult:
-    task_result = TaskResult(
-        task_id=task.task_id,
-        workflow_instance_id=task.workflow_instance_id,
-        worker_id='your_custom_id'
-    )
-    task_result.add_output_data('worker_style', 'function')
-    task_result.add_output_data('worker_input', 'Task')
-    task_result.add_output_data('worker_output', 'TaskResult')
-    task_result.status = TaskResultStatus.COMPLETED
-    return task_result
-
-
-def worker_with_generic_return(task: Task) -> Any:
-    return {
-        'worker_style': 'function',
-        'worker_input': 'Task',
-        'worker_output': 'Any'
-    }
