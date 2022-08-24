@@ -1,3 +1,4 @@
+from conductor.client.http.models import TaskDef
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
@@ -12,13 +13,46 @@ from conductor.client.workflow.task.sub_workflow_task import SubWorkflowTask, In
 from conductor.client.workflow.task.switch_task import SwitchTask
 from conductor.client.workflow.task.terminate_task import TerminateTask, WorkflowStatus
 
+WORKFLOW_OWNER_EMAIL = "test@test"
+
 
 def run_workflow_definition_tests(workflow_executor: WorkflowExecutor) -> None:
     test_kitchensink_workflow_registration(workflow_executor)
 
 
+def generate_tasks_defs() -> list[TaskDef]:
+    python_simple_task_from_code = TaskDef(
+        description="desc python_simple_task_from_code",
+        owner_app="python_integration_test_app",
+        timeout_seconds=3,
+        response_timeout_seconds=2,
+        created_by=WORKFLOW_OWNER_EMAIL,
+        name="python_simple_task_from_code",
+        input_keys=["input1"],
+        output_keys=[],
+        owner_email=WORKFLOW_OWNER_EMAIL,
+    )
+
+    return [python_simple_task_from_code]
+
+
 def test_kitchensink_workflow_registration(workflow_executor: WorkflowExecutor) -> None:
+    workflow = generate_sub_workflow(workflow_executor)
+    try:
+        workflow_executor.metadata_client.unregister_workflow_def_with_http_info(
+            workflow.name, workflow.version
+        )
+    except:
+        pass
+    assert workflow.register(True) == None
     workflow = generate_workflow(workflow_executor)
+    workflow_executor.metadata_client.register_task_def(generate_tasks_defs())
+    try:
+        workflow_executor.metadata_client.unregister_workflow_def_with_http_info(
+            workflow.name, workflow.version
+        )
+    except:
+        pass
     assert workflow.register(True) == None
     workflow_id = workflow_executor.start_workflow(
         start_workflow_request=StartWorkflowRequest(
@@ -112,7 +146,7 @@ def generate_dynamic_fork_task() -> DynamicForkTask:
         task_ref_name='dynamic_fork',
         pre_fork_task=generate_simple_task(10),
         join_task=JoinTask(
-            'join'
+            'join', join_on=[]
         ),
     )
 
@@ -128,6 +162,20 @@ def generate_json_jq_task() -> JsonJQTask:
     )
 
 
+def generate_sub_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
+    workflow = (
+        ConductorWorkflow(
+            executor=workflow_executor,
+            name="PopulationMinMax",
+            description="Python workflow example from code",
+            version=1234,
+        )
+        .owner_email(WORKFLOW_OWNER_EMAIL)
+        .add(generate_set_variable_task())
+    )
+    return workflow
+
+
 def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
     workflow = ConductorWorkflow(
         executor=workflow_executor,
@@ -140,9 +188,6 @@ def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
         generate_set_variable_task()
     ).add(
         generate_fork_task(workflow_executor)
-
-    ).add(
-        generate_dynamic_fork_task()
-    )
+    ).owner_email(WORKFLOW_OWNER_EMAIL)
     workflow >> generate_sub_workflow_task() >> generate_json_jq_task()
     return workflow

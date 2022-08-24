@@ -1,6 +1,7 @@
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models import StartWorkflowRequest
+from conductor.client.http.models import TaskDef
 from conductor.client.worker.worker import Worker
 from conductor.client.worker.worker_interface import WorkerInterface
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
@@ -12,9 +13,10 @@ from resources.worker.python.python_worker import worker_with_task_result
 from time import sleep
 from typing import List
 
-
-WORKFLOW_NAME = 'python_integration_test_workflow'
-TASK_NAME = 'python_integration_test_task'
+WORKFLOW_NAME = "python_integration_test_workflow"
+TASK_NAME = "python_integration_test_task"
+WORKFLOW_VERSION = 1234
+WORKFLOW_OWNER_EMAIL = "test@test"
 
 
 def run_workflow_execution_tests(configuration: Configuration, workflow_executor: WorkflowExecutor):
@@ -43,8 +45,30 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
     )
 
 
+def generate_tasks_defs():
+    python_simple_task_from_code = TaskDef(
+        description="desc python_simple_task_from_code",
+        owner_app="python_integration_test_app",
+        timeout_seconds=3,
+        response_timeout_seconds=2,
+        created_by=WORKFLOW_OWNER_EMAIL,
+        name=TASK_NAME,
+        input_keys=["input1"],
+        output_keys=[],
+        owner_email=WORKFLOW_OWNER_EMAIL,
+    )
+
+    return [python_simple_task_from_code]
+
+
 def test_workflow_registration(workflow_executor: WorkflowExecutor):
     workflow = generate_workflow(workflow_executor)
+    try:
+        workflow_executor.metadata_client.unregister_workflow_def_with_http_info(
+            workflow.name, workflow.version
+        )
+    except:
+        pass
     assert workflow.register(overwrite=True) == None
 
 
@@ -56,13 +80,11 @@ def test_workflow_execution(
     workflow_executor: WorkflowExecutor,
     workflow_completion_timeout: float,
 ) -> None:
-    requests = []
+    workflow_ids = []
     for i in range(quantity):
-        requests.append(StartWorkflowRequest(
-        name=workflow_name,
-        input={}
-    ))
-    workflow_ids = workflow_executor.start_workflows(requests)
+        workflow_ids.append(workflow_executor.start_workflow(
+            StartWorkflowRequest(name=workflow_name, input={})))
+
     task_handler = TaskHandler(workers, configuration)
     task_handler.start_processes()
     sleep(workflow_completion_timeout)
@@ -75,8 +97,8 @@ def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
     return ConductorWorkflow(
         executor=workflow_executor,
         name=WORKFLOW_NAME,
-        version=12345,
-    ).add(
+        version=WORKFLOW_VERSION,
+    ).owner_email(WORKFLOW_OWNER_EMAIL).add(
         SimpleTask(
             task_def_name=TASK_NAME,
             task_reference_name=TASK_NAME,
