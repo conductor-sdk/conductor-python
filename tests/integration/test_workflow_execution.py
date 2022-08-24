@@ -97,8 +97,10 @@ def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
     return ConductorWorkflow(
         executor=workflow_executor,
         name=WORKFLOW_NAME,
-        version=12345,
-    ).owner_email(WORKFLOW_OWNER_EMAIL).add(
+        version=WORKFLOW_VERSION,
+    ).owner_email(
+        WORKFLOW_OWNER_EMAIL
+    ).add(
         SimpleTask(
             task_def_name=TASK_NAME,
             task_reference_name=TASK_NAME,
