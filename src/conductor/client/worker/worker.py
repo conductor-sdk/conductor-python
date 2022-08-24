@@ -1,3 +1,4 @@
+from copy import deepcopy
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
@@ -37,11 +38,11 @@ class Worker(WorkerInterface):
         super().__init__(task_definition_name)
         if poll_interval == None:
             poll_interval = super().get_polling_interval_in_seconds()
-        self.poll_interval = poll_interval
+        self.poll_interval = deepcopy(poll_interval)
         if domain == None:
             domain = super().get_domain()
-        self.domain = domain
-        self.execute_function = execute_function
+        self.domain = deepcopy(domain)
+        self.execute_function = deepcopy(execute_function)
 
     def execute(self, task: Task) -> TaskResult:
         execute_function_input = None
