@@ -9,12 +9,6 @@ import six
 import ssl
 import urllib3
 
-logger = logging.getLogger(
-    Configuration.get_logging_formatted_name(
-        __name__
-    )
-)
-
 
 class RESTResponse(io.IOBase):
 
@@ -198,9 +192,6 @@ class RESTClientObject(object):
 
         if _preload_content:
             r = RESTResponse(r)
-
-            # log response body
-            logger.debug("response body: %s", r.data)
 
         if not 200 <= r.status <= 299:
             raise ApiException(http_resp=r)
