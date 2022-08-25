@@ -1,12 +1,18 @@
+from copy import deepcopy
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.worker.worker_interface import WorkerInterface
-from typing import Any, Callable
+from typing import Any, Callable, Union
 from typing_extensions import Self
 import inspect
 
-ExecuteTaskFunction = Callable[[Task], Any]
+ExecuteTaskFunction = Callable[
+    [
+        Union[Task, object]
+    ],
+    Union[TaskResult, object]
+]
 
 
 def is_callable_input_parameter_a_task(callable: ExecuteTaskFunction, object_type: Any) -> bool:
@@ -32,15 +38,25 @@ class Worker(WorkerInterface):
         super().__init__(task_definition_name)
         if poll_interval == None:
             poll_interval = super().get_polling_interval_in_seconds()
-        self.poll_interval = poll_interval
+        self.poll_interval = deepcopy(poll_interval)
         if domain == None:
             domain = super().get_domain()
-        self.domain = domain
-        self.execute_function = execute_function
+        self.domain = deepcopy(domain)
+        self.execute_function = deepcopy(execute_function)
 
     def execute(self, task: Task) -> TaskResult:
+        execute_function_input = None
+        if self._is_execute_function_input_parameter_a_task:
+            execute_function_input = task
+        else:
+            execute_function_input = task.input_data
         if self._is_execute_function_return_value_a_task_result:
-            return self.execute_function(task)
+            execute_function_output = self.execute_function(
+                execute_function_input)
+            if type(execute_function_output) == TaskResult:
+                execute_function_output.task_id = task.task_id
+                execute_function_output.workflow_instance_id = task.workflow_instance_id
+            return execute_function_output
         task_result = self.get_task_result_from_task(task)
         task_result.status = TaskResultStatus.COMPLETED
         task_result.output_data = self.execute_function(task)

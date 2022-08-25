@@ -45,7 +45,7 @@ jobs:
         env:
           CONDUCTOR_PYTHON_VERSION: v0.0.0+test.integration
       - name: Run Integration Tests
-        run: python3 ./tests/integration/integration/main.py
+        run: python3 ./tests/integration/main.py
         env:
           PYTHON_INTEGRATION_TESTS_SERVER_API_URL: ${{ secrets.PYTHON_INTEGRATION_TESTS_SERVER_API_URL }}
           PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID: ${{ secrets.PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID }}

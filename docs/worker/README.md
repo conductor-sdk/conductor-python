@@ -16,7 +16,24 @@ Currently, there are two ways of writing a Python worker:
 
 ### Worker as a function
 
-The function must receive a `Task` as input and produce `TaskResult` as output, example:
+The function should follow this signature:
+
+```python
+ExecuteTaskFunction = Callable[
+    [
+        Union[Task, object]
+    ],
+    Union[TaskResult, object]
+]
+```
+
+In other words:
+* Input must be either a `Task` or an `object`
+    * If it isn't a `Task`, the assumption is - you're expecting to receive the `Task.input_data` as the object
+* Output must be either a `TaskResult` or an `object` 
+    * If it isn't a `TaskResult`, the assumption is - you're expecting to use the object as the `TaskResult.output_data`
+
+Quick example below:
 
 ```python
 from conductor.client.http.models import Task, TaskResult
@@ -33,9 +50,11 @@ def execute(task: Task) -> TaskResult:
     return task_result
 ```
 
+In the case you like more details, you can take a look at all possible combinations of workers [here](../../tests/integration/resources/worker/python/python_worker.py)
+
 ### Worker as a class
 
-The class must implement `WorkerInterface` class, which requires `execute` method. The remaining ones are inherited, but can be easily overridden. Example:
+The class must implement `WorkerInterface` class, which requires an `execute` method. The remaining ones are inherited, but can be easily overridden. Example with a custom polling interval:
 
 ```python
 from conductor.client.http.models import Task, TaskResult
@@ -86,8 +105,43 @@ python3 main.py
 
 See [Using Conductor Playground](https://orkes.io/content/docs/getting-started/playground/using-conductor-playground) for more details on how to use Playground environment for testing.
 
-Check out more examples, like this general usage: [main.py](../../src/example/main/main.py)
+If you're looking for better performance (i.e. more workers of the same type) - you can simply append more instances of the same worker, like this:
 
+```python
+workers = [
+    SimplePythonWorker(
+        task_definition_name='python_task_example'
+    ),
+    SimplePythonWorker(
+        task_definition_name='python_task_example'
+    ),
+    SimplePythonWorker(
+        task_definition_name='python_task_example'
+    ),
+    ...
+]
+```
+
+```python
+workers = [
+    Worker(
+        task_definition_name='python_task_example',
+        execute_function=execute,
+        poll_interval=0.25,
+    ),
+    Worker(
+        task_definition_name='python_task_example',
+        execute_function=execute,
+        poll_interval=0.25,
+    ),
+    Worker(
+        task_definition_name='python_task_example',
+        execute_function=execute,
+        poll_interval=0.25,
+    )
+    ...
+]
+```
 
 ## C/C++ Support
 Python is great, but at times you need to call into native C/C++ code. 

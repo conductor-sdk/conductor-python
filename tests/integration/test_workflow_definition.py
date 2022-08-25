@@ -13,6 +13,8 @@ from conductor.client.workflow.task.sub_workflow_task import SubWorkflowTask, In
 from conductor.client.workflow.task.switch_task import SwitchTask
 from conductor.client.workflow.task.terminate_task import TerminateTask, WorkflowStatus
 
+WORKFLOW_NAME = 'python_test_workflow'
+TASK_NAME = 'python_test_simple_task'
 WORKFLOW_OWNER_EMAIL = "test@test"
 
 
@@ -64,8 +66,8 @@ def test_kitchensink_workflow_registration(workflow_executor: WorkflowExecutor) 
 
 def generate_simple_task(id: int) -> SimpleTask:
     return SimpleTask(
-        task_def_name='python_simple_task_from_code',
-        task_reference_name=f'python_simple_task_from_code_{id}'
+        task_def_name=TASK_NAME,
+        task_reference_name=f'{TASK_NAME}_{id}'
     )
 
 
@@ -179,7 +181,7 @@ def generate_sub_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkf
 def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
     workflow = ConductorWorkflow(
         executor=workflow_executor,
-        name='python_workflow_example_from_code',
+        name=WORKFLOW_NAME,
         description='Python workflow example from code',
         version=1234,
     ).add(
