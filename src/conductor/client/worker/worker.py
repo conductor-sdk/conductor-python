@@ -54,9 +54,8 @@ class Worker(WorkerInterface):
             execute_function_output = self.execute_function(
                 execute_function_input)
             if type(execute_function_output) == TaskResult:
-                if execute_function_output.task_id == '':
-                    execute_function_output.task_id = task.task_id
-                    execute_function_output.workflow_instance_id = task.workflow_instance_id
+                execute_function_output.task_id = task.task_id
+                execute_function_output.workflow_instance_id = task.workflow_instance_id
             return execute_function_output
         task_result = self.get_task_result_from_task(task)
         task_result.status = TaskResultStatus.COMPLETED
