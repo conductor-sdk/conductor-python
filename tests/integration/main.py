@@ -1,8 +1,8 @@
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from test_workflow_definition import run_workflow_definition_tests
-from test_workflow_execution import run_workflow_execution_tests
+from metadata.test_workflow_definition import run_workflow_definition_tests
+from workflow.test_workflow_execution import run_workflow_execution_tests
 import logging
 import os
 

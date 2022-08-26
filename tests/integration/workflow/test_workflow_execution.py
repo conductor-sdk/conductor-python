@@ -24,9 +24,8 @@ WORKFLOW_OWNER_EMAIL = "test@test"
 
 
 def run_workflow_execution_tests(configuration: Configuration, workflow_executor: WorkflowExecutor):
-    test_workflow_registration(
-        workflow_executor,
-    )
+    test_get_workflow_by_correlation_ids(workflow_executor)
+    test_workflow_registration(workflow_executor)
     test_workflow_execution(
         workflow_quantity=15,
         workflow_name=WORKFLOW_NAME,
@@ -57,6 +56,16 @@ def generate_tasks_defs():
         owner_email=WORKFLOW_OWNER_EMAIL,
     )
     return [python_simple_task_from_code]
+
+
+def test_get_workflow_by_correlation_ids(workflow_executor: WorkflowExecutor):
+    ids = workflow_executor.get_by_correlation_ids(
+        workflow_name=WORKFLOW_NAME,
+        correlation_ids=[
+            '2', '5', '33', '4', '32', '7', '34', '1', '3', '6', '1440'
+        ]
+    )
+    assert ids != None
 
 
 def test_workflow_registration(workflow_executor: WorkflowExecutor):
