@@ -4,7 +4,6 @@ from conductor.client.http.models import StartWorkflowRequest
 from conductor.client.http.models import TaskDef
 from conductor.client.worker.worker import ExecuteTaskFunction
 from conductor.client.worker.worker import Worker
-from conductor.client.worker.worker_interface import WorkerInterface
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.simple_task import SimpleTask
@@ -15,7 +14,6 @@ from resources.worker.python.python_worker import worker_with_generic_input_and_
 from resources.worker.python.python_worker import worker_with_task_input_and_generic_output
 from resources.worker.python.python_worker import worker_with_task_input_and_task_result_output
 from time import sleep
-from typing import List
 
 WORKFLOW_NAME = "python_integration_test_workflow"
 TASK_NAME = "python_integration_test_task"
@@ -24,11 +22,7 @@ WORKFLOW_OWNER_EMAIL = "test@test"
 
 
 def run_workflow_execution_tests(configuration: Configuration, workflow_executor: WorkflowExecutor):
-    test_get_workflow_by_correlation_ids(workflow_executor)
-    test_workflow_registration(workflow_executor)
-    test_workflow_execution(
-        workflow_quantity=15,
-        workflow_name=WORKFLOW_NAME,
+    task_handler = TaskHandler(
         workers=[
             ClassWorker(TASK_NAME),
             ClassWorkerWithDomain(TASK_NAME),
@@ -37,10 +31,22 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
             generate_worker(worker_with_task_input_and_generic_output),
             generate_worker(worker_with_task_input_and_task_result_output),
         ],
-        configuration=configuration,
-        workflow_executor=workflow_executor,
-        workflow_completion_timeout=15
+        configuration=configuration
     )
+    task_handler.start_processes()
+    test_get_workflow_by_correlation_ids(workflow_executor)
+    test_workflow_registration(workflow_executor)
+    test_workflow_execution(
+        workflow_quantity=10,
+        workflow_name=WORKFLOW_NAME,
+        workflow_executor=workflow_executor,
+        workflow_completion_timeout=7
+    )
+    test_workflow_methods(
+        workflow_executor,
+        workflow_quantity=10,
+    )
+    task_handler.stop_processes()
 
 
 def generate_tasks_defs():
@@ -68,6 +74,51 @@ def test_get_workflow_by_correlation_ids(workflow_executor: WorkflowExecutor):
     assert ids != None
 
 
+def test_workflow_methods(
+    workflow_executor: WorkflowExecutor,
+    workflow_quantity: int,
+) -> None:
+    task = SimpleTask(
+        'python_integration_test_abc1asjdkajskdjsad',
+        'python_integration_test_abc1asjdkajskdjsad'
+    )
+    workflow_executor.metadata_client.register_task_def(
+        [task.to_workflow_task()]
+    )
+    workflow_name = 'python_integration_test_abc1asjdk'
+    workflow = ConductorWorkflow(
+        executor=workflow_executor,
+        name=workflow_name,
+        description='Python workflow example from code',
+        version=1234,
+    ).add(
+        task
+    )
+    workflow_executor.register_workflow(
+        workflow.to_workflow_def(),
+        overwrite=True,
+    )
+    start_workflow_requests = [''] * workflow_quantity
+    for i in range(workflow_quantity):
+        start_workflow_requests[i] = StartWorkflowRequest(name=workflow_name)
+    workflow_ids = workflow_executor.start_workflows(
+        *start_workflow_requests
+    )
+    for workflow_id in workflow_ids:
+        _pause_workflow(workflow_executor, workflow_id)
+        _resume_workflow(workflow_executor, workflow_id)
+        try:
+            workflow_executor.restart(workflow_id)
+        except Exception as e:
+            assert '409' in str(e)
+        try:
+            workflow_executor.retry(workflow_id)
+        except Exception as e:
+            assert '409' in str(e)
+        _pause_workflow(workflow_executor, workflow_id)
+        workflow_executor.remove_workflow(workflow_id, archive_workflow=False)
+
+
 def test_workflow_registration(workflow_executor: WorkflowExecutor):
     workflow = generate_workflow(workflow_executor)
     try:
@@ -77,29 +128,24 @@ def test_workflow_registration(workflow_executor: WorkflowExecutor):
     except:
         pass
     assert workflow.register(overwrite=True) == None
+    assert workflow_executor.register_workflow(
+        workflow.to_workflow_def(), overwrite=True
+    ) == None
 
 
 def test_workflow_execution(
     workflow_quantity: int,
     workflow_name: str,
-    workers: List[WorkerInterface],
-    configuration: Configuration,
     workflow_executor: WorkflowExecutor,
     workflow_completion_timeout: float,
 ) -> None:
-    start_workflow_requests = [None] * workflow_quantity
+    start_workflow_requests = [''] * workflow_quantity
     for i in range(workflow_quantity):
         start_workflow_requests[i] = StartWorkflowRequest(name=workflow_name)
-    workflow_ids = []
-    for i in range(workflow_quantity):
-        workflow_ids.append(workflow_executor.start_workflow(
-            StartWorkflowRequest(name=workflow_name, input={})))
-    task_handler = TaskHandler(workers, configuration)
-    task_handler.start_processes()
+    workflow_ids = workflow_executor.start_workflows(*start_workflow_requests)
     sleep(workflow_completion_timeout)
     for workflow_id in workflow_ids:
         validate_workflow_status(workflow_id, workflow_executor)
-    task_handler.stop_processes()
 
 
 def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
@@ -123,6 +169,12 @@ def validate_workflow_status(workflow_id: str, workflow_executor: WorkflowExecut
         include_tasks=False,
     )
     assert workflow.status == 'COMPLETED'
+    workflow_status = workflow_executor.get_workflow_status(
+        workflow_id=workflow_id,
+        include_output=False,
+        include_variables=False,
+    )
+    assert workflow_status.status == 'COMPLETED'
 
 
 def generate_worker(execute_function: ExecuteTaskFunction) -> Worker:
@@ -131,3 +183,23 @@ def generate_worker(execute_function: ExecuteTaskFunction) -> Worker:
         execute_function=execute_function,
         poll_interval=0.05
     )
+
+
+def _pause_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+    workflow_executor.pause(workflow_id)
+    workflow_status = workflow_executor.get_workflow_status(
+        workflow_id,
+        include_output=True,
+        include_variables=False,
+    )
+    assert workflow_status.status == 'PAUSED'
+
+
+def _resume_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+    workflow_executor.resume(workflow_id)
+    workflow_status = workflow_executor.get_workflow_status(
+        workflow_id,
+        include_output=True,
+        include_variables=False,
+    )
+    assert workflow_status.status == 'RUNNING'

@@ -30,7 +30,7 @@ class WorkflowExecutor:
             body=start_workflow_request,
         )
 
-    def start_workflows(self, start_workflow_request: List[StartWorkflowRequest]) -> List[str]:
+    def start_workflows(self, *start_workflow_request: StartWorkflowRequest) -> List[str]:
         """Start multiple instances of workflows.  Note, there is no parallelism implemented in starting so giving a
         very large number can impact the latencies and performance
         """
@@ -41,7 +41,7 @@ class WorkflowExecutor:
             )
         return workflow_id_list
 
-    def remove_workflow(self, workflow_id: str, archive_workflow: bool = None):
+    def remove_workflow(self, workflow_id: str, archive_workflow: bool = None) -> None:
         """Removes the workflow permanently from the system"""
         kwargs = {}
         if archive_workflow is not None:
