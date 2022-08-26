@@ -107,16 +107,17 @@ def test_workflow_methods(
     for workflow_id in workflow_ids:
         _pause_workflow(workflow_executor, workflow_id)
         _resume_workflow(workflow_executor, workflow_id)
-        try:
-            workflow_executor.restart(workflow_id)
-        except Exception as e:
-            assert '409' in str(e)
+        _terminate_workflow(workflow_executor, workflow_id)
+        _restart_workflow(workflow_executor, workflow_id)
         try:
             workflow_executor.retry(workflow_id)
         except Exception as e:
             assert '409' in str(e)
         _pause_workflow(workflow_executor, workflow_id)
-        workflow_executor.remove_workflow(workflow_id, archive_workflow=False)
+        _terminate_workflow(workflow_executor, workflow_id)
+        workflow_executor.remove_workflow(
+            workflow_id, archive_workflow=True
+        )
 
 
 def test_workflow_registration(workflow_executor: WorkflowExecutor):
@@ -197,6 +198,26 @@ def _pause_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> No
 
 def _resume_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
     workflow_executor.resume(workflow_id)
+    workflow_status = workflow_executor.get_workflow_status(
+        workflow_id,
+        include_output=True,
+        include_variables=False,
+    )
+    assert workflow_status.status == 'RUNNING'
+
+
+def _terminate_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+    workflow_executor.terminate(workflow_id)
+    workflow_status = workflow_executor.get_workflow_status(
+        workflow_id,
+        include_output=True,
+        include_variables=False,
+    )
+    assert workflow_status.status == 'TERMINATED'
+
+
+def _restart_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+    workflow_executor.restart(workflow_id)
     workflow_status = workflow_executor.get_workflow_status(
         workflow_id,
         include_output=True,
