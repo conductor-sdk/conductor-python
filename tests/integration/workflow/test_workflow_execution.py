@@ -1,5 +1,6 @@
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
+from conductor.client.http.models import RerunWorkflowRequest
 from conductor.client.http.models import StartWorkflowRequest
 from conductor.client.http.models import TaskDef
 from conductor.client.worker.worker import ExecuteTaskFunction
@@ -115,8 +116,12 @@ def test_workflow_methods(
             assert '409' in str(e)
         _pause_workflow(workflow_executor, workflow_id)
         _terminate_workflow(workflow_executor, workflow_id)
+        workflow_executor.rerun(
+            RerunWorkflowRequest(),
+            workflow_id
+        )
         workflow_executor.remove_workflow(
-            workflow_id, archive_workflow=True
+            workflow_id, archive_workflow=False
         )
 
 
