@@ -24,7 +24,7 @@ jobs:
         run: python3 -m pip install -U twine
       - name: Publish package at pypi
         run: python3 -m twine upload dist/* -u ${{ secrets.pypi_user }} -p ${{ secrets.pypi_pass }}
-  validate-release:
+  wait-for-package-to-become-available-at-pypi:
     needs: build-package-and-publish-release-at-pypi
     runs-on: ubuntu-latest
     steps:
@@ -34,8 +34,22 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: "3.x"
-      - name: Wait for package to be available at pypi
-        run: sleep 150
+      - name: Wait for package to become available at pypi
+        run: sleep 300
+      - name: Install latest package version from pypi
+        run: python3 -m pip install conductor-python==$CONDUCTOR_PYTHON_VERSION
+        env:
+          CONDUCTOR_PYTHON_VERSION: ${{ github.ref_name }}
+  validate-release:
+    needs: wait-for-package-to-become-available-at-pypi
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.x"
       - name: Install latest package version from pypi
         run: python3 -m pip install conductor-python==$CONDUCTOR_PYTHON_VERSION
         env:
