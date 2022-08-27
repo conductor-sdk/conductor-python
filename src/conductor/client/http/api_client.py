@@ -1,6 +1,5 @@
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http import rest
-from multiprocessing.pool import ThreadPool
 from six.moves.urllib.parse import quote
 from typing import Dict
 import conductor.client.http.models as http_models
@@ -65,7 +64,6 @@ class ApiClient(object):
             configuration = Configuration()
         self.configuration = configuration
 
-        self.pool = ThreadPool()
         self.rest_client = rest.RESTClientObject(configuration)
 
         self.default_headers = self.__get_default_headers(
@@ -74,10 +72,6 @@ class ApiClient(object):
 
         self.cookie = cookie
         self.__refresh_auth_token()
-
-    def __del__(self):
-        self.pool.close()
-        self.pool.join()
 
     def __call_api(
             self, resource_path, method, path_params=None,
@@ -305,23 +299,12 @@ class ApiClient(object):
             If parameter async_req is False or missing,
             then the method will return the response directly.
         """
-        if not async_req:
-            return self.__call_api(resource_path, method,
-                                   path_params, query_params, header_params,
-                                   body, post_params, files,
-                                   response_type, auth_settings,
-                                   _return_http_data_only, collection_formats,
-                                   _preload_content, _request_timeout)
-        else:
-            thread = self.pool.apply_async(self.__call_api, (resource_path,
-                                           method, path_params, query_params,
-                                           header_params, body,
-                                           post_params, files,
-                                           response_type, auth_settings,
-                                           _return_http_data_only,
-                                           collection_formats,
-                                           _preload_content, _request_timeout))
-        return thread
+        return self.__call_api(resource_path, method,
+                                path_params, query_params, header_params,
+                                body, post_params, files,
+                                response_type, auth_settings,
+                                _return_http_data_only, collection_formats,
+                                _preload_content, _request_timeout)
 
     def request(self, method, url, query_params=None, headers=None,
                 post_params=None, body=None, _preload_content=True,
