@@ -32,5 +32,6 @@ class MetricsSettings:
                 os.mkdir(dir)
             except Exception as e:
                 logger.warning(
-                    'Failed to create metrics temporary folder, reason: ', e)
+                    f'Failed to create metrics temporary folder, reason: {str(e)}'
+                )
         self.directory = dir

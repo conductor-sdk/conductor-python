@@ -22,15 +22,18 @@ class TaskRunner:
     def __init__(
         self,
         worker: WorkerInterface,
-        configuration: Configuration = None,
+        configuration: Configuration,
         metrics_settings: MetricsSettings = None
     ):
         if not isinstance(worker, WorkerInterface):
             raise Exception('Invalid worker')
         self.worker = worker
+
         if not isinstance(configuration, Configuration):
-            configuration = Configuration()
-        self.configuration = configuration
+            self.configuration = Configuration()
+        else:
+            self.configuration = configuration
+
         self.metrics_collector = None
         if metrics_settings is not None:
             self.metrics_collector = MetricsCollector(
@@ -38,8 +41,12 @@ class TaskRunner:
             )
 
     def run(self) -> None:
-        if self.configuration != None:
-            self.configuration.apply_logging_config()
+        self.__task_resource_api = TaskResourceApi(
+            ApiClient(
+                configuration=self.configuration
+            )
+        )
+        self.configuration.apply_logging_config()
         while True:
             self.run_once()
 
@@ -61,13 +68,13 @@ class TaskRunner:
             start_time = time.time()
             domain = self.worker.get_domain()
             if domain != None:
-                task = self.__get_task_resource_api().poll(
+                task = self.__task_resource_api.poll(
                     tasktype=task_definition_name,
                     workerid=self.worker.get_identity(),
                     domain=self.worker.get_domain(),
                 )
             else:
-                task = self.__get_task_resource_api().poll(
+                task = self.__task_resource_api.poll(
                     tasktype=task_definition_name,
                     workerid=self.worker.get_identity(),
                 )
@@ -158,7 +165,7 @@ class TaskRunner:
             )
         )
         try:
-            response = self.__get_task_resource_api().update_task(
+            response = self.__task_resource_api.update_task(
                 body=task_result
             )
         except Exception as e:
@@ -189,10 +196,3 @@ class TaskRunner:
         polling_interval = self.worker.get_polling_interval_in_seconds()
         logger.debug(f'Sleep for {polling_interval} seconds')
         time.sleep(polling_interval)
-
-    def __get_task_resource_api(self) -> TaskResourceApi:
-        return TaskResourceApi(
-            ApiClient(
-                configuration=self.configuration
-            )
-        )

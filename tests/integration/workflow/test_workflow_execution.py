@@ -23,21 +23,8 @@ WORKFLOW_OWNER_EMAIL = "test@test"
 
 
 def run_workflow_execution_tests(configuration: Configuration, workflow_executor: WorkflowExecutor):
-    task_handler = TaskHandler(
-        workers=[
-            ClassWorker(TASK_NAME),
-            ClassWorkerWithDomain(TASK_NAME),
-            generate_worker(worker_with_generic_input_and_generic_output),
-            generate_worker(worker_with_generic_input_and_task_result_output),
-            generate_worker(worker_with_task_input_and_generic_output),
-            generate_worker(worker_with_task_input_and_task_result_output),
-        ],
-        configuration=configuration
-    )
-    task_handler.start_processes()
-    test_get_workflow_by_correlation_ids(workflow_executor)
-    test_workflow_registration(workflow_executor)
     test_workflow_execution(
+        configuration=configuration,
         workflow_quantity=10,
         workflow_name=WORKFLOW_NAME,
         workflow_executor=workflow_executor,
@@ -47,7 +34,6 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
         workflow_executor,
         workflow_quantity=10,
     )
-    task_handler.stop_processes()
 
 
 def generate_tasks_defs():
@@ -65,35 +51,29 @@ def generate_tasks_defs():
     return [python_simple_task_from_code]
 
 
-def test_get_workflow_by_correlation_ids(workflow_executor: WorkflowExecutor):
-    ids = workflow_executor.get_by_correlation_ids(
+def test_workflow_methods(
+    workflow_executor: WorkflowExecutor,
+    workflow_quantity: int,
+) -> None:
+    _ = workflow_executor.get_by_correlation_ids(
         workflow_name=WORKFLOW_NAME,
         correlation_ids=[
             '2', '5', '33', '4', '32', '7', '34', '1', '3', '6', '1440'
         ]
     )
-    assert ids != None
-
-
-def test_workflow_methods(
-    workflow_executor: WorkflowExecutor,
-    workflow_quantity: int,
-) -> None:
-    task = SimpleTask(
-        'python_integration_test_abc1asjdkajskdjsad',
-        'python_integration_test_abc1asjdkajskdjsad'
-    )
-    workflow_executor.metadata_client.register_task_def(
-        [task.to_workflow_task()]
-    )
-    workflow_name = 'python_integration_test_abc1asjdk'
     workflow = ConductorWorkflow(
         executor=workflow_executor,
-        name=workflow_name,
+        name='python_integration_test_abc1asjdk',
         description='Python workflow example from code',
         version=1234,
     ).add(
-        task
+        SimpleTask(
+            'python_integration_test_abc1asjdkajskdjsad',
+            'python_integration_test_abc1asjdkajskdjsad'
+        )
+    )
+    workflow_executor.metadata_client.register_task_def(
+        workflow.to_workflow_def().tasks
     )
     workflow_executor.register_workflow(
         workflow.to_workflow_def(),
@@ -101,7 +81,9 @@ def test_workflow_methods(
     )
     start_workflow_requests = [''] * workflow_quantity
     for i in range(workflow_quantity):
-        start_workflow_requests[i] = StartWorkflowRequest(name=workflow_name)
+        start_workflow_requests[i] = StartWorkflowRequest(
+            name=workflow.name
+        )
     workflow_ids = workflow_executor.start_workflows(
         *start_workflow_requests
     )
@@ -125,36 +107,38 @@ def test_workflow_methods(
         )
 
 
-def test_workflow_registration(workflow_executor: WorkflowExecutor):
-    workflow = generate_workflow(workflow_executor)
-    try:
-        workflow_executor.metadata_client.unregister_workflow_def_with_http_info(
-            workflow.name, workflow.version
-        )
-    except:
-        pass
-    assert workflow.register(overwrite=True) == None
-    assert workflow_executor.register_workflow(
-        workflow.to_workflow_def(), overwrite=True
-    ) == None
-
-
 def test_workflow_execution(
+    configuration: Configuration,
     workflow_quantity: int,
     workflow_name: str,
     workflow_executor: WorkflowExecutor,
     workflow_completion_timeout: float,
 ) -> None:
+    task_handler = TaskHandler(
+        workers=[
+            ClassWorker(TASK_NAME),
+            ClassWorkerWithDomain(TASK_NAME),
+            _generate_worker(worker_with_generic_input_and_generic_output),
+            _generate_worker(worker_with_generic_input_and_task_result_output),
+            _generate_worker(worker_with_task_input_and_generic_output),
+            _generate_worker(worker_with_task_input_and_task_result_output),
+        ],
+        configuration=configuration
+    )
+    task_handler.start_processes()
+    workflow = _generate_workflow(workflow_executor)
+    _register_workflow(workflow, workflow_executor)
     start_workflow_requests = [''] * workflow_quantity
     for i in range(workflow_quantity):
         start_workflow_requests[i] = StartWorkflowRequest(name=workflow_name)
     workflow_ids = workflow_executor.start_workflows(*start_workflow_requests)
     sleep(workflow_completion_timeout)
     for workflow_id in workflow_ids:
-        validate_workflow_status(workflow_id, workflow_executor)
+        _validate_workflow_status(workflow_id, workflow_executor)
+    task_handler.stop_processes()
 
 
-def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
+def _generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
     return ConductorWorkflow(
         executor=workflow_executor,
         name=WORKFLOW_NAME,
@@ -169,7 +153,29 @@ def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
     )
 
 
-def validate_workflow_status(workflow_id: str, workflow_executor: WorkflowExecutor) -> None:
+def _register_workflow(workflow: ConductorWorkflow, workflow_executor: WorkflowExecutor) -> None:
+    for task in workflow.to_workflow_def().tasks:
+        try:
+            workflow_executor.metadata_client.unregister_task_def(
+                task.task_reference_name
+            )
+        except Exception as e:
+            if '404' not in str(e):
+                raise Exception()
+    workflow_executor.metadata_client.register_task_def(
+        workflow.to_workflow_def().tasks
+    )
+    workflow_executor.metadata_client.unregister_workflow_def_with_http_info(
+        workflow.name, workflow.version
+    )
+    workflow.register()
+    workflow_executor.register_workflow(
+        workflow=workflow.to_workflow_def(),
+        overwrite=True
+    )
+
+
+def _validate_workflow_status(workflow_id: str, workflow_executor: WorkflowExecutor) -> None:
     workflow = workflow_executor.get_workflow(
         workflow_id=workflow_id,
         include_tasks=False,
@@ -183,7 +189,7 @@ def validate_workflow_status(workflow_id: str, workflow_executor: WorkflowExecut
     assert workflow_status.status == 'COMPLETED'
 
 
-def generate_worker(execute_function: ExecuteTaskFunction) -> Worker:
+def _generate_worker(execute_function: ExecuteTaskFunction) -> Worker:
     return Worker(
         task_definition_name=TASK_NAME,
         execute_function=execute_function,

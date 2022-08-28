@@ -150,7 +150,7 @@ class ConductorWorkflow:
     # Register the workflow definition with the server. If overwrite is set, the definition on the server will be
     # overwritten. When not set, the call fails if there is any change in the workflow definition between the server
     # and what is being registered.
-    def register(self, overwrite: bool):
+    def register(self, overwrite: bool = None):
         return self._executor.register_workflow(
             overwrite=overwrite,
             workflow=self.to_workflow_def(),
