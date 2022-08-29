@@ -41,7 +41,14 @@ class TaskRunner:
         if self.configuration != None:
             self.configuration.apply_logging_config()
         while True:
-            self.run_once()
+            try:
+                self.run_once()
+            except Exception as e:
+                if self.metrics_collector is not None:
+                    self.metrics_collector.increment_uncaught_exception()
+                logger.warning(
+                    f'Exception raised while running worker: {str(e)}'
+                )
 
     def run_once(self) -> None:
         task = self.__poll_task()
