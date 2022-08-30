@@ -263,7 +263,7 @@ class TaskRunner:
             args=(
                 self._task_resource_api,
                 task,
-                self._worker_execution_function,
+                self.worker_execution_function,
                 self.worker_id,
                 self.metrics_collector
             )
@@ -331,9 +331,14 @@ class TaskRunner:
         time.sleep(self.poll_interval)
 
     @property
-    def running_workers(self) -> int:
-        with self._running_workers_mutex:
-            return len(self._running_workers)
+    def batch_size(self) -> int:
+        with self._batch_size_mutex:
+            return self._batch_size
+
+    @batch_size.setter
+    def batch_size(self, batch_size: int) -> None:
+        with self._batch_size_mutex:
+            self._batch_size = deepcopy(batch_size)
 
     @property
     def poll_interval(self) -> float:
@@ -346,14 +351,15 @@ class TaskRunner:
             self._poll_interval = deepcopy(poll_interval)
 
     @property
-    def batch_size(self) -> int:
-        with self._batch_size_mutex:
-            return self._batch_size
+    def worker_execution_function(self) -> Callable[[Task], TaskResult]:
+        with self._worker_id_mutex:
+            return self._worker_id
 
-    @batch_size.setter
-    def batch_size(self, batch_size: int) -> None:
-        with self._batch_size_mutex:
-            self._batch_size = deepcopy(batch_size)
+    @worker_execution_function.setter
+    def worker_execution_function(self, worker_execution_function: Callable[[Task], TaskResult]) -> None:
+        with self._worker_execution_function_mutex:
+            self._worker_execution_function = deepcopy(
+                worker_execution_function)
 
     @property
     def worker_id(self) -> str:
@@ -367,8 +373,18 @@ class TaskRunner:
 
     @property
     def domain(self) -> str:
+        with self._domain_mutex:
+            return self._domain
 
-        #     domain: str = None,
+    @domain.setter
+    def domain(self, domain: str) -> None:
+        with self._domain_mutex:
+            self._domain = deepcopy(domain)
+
+    @property
+    def running_workers(self) -> int:
+        with self._running_workers_mutex:
+            return len(self._running_workers)
 
     def resume_worker(self) -> None:
         with self._paused_worker_mutex:
