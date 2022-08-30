@@ -14,6 +14,7 @@ class MetricName(str, Enum):
     TASK_POLL_TIME = "task_poll_time"
     TASK_RESULT_SIZE = "task_result_size"
     TASK_UPDATE_ERROR = "task_update_error"
+    TASK_UPDATE_TIME = 'task_update_time'
     THREAD_UNCAUGHT_EXCEPTION = "thread_uncaught_exceptions"
     WORKFLOW_INPUT_SIZE = "workflow_input_size"
     WORKFLOW_START_ERROR = "workflow_start_error"

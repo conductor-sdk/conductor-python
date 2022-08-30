@@ -5,6 +5,7 @@ from conductor.client.telemetry.metrics_collector import MetricsCollector
 from conductor.client.worker.worker_interface import WorkerInterface
 from multiprocessing import Process
 from typing import List
+from typing_extensions import Self
 import logging
 import threading
 
@@ -17,11 +18,11 @@ logger = logging.getLogger(
 
 class TaskHandler:
     def __init__(
-            self,
-            workers: List[WorkerInterface],
-            configuration: Configuration = None,
-            metrics_settings: MetricsSettings = None
-    ):
+        self,
+        workers: List[WorkerInterface],
+        configuration: Configuration = None,
+        metrics_settings: MetricsSettings = None
+    ) -> Self:
         if not isinstance(workers, list):
             workers = [workers]
         self.configuration = configuration
@@ -42,7 +43,6 @@ class TaskHandler:
         self.stop_processes()
 
     def stop_processes(self) -> None:
-        self.__stop_task_runner_processes()
         self.__stop_metrics_provider_process()
 
     def start_processes(self) -> None:
@@ -65,7 +65,6 @@ class TaskHandler:
         logger.info('Created MetricsProvider process')
 
     def start_worker(self, *workers: WorkerInterface) -> None:
-        self.task_runner_processes = []
         for worker in workers:
             self.__start_worker(worker)
         logger.info('Created TaskRunner processes')

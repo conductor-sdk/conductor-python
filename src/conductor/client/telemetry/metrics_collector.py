@@ -194,6 +194,16 @@ class MetricsCollector:
             value=time_spent
         )
 
+    def record_task_update_time(self, task_type: str, time_spent: float) -> None:
+        self.__record_gauge(
+            name=MetricName.TASK_UPDATE_TIME,
+            documentation=MetricDocumentation.TASK_UPDATE_TIME,
+            labels={
+                MetricLabel.TASK_TYPE: task_type
+            },
+            value=time_spent
+        )
+
     def __increment_counter(
         self,
         name: MetricName,

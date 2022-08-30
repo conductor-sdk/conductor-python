@@ -1,21 +1,18 @@
-from copy import deepcopy
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.worker.worker_interface import WorkerInterface
+from copy import deepcopy
 from typing import Any, Callable, Union
 from typing_extensions import Self
 import inspect
 
-ExecuteTaskFunction = Callable[
-    [
-        Union[Task, object]
-    ],
-    Union[TaskResult, object]
-]
+WorkerInput = Union[Task, Any]
+WorkerOutput = Union[TaskResult, Any]
+WorkerFunction = Callable[[WorkerInput], WorkerOutput]
 
 
-def is_callable_input_parameter_a_task(callable: ExecuteTaskFunction, object_type: Any) -> bool:
+def is_callable_input_parameter_of_type(callable: WorkerFunction, object_type: Any) -> bool:
     parameters = inspect.signature(callable).parameters
     if len(parameters) != 1:
         return False
@@ -23,43 +20,46 @@ def is_callable_input_parameter_a_task(callable: ExecuteTaskFunction, object_typ
     return parameter.annotation == object_type
 
 
-def is_callable_return_value_of_type(callable: ExecuteTaskFunction, object_type: Any) -> bool:
+def is_callable_return_value_of_type(callable: WorkerFunction, object_type: Any) -> bool:
     return_annotation = inspect.signature(callable).return_annotation
     return return_annotation == object_type
 
 
 class Worker(WorkerInterface):
-    def __init__(self,
-                 task_definition_name: str,
-                 execute_function: ExecuteTaskFunction,
-                 poll_interval: float = None,
-                 domain: str = None,
-                 ) -> Self:
+    def __init__(
+        self,
+        task_definition_name: str,
+        worker_execution_function: WorkerFunction,
+        poll_interval: float = None,
+        domain: str = None,
+    ) -> Self:
         super().__init__(task_definition_name)
         if poll_interval == None:
-            poll_interval = super().get_polling_interval_in_seconds()
-        self.poll_interval = deepcopy(poll_interval)
+            self.poll_interval = super().get_polling_interval_in_seconds()
+        else:
+            self.poll_interval = deepcopy(poll_interval)
         if domain == None:
-            domain = super().get_domain()
-        self.domain = deepcopy(domain)
-        self.execute_function = deepcopy(execute_function)
+            self.domain = super().get_domain()
+        else:
+            self.domain = deepcopy(domain)
+        self.worker_execution_function = deepcopy(worker_execution_function)
 
     def execute(self, task: Task) -> TaskResult:
-        execute_function_input = None
-        if self._is_execute_function_input_parameter_a_task:
-            execute_function_input = task
+        worker_execution_function_input = None
+        if self._is_worker_execution_function_input_parameter_a_task:
+            worker_execution_function_input = task
         else:
-            execute_function_input = task.input_data
-        if self._is_execute_function_return_value_a_task_result:
-            execute_function_output = self.execute_function(
-                execute_function_input)
-            if type(execute_function_output) == TaskResult:
-                execute_function_output.task_id = task.task_id
-                execute_function_output.workflow_instance_id = task.workflow_instance_id
-            return execute_function_output
+            worker_execution_function_input = task.input_data
+        if self._is_worker_execution_function_return_value_a_task_result:
+            worker_execution_function_output = self.worker_execution_function(
+                worker_execution_function_input)
+            if type(worker_execution_function_output) == TaskResult:
+                worker_execution_function_output.task_id = task.task_id
+                worker_execution_function_output.workflow_instance_id = task.workflow_instance_id
+            return worker_execution_function_output
         task_result = self.get_task_result_from_task(task)
         task_result.status = TaskResultStatus.COMPLETED
-        task_result.output_data = self.execute_function(task)
+        task_result.output_data = self.worker_execution_function(task)
         return task_result
 
     def get_polling_interval_in_seconds(self) -> float:
@@ -69,17 +69,17 @@ class Worker(WorkerInterface):
         return self.domain
 
     @property
-    def execute_function(self) -> ExecuteTaskFunction:
-        return self._execute_function
+    def worker_execution_function(self) -> WorkerFunction:
+        return self._worker_execution_function
 
-    @execute_function.setter
-    def execute_function(self, execute_function: ExecuteTaskFunction) -> None:
-        self._execute_function = execute_function
-        self._is_execute_function_input_parameter_a_task = is_callable_input_parameter_a_task(
-            callable=execute_function,
+    @worker_execution_function.setter
+    def worker_execution_function(self, worker_execution_function: WorkerFunction) -> None:
+        self._worker_execution_function = worker_execution_function
+        self._is_worker_execution_function_input_parameter_a_task = is_callable_input_parameter_of_type(
+            callable=worker_execution_function,
             object_type=Task,
         )
-        self._is_execute_function_return_value_a_task_result = is_callable_return_value_of_type(
-            callable=execute_function,
+        self._is_worker_execution_function_return_value_a_task_result = is_callable_return_value_of_type(
+            callable=worker_execution_function,
             object_type=TaskResult,
         )

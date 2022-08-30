@@ -14,6 +14,7 @@ class MetricDocumentation(str, Enum):
     TASK_POLL_TIME = "Time to poll for a batch of tasks"
     TASK_RESULT_SIZE = "Records output payload size of a task"
     TASK_UPDATE_ERROR = "Task status cannot be updated back to server"
+    TASK_UPDATE_TIME = "Time to update a task"
     THREAD_UNCAUGHT_EXCEPTION = "thread_uncaught_exceptions"
-    WORKFLOW_START_ERROR = "Counter for workflow start errors"
     WORKFLOW_INPUT_SIZE = "Records input payload size of a workflow"
+    WORKFLOW_START_ERROR = "Counter for workflow start errors"

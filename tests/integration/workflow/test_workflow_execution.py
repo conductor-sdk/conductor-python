@@ -117,11 +117,11 @@ def test_workflow_execution(
     task_handler = TaskHandler(
         workers=[
             ClassWorker(TASK_NAME),
-            ClassWorkerWithDomain(TASK_NAME),
-            _generate_worker(worker_with_generic_input_and_generic_output),
-            _generate_worker(worker_with_generic_input_and_task_result_output),
-            _generate_worker(worker_with_task_input_and_generic_output),
-            _generate_worker(worker_with_task_input_and_task_result_output),
+            # ClassWorkerWithDomain(TASK_NAME),
+            # _generate_worker(worker_with_generic_input_and_generic_output),
+            # _generate_worker(worker_with_generic_input_and_task_result_output),
+            # _generate_worker(worker_with_task_input_and_generic_output),
+            # _generate_worker(worker_with_task_input_and_task_result_output),
         ],
         configuration=configuration
     )
