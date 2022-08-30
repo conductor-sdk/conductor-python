@@ -9,10 +9,10 @@ import inspect
 
 WorkerInput = Union[Task, Any]
 WorkerOutput = Union[TaskResult, Any]
-WorkerFunction = Callable[[WorkerInput], WorkerOutput]
+WorkerExecutionFunction = Callable[[WorkerInput], WorkerOutput]
 
 
-def is_callable_input_parameter_of_type(callable: WorkerFunction, object_type: Any) -> bool:
+def is_callable_input_parameter_of_type(callable: WorkerExecutionFunction, object_type: Any) -> bool:
     parameters = inspect.signature(callable).parameters
     if len(parameters) != 1:
         return False
@@ -20,7 +20,7 @@ def is_callable_input_parameter_of_type(callable: WorkerFunction, object_type: A
     return parameter.annotation == object_type
 
 
-def is_callable_return_value_of_type(callable: WorkerFunction, object_type: Any) -> bool:
+def is_callable_return_value_of_type(callable: WorkerExecutionFunction, object_type: Any) -> bool:
     return_annotation = inspect.signature(callable).return_annotation
     return return_annotation == object_type
 
@@ -29,7 +29,7 @@ class Worker(WorkerInterface):
     def __init__(
         self,
         task_definition_name: str,
-        worker_execution_function: WorkerFunction,
+        worker_execution_function: WorkerExecutionFunction,
         poll_interval: float = None,
         domain: str = None,
     ) -> Self:
@@ -69,11 +69,11 @@ class Worker(WorkerInterface):
         return self.domain
 
     @property
-    def worker_execution_function(self) -> WorkerFunction:
+    def worker_execution_function(self) -> WorkerExecutionFunction:
         return self._worker_execution_function
 
     @worker_execution_function.setter
-    def worker_execution_function(self, worker_execution_function: WorkerFunction) -> None:
+    def worker_execution_function(self, worker_execution_function: WorkerExecutionFunction) -> None:
         self._worker_execution_function = worker_execution_function
         self._is_worker_execution_function_input_parameter_a_task = is_callable_input_parameter_of_type(
             callable=worker_execution_function,

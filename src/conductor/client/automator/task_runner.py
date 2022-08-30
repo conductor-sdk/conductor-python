@@ -15,7 +15,7 @@ import threading
 import time
 import traceback
 
-_logger = logging.get_logger(
+_logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
         __name__
     )

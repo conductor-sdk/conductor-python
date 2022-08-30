@@ -3,8 +3,8 @@ from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models import RerunWorkflowRequest
 from conductor.client.http.models import StartWorkflowRequest
 from conductor.client.http.models import TaskDef
-from conductor.client.worker.worker import ExecuteTaskFunction
 from conductor.client.worker.worker import Worker
+from conductor.client.worker.worker import WorkerExecutionFunction
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.simple_task import SimpleTask
@@ -189,7 +189,7 @@ def _validate_workflow_status(workflow_id: str, workflow_executor: WorkflowExecu
     assert workflow_status.status == 'COMPLETED'
 
 
-def _generate_worker(execute_function: ExecuteTaskFunction) -> Worker:
+def _generate_worker(execute_function: WorkerExecutionFunction) -> Worker:
     return Worker(
         task_definition_name=TASK_NAME,
         execute_function=execute_function,
