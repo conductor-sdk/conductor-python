@@ -1,3 +1,4 @@
+from calendar import c
 from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.metrics_settings import MetricsSettings
@@ -75,9 +76,14 @@ class TaskHandler:
             if task_name in self._task_runner:
                 raise Exception(f'worker already started for {task_name}')
             task_runner = TaskRunner(
-                worker,
-                self.configuration,
-                self.metrics_settings,
+                configuration=self.configuration,
+                task_definition_name=worker.task_definition_name,
+                batch_size=worker.batch_size,
+                polling_interval=worker.polling_interval,
+                worker_execution_function=worker.execute,
+                worker_id=worker.get_identity(),
+                domain=worker.get_domain(),
+                metrics_settings=self.metrics_settings
             )
             self._task_runner[task_name] = task_runner
             task_runner_thread = threading.Thread(target=task_runner.run)
