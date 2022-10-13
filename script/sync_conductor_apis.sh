@@ -53,6 +53,11 @@ function replace_url_api_prefix {
     replace_with_sed "$pattern" "$replace" "$1"
 }
 
+function remove_init_file {
+    echo "" > "$PACKAGE_APIS_PATH"__init__.py
+    echo "removed content from ${PACKAGE_APIS_PATH}__init__.py"
+}
+
 function update_api_file {
     do_line_ending_replacement "$1"
     remove_file_header "$1"
@@ -65,6 +70,7 @@ function update_api_file {
 function update_api_files {
     echo "start updating api files..."
     copy_generated_api_files
+    remove_init_file "$1"
     for filename in $(ls "$PACKAGE_APIS_PATH"); do
         filepath="$PACKAGE_APIS_PATH$filename"
         update_api_file "$filepath"
