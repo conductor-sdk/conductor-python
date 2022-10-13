@@ -26,7 +26,7 @@ function copy_generated_api_files {
 }
 
 function replace_with_sed {
-    sed -i '' -E s/"$1"/"$2"/ "$3"
+    sed -i '' -E s/"$1"/"$2"/g "$3"
 }
 
 function remove_file_header {
@@ -41,10 +41,24 @@ function replace_import_header {
     replace_with_sed "$pattern" "$replace" "$1"
 }
 
+function replace_authentication {
+    pattern="'api_key'"
+    replace=""
+    replace_with_sed "$pattern" "$replace" "$1"
+}
+
+function replace_url_api_prefix {
+    pattern="\'\/api"
+    replace="\'"
+    replace_with_sed "$pattern" "$replace" "$1"
+}
+
 function update_api_file {
     do_line_ending_replacement "$1"
     remove_file_header "$1"
     replace_import_header "$1"
+    replace_authentication "$1"
+    replace_url_api_prefix "$1"
     undo_line_ending_replacement "$1"
 }
 
@@ -59,5 +73,4 @@ function update_api_files {
     echo "done updating api files"
 }
 
-generate_code
 update_api_files
