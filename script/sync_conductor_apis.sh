@@ -74,6 +74,15 @@ function append_method_for_model_task_result {
     echo "${code}" >>"${1}"
 }
 
+function add_model_task_result_status {
+    code="from enum import Enum\n\n\nclass TaskResultStatus(str, Enum):\n    COMPLETED = \"COMPLETED\",\n    FAILED = \"FAILED\",\n    FAILED_WITH_TERMINAL_ERROR = \"FAILED_WITH_TERMINAL_ERROR\",\n    IN_PROGRESS = \"IN_PROGRESS\""
+    echo "${code}" >"${PACKAGE_PATH}/models/task_result_status.py"
+}
+
+function startup_models {
+    add_model_task_result_status
+}
+
 function update_api_file {
     remove_file_header "${1}" "# coding: utf-8.*from __future__" "from __future__"
     replace_import_header "${1}"
@@ -89,21 +98,28 @@ function update_models_file {
 }
 
 function update_files {
-    echo "starting to update ${1} files..."
-    copy_from_generated_files "${1}"
-    for filename in $(ls "${PACKAGE_PATH}/${1}"); do
-        filepath="${PACKAGE_PATH}/${1}/$filename"
+    path_to_update_files="${1}"
+    update_init_file_function=${2}
+    update_file_function=${3}
+    startup_function=${4}
+    echo "starting to update ${path_to_update_files} files..."
+    copy_from_generated_files "${path_to_update_files}"
+    if [ ! -z ${startup_function} ]; then
+        ${startup_function}
+    fi
+    for filename in $(ls "${PACKAGE_PATH}/${path_to_update_files}"); do
+        filepath="${PACKAGE_PATH}/${path_to_update_files}/${filename}"
         do_line_ending_replacement "${filepath}"
         if [[ "$filename" == "__init__.py" ]]; then
-            ${2} "${filepath}"
+            ${update_init_file_function} "${filepath}"
         else
-            ${3} "${filepath}"
+            ${update_file_function} "${filepath}"
         fi
         undo_line_ending_replacement "${filepath}"
         echo "done updating: ${filepath}"
     done
-    echo "done updating ${1} files"
+    echo "done updating ${path_to_update_files} files"
 }
 
 update_files "api" update_api_init_file update_api_file
-update_files "models" update_models_init_file update_models_file
+update_files "models" update_models_init_file update_models_file startup_models
