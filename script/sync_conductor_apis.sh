@@ -1,7 +1,9 @@
+SWAGGER_API_DOCS_URL="https://pg-staging.orkesconductor.com/api-docs"
+LANGUAGE_TO_GENERATE_CODE="python"
 TEMPORARY_FILE="temp.txt"
 POSSIBLE_LINE_ENDINGS=('\n' '\r')
 REPLACEMENT_FOR_LINE_ENDING='\f'
-PACKAGE_APIS_PATH="../src/conductor/client/http/api/"
+PACKAGE_PATH="../src/conductor/client/http"
 SWAGGER_GENERATED_CODE_FOLDER="./swagger-code"
 
 function install_dependencies {
@@ -9,7 +11,7 @@ function install_dependencies {
 }
 
 function generate_code {
-    swagger-codegen generate -l python -i https://pg-staging.orkesconductor.com/api-docs -o "$SWAGGER_GENERATED_CODE_FOLDER"
+    swagger-codegen generate -l "${LANGUAGE_TO_GENERATE_CODE}" -i "${SWAGGER_API_DOCS_URL}" -o "$SWAGGER_GENERATED_CODE_FOLDER"
 }
 
 function do_line_ending_replacement {
@@ -20,9 +22,13 @@ function undo_line_ending_replacement {
     tr $REPLACEMENT_FOR_LINE_ENDING '\n' <"$1" >"$TEMPORARY_FILE" && mv "$TEMPORARY_FILE" "$1"
 }
 
-function copy_generated_api_files {
-    cp $SWAGGER_GENERATED_CODE_FOLDER/swagger_client/api/* "$PACKAGE_APIS_PATH"
-    echo "copied the generated code into the package api"
+function copy_from_generated_files {
+    source_path="${SWAGGER_GENERATED_CODE_FOLDER}/swagger_client/${1}"
+    destination_path="${PACKAGE_PATH}/${1}/"
+    for filename in $(ls "${source_path}"); do
+        cp "${source_path}/${filename}" "${destination_path}"
+    done
+    echo "copied code from ${source_path} to ${destination_path}"
 }
 
 function replace_with_sed {
@@ -30,8 +36,8 @@ function replace_with_sed {
 }
 
 function remove_file_header {
-    pattern="# coding: utf-8.*from __future__"
-    replace="from __future__"
+    pattern="${2}"
+    replace="${3}"
     replace_with_sed "$pattern" "$replace" "$1"
 }
 
@@ -54,29 +60,35 @@ function replace_url_api_prefix {
 }
 
 function remove_init_file {
-    echo "" > "$PACKAGE_APIS_PATH"__init__.py
-    echo "removed content from ${PACKAGE_APIS_PATH}__init__.py"
+    init_path_to_remove="${PACKAGE_PATH}/${1}/__init__.py"
+    echo "" >"${init_path_to_remove}"
+    echo "removed content from ${init_path_to_remove}"
 }
 
 function update_api_file {
-    do_line_ending_replacement "$1"
-    remove_file_header "$1"
-    replace_import_header "$1"
-    replace_authentication "$1"
-    replace_url_api_prefix "$1"
-    undo_line_ending_replacement "$1"
+    remove_file_header "${1}" "# coding: utf-8.*from __future__" "from __future__"
+    replace_import_header "${1}"
+    replace_authentication "${1}"
+    replace_url_api_prefix "${1}"
 }
 
-function update_api_files {
-    echo "start updating api files..."
-    copy_generated_api_files
-    remove_init_file "$1"
-    for filename in $(ls "$PACKAGE_APIS_PATH"); do
-        filepath="$PACKAGE_APIS_PATH$filename"
-        update_api_file "$filepath"
-        echo "done updating api: $filepath"
+function update_models_file {
+    remove_file_header "$1" "# coding: utf-8.*import pprint" "import pprint"
+}
+
+function update_files {
+    echo "starting to update ${1} files..."
+    copy_from_generated_files "${1}"
+    remove_init_file "${1}"
+    for filename in $(ls "${PACKAGE_PATH}/${1}"); do
+        filepath="${PACKAGE_PATH}/${1}/$filename"
+        do_line_ending_replacement "${filepath}"
+        ${2} "${filepath}"
+        undo_line_ending_replacement "${filepath}"
+        echo "done updating: ${filepath}"
     done
-    echo "done updating api files"
+    echo "done updating ${1} files"
 }
 
-update_api_files
+update_files "api" update_api_file
+update_files "models" update_models_file
