@@ -16,45 +16,24 @@ class SearchResultWorkflowSummary(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'total_hits': 'int',
-        'results': 'list[WorkflowSummary]'
+        'results': 'list[WorkflowSummary]',
+        'total_hits': 'int'
     }
 
     attribute_map = {
-        'total_hits': 'totalHits',
-        'results': 'results'
+        'results': 'results',
+        'total_hits': 'totalHits'
     }
 
-    def __init__(self, total_hits=None, results=None):  # noqa: E501
+    def __init__(self, results=None, total_hits=None):  # noqa: E501
         """SearchResultWorkflowSummary - a model defined in Swagger"""  # noqa: E501
-        self._total_hits = None
         self._results = None
+        self._total_hits = None
         self.discriminator = None
-        if total_hits is not None:
-            self.total_hits = total_hits
         if results is not None:
             self.results = results
-
-    @property
-    def total_hits(self):
-        """Gets the total_hits of this SearchResultWorkflowSummary.  # noqa: E501
-
-
-        :return: The total_hits of this SearchResultWorkflowSummary.  # noqa: E501
-        :rtype: int
-        """
-        return self._total_hits
-
-    @total_hits.setter
-    def total_hits(self, total_hits):
-        """Sets the total_hits of this SearchResultWorkflowSummary.
-
-
-        :param total_hits: The total_hits of this SearchResultWorkflowSummary.  # noqa: E501
-        :type: int
-        """
-
-        self._total_hits = total_hits
+        if total_hits is not None:
+            self.total_hits = total_hits
 
     @property
     def results(self):
@@ -76,6 +55,27 @@ class SearchResultWorkflowSummary(object):
         """
 
         self._results = results
+
+    @property
+    def total_hits(self):
+        """Gets the total_hits of this SearchResultWorkflowSummary.  # noqa: E501
+
+
+        :return: The total_hits of this SearchResultWorkflowSummary.  # noqa: E501
+        :rtype: int
+        """
+        return self._total_hits
+
+    @total_hits.setter
+    def total_hits(self, total_hits):
+        """Sets the total_hits of this SearchResultWorkflowSummary.
+
+
+        :param total_hits: The total_hits of this SearchResultWorkflowSummary.  # noqa: E501
+        :type: int
+        """
+
+        self._total_hits = total_hits
 
     def to_dict(self):
         """Returns the model properties as a dict"""

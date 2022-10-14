@@ -16,60 +16,39 @@ class WorkflowStatus(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'workflow_id': 'str',
         'correlation_id': 'str',
         'output': 'dict(str, object)',
+        'status': 'str',
         'variables': 'dict(str, object)',
-        'status': 'str'
+        'workflow_id': 'str'
     }
 
     attribute_map = {
-        'workflow_id': 'workflowId',
         'correlation_id': 'correlationId',
         'output': 'output',
+        'status': 'status',
         'variables': 'variables',
-        'status': 'status'
+        'workflow_id': 'workflowId'
     }
 
-    def __init__(self, workflow_id=None, correlation_id=None, output=None, variables=None, status=None):  # noqa: E501
+    def __init__(self, correlation_id=None, output=None, status=None, variables=None, workflow_id=None):  # noqa: E501
         """WorkflowStatus - a model defined in Swagger"""  # noqa: E501
-        self._workflow_id = None
         self._correlation_id = None
         self._output = None
-        self._variables = None
         self._status = None
+        self._variables = None
+        self._workflow_id = None
         self.discriminator = None
-        if workflow_id is not None:
-            self.workflow_id = workflow_id
         if correlation_id is not None:
             self.correlation_id = correlation_id
         if output is not None:
             self.output = output
-        if variables is not None:
-            self.variables = variables
         if status is not None:
             self.status = status
-
-    @property
-    def workflow_id(self):
-        """Gets the workflow_id of this WorkflowStatus.  # noqa: E501
-
-
-        :return: The workflow_id of this WorkflowStatus.  # noqa: E501
-        :rtype: str
-        """
-        return self._workflow_id
-
-    @workflow_id.setter
-    def workflow_id(self, workflow_id):
-        """Sets the workflow_id of this WorkflowStatus.
-
-
-        :param workflow_id: The workflow_id of this WorkflowStatus.  # noqa: E501
-        :type: str
-        """
-
-        self._workflow_id = workflow_id
+        if variables is not None:
+            self.variables = variables
+        if workflow_id is not None:
+            self.workflow_id = workflow_id
 
     @property
     def correlation_id(self):
@@ -114,27 +93,6 @@ class WorkflowStatus(object):
         self._output = output
 
     @property
-    def variables(self):
-        """Gets the variables of this WorkflowStatus.  # noqa: E501
-
-
-        :return: The variables of this WorkflowStatus.  # noqa: E501
-        :rtype: dict(str, object)
-        """
-        return self._variables
-
-    @variables.setter
-    def variables(self, variables):
-        """Sets the variables of this WorkflowStatus.
-
-
-        :param variables: The variables of this WorkflowStatus.  # noqa: E501
-        :type: dict(str, object)
-        """
-
-        self._variables = variables
-
-    @property
     def status(self):
         """Gets the status of this WorkflowStatus.  # noqa: E501
 
@@ -160,6 +118,48 @@ class WorkflowStatus(object):
             )
 
         self._status = status
+
+    @property
+    def variables(self):
+        """Gets the variables of this WorkflowStatus.  # noqa: E501
+
+
+        :return: The variables of this WorkflowStatus.  # noqa: E501
+        :rtype: dict(str, object)
+        """
+        return self._variables
+
+    @variables.setter
+    def variables(self, variables):
+        """Sets the variables of this WorkflowStatus.
+
+
+        :param variables: The variables of this WorkflowStatus.  # noqa: E501
+        :type: dict(str, object)
+        """
+
+        self._variables = variables
+
+    @property
+    def workflow_id(self):
+        """Gets the workflow_id of this WorkflowStatus.  # noqa: E501
+
+
+        :return: The workflow_id of this WorkflowStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._workflow_id
+
+    @workflow_id.setter
+    def workflow_id(self, workflow_id):
+        """Sets the workflow_id of this WorkflowStatus.
+
+
+        :param workflow_id: The workflow_id of this WorkflowStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._workflow_id = workflow_id
 
     def to_dict(self):
         """Returns the model properties as a dict"""

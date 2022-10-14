@@ -16,45 +16,24 @@ class ExternalStorageLocation(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'uri': 'str',
-        'path': 'str'
+        'path': 'str',
+        'uri': 'str'
     }
 
     attribute_map = {
-        'uri': 'uri',
-        'path': 'path'
+        'path': 'path',
+        'uri': 'uri'
     }
 
-    def __init__(self, uri=None, path=None):  # noqa: E501
+    def __init__(self, path=None, uri=None):  # noqa: E501
         """ExternalStorageLocation - a model defined in Swagger"""  # noqa: E501
-        self._uri = None
         self._path = None
+        self._uri = None
         self.discriminator = None
-        if uri is not None:
-            self.uri = uri
         if path is not None:
             self.path = path
-
-    @property
-    def uri(self):
-        """Gets the uri of this ExternalStorageLocation.  # noqa: E501
-
-
-        :return: The uri of this ExternalStorageLocation.  # noqa: E501
-        :rtype: str
-        """
-        return self._uri
-
-    @uri.setter
-    def uri(self, uri):
-        """Sets the uri of this ExternalStorageLocation.
-
-
-        :param uri: The uri of this ExternalStorageLocation.  # noqa: E501
-        :type: str
-        """
-
-        self._uri = uri
+        if uri is not None:
+            self.uri = uri
 
     @property
     def path(self):
@@ -76,6 +55,27 @@ class ExternalStorageLocation(object):
         """
 
         self._path = path
+
+    @property
+    def uri(self):
+        """Gets the uri of this ExternalStorageLocation.  # noqa: E501
+
+
+        :return: The uri of this ExternalStorageLocation.  # noqa: E501
+        :rtype: str
+        """
+        return self._uri
+
+    @uri.setter
+    def uri(self, uri):
+        """Sets the uri of this ExternalStorageLocation.
+
+
+        :param uri: The uri of this ExternalStorageLocation.  # noqa: E501
+        :type: str
+        """
+
+        self._uri = uri
 
     def to_dict(self):
         """Returns the model properties as a dict"""

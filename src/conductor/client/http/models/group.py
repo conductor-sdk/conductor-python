@@ -16,50 +16,62 @@ class Group(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'id': 'str',
+        'default_access': 'dict(str, list[str])',
         'description': 'str',
+        'id': 'str',
         'roles': 'list[Role]'
     }
 
     attribute_map = {
-        'id': 'id',
+        'default_access': 'defaultAccess',
         'description': 'description',
+        'id': 'id',
         'roles': 'roles'
     }
 
-    def __init__(self, id=None, description=None, roles=None):  # noqa: E501
+    def __init__(self, default_access=None, description=None, id=None, roles=None):  # noqa: E501
         """Group - a model defined in Swagger"""  # noqa: E501
-        self._id = None
+        self._default_access = None
         self._description = None
+        self._id = None
         self._roles = None
         self.discriminator = None
-        if id is not None:
-            self.id = id
+        if default_access is not None:
+            self.default_access = default_access
         if description is not None:
             self.description = description
+        if id is not None:
+            self.id = id
         if roles is not None:
             self.roles = roles
 
     @property
-    def id(self):
-        """Gets the id of this Group.  # noqa: E501
+    def default_access(self):
+        """Gets the default_access of this Group.  # noqa: E501
 
 
-        :return: The id of this Group.  # noqa: E501
-        :rtype: str
+        :return: The default_access of this Group.  # noqa: E501
+        :rtype: dict(str, list[str])
         """
-        return self._id
+        return self._default_access
 
-    @id.setter
-    def id(self, id):
-        """Sets the id of this Group.
+    @default_access.setter
+    def default_access(self, default_access):
+        """Sets the default_access of this Group.
 
 
-        :param id: The id of this Group.  # noqa: E501
-        :type: str
+        :param default_access: The default_access of this Group.  # noqa: E501
+        :type: dict(str, list[str])
         """
+        allowed_values = [CREATE, READ, UPDATE, DELETE, EXECUTE]  # noqa: E501
+        if not set(default_access.keys()).issubset(set(allowed_values)):
+            raise ValueError(
+                "Invalid keys in `default_access` [{0}], must be a subset of [{1}]"  # noqa: E501
+                .format(", ".join(map(str, set(default_access.keys()) - set(allowed_values))),  # noqa: E501
+                        ", ".join(map(str, allowed_values)))
+            )
 
-        self._id = id
+        self._default_access = default_access
 
     @property
     def description(self):
@@ -81,6 +93,27 @@ class Group(object):
         """
 
         self._description = description
+
+    @property
+    def id(self):
+        """Gets the id of this Group.  # noqa: E501
+
+
+        :return: The id of this Group.  # noqa: E501
+        :rtype: str
+        """
+        return self._id
+
+    @id.setter
+    def id(self, id):
+        """Sets the id of this Group.
+
+
+        :param id: The id of this Group.  # noqa: E501
+        :type: str
+        """
+
+        self._id = id
 
     @property
     def roles(self):

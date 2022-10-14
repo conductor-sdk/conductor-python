@@ -17,30 +17,30 @@ class SubWorkflowParams(object):
     """
     swagger_types = {
         'name': 'str',
-        'version': 'int',
         'task_to_domain': 'dict(str, str)',
+        'version': 'int',
         'workflow_definition': 'WorkflowDef'
     }
 
     attribute_map = {
         'name': 'name',
-        'version': 'version',
         'task_to_domain': 'taskToDomain',
+        'version': 'version',
         'workflow_definition': 'workflowDefinition'
     }
 
-    def __init__(self, name=None, version=None, task_to_domain=None, workflow_definition=None):  # noqa: E501
+    def __init__(self, name=None, task_to_domain=None, version=None, workflow_definition=None):  # noqa: E501
         """SubWorkflowParams - a model defined in Swagger"""  # noqa: E501
         self._name = None
-        self._version = None
         self._task_to_domain = None
+        self._version = None
         self._workflow_definition = None
         self.discriminator = None
         self.name = name
-        if version is not None:
-            self.version = version
         if task_to_domain is not None:
             self.task_to_domain = task_to_domain
+        if version is not None:
+            self.version = version
         if workflow_definition is not None:
             self.workflow_definition = workflow_definition
 
@@ -68,27 +68,6 @@ class SubWorkflowParams(object):
         self._name = name
 
     @property
-    def version(self):
-        """Gets the version of this SubWorkflowParams.  # noqa: E501
-
-
-        :return: The version of this SubWorkflowParams.  # noqa: E501
-        :rtype: int
-        """
-        return self._version
-
-    @version.setter
-    def version(self, version):
-        """Sets the version of this SubWorkflowParams.
-
-
-        :param version: The version of this SubWorkflowParams.  # noqa: E501
-        :type: int
-        """
-
-        self._version = version
-
-    @property
     def task_to_domain(self):
         """Gets the task_to_domain of this SubWorkflowParams.  # noqa: E501
 
@@ -108,6 +87,27 @@ class SubWorkflowParams(object):
         """
 
         self._task_to_domain = task_to_domain
+
+    @property
+    def version(self):
+        """Gets the version of this SubWorkflowParams.  # noqa: E501
+
+
+        :return: The version of this SubWorkflowParams.  # noqa: E501
+        :rtype: int
+        """
+        return self._version
+
+    @version.setter
+    def version(self, version):
+        """Sets the version of this SubWorkflowParams.
+
+
+        :param version: The version of this SubWorkflowParams.  # noqa: E501
+        :type: int
+        """
+
+        self._version = version
 
     @property
     def workflow_definition(self):

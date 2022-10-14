@@ -16,81 +16,60 @@ class RerunWorkflowRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        're_run_from_workflow_id': 'str',
-        'workflow_input': 'dict(str, object)',
+        'correlation_id': 'str',
         're_run_from_task_id': 'str',
+        're_run_from_workflow_id': 'str',
         'task_input': 'dict(str, object)',
-        'correlation_id': 'str'
+        'workflow_input': 'dict(str, object)'
     }
 
     attribute_map = {
-        're_run_from_workflow_id': 'reRunFromWorkflowId',
-        'workflow_input': 'workflowInput',
+        'correlation_id': 'correlationId',
         're_run_from_task_id': 'reRunFromTaskId',
+        're_run_from_workflow_id': 'reRunFromWorkflowId',
         'task_input': 'taskInput',
-        'correlation_id': 'correlationId'
+        'workflow_input': 'workflowInput'
     }
 
-    def __init__(self, re_run_from_workflow_id=None, workflow_input=None, re_run_from_task_id=None, task_input=None, correlation_id=None):  # noqa: E501
+    def __init__(self, correlation_id=None, re_run_from_task_id=None, re_run_from_workflow_id=None, task_input=None, workflow_input=None):  # noqa: E501
         """RerunWorkflowRequest - a model defined in Swagger"""  # noqa: E501
-        self._re_run_from_workflow_id = None
-        self._workflow_input = None
-        self._re_run_from_task_id = None
-        self._task_input = None
         self._correlation_id = None
+        self._re_run_from_task_id = None
+        self._re_run_from_workflow_id = None
+        self._task_input = None
+        self._workflow_input = None
         self.discriminator = None
-        if re_run_from_workflow_id is not None:
-            self.re_run_from_workflow_id = re_run_from_workflow_id
-        if workflow_input is not None:
-            self.workflow_input = workflow_input
-        if re_run_from_task_id is not None:
-            self.re_run_from_task_id = re_run_from_task_id
-        if task_input is not None:
-            self.task_input = task_input
         if correlation_id is not None:
             self.correlation_id = correlation_id
+        if re_run_from_task_id is not None:
+            self.re_run_from_task_id = re_run_from_task_id
+        if re_run_from_workflow_id is not None:
+            self.re_run_from_workflow_id = re_run_from_workflow_id
+        if task_input is not None:
+            self.task_input = task_input
+        if workflow_input is not None:
+            self.workflow_input = workflow_input
 
     @property
-    def re_run_from_workflow_id(self):
-        """Gets the re_run_from_workflow_id of this RerunWorkflowRequest.  # noqa: E501
+    def correlation_id(self):
+        """Gets the correlation_id of this RerunWorkflowRequest.  # noqa: E501
 
 
-        :return: The re_run_from_workflow_id of this RerunWorkflowRequest.  # noqa: E501
+        :return: The correlation_id of this RerunWorkflowRequest.  # noqa: E501
         :rtype: str
         """
-        return self._re_run_from_workflow_id
+        return self._correlation_id
 
-    @re_run_from_workflow_id.setter
-    def re_run_from_workflow_id(self, re_run_from_workflow_id):
-        """Sets the re_run_from_workflow_id of this RerunWorkflowRequest.
+    @correlation_id.setter
+    def correlation_id(self, correlation_id):
+        """Sets the correlation_id of this RerunWorkflowRequest.
 
 
-        :param re_run_from_workflow_id: The re_run_from_workflow_id of this RerunWorkflowRequest.  # noqa: E501
+        :param correlation_id: The correlation_id of this RerunWorkflowRequest.  # noqa: E501
         :type: str
         """
 
-        self._re_run_from_workflow_id = re_run_from_workflow_id
-
-    @property
-    def workflow_input(self):
-        """Gets the workflow_input of this RerunWorkflowRequest.  # noqa: E501
-
-
-        :return: The workflow_input of this RerunWorkflowRequest.  # noqa: E501
-        :rtype: dict(str, object)
-        """
-        return self._workflow_input
-
-    @workflow_input.setter
-    def workflow_input(self, workflow_input):
-        """Sets the workflow_input of this RerunWorkflowRequest.
-
-
-        :param workflow_input: The workflow_input of this RerunWorkflowRequest.  # noqa: E501
-        :type: dict(str, object)
-        """
-
-        self._workflow_input = workflow_input
+        self._correlation_id = correlation_id
 
     @property
     def re_run_from_task_id(self):
@@ -114,6 +93,27 @@ class RerunWorkflowRequest(object):
         self._re_run_from_task_id = re_run_from_task_id
 
     @property
+    def re_run_from_workflow_id(self):
+        """Gets the re_run_from_workflow_id of this RerunWorkflowRequest.  # noqa: E501
+
+
+        :return: The re_run_from_workflow_id of this RerunWorkflowRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._re_run_from_workflow_id
+
+    @re_run_from_workflow_id.setter
+    def re_run_from_workflow_id(self, re_run_from_workflow_id):
+        """Sets the re_run_from_workflow_id of this RerunWorkflowRequest.
+
+
+        :param re_run_from_workflow_id: The re_run_from_workflow_id of this RerunWorkflowRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._re_run_from_workflow_id = re_run_from_workflow_id
+
+    @property
     def task_input(self):
         """Gets the task_input of this RerunWorkflowRequest.  # noqa: E501
 
@@ -135,25 +135,25 @@ class RerunWorkflowRequest(object):
         self._task_input = task_input
 
     @property
-    def correlation_id(self):
-        """Gets the correlation_id of this RerunWorkflowRequest.  # noqa: E501
+    def workflow_input(self):
+        """Gets the workflow_input of this RerunWorkflowRequest.  # noqa: E501
 
 
-        :return: The correlation_id of this RerunWorkflowRequest.  # noqa: E501
-        :rtype: str
+        :return: The workflow_input of this RerunWorkflowRequest.  # noqa: E501
+        :rtype: dict(str, object)
         """
-        return self._correlation_id
+        return self._workflow_input
 
-    @correlation_id.setter
-    def correlation_id(self, correlation_id):
-        """Sets the correlation_id of this RerunWorkflowRequest.
+    @workflow_input.setter
+    def workflow_input(self, workflow_input):
+        """Sets the workflow_input of this RerunWorkflowRequest.
 
 
-        :param correlation_id: The correlation_id of this RerunWorkflowRequest.  # noqa: E501
-        :type: str
+        :param workflow_input: The workflow_input of this RerunWorkflowRequest.  # noqa: E501
+        :type: dict(str, object)
         """
 
-        self._correlation_id = correlation_id
+        self._workflow_input = workflow_input
 
     def to_dict(self):
         """Returns the model properties as a dict"""

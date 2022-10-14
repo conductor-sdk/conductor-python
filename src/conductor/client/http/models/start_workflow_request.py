@@ -16,58 +16,142 @@ class StartWorkflowRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'name': 'str',
-        'version': 'int',
         'correlation_id': 'str',
-        'input': 'dict(str, object)',
-        'task_to_domain': 'dict(str, str)',
-        'workflow_def': 'WorkflowDef',
+        'created_by': 'str',
         'external_input_payload_storage_path': 'str',
+        'input': 'dict(str, object)',
+        'name': 'str',
         'priority': 'int',
-        'created_by': 'str'
+        'task_to_domain': 'dict(str, str)',
+        'version': 'int',
+        'workflow_def': 'WorkflowDef'
     }
 
     attribute_map = {
-        'name': 'name',
-        'version': 'version',
         'correlation_id': 'correlationId',
-        'input': 'input',
-        'task_to_domain': 'taskToDomain',
-        'workflow_def': 'workflowDef',
+        'created_by': 'createdBy',
         'external_input_payload_storage_path': 'externalInputPayloadStoragePath',
+        'input': 'input',
+        'name': 'name',
         'priority': 'priority',
-        'created_by': 'createdBy'
+        'task_to_domain': 'taskToDomain',
+        'version': 'version',
+        'workflow_def': 'workflowDef'
     }
 
-    def __init__(self, name=None, version=None, correlation_id=None, input=None, task_to_domain=None, workflow_def=None, external_input_payload_storage_path=None, priority=None, created_by=None):  # noqa: E501
+    def __init__(self, correlation_id=None, created_by=None, external_input_payload_storage_path=None, input=None, name=None, priority=None, task_to_domain=None, version=None, workflow_def=None):  # noqa: E501
         """StartWorkflowRequest - a model defined in Swagger"""  # noqa: E501
-        self._name = None
-        self._version = None
         self._correlation_id = None
-        self._input = None
-        self._task_to_domain = None
-        self._workflow_def = None
-        self._external_input_payload_storage_path = None
-        self._priority = None
         self._created_by = None
+        self._external_input_payload_storage_path = None
+        self._input = None
+        self._name = None
+        self._priority = None
+        self._task_to_domain = None
+        self._version = None
+        self._workflow_def = None
         self.discriminator = None
-        self.name = name
-        if version is not None:
-            self.version = version
         if correlation_id is not None:
             self.correlation_id = correlation_id
-        if input is not None:
-            self.input = input
-        if task_to_domain is not None:
-            self.task_to_domain = task_to_domain
-        if workflow_def is not None:
-            self.workflow_def = workflow_def
-        if external_input_payload_storage_path is not None:
-            self.external_input_payload_storage_path = external_input_payload_storage_path
-        if priority is not None:
-            self.priority = priority
         if created_by is not None:
             self.created_by = created_by
+        if external_input_payload_storage_path is not None:
+            self.external_input_payload_storage_path = external_input_payload_storage_path
+        if input is not None:
+            self.input = input
+        self.name = name
+        if priority is not None:
+            self.priority = priority
+        if task_to_domain is not None:
+            self.task_to_domain = task_to_domain
+        if version is not None:
+            self.version = version
+        if workflow_def is not None:
+            self.workflow_def = workflow_def
+
+    @property
+    def correlation_id(self):
+        """Gets the correlation_id of this StartWorkflowRequest.  # noqa: E501
+
+
+        :return: The correlation_id of this StartWorkflowRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._correlation_id
+
+    @correlation_id.setter
+    def correlation_id(self, correlation_id):
+        """Sets the correlation_id of this StartWorkflowRequest.
+
+
+        :param correlation_id: The correlation_id of this StartWorkflowRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._correlation_id = correlation_id
+
+    @property
+    def created_by(self):
+        """Gets the created_by of this StartWorkflowRequest.  # noqa: E501
+
+
+        :return: The created_by of this StartWorkflowRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._created_by
+
+    @created_by.setter
+    def created_by(self, created_by):
+        """Sets the created_by of this StartWorkflowRequest.
+
+
+        :param created_by: The created_by of this StartWorkflowRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._created_by = created_by
+
+    @property
+    def external_input_payload_storage_path(self):
+        """Gets the external_input_payload_storage_path of this StartWorkflowRequest.  # noqa: E501
+
+
+        :return: The external_input_payload_storage_path of this StartWorkflowRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._external_input_payload_storage_path
+
+    @external_input_payload_storage_path.setter
+    def external_input_payload_storage_path(self, external_input_payload_storage_path):
+        """Sets the external_input_payload_storage_path of this StartWorkflowRequest.
+
+
+        :param external_input_payload_storage_path: The external_input_payload_storage_path of this StartWorkflowRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._external_input_payload_storage_path = external_input_payload_storage_path
+
+    @property
+    def input(self):
+        """Gets the input of this StartWorkflowRequest.  # noqa: E501
+
+
+        :return: The input of this StartWorkflowRequest.  # noqa: E501
+        :rtype: dict(str, object)
+        """
+        return self._input
+
+    @input.setter
+    def input(self, input):
+        """Sets the input of this StartWorkflowRequest.
+
+
+        :param input: The input of this StartWorkflowRequest.  # noqa: E501
+        :type: dict(str, object)
+        """
+
+        self._input = input
 
     @property
     def name(self):
@@ -93,67 +177,25 @@ class StartWorkflowRequest(object):
         self._name = name
 
     @property
-    def version(self):
-        """Gets the version of this StartWorkflowRequest.  # noqa: E501
+    def priority(self):
+        """Gets the priority of this StartWorkflowRequest.  # noqa: E501
 
 
-        :return: The version of this StartWorkflowRequest.  # noqa: E501
+        :return: The priority of this StartWorkflowRequest.  # noqa: E501
         :rtype: int
         """
-        return self._version
+        return self._priority
 
-    @version.setter
-    def version(self, version):
-        """Sets the version of this StartWorkflowRequest.
+    @priority.setter
+    def priority(self, priority):
+        """Sets the priority of this StartWorkflowRequest.
 
 
-        :param version: The version of this StartWorkflowRequest.  # noqa: E501
+        :param priority: The priority of this StartWorkflowRequest.  # noqa: E501
         :type: int
         """
 
-        self._version = version
-
-    @property
-    def correlation_id(self):
-        """Gets the correlation_id of this StartWorkflowRequest.  # noqa: E501
-
-
-        :return: The correlation_id of this StartWorkflowRequest.  # noqa: E501
-        :rtype: str
-        """
-        return self._correlation_id
-
-    @correlation_id.setter
-    def correlation_id(self, correlation_id):
-        """Sets the correlation_id of this StartWorkflowRequest.
-
-
-        :param correlation_id: The correlation_id of this StartWorkflowRequest.  # noqa: E501
-        :type: str
-        """
-
-        self._correlation_id = correlation_id
-
-    @property
-    def input(self):
-        """Gets the input of this StartWorkflowRequest.  # noqa: E501
-
-
-        :return: The input of this StartWorkflowRequest.  # noqa: E501
-        :rtype: dict(str, object)
-        """
-        return self._input
-
-    @input.setter
-    def input(self, input):
-        """Sets the input of this StartWorkflowRequest.
-
-
-        :param input: The input of this StartWorkflowRequest.  # noqa: E501
-        :type: dict(str, object)
-        """
-
-        self._input = input
+        self._priority = priority
 
     @property
     def task_to_domain(self):
@@ -177,6 +219,27 @@ class StartWorkflowRequest(object):
         self._task_to_domain = task_to_domain
 
     @property
+    def version(self):
+        """Gets the version of this StartWorkflowRequest.  # noqa: E501
+
+
+        :return: The version of this StartWorkflowRequest.  # noqa: E501
+        :rtype: int
+        """
+        return self._version
+
+    @version.setter
+    def version(self, version):
+        """Sets the version of this StartWorkflowRequest.
+
+
+        :param version: The version of this StartWorkflowRequest.  # noqa: E501
+        :type: int
+        """
+
+        self._version = version
+
+    @property
     def workflow_def(self):
         """Gets the workflow_def of this StartWorkflowRequest.  # noqa: E501
 
@@ -196,69 +259,6 @@ class StartWorkflowRequest(object):
         """
 
         self._workflow_def = workflow_def
-
-    @property
-    def external_input_payload_storage_path(self):
-        """Gets the external_input_payload_storage_path of this StartWorkflowRequest.  # noqa: E501
-
-
-        :return: The external_input_payload_storage_path of this StartWorkflowRequest.  # noqa: E501
-        :rtype: str
-        """
-        return self._external_input_payload_storage_path
-
-    @external_input_payload_storage_path.setter
-    def external_input_payload_storage_path(self, external_input_payload_storage_path):
-        """Sets the external_input_payload_storage_path of this StartWorkflowRequest.
-
-
-        :param external_input_payload_storage_path: The external_input_payload_storage_path of this StartWorkflowRequest.  # noqa: E501
-        :type: str
-        """
-
-        self._external_input_payload_storage_path = external_input_payload_storage_path
-
-    @property
-    def priority(self):
-        """Gets the priority of this StartWorkflowRequest.  # noqa: E501
-
-
-        :return: The priority of this StartWorkflowRequest.  # noqa: E501
-        :rtype: int
-        """
-        return self._priority
-
-    @priority.setter
-    def priority(self, priority):
-        """Sets the priority of this StartWorkflowRequest.
-
-
-        :param priority: The priority of this StartWorkflowRequest.  # noqa: E501
-        :type: int
-        """
-
-        self._priority = priority
-
-    @property
-    def created_by(self):
-        """Gets the created_by of this StartWorkflowRequest.  # noqa: E501
-
-
-        :return: The created_by of this StartWorkflowRequest.  # noqa: E501
-        :rtype: str
-        """
-        return self._created_by
-
-    @created_by.setter
-    def created_by(self, created_by):
-        """Sets the created_by of this StartWorkflowRequest.
-
-
-        :param created_by: The created_by of this StartWorkflowRequest.  # noqa: E501
-        :type: str
-        """
-
-        self._created_by = created_by
 
     def to_dict(self):
         """Returns the model properties as a dict"""

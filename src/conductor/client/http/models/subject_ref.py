@@ -16,23 +16,46 @@ class SubjectRef(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'type': 'str',
-        'id': 'str'
+        'id': 'str',
+        'type': 'str'
     }
 
     attribute_map = {
-        'type': 'type',
-        'id': 'id'
+        'id': 'id',
+        'type': 'type'
     }
 
-    def __init__(self, type=None, id=None):  # noqa: E501
+    def __init__(self, id=None, type=None):  # noqa: E501
         """SubjectRef - a model defined in Swagger"""  # noqa: E501
-        self._type = None
         self._id = None
+        self._type = None
         self.discriminator = None
+        self.id = id
         if type is not None:
             self.type = type
-        self.id = id
+
+    @property
+    def id(self):
+        """Gets the id of this SubjectRef.  # noqa: E501
+
+
+        :return: The id of this SubjectRef.  # noqa: E501
+        :rtype: str
+        """
+        return self._id
+
+    @id.setter
+    def id(self, id):
+        """Sets the id of this SubjectRef.
+
+
+        :param id: The id of this SubjectRef.  # noqa: E501
+        :type: str
+        """
+        if id is None:
+            raise ValueError("Invalid value for `id`, must not be `None`")  # noqa: E501
+
+        self._id = id
 
     @property
     def type(self):
@@ -62,29 +85,6 @@ class SubjectRef(object):
             )
 
         self._type = type
-
-    @property
-    def id(self):
-        """Gets the id of this SubjectRef.  # noqa: E501
-
-
-        :return: The id of this SubjectRef.  # noqa: E501
-        :rtype: str
-        """
-        return self._id
-
-    @id.setter
-    def id(self, id):
-        """Sets the id of this SubjectRef.
-
-
-        :param id: The id of this SubjectRef.  # noqa: E501
-        :type: str
-        """
-        if id is None:
-            raise ValueError("Invalid value for `id`, must not be `None`")  # noqa: E501
-
-        self._id = id
 
     def to_dict(self):
         """Returns the model properties as a dict"""

@@ -17,63 +17,63 @@ class WorkflowScheduleExecutionModel(object):
     """
     swagger_types = {
         'execution_id': 'str',
+        'execution_time': 'int',
+        'reason': 'str',
         'schedule_name': 'str',
         'scheduled_time': 'int',
-        'execution_time': 'int',
-        'workflow_name': 'str',
-        'workflow_id': 'str',
-        'reason': 'str',
         'stack_trace': 'str',
         'start_workflow_request': 'StartWorkflowRequest',
-        'state': 'str'
+        'state': 'str',
+        'workflow_id': 'str',
+        'workflow_name': 'str'
     }
 
     attribute_map = {
         'execution_id': 'executionId',
+        'execution_time': 'executionTime',
+        'reason': 'reason',
         'schedule_name': 'scheduleName',
         'scheduled_time': 'scheduledTime',
-        'execution_time': 'executionTime',
-        'workflow_name': 'workflowName',
-        'workflow_id': 'workflowId',
-        'reason': 'reason',
         'stack_trace': 'stackTrace',
         'start_workflow_request': 'startWorkflowRequest',
-        'state': 'state'
+        'state': 'state',
+        'workflow_id': 'workflowId',
+        'workflow_name': 'workflowName'
     }
 
-    def __init__(self, execution_id=None, schedule_name=None, scheduled_time=None, execution_time=None, workflow_name=None, workflow_id=None, reason=None, stack_trace=None, start_workflow_request=None, state=None):  # noqa: E501
+    def __init__(self, execution_id=None, execution_time=None, reason=None, schedule_name=None, scheduled_time=None, stack_trace=None, start_workflow_request=None, state=None, workflow_id=None, workflow_name=None):  # noqa: E501
         """WorkflowScheduleExecutionModel - a model defined in Swagger"""  # noqa: E501
         self._execution_id = None
+        self._execution_time = None
+        self._reason = None
         self._schedule_name = None
         self._scheduled_time = None
-        self._execution_time = None
-        self._workflow_name = None
-        self._workflow_id = None
-        self._reason = None
         self._stack_trace = None
         self._start_workflow_request = None
         self._state = None
+        self._workflow_id = None
+        self._workflow_name = None
         self.discriminator = None
         if execution_id is not None:
             self.execution_id = execution_id
+        if execution_time is not None:
+            self.execution_time = execution_time
+        if reason is not None:
+            self.reason = reason
         if schedule_name is not None:
             self.schedule_name = schedule_name
         if scheduled_time is not None:
             self.scheduled_time = scheduled_time
-        if execution_time is not None:
-            self.execution_time = execution_time
-        if workflow_name is not None:
-            self.workflow_name = workflow_name
-        if workflow_id is not None:
-            self.workflow_id = workflow_id
-        if reason is not None:
-            self.reason = reason
         if stack_trace is not None:
             self.stack_trace = stack_trace
         if start_workflow_request is not None:
             self.start_workflow_request = start_workflow_request
         if state is not None:
             self.state = state
+        if workflow_id is not None:
+            self.workflow_id = workflow_id
+        if workflow_name is not None:
+            self.workflow_name = workflow_name
 
     @property
     def execution_id(self):
@@ -95,6 +95,48 @@ class WorkflowScheduleExecutionModel(object):
         """
 
         self._execution_id = execution_id
+
+    @property
+    def execution_time(self):
+        """Gets the execution_time of this WorkflowScheduleExecutionModel.  # noqa: E501
+
+
+        :return: The execution_time of this WorkflowScheduleExecutionModel.  # noqa: E501
+        :rtype: int
+        """
+        return self._execution_time
+
+    @execution_time.setter
+    def execution_time(self, execution_time):
+        """Sets the execution_time of this WorkflowScheduleExecutionModel.
+
+
+        :param execution_time: The execution_time of this WorkflowScheduleExecutionModel.  # noqa: E501
+        :type: int
+        """
+
+        self._execution_time = execution_time
+
+    @property
+    def reason(self):
+        """Gets the reason of this WorkflowScheduleExecutionModel.  # noqa: E501
+
+
+        :return: The reason of this WorkflowScheduleExecutionModel.  # noqa: E501
+        :rtype: str
+        """
+        return self._reason
+
+    @reason.setter
+    def reason(self, reason):
+        """Sets the reason of this WorkflowScheduleExecutionModel.
+
+
+        :param reason: The reason of this WorkflowScheduleExecutionModel.  # noqa: E501
+        :type: str
+        """
+
+        self._reason = reason
 
     @property
     def schedule_name(self):
@@ -137,90 +179,6 @@ class WorkflowScheduleExecutionModel(object):
         """
 
         self._scheduled_time = scheduled_time
-
-    @property
-    def execution_time(self):
-        """Gets the execution_time of this WorkflowScheduleExecutionModel.  # noqa: E501
-
-
-        :return: The execution_time of this WorkflowScheduleExecutionModel.  # noqa: E501
-        :rtype: int
-        """
-        return self._execution_time
-
-    @execution_time.setter
-    def execution_time(self, execution_time):
-        """Sets the execution_time of this WorkflowScheduleExecutionModel.
-
-
-        :param execution_time: The execution_time of this WorkflowScheduleExecutionModel.  # noqa: E501
-        :type: int
-        """
-
-        self._execution_time = execution_time
-
-    @property
-    def workflow_name(self):
-        """Gets the workflow_name of this WorkflowScheduleExecutionModel.  # noqa: E501
-
-
-        :return: The workflow_name of this WorkflowScheduleExecutionModel.  # noqa: E501
-        :rtype: str
-        """
-        return self._workflow_name
-
-    @workflow_name.setter
-    def workflow_name(self, workflow_name):
-        """Sets the workflow_name of this WorkflowScheduleExecutionModel.
-
-
-        :param workflow_name: The workflow_name of this WorkflowScheduleExecutionModel.  # noqa: E501
-        :type: str
-        """
-
-        self._workflow_name = workflow_name
-
-    @property
-    def workflow_id(self):
-        """Gets the workflow_id of this WorkflowScheduleExecutionModel.  # noqa: E501
-
-
-        :return: The workflow_id of this WorkflowScheduleExecutionModel.  # noqa: E501
-        :rtype: str
-        """
-        return self._workflow_id
-
-    @workflow_id.setter
-    def workflow_id(self, workflow_id):
-        """Sets the workflow_id of this WorkflowScheduleExecutionModel.
-
-
-        :param workflow_id: The workflow_id of this WorkflowScheduleExecutionModel.  # noqa: E501
-        :type: str
-        """
-
-        self._workflow_id = workflow_id
-
-    @property
-    def reason(self):
-        """Gets the reason of this WorkflowScheduleExecutionModel.  # noqa: E501
-
-
-        :return: The reason of this WorkflowScheduleExecutionModel.  # noqa: E501
-        :rtype: str
-        """
-        return self._reason
-
-    @reason.setter
-    def reason(self, reason):
-        """Sets the reason of this WorkflowScheduleExecutionModel.
-
-
-        :param reason: The reason of this WorkflowScheduleExecutionModel.  # noqa: E501
-        :type: str
-        """
-
-        self._reason = reason
 
     @property
     def stack_trace(self):
@@ -290,6 +248,48 @@ class WorkflowScheduleExecutionModel(object):
             )
 
         self._state = state
+
+    @property
+    def workflow_id(self):
+        """Gets the workflow_id of this WorkflowScheduleExecutionModel.  # noqa: E501
+
+
+        :return: The workflow_id of this WorkflowScheduleExecutionModel.  # noqa: E501
+        :rtype: str
+        """
+        return self._workflow_id
+
+    @workflow_id.setter
+    def workflow_id(self, workflow_id):
+        """Sets the workflow_id of this WorkflowScheduleExecutionModel.
+
+
+        :param workflow_id: The workflow_id of this WorkflowScheduleExecutionModel.  # noqa: E501
+        :type: str
+        """
+
+        self._workflow_id = workflow_id
+
+    @property
+    def workflow_name(self):
+        """Gets the workflow_name of this WorkflowScheduleExecutionModel.  # noqa: E501
+
+
+        :return: The workflow_name of this WorkflowScheduleExecutionModel.  # noqa: E501
+        :rtype: str
+        """
+        return self._workflow_name
+
+    @workflow_name.setter
+    def workflow_name(self, workflow_name):
+        """Sets the workflow_name of this WorkflowScheduleExecutionModel.
+
+
+        :param workflow_name: The workflow_name of this WorkflowScheduleExecutionModel.  # noqa: E501
+        :type: str
+        """
+
+        self._workflow_name = workflow_name
 
     def to_dict(self):
         """Returns the model properties as a dict"""

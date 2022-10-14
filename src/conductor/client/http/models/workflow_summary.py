@@ -16,177 +16,114 @@ class WorkflowSummary(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'workflow_type': 'str',
-        'version': 'int',
-        'workflow_id': 'str',
         'correlation_id': 'str',
-        'start_time': 'str',
-        'update_time': 'str',
+        'created_by': 'str',
         'end_time': 'str',
-        'status': 'str',
-        'input': 'str',
-        'output': 'str',
-        'reason_for_incompletion': 'str',
-        'execution_time': 'int',
         'event': 'str',
-        'failed_reference_task_names': 'str',
+        'execution_time': 'int',
         'external_input_payload_storage_path': 'str',
         'external_output_payload_storage_path': 'str',
-        'priority': 'int',
-        'created_by': 'str',
+        'failed_reference_task_names': 'str',
+        'input': 'str',
+        'input_size': 'int',
+        'output': 'str',
         'output_size': 'int',
-        'input_size': 'int'
+        'priority': 'int',
+        'reason_for_incompletion': 'str',
+        'start_time': 'str',
+        'status': 'str',
+        'update_time': 'str',
+        'version': 'int',
+        'workflow_id': 'str',
+        'workflow_type': 'str'
     }
 
     attribute_map = {
-        'workflow_type': 'workflowType',
-        'version': 'version',
-        'workflow_id': 'workflowId',
         'correlation_id': 'correlationId',
-        'start_time': 'startTime',
-        'update_time': 'updateTime',
+        'created_by': 'createdBy',
         'end_time': 'endTime',
-        'status': 'status',
-        'input': 'input',
-        'output': 'output',
-        'reason_for_incompletion': 'reasonForIncompletion',
-        'execution_time': 'executionTime',
         'event': 'event',
-        'failed_reference_task_names': 'failedReferenceTaskNames',
+        'execution_time': 'executionTime',
         'external_input_payload_storage_path': 'externalInputPayloadStoragePath',
         'external_output_payload_storage_path': 'externalOutputPayloadStoragePath',
-        'priority': 'priority',
-        'created_by': 'createdBy',
+        'failed_reference_task_names': 'failedReferenceTaskNames',
+        'input': 'input',
+        'input_size': 'inputSize',
+        'output': 'output',
         'output_size': 'outputSize',
-        'input_size': 'inputSize'
+        'priority': 'priority',
+        'reason_for_incompletion': 'reasonForIncompletion',
+        'start_time': 'startTime',
+        'status': 'status',
+        'update_time': 'updateTime',
+        'version': 'version',
+        'workflow_id': 'workflowId',
+        'workflow_type': 'workflowType'
     }
 
-    def __init__(self, workflow_type=None, version=None, workflow_id=None, correlation_id=None, start_time=None, update_time=None, end_time=None, status=None, input=None, output=None, reason_for_incompletion=None, execution_time=None, event=None, failed_reference_task_names=None, external_input_payload_storage_path=None, external_output_payload_storage_path=None, priority=None, created_by=None, output_size=None, input_size=None):  # noqa: E501
+    def __init__(self, correlation_id=None, created_by=None, end_time=None, event=None, execution_time=None, external_input_payload_storage_path=None, external_output_payload_storage_path=None, failed_reference_task_names=None, input=None, input_size=None, output=None, output_size=None, priority=None, reason_for_incompletion=None, start_time=None, status=None, update_time=None, version=None, workflow_id=None, workflow_type=None):  # noqa: E501
         """WorkflowSummary - a model defined in Swagger"""  # noqa: E501
-        self._workflow_type = None
-        self._version = None
-        self._workflow_id = None
         self._correlation_id = None
-        self._start_time = None
-        self._update_time = None
+        self._created_by = None
         self._end_time = None
-        self._status = None
-        self._input = None
-        self._output = None
-        self._reason_for_incompletion = None
-        self._execution_time = None
         self._event = None
-        self._failed_reference_task_names = None
+        self._execution_time = None
         self._external_input_payload_storage_path = None
         self._external_output_payload_storage_path = None
-        self._priority = None
-        self._created_by = None
-        self._output_size = None
+        self._failed_reference_task_names = None
+        self._input = None
         self._input_size = None
+        self._output = None
+        self._output_size = None
+        self._priority = None
+        self._reason_for_incompletion = None
+        self._start_time = None
+        self._status = None
+        self._update_time = None
+        self._version = None
+        self._workflow_id = None
+        self._workflow_type = None
         self.discriminator = None
-        if workflow_type is not None:
-            self.workflow_type = workflow_type
-        if version is not None:
-            self.version = version
-        if workflow_id is not None:
-            self.workflow_id = workflow_id
         if correlation_id is not None:
             self.correlation_id = correlation_id
-        if start_time is not None:
-            self.start_time = start_time
-        if update_time is not None:
-            self.update_time = update_time
+        if created_by is not None:
+            self.created_by = created_by
         if end_time is not None:
             self.end_time = end_time
-        if status is not None:
-            self.status = status
-        if input is not None:
-            self.input = input
-        if output is not None:
-            self.output = output
-        if reason_for_incompletion is not None:
-            self.reason_for_incompletion = reason_for_incompletion
-        if execution_time is not None:
-            self.execution_time = execution_time
         if event is not None:
             self.event = event
-        if failed_reference_task_names is not None:
-            self.failed_reference_task_names = failed_reference_task_names
+        if execution_time is not None:
+            self.execution_time = execution_time
         if external_input_payload_storage_path is not None:
             self.external_input_payload_storage_path = external_input_payload_storage_path
         if external_output_payload_storage_path is not None:
             self.external_output_payload_storage_path = external_output_payload_storage_path
-        if priority is not None:
-            self.priority = priority
-        if created_by is not None:
-            self.created_by = created_by
-        if output_size is not None:
-            self.output_size = output_size
+        if failed_reference_task_names is not None:
+            self.failed_reference_task_names = failed_reference_task_names
+        if input is not None:
+            self.input = input
         if input_size is not None:
             self.input_size = input_size
-
-    @property
-    def workflow_type(self):
-        """Gets the workflow_type of this WorkflowSummary.  # noqa: E501
-
-
-        :return: The workflow_type of this WorkflowSummary.  # noqa: E501
-        :rtype: str
-        """
-        return self._workflow_type
-
-    @workflow_type.setter
-    def workflow_type(self, workflow_type):
-        """Sets the workflow_type of this WorkflowSummary.
-
-
-        :param workflow_type: The workflow_type of this WorkflowSummary.  # noqa: E501
-        :type: str
-        """
-
-        self._workflow_type = workflow_type
-
-    @property
-    def version(self):
-        """Gets the version of this WorkflowSummary.  # noqa: E501
-
-
-        :return: The version of this WorkflowSummary.  # noqa: E501
-        :rtype: int
-        """
-        return self._version
-
-    @version.setter
-    def version(self, version):
-        """Sets the version of this WorkflowSummary.
-
-
-        :param version: The version of this WorkflowSummary.  # noqa: E501
-        :type: int
-        """
-
-        self._version = version
-
-    @property
-    def workflow_id(self):
-        """Gets the workflow_id of this WorkflowSummary.  # noqa: E501
-
-
-        :return: The workflow_id of this WorkflowSummary.  # noqa: E501
-        :rtype: str
-        """
-        return self._workflow_id
-
-    @workflow_id.setter
-    def workflow_id(self, workflow_id):
-        """Sets the workflow_id of this WorkflowSummary.
-
-
-        :param workflow_id: The workflow_id of this WorkflowSummary.  # noqa: E501
-        :type: str
-        """
-
-        self._workflow_id = workflow_id
+        if output is not None:
+            self.output = output
+        if output_size is not None:
+            self.output_size = output_size
+        if priority is not None:
+            self.priority = priority
+        if reason_for_incompletion is not None:
+            self.reason_for_incompletion = reason_for_incompletion
+        if start_time is not None:
+            self.start_time = start_time
+        if status is not None:
+            self.status = status
+        if update_time is not None:
+            self.update_time = update_time
+        if version is not None:
+            self.version = version
+        if workflow_id is not None:
+            self.workflow_id = workflow_id
+        if workflow_type is not None:
+            self.workflow_type = workflow_type
 
     @property
     def correlation_id(self):
@@ -210,46 +147,25 @@ class WorkflowSummary(object):
         self._correlation_id = correlation_id
 
     @property
-    def start_time(self):
-        """Gets the start_time of this WorkflowSummary.  # noqa: E501
+    def created_by(self):
+        """Gets the created_by of this WorkflowSummary.  # noqa: E501
 
 
-        :return: The start_time of this WorkflowSummary.  # noqa: E501
+        :return: The created_by of this WorkflowSummary.  # noqa: E501
         :rtype: str
         """
-        return self._start_time
+        return self._created_by
 
-    @start_time.setter
-    def start_time(self, start_time):
-        """Sets the start_time of this WorkflowSummary.
+    @created_by.setter
+    def created_by(self, created_by):
+        """Sets the created_by of this WorkflowSummary.
 
 
-        :param start_time: The start_time of this WorkflowSummary.  # noqa: E501
+        :param created_by: The created_by of this WorkflowSummary.  # noqa: E501
         :type: str
         """
 
-        self._start_time = start_time
-
-    @property
-    def update_time(self):
-        """Gets the update_time of this WorkflowSummary.  # noqa: E501
-
-
-        :return: The update_time of this WorkflowSummary.  # noqa: E501
-        :rtype: str
-        """
-        return self._update_time
-
-    @update_time.setter
-    def update_time(self, update_time):
-        """Sets the update_time of this WorkflowSummary.
-
-
-        :param update_time: The update_time of this WorkflowSummary.  # noqa: E501
-        :type: str
-        """
-
-        self._update_time = update_time
+        self._created_by = created_by
 
     @property
     def end_time(self):
@@ -273,117 +189,6 @@ class WorkflowSummary(object):
         self._end_time = end_time
 
     @property
-    def status(self):
-        """Gets the status of this WorkflowSummary.  # noqa: E501
-
-
-        :return: The status of this WorkflowSummary.  # noqa: E501
-        :rtype: str
-        """
-        return self._status
-
-    @status.setter
-    def status(self, status):
-        """Sets the status of this WorkflowSummary.
-
-
-        :param status: The status of this WorkflowSummary.  # noqa: E501
-        :type: str
-        """
-        allowed_values = ["RUNNING", "COMPLETED", "FAILED", "TIMED_OUT", "TERMINATED", "PAUSED"]  # noqa: E501
-        if status not in allowed_values:
-            raise ValueError(
-                "Invalid value for `status` ({0}), must be one of {1}"  # noqa: E501
-                .format(status, allowed_values)
-            )
-
-        self._status = status
-
-    @property
-    def input(self):
-        """Gets the input of this WorkflowSummary.  # noqa: E501
-
-
-        :return: The input of this WorkflowSummary.  # noqa: E501
-        :rtype: str
-        """
-        return self._input
-
-    @input.setter
-    def input(self, input):
-        """Sets the input of this WorkflowSummary.
-
-
-        :param input: The input of this WorkflowSummary.  # noqa: E501
-        :type: str
-        """
-
-        self._input = input
-
-    @property
-    def output(self):
-        """Gets the output of this WorkflowSummary.  # noqa: E501
-
-
-        :return: The output of this WorkflowSummary.  # noqa: E501
-        :rtype: str
-        """
-        return self._output
-
-    @output.setter
-    def output(self, output):
-        """Sets the output of this WorkflowSummary.
-
-
-        :param output: The output of this WorkflowSummary.  # noqa: E501
-        :type: str
-        """
-
-        self._output = output
-
-    @property
-    def reason_for_incompletion(self):
-        """Gets the reason_for_incompletion of this WorkflowSummary.  # noqa: E501
-
-
-        :return: The reason_for_incompletion of this WorkflowSummary.  # noqa: E501
-        :rtype: str
-        """
-        return self._reason_for_incompletion
-
-    @reason_for_incompletion.setter
-    def reason_for_incompletion(self, reason_for_incompletion):
-        """Sets the reason_for_incompletion of this WorkflowSummary.
-
-
-        :param reason_for_incompletion: The reason_for_incompletion of this WorkflowSummary.  # noqa: E501
-        :type: str
-        """
-
-        self._reason_for_incompletion = reason_for_incompletion
-
-    @property
-    def execution_time(self):
-        """Gets the execution_time of this WorkflowSummary.  # noqa: E501
-
-
-        :return: The execution_time of this WorkflowSummary.  # noqa: E501
-        :rtype: int
-        """
-        return self._execution_time
-
-    @execution_time.setter
-    def execution_time(self, execution_time):
-        """Sets the execution_time of this WorkflowSummary.
-
-
-        :param execution_time: The execution_time of this WorkflowSummary.  # noqa: E501
-        :type: int
-        """
-
-        self._execution_time = execution_time
-
-    @property
     def event(self):
         """Gets the event of this WorkflowSummary.  # noqa: E501
 
@@ -405,25 +210,25 @@ class WorkflowSummary(object):
         self._event = event
 
     @property
-    def failed_reference_task_names(self):
-        """Gets the failed_reference_task_names of this WorkflowSummary.  # noqa: E501
+    def execution_time(self):
+        """Gets the execution_time of this WorkflowSummary.  # noqa: E501
 
 
-        :return: The failed_reference_task_names of this WorkflowSummary.  # noqa: E501
-        :rtype: str
+        :return: The execution_time of this WorkflowSummary.  # noqa: E501
+        :rtype: int
         """
-        return self._failed_reference_task_names
+        return self._execution_time
 
-    @failed_reference_task_names.setter
-    def failed_reference_task_names(self, failed_reference_task_names):
-        """Sets the failed_reference_task_names of this WorkflowSummary.
+    @execution_time.setter
+    def execution_time(self, execution_time):
+        """Sets the execution_time of this WorkflowSummary.
 
 
-        :param failed_reference_task_names: The failed_reference_task_names of this WorkflowSummary.  # noqa: E501
-        :type: str
+        :param execution_time: The execution_time of this WorkflowSummary.  # noqa: E501
+        :type: int
         """
 
-        self._failed_reference_task_names = failed_reference_task_names
+        self._execution_time = execution_time
 
     @property
     def external_input_payload_storage_path(self):
@@ -468,46 +273,88 @@ class WorkflowSummary(object):
         self._external_output_payload_storage_path = external_output_payload_storage_path
 
     @property
-    def priority(self):
-        """Gets the priority of this WorkflowSummary.  # noqa: E501
+    def failed_reference_task_names(self):
+        """Gets the failed_reference_task_names of this WorkflowSummary.  # noqa: E501
 
 
-        :return: The priority of this WorkflowSummary.  # noqa: E501
-        :rtype: int
-        """
-        return self._priority
-
-    @priority.setter
-    def priority(self, priority):
-        """Sets the priority of this WorkflowSummary.
-
-
-        :param priority: The priority of this WorkflowSummary.  # noqa: E501
-        :type: int
-        """
-
-        self._priority = priority
-
-    @property
-    def created_by(self):
-        """Gets the created_by of this WorkflowSummary.  # noqa: E501
-
-
-        :return: The created_by of this WorkflowSummary.  # noqa: E501
+        :return: The failed_reference_task_names of this WorkflowSummary.  # noqa: E501
         :rtype: str
         """
-        return self._created_by
+        return self._failed_reference_task_names
 
-    @created_by.setter
-    def created_by(self, created_by):
-        """Sets the created_by of this WorkflowSummary.
+    @failed_reference_task_names.setter
+    def failed_reference_task_names(self, failed_reference_task_names):
+        """Sets the failed_reference_task_names of this WorkflowSummary.
 
 
-        :param created_by: The created_by of this WorkflowSummary.  # noqa: E501
+        :param failed_reference_task_names: The failed_reference_task_names of this WorkflowSummary.  # noqa: E501
         :type: str
         """
 
-        self._created_by = created_by
+        self._failed_reference_task_names = failed_reference_task_names
+
+    @property
+    def input(self):
+        """Gets the input of this WorkflowSummary.  # noqa: E501
+
+
+        :return: The input of this WorkflowSummary.  # noqa: E501
+        :rtype: str
+        """
+        return self._input
+
+    @input.setter
+    def input(self, input):
+        """Sets the input of this WorkflowSummary.
+
+
+        :param input: The input of this WorkflowSummary.  # noqa: E501
+        :type: str
+        """
+
+        self._input = input
+
+    @property
+    def input_size(self):
+        """Gets the input_size of this WorkflowSummary.  # noqa: E501
+
+
+        :return: The input_size of this WorkflowSummary.  # noqa: E501
+        :rtype: int
+        """
+        return self._input_size
+
+    @input_size.setter
+    def input_size(self, input_size):
+        """Sets the input_size of this WorkflowSummary.
+
+
+        :param input_size: The input_size of this WorkflowSummary.  # noqa: E501
+        :type: int
+        """
+
+        self._input_size = input_size
+
+    @property
+    def output(self):
+        """Gets the output of this WorkflowSummary.  # noqa: E501
+
+
+        :return: The output of this WorkflowSummary.  # noqa: E501
+        :rtype: str
+        """
+        return self._output
+
+    @output.setter
+    def output(self, output):
+        """Sets the output of this WorkflowSummary.
+
+
+        :param output: The output of this WorkflowSummary.  # noqa: E501
+        :type: str
+        """
+
+        self._output = output
 
     @property
     def output_size(self):
@@ -531,25 +378,178 @@ class WorkflowSummary(object):
         self._output_size = output_size
 
     @property
-    def input_size(self):
-        """Gets the input_size of this WorkflowSummary.  # noqa: E501
+    def priority(self):
+        """Gets the priority of this WorkflowSummary.  # noqa: E501
 
 
-        :return: The input_size of this WorkflowSummary.  # noqa: E501
+        :return: The priority of this WorkflowSummary.  # noqa: E501
         :rtype: int
         """
-        return self._input_size
+        return self._priority
 
-    @input_size.setter
-    def input_size(self, input_size):
-        """Sets the input_size of this WorkflowSummary.
+    @priority.setter
+    def priority(self, priority):
+        """Sets the priority of this WorkflowSummary.
 
 
-        :param input_size: The input_size of this WorkflowSummary.  # noqa: E501
+        :param priority: The priority of this WorkflowSummary.  # noqa: E501
         :type: int
         """
 
-        self._input_size = input_size
+        self._priority = priority
+
+    @property
+    def reason_for_incompletion(self):
+        """Gets the reason_for_incompletion of this WorkflowSummary.  # noqa: E501
+
+
+        :return: The reason_for_incompletion of this WorkflowSummary.  # noqa: E501
+        :rtype: str
+        """
+        return self._reason_for_incompletion
+
+    @reason_for_incompletion.setter
+    def reason_for_incompletion(self, reason_for_incompletion):
+        """Sets the reason_for_incompletion of this WorkflowSummary.
+
+
+        :param reason_for_incompletion: The reason_for_incompletion of this WorkflowSummary.  # noqa: E501
+        :type: str
+        """
+
+        self._reason_for_incompletion = reason_for_incompletion
+
+    @property
+    def start_time(self):
+        """Gets the start_time of this WorkflowSummary.  # noqa: E501
+
+
+        :return: The start_time of this WorkflowSummary.  # noqa: E501
+        :rtype: str
+        """
+        return self._start_time
+
+    @start_time.setter
+    def start_time(self, start_time):
+        """Sets the start_time of this WorkflowSummary.
+
+
+        :param start_time: The start_time of this WorkflowSummary.  # noqa: E501
+        :type: str
+        """
+
+        self._start_time = start_time
+
+    @property
+    def status(self):
+        """Gets the status of this WorkflowSummary.  # noqa: E501
+
+
+        :return: The status of this WorkflowSummary.  # noqa: E501
+        :rtype: str
+        """
+        return self._status
+
+    @status.setter
+    def status(self, status):
+        """Sets the status of this WorkflowSummary.
+
+
+        :param status: The status of this WorkflowSummary.  # noqa: E501
+        :type: str
+        """
+        allowed_values = ["RUNNING", "COMPLETED", "FAILED", "TIMED_OUT", "TERMINATED", "PAUSED"]  # noqa: E501
+        if status not in allowed_values:
+            raise ValueError(
+                "Invalid value for `status` ({0}), must be one of {1}"  # noqa: E501
+                .format(status, allowed_values)
+            )
+
+        self._status = status
+
+    @property
+    def update_time(self):
+        """Gets the update_time of this WorkflowSummary.  # noqa: E501
+
+
+        :return: The update_time of this WorkflowSummary.  # noqa: E501
+        :rtype: str
+        """
+        return self._update_time
+
+    @update_time.setter
+    def update_time(self, update_time):
+        """Sets the update_time of this WorkflowSummary.
+
+
+        :param update_time: The update_time of this WorkflowSummary.  # noqa: E501
+        :type: str
+        """
+
+        self._update_time = update_time
+
+    @property
+    def version(self):
+        """Gets the version of this WorkflowSummary.  # noqa: E501
+
+
+        :return: The version of this WorkflowSummary.  # noqa: E501
+        :rtype: int
+        """
+        return self._version
+
+    @version.setter
+    def version(self, version):
+        """Sets the version of this WorkflowSummary.
+
+
+        :param version: The version of this WorkflowSummary.  # noqa: E501
+        :type: int
+        """
+
+        self._version = version
+
+    @property
+    def workflow_id(self):
+        """Gets the workflow_id of this WorkflowSummary.  # noqa: E501
+
+
+        :return: The workflow_id of this WorkflowSummary.  # noqa: E501
+        :rtype: str
+        """
+        return self._workflow_id
+
+    @workflow_id.setter
+    def workflow_id(self, workflow_id):
+        """Sets the workflow_id of this WorkflowSummary.
+
+
+        :param workflow_id: The workflow_id of this WorkflowSummary.  # noqa: E501
+        :type: str
+        """
+
+        self._workflow_id = workflow_id
+
+    @property
+    def workflow_type(self):
+        """Gets the workflow_type of this WorkflowSummary.  # noqa: E501
+
+
+        :return: The workflow_type of this WorkflowSummary.  # noqa: E501
+        :rtype: str
+        """
+        return self._workflow_type
+
+    @workflow_type.setter
+    def workflow_type(self, workflow_type):
+        """Sets the workflow_type of this WorkflowSummary.
+
+
+        :param workflow_type: The workflow_type of this WorkflowSummary.  # noqa: E501
+        :type: str
+        """
+
+        self._workflow_type = workflow_type
 
     def to_dict(self):
         """Returns the model properties as a dict"""

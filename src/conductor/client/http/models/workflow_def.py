@@ -16,132 +16,111 @@ class WorkflowDef(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'owner_app': 'str',
         'create_time': 'int',
-        'update_time': 'int',
         'created_by': 'str',
-        'updated_by': 'str',
-        'name': 'str',
         'description': 'str',
-        'version': 'int',
-        'tasks': 'list[WorkflowTask]',
-        'input_parameters': 'list[str]',
-        'output_parameters': 'dict(str, object)',
         'failure_workflow': 'str',
-        'schema_version': 'int',
-        'restartable': 'bool',
-        'workflow_status_listener_enabled': 'bool',
+        'input_parameters': 'list[str]',
+        'input_template': 'dict(str, object)',
+        'name': 'str',
+        'output_parameters': 'dict(str, object)',
+        'owner_app': 'str',
         'owner_email': 'str',
+        'restartable': 'bool',
+        'schema_version': 'int',
+        'tasks': 'list[WorkflowTask]',
         'timeout_policy': 'str',
         'timeout_seconds': 'int',
+        'update_time': 'int',
+        'updated_by': 'str',
         'variables': 'dict(str, object)',
-        'input_template': 'dict(str, object)'
+        'version': 'int',
+        'workflow_status_listener_enabled': 'bool'
     }
 
     attribute_map = {
-        'owner_app': 'ownerApp',
         'create_time': 'createTime',
-        'update_time': 'updateTime',
         'created_by': 'createdBy',
-        'updated_by': 'updatedBy',
-        'name': 'name',
         'description': 'description',
-        'version': 'version',
-        'tasks': 'tasks',
-        'input_parameters': 'inputParameters',
-        'output_parameters': 'outputParameters',
         'failure_workflow': 'failureWorkflow',
-        'schema_version': 'schemaVersion',
-        'restartable': 'restartable',
-        'workflow_status_listener_enabled': 'workflowStatusListenerEnabled',
+        'input_parameters': 'inputParameters',
+        'input_template': 'inputTemplate',
+        'name': 'name',
+        'output_parameters': 'outputParameters',
+        'owner_app': 'ownerApp',
         'owner_email': 'ownerEmail',
+        'restartable': 'restartable',
+        'schema_version': 'schemaVersion',
+        'tasks': 'tasks',
         'timeout_policy': 'timeoutPolicy',
         'timeout_seconds': 'timeoutSeconds',
+        'update_time': 'updateTime',
+        'updated_by': 'updatedBy',
         'variables': 'variables',
-        'input_template': 'inputTemplate'
+        'version': 'version',
+        'workflow_status_listener_enabled': 'workflowStatusListenerEnabled'
     }
 
-    def __init__(self, owner_app=None, create_time=None, update_time=None, created_by=None, updated_by=None, name=None, description=None, version=None, tasks=None, input_parameters=None, output_parameters=None, failure_workflow=None, schema_version=None, restartable=None, workflow_status_listener_enabled=None, owner_email=None, timeout_policy=None, timeout_seconds=None, variables=None, input_template=None):  # noqa: E501
+    def __init__(self, create_time=None, created_by=None, description=None, failure_workflow=None, input_parameters=None, input_template=None, name=None, output_parameters=None, owner_app=None, owner_email=None, restartable=None, schema_version=None, tasks=None, timeout_policy=None, timeout_seconds=None, update_time=None, updated_by=None, variables=None, version=None, workflow_status_listener_enabled=None):  # noqa: E501
         """WorkflowDef - a model defined in Swagger"""  # noqa: E501
-        self._owner_app = None
         self._create_time = None
-        self._update_time = None
         self._created_by = None
-        self._updated_by = None
-        self._name = None
         self._description = None
-        self._version = None
-        self._tasks = None
-        self._input_parameters = None
-        self._output_parameters = None
         self._failure_workflow = None
-        self._schema_version = None
-        self._restartable = None
-        self._workflow_status_listener_enabled = None
+        self._input_parameters = None
+        self._input_template = None
+        self._name = None
+        self._output_parameters = None
+        self._owner_app = None
         self._owner_email = None
+        self._restartable = None
+        self._schema_version = None
+        self._tasks = None
         self._timeout_policy = None
         self._timeout_seconds = None
+        self._update_time = None
+        self._updated_by = None
         self._variables = None
-        self._input_template = None
+        self._version = None
+        self._workflow_status_listener_enabled = None
         self.discriminator = None
-        if owner_app is not None:
-            self.owner_app = owner_app
         if create_time is not None:
             self.create_time = create_time
-        if update_time is not None:
-            self.update_time = update_time
         if created_by is not None:
             self.created_by = created_by
-        if updated_by is not None:
-            self.updated_by = updated_by
-        self.name = name
         if description is not None:
             self.description = description
-        if version is not None:
-            self.version = version
-        self.tasks = tasks
-        if input_parameters is not None:
-            self.input_parameters = input_parameters
-        if output_parameters is not None:
-            self.output_parameters = output_parameters
         if failure_workflow is not None:
             self.failure_workflow = failure_workflow
-        if schema_version is not None:
-            self.schema_version = schema_version
-        if restartable is not None:
-            self.restartable = restartable
-        if workflow_status_listener_enabled is not None:
-            self.workflow_status_listener_enabled = workflow_status_listener_enabled
+        if input_parameters is not None:
+            self.input_parameters = input_parameters
+        if input_template is not None:
+            self.input_template = input_template
+        self.name = name
+        if output_parameters is not None:
+            self.output_parameters = output_parameters
+        if owner_app is not None:
+            self.owner_app = owner_app
         if owner_email is not None:
             self.owner_email = owner_email
+        if restartable is not None:
+            self.restartable = restartable
+        if schema_version is not None:
+            self.schema_version = schema_version
+        self.tasks = tasks
         if timeout_policy is not None:
             self.timeout_policy = timeout_policy
         self.timeout_seconds = timeout_seconds
+        if update_time is not None:
+            self.update_time = update_time
+        if updated_by is not None:
+            self.updated_by = updated_by
         if variables is not None:
             self.variables = variables
-        if input_template is not None:
-            self.input_template = input_template
-
-    @property
-    def owner_app(self):
-        """Gets the owner_app of this WorkflowDef.  # noqa: E501
-
-
-        :return: The owner_app of this WorkflowDef.  # noqa: E501
-        :rtype: str
-        """
-        return self._owner_app
-
-    @owner_app.setter
-    def owner_app(self, owner_app):
-        """Sets the owner_app of this WorkflowDef.
-
-
-        :param owner_app: The owner_app of this WorkflowDef.  # noqa: E501
-        :type: str
-        """
-
-        self._owner_app = owner_app
+        if version is not None:
+            self.version = version
+        if workflow_status_listener_enabled is not None:
+            self.workflow_status_listener_enabled = workflow_status_listener_enabled
 
     @property
     def create_time(self):
@@ -165,27 +144,6 @@ class WorkflowDef(object):
         self._create_time = create_time
 
     @property
-    def update_time(self):
-        """Gets the update_time of this WorkflowDef.  # noqa: E501
-
-
-        :return: The update_time of this WorkflowDef.  # noqa: E501
-        :rtype: int
-        """
-        return self._update_time
-
-    @update_time.setter
-    def update_time(self, update_time):
-        """Sets the update_time of this WorkflowDef.
-
-
-        :param update_time: The update_time of this WorkflowDef.  # noqa: E501
-        :type: int
-        """
-
-        self._update_time = update_time
-
-    @property
     def created_by(self):
         """Gets the created_by of this WorkflowDef.  # noqa: E501
 
@@ -207,25 +165,88 @@ class WorkflowDef(object):
         self._created_by = created_by
 
     @property
-    def updated_by(self):
-        """Gets the updated_by of this WorkflowDef.  # noqa: E501
+    def description(self):
+        """Gets the description of this WorkflowDef.  # noqa: E501
 
 
-        :return: The updated_by of this WorkflowDef.  # noqa: E501
+        :return: The description of this WorkflowDef.  # noqa: E501
         :rtype: str
         """
-        return self._updated_by
+        return self._description
 
-    @updated_by.setter
-    def updated_by(self, updated_by):
-        """Sets the updated_by of this WorkflowDef.
+    @description.setter
+    def description(self, description):
+        """Sets the description of this WorkflowDef.
 
 
-        :param updated_by: The updated_by of this WorkflowDef.  # noqa: E501
+        :param description: The description of this WorkflowDef.  # noqa: E501
         :type: str
         """
 
-        self._updated_by = updated_by
+        self._description = description
+
+    @property
+    def failure_workflow(self):
+        """Gets the failure_workflow of this WorkflowDef.  # noqa: E501
+
+
+        :return: The failure_workflow of this WorkflowDef.  # noqa: E501
+        :rtype: str
+        """
+        return self._failure_workflow
+
+    @failure_workflow.setter
+    def failure_workflow(self, failure_workflow):
+        """Sets the failure_workflow of this WorkflowDef.
+
+
+        :param failure_workflow: The failure_workflow of this WorkflowDef.  # noqa: E501
+        :type: str
+        """
+
+        self._failure_workflow = failure_workflow
+
+    @property
+    def input_parameters(self):
+        """Gets the input_parameters of this WorkflowDef.  # noqa: E501
+
+
+        :return: The input_parameters of this WorkflowDef.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._input_parameters
+
+    @input_parameters.setter
+    def input_parameters(self, input_parameters):
+        """Sets the input_parameters of this WorkflowDef.
+
+
+        :param input_parameters: The input_parameters of this WorkflowDef.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._input_parameters = input_parameters
+
+    @property
+    def input_template(self):
+        """Gets the input_template of this WorkflowDef.  # noqa: E501
+
+
+        :return: The input_template of this WorkflowDef.  # noqa: E501
+        :rtype: dict(str, object)
+        """
+        return self._input_template
+
+    @input_template.setter
+    def input_template(self, input_template):
+        """Sets the input_template of this WorkflowDef.
+
+
+        :param input_template: The input_template of this WorkflowDef.  # noqa: E501
+        :type: dict(str, object)
+        """
+
+        self._input_template = input_template
 
     @property
     def name(self):
@@ -251,92 +272,6 @@ class WorkflowDef(object):
         self._name = name
 
     @property
-    def description(self):
-        """Gets the description of this WorkflowDef.  # noqa: E501
-
-
-        :return: The description of this WorkflowDef.  # noqa: E501
-        :rtype: str
-        """
-        return self._description
-
-    @description.setter
-    def description(self, description):
-        """Sets the description of this WorkflowDef.
-
-
-        :param description: The description of this WorkflowDef.  # noqa: E501
-        :type: str
-        """
-
-        self._description = description
-
-    @property
-    def version(self):
-        """Gets the version of this WorkflowDef.  # noqa: E501
-
-
-        :return: The version of this WorkflowDef.  # noqa: E501
-        :rtype: int
-        """
-        return self._version
-
-    @version.setter
-    def version(self, version):
-        """Sets the version of this WorkflowDef.
-
-
-        :param version: The version of this WorkflowDef.  # noqa: E501
-        :type: int
-        """
-
-        self._version = version
-
-    @property
-    def tasks(self):
-        """Gets the tasks of this WorkflowDef.  # noqa: E501
-
-
-        :return: The tasks of this WorkflowDef.  # noqa: E501
-        :rtype: list[WorkflowTask]
-        """
-        return self._tasks
-
-    @tasks.setter
-    def tasks(self, tasks):
-        """Sets the tasks of this WorkflowDef.
-
-
-        :param tasks: The tasks of this WorkflowDef.  # noqa: E501
-        :type: list[WorkflowTask]
-        """
-        if tasks is None:
-            raise ValueError("Invalid value for `tasks`, must not be `None`")  # noqa: E501
-
-        self._tasks = tasks
-
-    @property
-    def input_parameters(self):
-        """Gets the input_parameters of this WorkflowDef.  # noqa: E501
-
-
-        :return: The input_parameters of this WorkflowDef.  # noqa: E501
-        :rtype: list[str]
-        """
-        return self._input_parameters
-
-    @input_parameters.setter
-    def input_parameters(self, input_parameters):
-        """Sets the input_parameters of this WorkflowDef.
-
-
-        :param input_parameters: The input_parameters of this WorkflowDef.  # noqa: E501
-        :type: list[str]
-        """
-
-        self._input_parameters = input_parameters
-
-    @property
     def output_parameters(self):
         """Gets the output_parameters of this WorkflowDef.  # noqa: E501
 
@@ -358,46 +293,46 @@ class WorkflowDef(object):
         self._output_parameters = output_parameters
 
     @property
-    def failure_workflow(self):
-        """Gets the failure_workflow of this WorkflowDef.  # noqa: E501
+    def owner_app(self):
+        """Gets the owner_app of this WorkflowDef.  # noqa: E501
 
 
-        :return: The failure_workflow of this WorkflowDef.  # noqa: E501
+        :return: The owner_app of this WorkflowDef.  # noqa: E501
         :rtype: str
         """
-        return self._failure_workflow
+        return self._owner_app
 
-    @failure_workflow.setter
-    def failure_workflow(self, failure_workflow):
-        """Sets the failure_workflow of this WorkflowDef.
+    @owner_app.setter
+    def owner_app(self, owner_app):
+        """Sets the owner_app of this WorkflowDef.
 
 
-        :param failure_workflow: The failure_workflow of this WorkflowDef.  # noqa: E501
+        :param owner_app: The owner_app of this WorkflowDef.  # noqa: E501
         :type: str
         """
 
-        self._failure_workflow = failure_workflow
+        self._owner_app = owner_app
 
     @property
-    def schema_version(self):
-        """Gets the schema_version of this WorkflowDef.  # noqa: E501
+    def owner_email(self):
+        """Gets the owner_email of this WorkflowDef.  # noqa: E501
 
 
-        :return: The schema_version of this WorkflowDef.  # noqa: E501
-        :rtype: int
+        :return: The owner_email of this WorkflowDef.  # noqa: E501
+        :rtype: str
         """
-        return self._schema_version
+        return self._owner_email
 
-    @schema_version.setter
-    def schema_version(self, schema_version):
-        """Sets the schema_version of this WorkflowDef.
+    @owner_email.setter
+    def owner_email(self, owner_email):
+        """Sets the owner_email of this WorkflowDef.
 
 
-        :param schema_version: The schema_version of this WorkflowDef.  # noqa: E501
-        :type: int
+        :param owner_email: The owner_email of this WorkflowDef.  # noqa: E501
+        :type: str
         """
 
-        self._schema_version = schema_version
+        self._owner_email = owner_email
 
     @property
     def restartable(self):
@@ -421,46 +356,48 @@ class WorkflowDef(object):
         self._restartable = restartable
 
     @property
-    def workflow_status_listener_enabled(self):
-        """Gets the workflow_status_listener_enabled of this WorkflowDef.  # noqa: E501
+    def schema_version(self):
+        """Gets the schema_version of this WorkflowDef.  # noqa: E501
 
 
-        :return: The workflow_status_listener_enabled of this WorkflowDef.  # noqa: E501
-        :rtype: bool
+        :return: The schema_version of this WorkflowDef.  # noqa: E501
+        :rtype: int
         """
-        return self._workflow_status_listener_enabled
+        return self._schema_version
 
-    @workflow_status_listener_enabled.setter
-    def workflow_status_listener_enabled(self, workflow_status_listener_enabled):
-        """Sets the workflow_status_listener_enabled of this WorkflowDef.
+    @schema_version.setter
+    def schema_version(self, schema_version):
+        """Sets the schema_version of this WorkflowDef.
 
 
-        :param workflow_status_listener_enabled: The workflow_status_listener_enabled of this WorkflowDef.  # noqa: E501
-        :type: bool
+        :param schema_version: The schema_version of this WorkflowDef.  # noqa: E501
+        :type: int
         """
 
-        self._workflow_status_listener_enabled = workflow_status_listener_enabled
+        self._schema_version = schema_version
 
     @property
-    def owner_email(self):
-        """Gets the owner_email of this WorkflowDef.  # noqa: E501
+    def tasks(self):
+        """Gets the tasks of this WorkflowDef.  # noqa: E501
 
 
-        :return: The owner_email of this WorkflowDef.  # noqa: E501
-        :rtype: str
+        :return: The tasks of this WorkflowDef.  # noqa: E501
+        :rtype: list[WorkflowTask]
         """
-        return self._owner_email
+        return self._tasks
 
-    @owner_email.setter
-    def owner_email(self, owner_email):
-        """Sets the owner_email of this WorkflowDef.
+    @tasks.setter
+    def tasks(self, tasks):
+        """Sets the tasks of this WorkflowDef.
 
 
-        :param owner_email: The owner_email of this WorkflowDef.  # noqa: E501
-        :type: str
+        :param tasks: The tasks of this WorkflowDef.  # noqa: E501
+        :type: list[WorkflowTask]
         """
+        if tasks is None:
+            raise ValueError("Invalid value for `tasks`, must not be `None`")  # noqa: E501
 
-        self._owner_email = owner_email
+        self._tasks = tasks
 
     @property
     def timeout_policy(self):
@@ -513,6 +450,48 @@ class WorkflowDef(object):
         self._timeout_seconds = timeout_seconds
 
     @property
+    def update_time(self):
+        """Gets the update_time of this WorkflowDef.  # noqa: E501
+
+
+        :return: The update_time of this WorkflowDef.  # noqa: E501
+        :rtype: int
+        """
+        return self._update_time
+
+    @update_time.setter
+    def update_time(self, update_time):
+        """Sets the update_time of this WorkflowDef.
+
+
+        :param update_time: The update_time of this WorkflowDef.  # noqa: E501
+        :type: int
+        """
+
+        self._update_time = update_time
+
+    @property
+    def updated_by(self):
+        """Gets the updated_by of this WorkflowDef.  # noqa: E501
+
+
+        :return: The updated_by of this WorkflowDef.  # noqa: E501
+        :rtype: str
+        """
+        return self._updated_by
+
+    @updated_by.setter
+    def updated_by(self, updated_by):
+        """Sets the updated_by of this WorkflowDef.
+
+
+        :param updated_by: The updated_by of this WorkflowDef.  # noqa: E501
+        :type: str
+        """
+
+        self._updated_by = updated_by
+
+    @property
     def variables(self):
         """Gets the variables of this WorkflowDef.  # noqa: E501
 
@@ -534,25 +513,46 @@ class WorkflowDef(object):
         self._variables = variables
 
     @property
-    def input_template(self):
-        """Gets the input_template of this WorkflowDef.  # noqa: E501
+    def version(self):
+        """Gets the version of this WorkflowDef.  # noqa: E501
 
 
-        :return: The input_template of this WorkflowDef.  # noqa: E501
-        :rtype: dict(str, object)
+        :return: The version of this WorkflowDef.  # noqa: E501
+        :rtype: int
         """
-        return self._input_template
+        return self._version
 
-    @input_template.setter
-    def input_template(self, input_template):
-        """Sets the input_template of this WorkflowDef.
+    @version.setter
+    def version(self, version):
+        """Sets the version of this WorkflowDef.
 
 
-        :param input_template: The input_template of this WorkflowDef.  # noqa: E501
-        :type: dict(str, object)
+        :param version: The version of this WorkflowDef.  # noqa: E501
+        :type: int
         """
 
-        self._input_template = input_template
+        self._version = version
+
+    @property
+    def workflow_status_listener_enabled(self):
+        """Gets the workflow_status_listener_enabled of this WorkflowDef.  # noqa: E501
+
+
+        :return: The workflow_status_listener_enabled of this WorkflowDef.  # noqa: E501
+        :rtype: bool
+        """
+        return self._workflow_status_listener_enabled
+
+    @workflow_status_listener_enabled.setter
+    def workflow_status_listener_enabled(self, workflow_status_listener_enabled):
+        """Sets the workflow_status_listener_enabled of this WorkflowDef.
+
+
+        :param workflow_status_listener_enabled: The workflow_status_listener_enabled of this WorkflowDef.  # noqa: E501
+        :type: bool
+        """
+
+        self._workflow_status_listener_enabled = workflow_status_listener_enabled
 
     def to_dict(self):
         """Returns the model properties as a dict"""

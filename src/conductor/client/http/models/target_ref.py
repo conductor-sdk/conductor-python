@@ -16,51 +16,22 @@ class TargetRef(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'type': 'str',
-        'id': 'str'
+        'id': 'str',
+        'type': 'str'
     }
 
     attribute_map = {
-        'type': 'type',
-        'id': 'id'
+        'id': 'id',
+        'type': 'type'
     }
 
-    def __init__(self, type=None, id=None):  # noqa: E501
+    def __init__(self, id=None, type=None):  # noqa: E501
         """TargetRef - a model defined in Swagger"""  # noqa: E501
-        self._type = None
         self._id = None
+        self._type = None
         self.discriminator = None
-        self.type = type
         self.id = id
-
-    @property
-    def type(self):
-        """Gets the type of this TargetRef.  # noqa: E501
-
-
-        :return: The type of this TargetRef.  # noqa: E501
-        :rtype: str
-        """
-        return self._type
-
-    @type.setter
-    def type(self, type):
-        """Sets the type of this TargetRef.
-
-
-        :param type: The type of this TargetRef.  # noqa: E501
-        :type: str
-        """
-        if type is None:
-            raise ValueError("Invalid value for `type`, must not be `None`")  # noqa: E501
-        allowed_values = ["WORKFLOW_DEF", "TASK_DEF", "APPLICATION", "USER"]  # noqa: E501
-        if type not in allowed_values:
-            raise ValueError(
-                "Invalid value for `type` ({0}), must be one of {1}"  # noqa: E501
-                .format(type, allowed_values)
-            )
-
-        self._type = type
+        self.type = type
 
     @property
     def id(self):
@@ -90,6 +61,35 @@ class TargetRef(object):
             )
 
         self._id = id
+
+    @property
+    def type(self):
+        """Gets the type of this TargetRef.  # noqa: E501
+
+
+        :return: The type of this TargetRef.  # noqa: E501
+        :rtype: str
+        """
+        return self._type
+
+    @type.setter
+    def type(self, type):
+        """Sets the type of this TargetRef.
+
+
+        :param type: The type of this TargetRef.  # noqa: E501
+        :type: str
+        """
+        if type is None:
+            raise ValueError("Invalid value for `type`, must not be `None`")  # noqa: E501
+        allowed_values = ["WORKFLOW_DEF", "TASK_DEF", "APPLICATION", "USER"]  # noqa: E501
+        if type not in allowed_values:
+            raise ValueError(
+                "Invalid value for `type` ({0}), must be one of {1}"  # noqa: E501
+                .format(type, allowed_values)
+            )
+
+        self._type = type
 
     def to_dict(self):
         """Returns the model properties as a dict"""

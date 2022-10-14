@@ -16,81 +16,39 @@ class StartWorkflow(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'name': 'str',
-        'version': 'int',
         'correlation_id': 'str',
         'input': 'dict(str, object)',
-        'task_to_domain': 'dict(str, str)'
+        'name': 'str',
+        'task_to_domain': 'dict(str, str)',
+        'version': 'int'
     }
 
     attribute_map = {
-        'name': 'name',
-        'version': 'version',
         'correlation_id': 'correlationId',
         'input': 'input',
-        'task_to_domain': 'taskToDomain'
+        'name': 'name',
+        'task_to_domain': 'taskToDomain',
+        'version': 'version'
     }
 
-    def __init__(self, name=None, version=None, correlation_id=None, input=None, task_to_domain=None):  # noqa: E501
+    def __init__(self, correlation_id=None, input=None, name=None, task_to_domain=None, version=None):  # noqa: E501
         """StartWorkflow - a model defined in Swagger"""  # noqa: E501
-        self._name = None
-        self._version = None
         self._correlation_id = None
         self._input = None
+        self._name = None
         self._task_to_domain = None
+        self._version = None
         self.discriminator = None
-        if name is not None:
-            self.name = name
-        if version is not None:
-            self.version = version
         if correlation_id is not None:
             self.correlation_id = correlation_id
         if input is not None:
             self.input = input
+        if name is not None:
+            self.name = name
         if task_to_domain is not None:
             self.task_to_domain = task_to_domain
-
-    @property
-    def name(self):
-        """Gets the name of this StartWorkflow.  # noqa: E501
-
-
-        :return: The name of this StartWorkflow.  # noqa: E501
-        :rtype: str
-        """
-        return self._name
-
-    @name.setter
-    def name(self, name):
-        """Sets the name of this StartWorkflow.
-
-
-        :param name: The name of this StartWorkflow.  # noqa: E501
-        :type: str
-        """
-
-        self._name = name
-
-    @property
-    def version(self):
-        """Gets the version of this StartWorkflow.  # noqa: E501
-
-
-        :return: The version of this StartWorkflow.  # noqa: E501
-        :rtype: int
-        """
-        return self._version
-
-    @version.setter
-    def version(self, version):
-        """Sets the version of this StartWorkflow.
-
-
-        :param version: The version of this StartWorkflow.  # noqa: E501
-        :type: int
-        """
-
-        self._version = version
+        if version is not None:
+            self.version = version
 
     @property
     def correlation_id(self):
@@ -135,6 +93,27 @@ class StartWorkflow(object):
         self._input = input
 
     @property
+    def name(self):
+        """Gets the name of this StartWorkflow.  # noqa: E501
+
+
+        :return: The name of this StartWorkflow.  # noqa: E501
+        :rtype: str
+        """
+        return self._name
+
+    @name.setter
+    def name(self, name):
+        """Sets the name of this StartWorkflow.
+
+
+        :param name: The name of this StartWorkflow.  # noqa: E501
+        :type: str
+        """
+
+        self._name = name
+
+    @property
     def task_to_domain(self):
         """Gets the task_to_domain of this StartWorkflow.  # noqa: E501
 
@@ -154,6 +133,27 @@ class StartWorkflow(object):
         """
 
         self._task_to_domain = task_to_domain
+
+    @property
+    def version(self):
+        """Gets the version of this StartWorkflow.  # noqa: E501
+
+
+        :return: The version of this StartWorkflow.  # noqa: E501
+        :rtype: int
+        """
+        return self._version
+
+    @version.setter
+    def version(self, version):
+        """Sets the version of this StartWorkflow.
+
+
+        :param version: The version of this StartWorkflow.  # noqa: E501
+        :type: int
+        """
+
+        self._version = version
 
     def to_dict(self):
         """Returns the model properties as a dict"""

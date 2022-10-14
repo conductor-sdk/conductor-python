@@ -16,29 +16,50 @@ class TaskExecLog(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'created_time': 'int',
         'log': 'str',
-        'task_id': 'str',
-        'created_time': 'int'
+        'task_id': 'str'
     }
 
     attribute_map = {
+        'created_time': 'createdTime',
         'log': 'log',
-        'task_id': 'taskId',
-        'created_time': 'createdTime'
+        'task_id': 'taskId'
     }
 
-    def __init__(self, log=None, task_id=None, created_time=None):  # noqa: E501
+    def __init__(self, created_time=None, log=None, task_id=None):  # noqa: E501
         """TaskExecLog - a model defined in Swagger"""  # noqa: E501
+        self._created_time = None
         self._log = None
         self._task_id = None
-        self._created_time = None
         self.discriminator = None
+        if created_time is not None:
+            self.created_time = created_time
         if log is not None:
             self.log = log
         if task_id is not None:
             self.task_id = task_id
-        if created_time is not None:
-            self.created_time = created_time
+
+    @property
+    def created_time(self):
+        """Gets the created_time of this TaskExecLog.  # noqa: E501
+
+
+        :return: The created_time of this TaskExecLog.  # noqa: E501
+        :rtype: int
+        """
+        return self._created_time
+
+    @created_time.setter
+    def created_time(self, created_time):
+        """Sets the created_time of this TaskExecLog.
+
+
+        :param created_time: The created_time of this TaskExecLog.  # noqa: E501
+        :type: int
+        """
+
+        self._created_time = created_time
 
     @property
     def log(self):
@@ -81,27 +102,6 @@ class TaskExecLog(object):
         """
 
         self._task_id = task_id
-
-    @property
-    def created_time(self):
-        """Gets the created_time of this TaskExecLog.  # noqa: E501
-
-
-        :return: The created_time of this TaskExecLog.  # noqa: E501
-        :rtype: int
-        """
-        return self._created_time
-
-    @created_time.setter
-    def created_time(self, created_time):
-        """Sets the created_time of this TaskExecLog.
-
-
-        :param created_time: The created_time of this TaskExecLog.  # noqa: E501
-        :type: int
-        """
-
-        self._created_time = created_time
 
     def to_dict(self):
         """Returns the model properties as a dict"""

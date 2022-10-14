@@ -16,80 +16,77 @@ class SaveScheduleRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'name': 'str',
-        'cron_expression': 'str',
-        'run_catchup_schedule_instances': 'bool',
-        'paused': 'bool',
-        'start_workflow_request': 'StartWorkflowRequest',
         'created_by': 'str',
-        'updated_by': 'str',
+        'cron_expression': 'str',
+        'name': 'str',
+        'paused': 'bool',
+        'run_catchup_schedule_instances': 'bool',
+        'schedule_end_time': 'int',
         'schedule_start_time': 'int',
-        'schedule_end_time': 'int'
+        'start_workflow_request': 'StartWorkflowRequest',
+        'updated_by': 'str'
     }
 
     attribute_map = {
-        'name': 'name',
-        'cron_expression': 'cronExpression',
-        'run_catchup_schedule_instances': 'runCatchupScheduleInstances',
-        'paused': 'paused',
-        'start_workflow_request': 'startWorkflowRequest',
         'created_by': 'createdBy',
-        'updated_by': 'updatedBy',
+        'cron_expression': 'cronExpression',
+        'name': 'name',
+        'paused': 'paused',
+        'run_catchup_schedule_instances': 'runCatchupScheduleInstances',
+        'schedule_end_time': 'scheduleEndTime',
         'schedule_start_time': 'scheduleStartTime',
-        'schedule_end_time': 'scheduleEndTime'
+        'start_workflow_request': 'startWorkflowRequest',
+        'updated_by': 'updatedBy'
     }
 
-    def __init__(self, name=None, cron_expression=None, run_catchup_schedule_instances=None, paused=None, start_workflow_request=None, created_by=None, updated_by=None, schedule_start_time=None, schedule_end_time=None):  # noqa: E501
+    def __init__(self, created_by=None, cron_expression=None, name=None, paused=None, run_catchup_schedule_instances=None, schedule_end_time=None, schedule_start_time=None, start_workflow_request=None, updated_by=None):  # noqa: E501
         """SaveScheduleRequest - a model defined in Swagger"""  # noqa: E501
-        self._name = None
-        self._cron_expression = None
-        self._run_catchup_schedule_instances = None
-        self._paused = None
-        self._start_workflow_request = None
         self._created_by = None
-        self._updated_by = None
-        self._schedule_start_time = None
+        self._cron_expression = None
+        self._name = None
+        self._paused = None
+        self._run_catchup_schedule_instances = None
         self._schedule_end_time = None
+        self._schedule_start_time = None
+        self._start_workflow_request = None
+        self._updated_by = None
         self.discriminator = None
-        self.name = name
-        self.cron_expression = cron_expression
-        if run_catchup_schedule_instances is not None:
-            self.run_catchup_schedule_instances = run_catchup_schedule_instances
-        if paused is not None:
-            self.paused = paused
-        if start_workflow_request is not None:
-            self.start_workflow_request = start_workflow_request
         if created_by is not None:
             self.created_by = created_by
-        if updated_by is not None:
-            self.updated_by = updated_by
-        if schedule_start_time is not None:
-            self.schedule_start_time = schedule_start_time
+        self.cron_expression = cron_expression
+        self.name = name
+        if paused is not None:
+            self.paused = paused
+        if run_catchup_schedule_instances is not None:
+            self.run_catchup_schedule_instances = run_catchup_schedule_instances
         if schedule_end_time is not None:
             self.schedule_end_time = schedule_end_time
+        if schedule_start_time is not None:
+            self.schedule_start_time = schedule_start_time
+        self.start_workflow_request = start_workflow_request
+        if updated_by is not None:
+            self.updated_by = updated_by
 
     @property
-    def name(self):
-        """Gets the name of this SaveScheduleRequest.  # noqa: E501
+    def created_by(self):
+        """Gets the created_by of this SaveScheduleRequest.  # noqa: E501
 
 
-        :return: The name of this SaveScheduleRequest.  # noqa: E501
+        :return: The created_by of this SaveScheduleRequest.  # noqa: E501
         :rtype: str
         """
-        return self._name
+        return self._created_by
 
-    @name.setter
-    def name(self, name):
-        """Sets the name of this SaveScheduleRequest.
+    @created_by.setter
+    def created_by(self, created_by):
+        """Sets the created_by of this SaveScheduleRequest.
 
 
-        :param name: The name of this SaveScheduleRequest.  # noqa: E501
+        :param created_by: The created_by of this SaveScheduleRequest.  # noqa: E501
         :type: str
         """
-        if name is None:
-            raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
 
-        self._name = name
+        self._created_by = created_by
 
     @property
     def cron_expression(self):
@@ -115,25 +112,27 @@ class SaveScheduleRequest(object):
         self._cron_expression = cron_expression
 
     @property
-    def run_catchup_schedule_instances(self):
-        """Gets the run_catchup_schedule_instances of this SaveScheduleRequest.  # noqa: E501
+    def name(self):
+        """Gets the name of this SaveScheduleRequest.  # noqa: E501
 
 
-        :return: The run_catchup_schedule_instances of this SaveScheduleRequest.  # noqa: E501
-        :rtype: bool
+        :return: The name of this SaveScheduleRequest.  # noqa: E501
+        :rtype: str
         """
-        return self._run_catchup_schedule_instances
+        return self._name
 
-    @run_catchup_schedule_instances.setter
-    def run_catchup_schedule_instances(self, run_catchup_schedule_instances):
-        """Sets the run_catchup_schedule_instances of this SaveScheduleRequest.
+    @name.setter
+    def name(self, name):
+        """Sets the name of this SaveScheduleRequest.
 
 
-        :param run_catchup_schedule_instances: The run_catchup_schedule_instances of this SaveScheduleRequest.  # noqa: E501
-        :type: bool
+        :param name: The name of this SaveScheduleRequest.  # noqa: E501
+        :type: str
         """
+        if name is None:
+            raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
 
-        self._run_catchup_schedule_instances = run_catchup_schedule_instances
+        self._name = name
 
     @property
     def paused(self):
@@ -157,67 +156,46 @@ class SaveScheduleRequest(object):
         self._paused = paused
 
     @property
-    def start_workflow_request(self):
-        """Gets the start_workflow_request of this SaveScheduleRequest.  # noqa: E501
+    def run_catchup_schedule_instances(self):
+        """Gets the run_catchup_schedule_instances of this SaveScheduleRequest.  # noqa: E501
 
 
-        :return: The start_workflow_request of this SaveScheduleRequest.  # noqa: E501
-        :rtype: StartWorkflowRequest
+        :return: The run_catchup_schedule_instances of this SaveScheduleRequest.  # noqa: E501
+        :rtype: bool
         """
-        return self._start_workflow_request
+        return self._run_catchup_schedule_instances
 
-    @start_workflow_request.setter
-    def start_workflow_request(self, start_workflow_request):
-        """Sets the start_workflow_request of this SaveScheduleRequest.
+    @run_catchup_schedule_instances.setter
+    def run_catchup_schedule_instances(self, run_catchup_schedule_instances):
+        """Sets the run_catchup_schedule_instances of this SaveScheduleRequest.
 
 
-        :param start_workflow_request: The start_workflow_request of this SaveScheduleRequest.  # noqa: E501
-        :type: StartWorkflowRequest
+        :param run_catchup_schedule_instances: The run_catchup_schedule_instances of this SaveScheduleRequest.  # noqa: E501
+        :type: bool
         """
 
-        self._start_workflow_request = start_workflow_request
+        self._run_catchup_schedule_instances = run_catchup_schedule_instances
 
     @property
-    def created_by(self):
-        """Gets the created_by of this SaveScheduleRequest.  # noqa: E501
+    def schedule_end_time(self):
+        """Gets the schedule_end_time of this SaveScheduleRequest.  # noqa: E501
 
 
-        :return: The created_by of this SaveScheduleRequest.  # noqa: E501
-        :rtype: str
+        :return: The schedule_end_time of this SaveScheduleRequest.  # noqa: E501
+        :rtype: int
         """
-        return self._created_by
+        return self._schedule_end_time
 
-    @created_by.setter
-    def created_by(self, created_by):
-        """Sets the created_by of this SaveScheduleRequest.
-
-
-        :param created_by: The created_by of this SaveScheduleRequest.  # noqa: E501
-        :type: str
-        """
-
-        self._created_by = created_by
-
-    @property
-    def updated_by(self):
-        """Gets the updated_by of this SaveScheduleRequest.  # noqa: E501
+    @schedule_end_time.setter
+    def schedule_end_time(self, schedule_end_time):
+        """Sets the schedule_end_time of this SaveScheduleRequest.
 
 
-        :return: The updated_by of this SaveScheduleRequest.  # noqa: E501
-        :rtype: str
-        """
-        return self._updated_by
-
-    @updated_by.setter
-    def updated_by(self, updated_by):
-        """Sets the updated_by of this SaveScheduleRequest.
-
-
-        :param updated_by: The updated_by of this SaveScheduleRequest.  # noqa: E501
-        :type: str
+        :param schedule_end_time: The schedule_end_time of this SaveScheduleRequest.  # noqa: E501
+        :type: int
         """
 
-        self._updated_by = updated_by
+        self._schedule_end_time = schedule_end_time
 
     @property
     def schedule_start_time(self):
@@ -241,25 +219,48 @@ class SaveScheduleRequest(object):
         self._schedule_start_time = schedule_start_time
 
     @property
-    def schedule_end_time(self):
-        """Gets the schedule_end_time of this SaveScheduleRequest.  # noqa: E501
+    def start_workflow_request(self):
+        """Gets the start_workflow_request of this SaveScheduleRequest.  # noqa: E501
 
 
-        :return: The schedule_end_time of this SaveScheduleRequest.  # noqa: E501
-        :rtype: int
+        :return: The start_workflow_request of this SaveScheduleRequest.  # noqa: E501
+        :rtype: StartWorkflowRequest
         """
-        return self._schedule_end_time
+        return self._start_workflow_request
 
-    @schedule_end_time.setter
-    def schedule_end_time(self, schedule_end_time):
-        """Sets the schedule_end_time of this SaveScheduleRequest.
+    @start_workflow_request.setter
+    def start_workflow_request(self, start_workflow_request):
+        """Sets the start_workflow_request of this SaveScheduleRequest.
 
 
-        :param schedule_end_time: The schedule_end_time of this SaveScheduleRequest.  # noqa: E501
-        :type: int
+        :param start_workflow_request: The start_workflow_request of this SaveScheduleRequest.  # noqa: E501
+        :type: StartWorkflowRequest
+        """
+        if start_workflow_request is None:
+            raise ValueError("Invalid value for `start_workflow_request`, must not be `None`")  # noqa: E501
+
+        self._start_workflow_request = start_workflow_request
+
+    @property
+    def updated_by(self):
+        """Gets the updated_by of this SaveScheduleRequest.  # noqa: E501
+
+
+        :return: The updated_by of this SaveScheduleRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._updated_by
+
+    @updated_by.setter
+    def updated_by(self, updated_by):
+        """Sets the updated_by of this SaveScheduleRequest.
+
+
+        :param updated_by: The updated_by of this SaveScheduleRequest.  # noqa: E501
+        :type: str
         """
 
-        self._schedule_end_time = schedule_end_time
+        self._updated_by = updated_by
 
     def to_dict(self):
         """Returns the model properties as a dict"""

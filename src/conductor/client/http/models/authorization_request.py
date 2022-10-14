@@ -16,26 +16,58 @@ class AuthorizationRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'access': 'list[str]',
         'subject': 'SubjectRef',
-        'target': 'TargetRef',
-        'access': 'list[str]'
+        'target': 'TargetRef'
     }
 
     attribute_map = {
+        'access': 'access',
         'subject': 'subject',
-        'target': 'target',
-        'access': 'access'
+        'target': 'target'
     }
 
-    def __init__(self, subject=None, target=None, access=None):  # noqa: E501
+    def __init__(self, access=None, subject=None, target=None):  # noqa: E501
         """AuthorizationRequest - a model defined in Swagger"""  # noqa: E501
+        self._access = None
         self._subject = None
         self._target = None
-        self._access = None
         self.discriminator = None
+        self.access = access
         self.subject = subject
         self.target = target
-        self.access = access
+
+    @property
+    def access(self):
+        """Gets the access of this AuthorizationRequest.  # noqa: E501
+
+        The set of access which is granted or removed  # noqa: E501
+
+        :return: The access of this AuthorizationRequest.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._access
+
+    @access.setter
+    def access(self, access):
+        """Sets the access of this AuthorizationRequest.
+
+        The set of access which is granted or removed  # noqa: E501
+
+        :param access: The access of this AuthorizationRequest.  # noqa: E501
+        :type: list[str]
+        """
+        if access is None:
+            raise ValueError("Invalid value for `access`, must not be `None`")  # noqa: E501
+        allowed_values = ["CREATE", "READ", "UPDATE", "DELETE", "EXECUTE"]  # noqa: E501
+        if not set(access).issubset(set(allowed_values)):
+            raise ValueError(
+                "Invalid values for `access` [{0}], must be a subset of [{1}]"  # noqa: E501
+                .format(", ".join(map(str, set(access) - set(allowed_values))),  # noqa: E501
+                        ", ".join(map(str, allowed_values)))
+            )
+
+        self._access = access
 
     @property
     def subject(self):
@@ -82,38 +114,6 @@ class AuthorizationRequest(object):
             raise ValueError("Invalid value for `target`, must not be `None`")  # noqa: E501
 
         self._target = target
-
-    @property
-    def access(self):
-        """Gets the access of this AuthorizationRequest.  # noqa: E501
-
-        The set of access which is granted or removed  # noqa: E501
-
-        :return: The access of this AuthorizationRequest.  # noqa: E501
-        :rtype: list[str]
-        """
-        return self._access
-
-    @access.setter
-    def access(self, access):
-        """Sets the access of this AuthorizationRequest.
-
-        The set of access which is granted or removed  # noqa: E501
-
-        :param access: The access of this AuthorizationRequest.  # noqa: E501
-        :type: list[str]
-        """
-        if access is None:
-            raise ValueError("Invalid value for `access`, must not be `None`")  # noqa: E501
-        allowed_values = ["CREATE", "READ", "UPDATE", "DELETE", "EXECUTE"]  # noqa: E501
-        if not set(access).issubset(set(allowed_values)):
-            raise ValueError(
-                "Invalid values for `access` [{0}], must be a subset of [{1}]"  # noqa: E501
-                .format(", ".join(map(str, set(access) - set(allowed_values))),  # noqa: E501
-                        ", ".join(map(str, allowed_values)))
-            )
-
-        self._access = access
 
     def to_dict(self):
         """Returns the model properties as a dict"""

@@ -16,28 +16,51 @@ class UpsertUserRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'groups': 'list[str]',
         'name': 'str',
-        'roles': 'list[str]',
-        'groups': 'list[str]'
+        'roles': 'list[str]'
     }
 
     attribute_map = {
+        'groups': 'groups',
         'name': 'name',
-        'roles': 'roles',
-        'groups': 'groups'
+        'roles': 'roles'
     }
 
-    def __init__(self, name=None, roles=None, groups=None):  # noqa: E501
+    def __init__(self, groups=None, name=None, roles=None):  # noqa: E501
         """UpsertUserRequest - a model defined in Swagger"""  # noqa: E501
+        self._groups = None
         self._name = None
         self._roles = None
-        self._groups = None
         self.discriminator = None
+        if groups is not None:
+            self.groups = groups
         self.name = name
         if roles is not None:
             self.roles = roles
-        if groups is not None:
-            self.groups = groups
+
+    @property
+    def groups(self):
+        """Gets the groups of this UpsertUserRequest.  # noqa: E501
+
+        Ids of the groups this user belongs to  # noqa: E501
+
+        :return: The groups of this UpsertUserRequest.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._groups
+
+    @groups.setter
+    def groups(self, groups):
+        """Sets the groups of this UpsertUserRequest.
+
+        Ids of the groups this user belongs to  # noqa: E501
+
+        :param groups: The groups of this UpsertUserRequest.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._groups = groups
 
     @property
     def name(self):
@@ -91,29 +114,6 @@ class UpsertUserRequest(object):
             )
 
         self._roles = roles
-
-    @property
-    def groups(self):
-        """Gets the groups of this UpsertUserRequest.  # noqa: E501
-
-        Ids of the groups this user belongs to  # noqa: E501
-
-        :return: The groups of this UpsertUserRequest.  # noqa: E501
-        :rtype: list[str]
-        """
-        return self._groups
-
-    @groups.setter
-    def groups(self, groups):
-        """Sets the groups of this UpsertUserRequest.
-
-        Ids of the groups this user belongs to  # noqa: E501
-
-        :param groups: The groups of this UpsertUserRequest.  # noqa: E501
-        :type: list[str]
-        """
-
-        self._groups = groups
 
     def to_dict(self):
         """Returns the model properties as a dict"""

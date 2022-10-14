@@ -17,38 +17,48 @@ class Action(object):
     """
     swagger_types = {
         'action': 'str',
-        'start_workflow': 'StartWorkflow',
         'complete_task': 'TaskDetails',
+        'expand_inline_json': 'bool',
         'fail_task': 'TaskDetails',
-        'expand_inline_json': 'bool'
+        'start_workflow': 'StartWorkflow',
+        'terminate_workflow': 'TerminateWorkflow',
+        'update_workflow_variables': 'UpdateWorkflowVariables'
     }
 
     attribute_map = {
         'action': 'action',
-        'start_workflow': 'start_workflow',
         'complete_task': 'complete_task',
+        'expand_inline_json': 'expandInlineJSON',
         'fail_task': 'fail_task',
-        'expand_inline_json': 'expandInlineJSON'
+        'start_workflow': 'start_workflow',
+        'terminate_workflow': 'terminate_workflow',
+        'update_workflow_variables': 'update_workflow_variables'
     }
 
-    def __init__(self, action=None, start_workflow=None, complete_task=None, fail_task=None, expand_inline_json=None):  # noqa: E501
+    def __init__(self, action=None, complete_task=None, expand_inline_json=None, fail_task=None, start_workflow=None, terminate_workflow=None, update_workflow_variables=None):  # noqa: E501
         """Action - a model defined in Swagger"""  # noqa: E501
         self._action = None
-        self._start_workflow = None
         self._complete_task = None
-        self._fail_task = None
         self._expand_inline_json = None
+        self._fail_task = None
+        self._start_workflow = None
+        self._terminate_workflow = None
+        self._update_workflow_variables = None
         self.discriminator = None
         if action is not None:
             self.action = action
-        if start_workflow is not None:
-            self.start_workflow = start_workflow
         if complete_task is not None:
             self.complete_task = complete_task
-        if fail_task is not None:
-            self.fail_task = fail_task
         if expand_inline_json is not None:
             self.expand_inline_json = expand_inline_json
+        if fail_task is not None:
+            self.fail_task = fail_task
+        if start_workflow is not None:
+            self.start_workflow = start_workflow
+        if terminate_workflow is not None:
+            self.terminate_workflow = terminate_workflow
+        if update_workflow_variables is not None:
+            self.update_workflow_variables = update_workflow_variables
 
     @property
     def action(self):
@@ -68,7 +78,7 @@ class Action(object):
         :param action: The action of this Action.  # noqa: E501
         :type: str
         """
-        allowed_values = ["start_workflow", "complete_task", "fail_task"]  # noqa: E501
+        allowed_values = ["start_workflow", "complete_task", "fail_task", "terminate_workflow", "update_workflow_variables"]  # noqa: E501
         if action not in allowed_values:
             raise ValueError(
                 "Invalid value for `action` ({0}), must be one of {1}"  # noqa: E501
@@ -76,27 +86,6 @@ class Action(object):
             )
 
         self._action = action
-
-    @property
-    def start_workflow(self):
-        """Gets the start_workflow of this Action.  # noqa: E501
-
-
-        :return: The start_workflow of this Action.  # noqa: E501
-        :rtype: StartWorkflow
-        """
-        return self._start_workflow
-
-    @start_workflow.setter
-    def start_workflow(self, start_workflow):
-        """Sets the start_workflow of this Action.
-
-
-        :param start_workflow: The start_workflow of this Action.  # noqa: E501
-        :type: StartWorkflow
-        """
-
-        self._start_workflow = start_workflow
 
     @property
     def complete_task(self):
@@ -120,6 +109,27 @@ class Action(object):
         self._complete_task = complete_task
 
     @property
+    def expand_inline_json(self):
+        """Gets the expand_inline_json of this Action.  # noqa: E501
+
+
+        :return: The expand_inline_json of this Action.  # noqa: E501
+        :rtype: bool
+        """
+        return self._expand_inline_json
+
+    @expand_inline_json.setter
+    def expand_inline_json(self, expand_inline_json):
+        """Sets the expand_inline_json of this Action.
+
+
+        :param expand_inline_json: The expand_inline_json of this Action.  # noqa: E501
+        :type: bool
+        """
+
+        self._expand_inline_json = expand_inline_json
+
+    @property
     def fail_task(self):
         """Gets the fail_task of this Action.  # noqa: E501
 
@@ -141,25 +151,67 @@ class Action(object):
         self._fail_task = fail_task
 
     @property
-    def expand_inline_json(self):
-        """Gets the expand_inline_json of this Action.  # noqa: E501
+    def start_workflow(self):
+        """Gets the start_workflow of this Action.  # noqa: E501
 
 
-        :return: The expand_inline_json of this Action.  # noqa: E501
-        :rtype: bool
+        :return: The start_workflow of this Action.  # noqa: E501
+        :rtype: StartWorkflow
         """
-        return self._expand_inline_json
+        return self._start_workflow
 
-    @expand_inline_json.setter
-    def expand_inline_json(self, expand_inline_json):
-        """Sets the expand_inline_json of this Action.
+    @start_workflow.setter
+    def start_workflow(self, start_workflow):
+        """Sets the start_workflow of this Action.
 
 
-        :param expand_inline_json: The expand_inline_json of this Action.  # noqa: E501
-        :type: bool
+        :param start_workflow: The start_workflow of this Action.  # noqa: E501
+        :type: StartWorkflow
         """
 
-        self._expand_inline_json = expand_inline_json
+        self._start_workflow = start_workflow
+
+    @property
+    def terminate_workflow(self):
+        """Gets the terminate_workflow of this Action.  # noqa: E501
+
+
+        :return: The terminate_workflow of this Action.  # noqa: E501
+        :rtype: TerminateWorkflow
+        """
+        return self._terminate_workflow
+
+    @terminate_workflow.setter
+    def terminate_workflow(self, terminate_workflow):
+        """Sets the terminate_workflow of this Action.
+
+
+        :param terminate_workflow: The terminate_workflow of this Action.  # noqa: E501
+        :type: TerminateWorkflow
+        """
+
+        self._terminate_workflow = terminate_workflow
+
+    @property
+    def update_workflow_variables(self):
+        """Gets the update_workflow_variables of this Action.  # noqa: E501
+
+
+        :return: The update_workflow_variables of this Action.  # noqa: E501
+        :rtype: UpdateWorkflowVariables
+        """
+        return self._update_workflow_variables
+
+    @update_workflow_variables.setter
+    def update_workflow_variables(self, update_workflow_variables):
+        """Sets the update_workflow_variables of this Action.
+
+
+        :param update_workflow_variables: The update_workflow_variables of this Action.  # noqa: E501
+        :type: UpdateWorkflowVariables
+        """
+
+        self._update_workflow_variables = update_workflow_variables
 
     def to_dict(self):
         """Returns the model properties as a dict"""

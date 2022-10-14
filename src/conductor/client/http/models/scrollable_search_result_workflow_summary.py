@@ -16,45 +16,24 @@ class ScrollableSearchResultWorkflowSummary(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'results': 'list[WorkflowSummary]',
-        'query_id': 'str'
+        'query_id': 'str',
+        'results': 'list[WorkflowSummary]'
     }
 
     attribute_map = {
-        'results': 'results',
-        'query_id': 'queryId'
+        'query_id': 'queryId',
+        'results': 'results'
     }
 
-    def __init__(self, results=None, query_id=None):  # noqa: E501
+    def __init__(self, query_id=None, results=None):  # noqa: E501
         """ScrollableSearchResultWorkflowSummary - a model defined in Swagger"""  # noqa: E501
-        self._results = None
         self._query_id = None
+        self._results = None
         self.discriminator = None
-        if results is not None:
-            self.results = results
         if query_id is not None:
             self.query_id = query_id
-
-    @property
-    def results(self):
-        """Gets the results of this ScrollableSearchResultWorkflowSummary.  # noqa: E501
-
-
-        :return: The results of this ScrollableSearchResultWorkflowSummary.  # noqa: E501
-        :rtype: list[WorkflowSummary]
-        """
-        return self._results
-
-    @results.setter
-    def results(self, results):
-        """Sets the results of this ScrollableSearchResultWorkflowSummary.
-
-
-        :param results: The results of this ScrollableSearchResultWorkflowSummary.  # noqa: E501
-        :type: list[WorkflowSummary]
-        """
-
-        self._results = results
+        if results is not None:
+            self.results = results
 
     @property
     def query_id(self):
@@ -76,6 +55,27 @@ class ScrollableSearchResultWorkflowSummary(object):
         """
 
         self._query_id = query_id
+
+    @property
+    def results(self):
+        """Gets the results of this ScrollableSearchResultWorkflowSummary.  # noqa: E501
+
+
+        :return: The results of this ScrollableSearchResultWorkflowSummary.  # noqa: E501
+        :rtype: list[WorkflowSummary]
+        """
+        return self._results
+
+    @results.setter
+    def results(self, results):
+        """Sets the results of this ScrollableSearchResultWorkflowSummary.
+
+
+        :param results: The results of this ScrollableSearchResultWorkflowSummary.  # noqa: E501
+        :type: list[WorkflowSummary]
+        """
+
+        self._results = results
 
     def to_dict(self):
         """Returns the model properties as a dict"""

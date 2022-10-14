@@ -16,44 +16,86 @@ class ConductorUser(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'application_user': 'bool',
+        'groups': 'list[Group]',
         'id': 'str',
         'name': 'str',
         'roles': 'list[Role]',
-        'groups': 'list[Group]',
-        'uuid': 'str',
-        'application_user': 'bool'
+        'uuid': 'str'
     }
 
     attribute_map = {
+        'application_user': 'applicationUser',
+        'groups': 'groups',
         'id': 'id',
         'name': 'name',
         'roles': 'roles',
-        'groups': 'groups',
-        'uuid': 'uuid',
-        'application_user': 'applicationUser'
+        'uuid': 'uuid'
     }
 
-    def __init__(self, id=None, name=None, roles=None, groups=None, uuid=None, application_user=None):  # noqa: E501
+    def __init__(self, application_user=None, groups=None, id=None, name=None, roles=None, uuid=None):  # noqa: E501
         """ConductorUser - a model defined in Swagger"""  # noqa: E501
+        self._application_user = None
+        self._groups = None
         self._id = None
         self._name = None
         self._roles = None
-        self._groups = None
         self._uuid = None
-        self._application_user = None
         self.discriminator = None
+        if application_user is not None:
+            self.application_user = application_user
+        if groups is not None:
+            self.groups = groups
         if id is not None:
             self.id = id
         if name is not None:
             self.name = name
         if roles is not None:
             self.roles = roles
-        if groups is not None:
-            self.groups = groups
         if uuid is not None:
             self.uuid = uuid
-        if application_user is not None:
-            self.application_user = application_user
+
+    @property
+    def application_user(self):
+        """Gets the application_user of this ConductorUser.  # noqa: E501
+
+
+        :return: The application_user of this ConductorUser.  # noqa: E501
+        :rtype: bool
+        """
+        return self._application_user
+
+    @application_user.setter
+    def application_user(self, application_user):
+        """Sets the application_user of this ConductorUser.
+
+
+        :param application_user: The application_user of this ConductorUser.  # noqa: E501
+        :type: bool
+        """
+
+        self._application_user = application_user
+
+    @property
+    def groups(self):
+        """Gets the groups of this ConductorUser.  # noqa: E501
+
+
+        :return: The groups of this ConductorUser.  # noqa: E501
+        :rtype: list[Group]
+        """
+        return self._groups
+
+    @groups.setter
+    def groups(self, groups):
+        """Sets the groups of this ConductorUser.
+
+
+        :param groups: The groups of this ConductorUser.  # noqa: E501
+        :type: list[Group]
+        """
+
+        self._groups = groups
 
     @property
     def id(self):
@@ -119,27 +161,6 @@ class ConductorUser(object):
         self._roles = roles
 
     @property
-    def groups(self):
-        """Gets the groups of this ConductorUser.  # noqa: E501
-
-
-        :return: The groups of this ConductorUser.  # noqa: E501
-        :rtype: list[Group]
-        """
-        return self._groups
-
-    @groups.setter
-    def groups(self, groups):
-        """Sets the groups of this ConductorUser.
-
-
-        :param groups: The groups of this ConductorUser.  # noqa: E501
-        :type: list[Group]
-        """
-
-        self._groups = groups
-
-    @property
     def uuid(self):
         """Gets the uuid of this ConductorUser.  # noqa: E501
 
@@ -159,27 +180,6 @@ class ConductorUser(object):
         """
 
         self._uuid = uuid
-
-    @property
-    def application_user(self):
-        """Gets the application_user of this ConductorUser.  # noqa: E501
-
-
-        :return: The application_user of this ConductorUser.  # noqa: E501
-        :rtype: bool
-        """
-        return self._application_user
-
-    @application_user.setter
-    def application_user(self, application_user):
-        """Sets the application_user of this ConductorUser.
-
-
-        :param application_user: The application_user of this ConductorUser.  # noqa: E501
-        :type: bool
-        """
-
-        self._application_user = application_user
 
     def to_dict(self):
         """Returns the model properties as a dict"""

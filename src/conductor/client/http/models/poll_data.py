@@ -16,55 +16,34 @@ class PollData(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'queue_name': 'str',
         'domain': 'str',
-        'worker_id': 'str',
-        'last_poll_time': 'int'
+        'last_poll_time': 'int',
+        'queue_name': 'str',
+        'worker_id': 'str'
     }
 
     attribute_map = {
-        'queue_name': 'queueName',
         'domain': 'domain',
-        'worker_id': 'workerId',
-        'last_poll_time': 'lastPollTime'
+        'last_poll_time': 'lastPollTime',
+        'queue_name': 'queueName',
+        'worker_id': 'workerId'
     }
 
-    def __init__(self, queue_name=None, domain=None, worker_id=None, last_poll_time=None):  # noqa: E501
+    def __init__(self, domain=None, last_poll_time=None, queue_name=None, worker_id=None):  # noqa: E501
         """PollData - a model defined in Swagger"""  # noqa: E501
-        self._queue_name = None
         self._domain = None
-        self._worker_id = None
         self._last_poll_time = None
+        self._queue_name = None
+        self._worker_id = None
         self.discriminator = None
-        if queue_name is not None:
-            self.queue_name = queue_name
         if domain is not None:
             self.domain = domain
-        if worker_id is not None:
-            self.worker_id = worker_id
         if last_poll_time is not None:
             self.last_poll_time = last_poll_time
-
-    @property
-    def queue_name(self):
-        """Gets the queue_name of this PollData.  # noqa: E501
-
-
-        :return: The queue_name of this PollData.  # noqa: E501
-        :rtype: str
-        """
-        return self._queue_name
-
-    @queue_name.setter
-    def queue_name(self, queue_name):
-        """Sets the queue_name of this PollData.
-
-
-        :param queue_name: The queue_name of this PollData.  # noqa: E501
-        :type: str
-        """
-
-        self._queue_name = queue_name
+        if queue_name is not None:
+            self.queue_name = queue_name
+        if worker_id is not None:
+            self.worker_id = worker_id
 
     @property
     def domain(self):
@@ -88,27 +67,6 @@ class PollData(object):
         self._domain = domain
 
     @property
-    def worker_id(self):
-        """Gets the worker_id of this PollData.  # noqa: E501
-
-
-        :return: The worker_id of this PollData.  # noqa: E501
-        :rtype: str
-        """
-        return self._worker_id
-
-    @worker_id.setter
-    def worker_id(self, worker_id):
-        """Sets the worker_id of this PollData.
-
-
-        :param worker_id: The worker_id of this PollData.  # noqa: E501
-        :type: str
-        """
-
-        self._worker_id = worker_id
-
-    @property
     def last_poll_time(self):
         """Gets the last_poll_time of this PollData.  # noqa: E501
 
@@ -128,6 +86,48 @@ class PollData(object):
         """
 
         self._last_poll_time = last_poll_time
+
+    @property
+    def queue_name(self):
+        """Gets the queue_name of this PollData.  # noqa: E501
+
+
+        :return: The queue_name of this PollData.  # noqa: E501
+        :rtype: str
+        """
+        return self._queue_name
+
+    @queue_name.setter
+    def queue_name(self, queue_name):
+        """Sets the queue_name of this PollData.
+
+
+        :param queue_name: The queue_name of this PollData.  # noqa: E501
+        :type: str
+        """
+
+        self._queue_name = queue_name
+
+    @property
+    def worker_id(self):
+        """Gets the worker_id of this PollData.  # noqa: E501
+
+
+        :return: The worker_id of this PollData.  # noqa: E501
+        :rtype: str
+        """
+        return self._worker_id
+
+    @worker_id.setter
+    def worker_id(self, worker_id):
+        """Sets the worker_id of this PollData.
+
+
+        :param worker_id: The worker_id of this PollData.  # noqa: E501
+        :type: str
+        """
+
+        self._worker_id = worker_id
 
     def to_dict(self):
         """Returns the model properties as a dict"""

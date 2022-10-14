@@ -16,108 +16,41 @@ class EventHandler(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'name': 'str',
-        'event': 'str',
-        'condition': 'str',
         'actions': 'list[Action]',
         'active': 'bool',
-        'evaluator_type': 'str'
+        'condition': 'str',
+        'evaluator_type': 'str',
+        'event': 'str',
+        'name': 'str'
     }
 
     attribute_map = {
-        'name': 'name',
-        'event': 'event',
-        'condition': 'condition',
         'actions': 'actions',
         'active': 'active',
-        'evaluator_type': 'evaluatorType'
+        'condition': 'condition',
+        'evaluator_type': 'evaluatorType',
+        'event': 'event',
+        'name': 'name'
     }
 
-    def __init__(self, name=None, event=None, condition=None, actions=None, active=None, evaluator_type=None):  # noqa: E501
+    def __init__(self, actions=None, active=None, condition=None, evaluator_type=None, event=None, name=None):  # noqa: E501
         """EventHandler - a model defined in Swagger"""  # noqa: E501
-        self._name = None
-        self._event = None
-        self._condition = None
         self._actions = None
         self._active = None
+        self._condition = None
         self._evaluator_type = None
+        self._event = None
+        self._name = None
         self.discriminator = None
-        self.name = name
-        self.event = event
-        if condition is not None:
-            self.condition = condition
         self.actions = actions
         if active is not None:
             self.active = active
+        if condition is not None:
+            self.condition = condition
         if evaluator_type is not None:
             self.evaluator_type = evaluator_type
-
-    @property
-    def name(self):
-        """Gets the name of this EventHandler.  # noqa: E501
-
-
-        :return: The name of this EventHandler.  # noqa: E501
-        :rtype: str
-        """
-        return self._name
-
-    @name.setter
-    def name(self, name):
-        """Sets the name of this EventHandler.
-
-
-        :param name: The name of this EventHandler.  # noqa: E501
-        :type: str
-        """
-        if name is None:
-            raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
-
-        self._name = name
-
-    @property
-    def event(self):
-        """Gets the event of this EventHandler.  # noqa: E501
-
-
-        :return: The event of this EventHandler.  # noqa: E501
-        :rtype: str
-        """
-        return self._event
-
-    @event.setter
-    def event(self, event):
-        """Sets the event of this EventHandler.
-
-
-        :param event: The event of this EventHandler.  # noqa: E501
-        :type: str
-        """
-        if event is None:
-            raise ValueError("Invalid value for `event`, must not be `None`")  # noqa: E501
-
-        self._event = event
-
-    @property
-    def condition(self):
-        """Gets the condition of this EventHandler.  # noqa: E501
-
-
-        :return: The condition of this EventHandler.  # noqa: E501
-        :rtype: str
-        """
-        return self._condition
-
-    @condition.setter
-    def condition(self, condition):
-        """Sets the condition of this EventHandler.
-
-
-        :param condition: The condition of this EventHandler.  # noqa: E501
-        :type: str
-        """
-
-        self._condition = condition
+        self.event = event
+        self.name = name
 
     @property
     def actions(self):
@@ -164,6 +97,27 @@ class EventHandler(object):
         self._active = active
 
     @property
+    def condition(self):
+        """Gets the condition of this EventHandler.  # noqa: E501
+
+
+        :return: The condition of this EventHandler.  # noqa: E501
+        :rtype: str
+        """
+        return self._condition
+
+    @condition.setter
+    def condition(self, condition):
+        """Sets the condition of this EventHandler.
+
+
+        :param condition: The condition of this EventHandler.  # noqa: E501
+        :type: str
+        """
+
+        self._condition = condition
+
+    @property
     def evaluator_type(self):
         """Gets the evaluator_type of this EventHandler.  # noqa: E501
 
@@ -183,6 +137,52 @@ class EventHandler(object):
         """
 
         self._evaluator_type = evaluator_type
+
+    @property
+    def event(self):
+        """Gets the event of this EventHandler.  # noqa: E501
+
+
+        :return: The event of this EventHandler.  # noqa: E501
+        :rtype: str
+        """
+        return self._event
+
+    @event.setter
+    def event(self, event):
+        """Sets the event of this EventHandler.
+
+
+        :param event: The event of this EventHandler.  # noqa: E501
+        :type: str
+        """
+        if event is None:
+            raise ValueError("Invalid value for `event`, must not be `None`")  # noqa: E501
+
+        self._event = event
+
+    @property
+    def name(self):
+        """Gets the name of this EventHandler.  # noqa: E501
+
+
+        :return: The name of this EventHandler.  # noqa: E501
+        :rtype: str
+        """
+        return self._name
+
+    @name.setter
+    def name(self, name):
+        """Sets the name of this EventHandler.
+
+
+        :param name: The name of this EventHandler.  # noqa: E501
+        :type: str
+        """
+        if name is None:
+            raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
+
+        self._name = name
 
     def to_dict(self):
         """Returns the model properties as a dict"""

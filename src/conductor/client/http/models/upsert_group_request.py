@@ -16,23 +16,58 @@ class UpsertGroupRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'default_access': 'dict(str, list[str])',
         'description': 'str',
         'roles': 'list[str]'
     }
 
     attribute_map = {
+        'default_access': 'defaultAccess',
         'description': 'description',
         'roles': 'roles'
     }
 
-    def __init__(self, description=None, roles=None):  # noqa: E501
+    def __init__(self, default_access=None, description=None, roles=None):  # noqa: E501
         """UpsertGroupRequest - a model defined in Swagger"""  # noqa: E501
+        self._default_access = None
         self._description = None
         self._roles = None
         self.discriminator = None
+        if default_access is not None:
+            self.default_access = default_access
         self.description = description
         if roles is not None:
             self.roles = roles
+
+    @property
+    def default_access(self):
+        """Gets the default_access of this UpsertGroupRequest.  # noqa: E501
+
+        a default Map<TargetType, Set<Access> to share permissions, allowed target types: WORKFLOW_DEF, TASK_DEF, WORKFLOW_SCHEDULE  # noqa: E501
+
+        :return: The default_access of this UpsertGroupRequest.  # noqa: E501
+        :rtype: dict(str, list[str])
+        """
+        return self._default_access
+
+    @default_access.setter
+    def default_access(self, default_access):
+        """Sets the default_access of this UpsertGroupRequest.
+
+        a default Map<TargetType, Set<Access> to share permissions, allowed target types: WORKFLOW_DEF, TASK_DEF, WORKFLOW_SCHEDULE  # noqa: E501
+
+        :param default_access: The default_access of this UpsertGroupRequest.  # noqa: E501
+        :type: dict(str, list[str])
+        """
+        allowed_values = [CREATE, READ, UPDATE, DELETE, EXECUTE]  # noqa: E501
+        if not set(default_access.keys()).issubset(set(allowed_values)):
+            raise ValueError(
+                "Invalid keys in `default_access` [{0}], must be a subset of [{1}]"  # noqa: E501
+                .format(", ".join(map(str, set(default_access.keys()) - set(allowed_values))),  # noqa: E501
+                        ", ".join(map(str, allowed_values)))
+            )
+
+        self._default_access = default_access
 
     @property
     def description(self):

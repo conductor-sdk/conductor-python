@@ -16,29 +16,50 @@ class ConductorApplication(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'created_by': 'str',
         'id': 'str',
-        'name': 'str',
-        'created_by': 'str'
+        'name': 'str'
     }
 
     attribute_map = {
+        'created_by': 'createdBy',
         'id': 'id',
-        'name': 'name',
-        'created_by': 'createdBy'
+        'name': 'name'
     }
 
-    def __init__(self, id=None, name=None, created_by=None):  # noqa: E501
+    def __init__(self, created_by=None, id=None, name=None):  # noqa: E501
         """ConductorApplication - a model defined in Swagger"""  # noqa: E501
+        self._created_by = None
         self._id = None
         self._name = None
-        self._created_by = None
         self.discriminator = None
+        if created_by is not None:
+            self.created_by = created_by
         if id is not None:
             self.id = id
         if name is not None:
             self.name = name
-        if created_by is not None:
-            self.created_by = created_by
+
+    @property
+    def created_by(self):
+        """Gets the created_by of this ConductorApplication.  # noqa: E501
+
+
+        :return: The created_by of this ConductorApplication.  # noqa: E501
+        :rtype: str
+        """
+        return self._created_by
+
+    @created_by.setter
+    def created_by(self, created_by):
+        """Sets the created_by of this ConductorApplication.
+
+
+        :param created_by: The created_by of this ConductorApplication.  # noqa: E501
+        :type: str
+        """
+
+        self._created_by = created_by
 
     @property
     def id(self):
@@ -81,27 +102,6 @@ class ConductorApplication(object):
         """
 
         self._name = name
-
-    @property
-    def created_by(self):
-        """Gets the created_by of this ConductorApplication.  # noqa: E501
-
-
-        :return: The created_by of this ConductorApplication.  # noqa: E501
-        :rtype: str
-        """
-        return self._created_by
-
-    @created_by.setter
-    def created_by(self, created_by):
-        """Sets the created_by of this ConductorApplication.
-
-
-        :param created_by: The created_by of this ConductorApplication.  # noqa: E501
-        :type: str
-        """
-
-        self._created_by = created_by
 
     def to_dict(self):
         """Returns the model properties as a dict"""
