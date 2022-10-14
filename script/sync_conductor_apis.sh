@@ -65,6 +65,11 @@ function remove_init_file {
     echo "removed content from ${init_path_to_remove}"
 }
 
+function append_method_for_model_task_result {
+    code="\n    def add_output_data(self, key, value):\n        if self.output_data == None:\n            self.output_data = {}\n        self.output_data[key] = value"
+    echo "${code}" >>"${1}"
+}
+
 function update_api_file {
     remove_file_header "${1}" "# coding: utf-8.*from __future__" "from __future__"
     replace_import_header "${1}"
@@ -74,6 +79,10 @@ function update_api_file {
 
 function update_models_file {
     remove_file_header "$1" "# coding: utf-8.*import pprint" "import pprint"
+    echo "updating models file: ${1}"
+    if [[ "$1" == *"task_result.py" ]]; then
+        append_method_for_model_task_result "${1}"
+    fi
 }
 
 function update_files {
