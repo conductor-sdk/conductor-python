@@ -24,6 +24,7 @@ function undo_line_ending_replacement {
 
 function copy_from_generated_files {
     source_path="${SWAGGER_GENERATED_CODE_FOLDER}/swagger_client/${1}"
+    rm -rf "${PACKAGE_PATH}/${1}/"*
     destination_path="${PACKAGE_PATH}/${1}/"
     for filename in $(ls "${source_path}"); do
         cp "${source_path}/${filename}" "${destination_path}"
@@ -59,10 +60,13 @@ function replace_url_api_prefix {
     replace_with_sed "$pattern" "$replace" "$1"
 }
 
-function remove_init_file {
-    init_path_to_remove="${PACKAGE_PATH}/${1}/__init__.py"
-    echo "" >"${init_path_to_remove}"
-    echo "removed content from ${init_path_to_remove}"
+function update_api_init_file {
+    echo "" >"${1}"
+}
+
+function update_models_init_file {
+    remove_file_header "${1}" "# coding: utf-8.*from __future__" "from __future__"
+    replace_with_sed "from swagger_client.models." "from conductor.client.http.models." "${1}"
 }
 
 function append_method_for_model_task_result {
@@ -79,7 +83,6 @@ function update_api_file {
 
 function update_models_file {
     remove_file_header "$1" "# coding: utf-8.*import pprint" "import pprint"
-    echo "updating models file: ${1}"
     if [[ "$1" == *"task_result.py" ]]; then
         append_method_for_model_task_result "${1}"
     fi
@@ -88,16 +91,19 @@ function update_models_file {
 function update_files {
     echo "starting to update ${1} files..."
     copy_from_generated_files "${1}"
-    remove_init_file "${1}"
     for filename in $(ls "${PACKAGE_PATH}/${1}"); do
         filepath="${PACKAGE_PATH}/${1}/$filename"
         do_line_ending_replacement "${filepath}"
-        ${2} "${filepath}"
+        if [[ "$filename" == "__init__.py" ]]; then
+            ${2} "${filepath}"
+        else
+            ${3} "${filepath}"
+        fi
         undo_line_ending_replacement "${filepath}"
         echo "done updating: ${filepath}"
     done
     echo "done updating ${1} files"
 }
 
-update_files "api" update_api_file
-update_files "models" update_models_file
+update_files "api" update_api_init_file update_api_file
+update_files "models" update_models_init_file update_models_file
