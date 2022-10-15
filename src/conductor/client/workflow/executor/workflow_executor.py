@@ -3,13 +3,19 @@ from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
 from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
-from conductor.client.http.models import *
+from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
+from conductor.client.http.models.scrollable_search_result_workflow_summary import ScrollableSearchResultWorkflowSummary
+from conductor.client.http.models.skip_task_request import SkipTaskRequest
+from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
+from conductor.client.http.models.task_result import TaskResult
+from conductor.client.http.models.workflow import Workflow
+from conductor.client.http.models.workflow_def import WorkflowDef
+from conductor.client.http.models.workflow_status import WorkflowStatus
 from typing import Any, Dict, List
-from typing_extensions import Self
 
 
 class WorkflowExecutor:
-    def __init__(self, configuration: Configuration) -> Self:
+    def __init__(self, configuration: Configuration) -> None:
         api_client = ApiClient(configuration)
         self.metadata_client = MetadataResourceApi(api_client)
         self.task_client = TaskResourceApi(api_client)
@@ -119,13 +125,13 @@ class WorkflowExecutor:
 
     def pause(self, workflow_id: str) -> None:
         """Pauses the workflow"""
-        return self.workflow_client.pause_workflow1(
+        return self.workflow_client.pause_workflow(
             workflow_id=workflow_id
         )
 
     def resume(self, workflow_id: str) -> None:
         """Resumes the workflow"""
-        return self.workflow_client.resume_workflow1(
+        return self.workflow_client.resume_workflow(
             workflow_id=workflow_id
         )
 
@@ -144,7 +150,7 @@ class WorkflowExecutor:
         kwargs = {}
         if use_latest_definitions is not None:
             kwargs['use_latest_definitions'] = use_latest_definitions
-        return self.workflow_client.restart1(
+        return self.workflow_client.restart(
             workflow_id=workflow_id, **kwargs
         )
 
@@ -153,7 +159,7 @@ class WorkflowExecutor:
         kwargs = {}
         if resume_subworkflow_tasks is not None:
             kwargs['resume_subworkflow_tasks'] = resume_subworkflow_tasks
-        return self.workflow_client.retry1(
+        return self.workflow_client.retry(
             workflow_id=workflow_id, **kwargs
         )
 

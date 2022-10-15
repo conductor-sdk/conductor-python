@@ -110,10 +110,8 @@ def test_workflow_methods(
         _resume_workflow(workflow_executor, workflow_id)
         _terminate_workflow(workflow_executor, workflow_id)
         _restart_workflow(workflow_executor, workflow_id)
-        try:
-            workflow_executor.retry(workflow_id)
-        except Exception as e:
-            assert '409' in str(e)
+        _terminate_workflow(workflow_executor, workflow_id)
+        _retry_workflow(workflow_executor, workflow_id)
         _pause_workflow(workflow_executor, workflow_id)
         _terminate_workflow(workflow_executor, workflow_id)
         workflow_executor.rerun(
@@ -223,6 +221,16 @@ def _terminate_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -
 
 def _restart_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
     workflow_executor.restart(workflow_id)
+    workflow_status = workflow_executor.get_workflow_status(
+        workflow_id,
+        include_output=True,
+        include_variables=False,
+    )
+    assert workflow_status.status == 'RUNNING'
+
+
+def _retry_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+    workflow_executor.retry(workflow_id)
     workflow_status = workflow_executor.get_workflow_status(
         workflow_id,
         include_output=True,
