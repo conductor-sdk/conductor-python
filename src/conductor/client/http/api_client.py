@@ -243,6 +243,8 @@ class ApiClient(object):
             # convert str to class
             if klass in self.NATIVE_TYPES_MAPPING:
                 klass = self.NATIVE_TYPES_MAPPING[klass]
+            elif klass == Token.__name__:
+                klass = Token
             else:
                 klass = getattr(http_models, klass)
 
@@ -300,11 +302,11 @@ class ApiClient(object):
             then the method will return the response directly.
         """
         return self.__call_api(resource_path, method,
-                                path_params, query_params, header_params,
-                                body, post_params, files,
-                                response_type, auth_settings,
-                                _return_http_data_only, collection_formats,
-                                _preload_content, _request_timeout)
+                               path_params, query_params, header_params,
+                               body, post_params, files,
+                               response_type, auth_settings,
+                               _return_http_data_only, collection_formats,
+                               _preload_content, _request_timeout)
 
     def request(self, method, url, query_params=None, headers=None,
                 post_params=None, body=None, _preload_content=True,
@@ -657,3 +659,26 @@ class ApiClient(object):
             for key, value in encrypted_headers.items():
                 headers[key] = value
         return headers
+
+
+class Token(object):
+    swagger_types = {
+        'token': 'str'
+    }
+
+    attribute_map = {
+        'token': 'token'
+    }
+
+    def __init__(self, token: str = None):
+        self.token = None
+        if token is not None:
+            self.token = token
+
+    @property
+    def token(self) -> str:
+        return self._token
+
+    @token.setter
+    def token(self, token: str):
+        self._token = token
