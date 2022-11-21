@@ -64,3 +64,9 @@ class WorkerInterface(abc.ABC):
         :return: str
         """
         return None
+
+    def paused(self) -> bool:
+        """
+        Override this method to pause the worker from polling.
+        """
+        return False
