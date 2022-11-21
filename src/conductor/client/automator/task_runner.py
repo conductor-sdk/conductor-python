@@ -52,6 +52,9 @@ class TaskRunner:
 
     def __poll_task(self) -> Task:
         task_definition_name = self.worker.get_task_definition_name()
+        if self.worker.paused():
+            logger.warning(f'Stop polling task for: {task_definition_name}')
+            return None
         if self.metrics_collector is not None:
             self.metrics_collector.increment_task_poll(
                 task_definition_name
