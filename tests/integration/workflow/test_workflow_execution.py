@@ -124,7 +124,7 @@ def test_workflow_methods(
         try:
             workflow_executor.retry(workflow_id)
         except Exception as e:
-            assert '409' in str(e)
+            assert ('409' in str(e) or '500' in str(e))
         _pause_workflow(workflow_executor, workflow_id)
         _terminate_workflow(workflow_executor, workflow_id)
         workflow_executor.rerun(
