@@ -960,6 +960,111 @@ class WorkflowResourceApi(object):
             _preload_content=params.get('_preload_content', True),
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
+    
+    def get_workflows_batch(self, body, **kwargs):  # noqa: E501
+        """Lists workflows for the given correlation id list and workflow name list  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.get_workflows1(body, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param CorrelationIdsSearchRequest body: (required)
+        :param bool include_closed:
+        :param bool include_tasks:
+        :return: dict(str, list[Workflow])
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.get_workflows_batch_with_http_info(body, **kwargs)  # noqa: E501
+        else:
+            (data) = self.get_workflows_batch_with_http_info(body, **kwargs)  # noqa: E501
+            return data
+
+    def get_workflows_batch_with_http_info(self, body, **kwargs):  # noqa: E501
+        """Lists workflows for the given correlation id list and workflow name list  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.get_workflows1_with_http_info(body, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param CorrelationIdsSearchRequest body: (required)
+        :param bool include_closed:
+        :param bool include_tasks:
+        :return: dict(str, list[Workflow])
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'include_closed', 'include_tasks']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method get_workflows_batch" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `get_workflows_batch`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+        if 'include_closed' in params:
+            query_params.append(('includeClosed', params['include_closed']))  # noqa: E501
+        if 'include_tasks' in params:
+            query_params.append(('includeTasks', params['include_tasks']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['*/*'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/workflow/correlated/batch', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='dict(str, list[Workflow])',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
 
     def pause_workflow1(self, workflow_id, **kwargs):  # noqa: E501
         """Pauses the workflow  # noqa: E501
