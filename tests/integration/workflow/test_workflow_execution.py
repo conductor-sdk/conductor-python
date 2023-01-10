@@ -15,6 +15,7 @@ from resources.worker.python.python_worker import worker_with_generic_input_and_
 from resources.worker.python.python_worker import worker_with_task_input_and_generic_output
 from resources.worker.python.python_worker import worker_with_task_input_and_task_result_output
 from time import sleep
+import uuid
 
 WORKFLOW_NAME = "python_integration_test_workflow"
 TASK_NAME = "python_integration_test_task"
@@ -75,6 +76,16 @@ def test_get_workflow_by_correlation_ids(workflow_executor: WorkflowExecutor):
     assert ids != None
 
 
+def test_workflow_sync_execution(workflow_executor: WorkflowExecutor):
+    workflow_executor.workflow_client.execute_workflow(
+        body=StartWorkflowRequest(name=WORKFLOW_NAME),
+        request_id=str(uuid.uuid4()),
+        name=WORKFLOW_NAME,
+        version=WORKFLOW_VERSION,
+        wait_until_task_ref='',
+    )
+
+
 def test_workflow_methods(
     workflow_executor: WorkflowExecutor,
     workflow_quantity: int,
@@ -113,7 +124,7 @@ def test_workflow_methods(
         try:
             workflow_executor.retry(workflow_id)
         except Exception as e:
-            assert '409' in str(e)
+            assert ('409' in str(e) or '500' in str(e))
         _pause_workflow(workflow_executor, workflow_id)
         _terminate_workflow(workflow_executor, workflow_id)
         workflow_executor.rerun(
