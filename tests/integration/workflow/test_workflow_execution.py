@@ -60,6 +60,8 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
             workflow_quantity=2,
         )
         logger.debug('finished workflow methods tests')
+        test_workflow_sync_execution(workflow_executor)
+        logger.debug('finished workflow sync execution test')
     except Exception as e:
         task_handler.stop_processes()
         raise Exception(f'failed integration tests, reason: {e}')
