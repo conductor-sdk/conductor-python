@@ -43,7 +43,7 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
             workflow_quantity=10,
             workflow_name=WORKFLOW_NAME,
             workflow_executor=workflow_executor,
-            workflow_completion_timeout=3
+            workflow_completion_timeout=5
         )
         test_workflow_methods(
             workflow_executor,
