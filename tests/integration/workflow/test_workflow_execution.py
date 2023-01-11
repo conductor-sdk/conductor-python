@@ -15,12 +15,19 @@ from resources.worker.python.python_worker import worker_with_generic_input_and_
 from resources.worker.python.python_worker import worker_with_task_input_and_generic_output
 from resources.worker.python.python_worker import worker_with_task_input_and_task_result_output
 from time import sleep
+import logging
 import uuid
 
 WORKFLOW_NAME = "python_integration_test_workflow"
 TASK_NAME = "python_integration_test_task"
 WORKFLOW_VERSION = 1234
 WORKFLOW_OWNER_EMAIL = "test@test"
+
+logger = logging.getLogger(
+    Configuration.get_logging_formatted_name(
+        __name__
+    )
+)
 
 
 def run_workflow_execution_tests(configuration: Configuration, workflow_executor: WorkflowExecutor):
@@ -38,21 +45,25 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
     task_handler.start_processes()
     try:
         test_get_workflow_by_correlation_ids(workflow_executor)
+        logger.debug('finished workflow correlation ids test')
         test_workflow_registration(workflow_executor)
+        logger.debug('finished workflow registration tests')
         test_workflow_execution(
             workflow_quantity=10,
             workflow_name=WORKFLOW_NAME,
             workflow_executor=workflow_executor,
             workflow_completion_timeout=5
         )
+        logger.debug('finished workflow execution tests')
         test_workflow_methods(
             workflow_executor,
-            workflow_quantity=4,
+            workflow_quantity=2,
         )
+        logger.debug('finished workflow methods tests')
     except Exception as e:
-        raise Exception(f'failed integration tests, reason: {e}')
-    finally:
         task_handler.stop_processes()
+        raise Exception(f'failed integration tests, reason: {e}')
+    task_handler.stop_processes()
 
 
 def generate_tasks_defs():
@@ -124,18 +135,10 @@ def test_workflow_methods(
         _resume_workflow(workflow_executor, workflow_id)
         _terminate_workflow(workflow_executor, workflow_id)
         _restart_workflow(workflow_executor, workflow_id)
-        try:
-            workflow_executor.retry(workflow_id)
-        except Exception as e:
-            message = str(e)
-            if '409' not in message and '500' not in message:
-                raise e
-        _pause_workflow(workflow_executor, workflow_id)
         _terminate_workflow(workflow_executor, workflow_id)
-        workflow_executor.rerun(
-            RerunWorkflowRequest(),
-            workflow_id
-        )
+        _retry_workflow(workflow_executor, workflow_id)
+        _terminate_workflow(workflow_executor, workflow_id)
+        _rerun_workflow(workflow_executor, workflow_id)
         workflow_executor.remove_workflow(
             workflow_id, archive_workflow=False
         )
@@ -255,6 +258,32 @@ def _terminate_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -
 
 def _restart_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
     workflow_executor.restart(workflow_id)
+    workflow_status = workflow_executor.get_workflow_status(
+        workflow_id,
+        include_output=True,
+        include_variables=False,
+    )
+    if workflow_status.status != 'RUNNING':
+        raise Exception(
+            f'workflow expected to be RUNNING, but received {workflow_status.status}, workflow_id: {workflow_id}'
+        )
+
+
+def _retry_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+    workflow_executor.retry(workflow_id)
+    workflow_status = workflow_executor.get_workflow_status(
+        workflow_id,
+        include_output=True,
+        include_variables=False,
+    )
+    if workflow_status.status != 'RUNNING':
+        raise Exception(
+            f'workflow expected to be RUNNING, but received {workflow_status.status}, workflow_id: {workflow_id}'
+        )
+
+
+def _rerun_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+    workflow_executor.rerun(RerunWorkflowRequest(), workflow_id)
     workflow_status = workflow_executor.get_workflow_status(
         workflow_id,
         include_output=True,

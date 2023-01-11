@@ -35,7 +35,9 @@ def generate_configuration():
             key_id=envs['KEY'],
             key_secret=envs['SECRET']
         )
-    return Configuration(**params)
+    configuration = Configuration(**params)
+    configuration.apply_logging_config()
+    return configuration
 
 
 def main():
