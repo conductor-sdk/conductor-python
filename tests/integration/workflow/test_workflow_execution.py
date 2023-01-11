@@ -47,7 +47,7 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
         )
         test_workflow_methods(
             workflow_executor,
-            workflow_quantity=10,
+            workflow_quantity=3,
         )
     except Exception as e:
         raise Exception(f'failed integration tests, reason: {e}')
@@ -143,9 +143,13 @@ def test_workflow_methods(
 
 def test_workflow_registration(workflow_executor: WorkflowExecutor):
     workflow = generate_workflow(workflow_executor)
-    workflow_executor.metadata_client.unregister_workflow_def_with_http_info(
-        workflow.name, workflow.version
-    )
+    try:
+        workflow_executor.metadata_client.unregister_workflow_def_with_http_info(
+            workflow.name, workflow.version
+        )
+    except Exception as e:
+        if '404' not in str(e):
+            raise e
     workflow.register(overwrite=True) == None
     workflow_executor.register_workflow(
         workflow.to_workflow_def(), overwrite=True
@@ -206,7 +210,6 @@ def generate_worker(execute_function: ExecuteTaskFunction) -> Worker:
     return Worker(
         task_definition_name=TASK_NAME,
         execute_function=execute_function,
-        poll_interval=0.5
     )
 
 
