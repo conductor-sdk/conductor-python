@@ -3,50 +3,37 @@ name: Continuous Integration
 on: pull_request
 
 jobs:
-  linter:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.x"
-      - name: Instal pylint
-        run: python3 -m pip install pylint==2.14.5
-      - name: Run Pylint
-        run: python3 -m pylint --disable=all ./src
-  unit-tests:
+      - name: Lint
+        run: >
+          DOCKER_BUILDKIT=1 docker build .
+          --progress=plain
+          --target=lint
+  unit-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.x"
-      - name: Instal package from local files
-        run: python3 -m pip install .
-        env:
-          CONDUCTOR_PYTHON_VERSION: v0.0.0+test.unit
-      - name: Run Unit Tests
-        run: python3 -m unittest discover --verbose --start-directory=./tests/unit
-  integration-tests:
+      - name: Test
+        run: >
+          DOCKER_BUILDKIT=1 docker build .
+          --progress=plain
+          --target=unit_test
+  integration-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.x"
-      - name: Instal package from local files
-        run: python3 -m pip install .
-        env:
-          CONDUCTOR_PYTHON_VERSION: v0.0.0+test.integration
-      - name: Run Integration Tests
-        run: python3 ./tests/integration/main.py
-        env:
-          PYTHON_INTEGRATION_TESTS_SERVER_API_URL: ${{ secrets.PYTHON_INTEGRATION_TESTS_SERVER_API_URL }}
-          PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID: ${{ secrets.PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID }}
-          PYTHON_INTEGRATION_TESTS_SERVER_KEY_SECRET: ${{ secrets.PYTHON_INTEGRATION_TESTS_SERVER_KEY_SECRET }}
+      - name: Test
+        run: >
+          DOCKER_BUILDKIT=1 docker build
+          --progress=plain
+          --build-arg KEY=${{ secrets.KEY }}
+          --build-arg SECRET=${{ secrets.SECRET }}
+          --build-arg CONDUCTOR_SERVER_URL=${{ secrets.CONDUCTOR_SERVER_URL }}
+          --target=integration_test          
+          .

@@ -15,9 +15,9 @@ _logger = logging.getLogger(
 
 def generate_configuration():
     required_envs = {
-        'KEY': 'PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID',
-        'SECRET': 'PYTHON_INTEGRATION_TESTS_SERVER_KEY_SECRET',
-        'URL': 'PYTHON_INTEGRATION_TESTS_SERVER_API_URL',
+        'KEY': 'KEY',
+        'SECRET': 'SECRET',
+        'URL': 'CONDUCTOR_SERVER_URL',
     }
     envs = {}
     for key, env in required_envs.items():

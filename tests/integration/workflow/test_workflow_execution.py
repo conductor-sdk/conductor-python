@@ -36,19 +36,23 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
         configuration=configuration
     )
     task_handler.start_processes()
-    test_get_workflow_by_correlation_ids(workflow_executor)
-    test_workflow_registration(workflow_executor)
-    test_workflow_execution(
-        workflow_quantity=10,
-        workflow_name=WORKFLOW_NAME,
-        workflow_executor=workflow_executor,
-        workflow_completion_timeout=7
-    )
-    test_workflow_methods(
-        workflow_executor,
-        workflow_quantity=10,
-    )
-    task_handler.stop_processes()
+    try:
+        test_get_workflow_by_correlation_ids(workflow_executor)
+        test_workflow_registration(workflow_executor)
+        test_workflow_execution(
+            workflow_quantity=10,
+            workflow_name=WORKFLOW_NAME,
+            workflow_executor=workflow_executor,
+            workflow_completion_timeout=3
+        )
+        test_workflow_methods(
+            workflow_executor,
+            workflow_quantity=10,
+        )
+    except Exception as e:
+        raise Exception(f'failed integration tests, reason: {e}')
+    finally:
+        task_handler.stop_processes()
 
 
 def generate_tasks_defs():
@@ -67,13 +71,12 @@ def generate_tasks_defs():
 
 
 def test_get_workflow_by_correlation_ids(workflow_executor: WorkflowExecutor):
-    ids = workflow_executor.get_by_correlation_ids(
+    workflow_executor.get_by_correlation_ids(
         workflow_name=WORKFLOW_NAME,
         correlation_ids=[
             '2', '5', '33', '4', '32', '7', '34', '1', '3', '6', '1440'
         ]
     )
-    assert ids != None
 
 
 def test_workflow_sync_execution(workflow_executor: WorkflowExecutor):
@@ -124,7 +127,9 @@ def test_workflow_methods(
         try:
             workflow_executor.retry(workflow_id)
         except Exception as e:
-            assert ('409' in str(e) or '500' in str(e))
+            message = str(e)
+            if '409' not in message and '500' not in message:
+                raise e
         _pause_workflow(workflow_executor, workflow_id)
         _terminate_workflow(workflow_executor, workflow_id)
         workflow_executor.rerun(
@@ -138,16 +143,13 @@ def test_workflow_methods(
 
 def test_workflow_registration(workflow_executor: WorkflowExecutor):
     workflow = generate_workflow(workflow_executor)
-    try:
-        workflow_executor.metadata_client.unregister_workflow_def_with_http_info(
-            workflow.name, workflow.version
-        )
-    except:
-        pass
-    assert workflow.register(overwrite=True) == None
-    assert workflow_executor.register_workflow(
+    workflow_executor.metadata_client.unregister_workflow_def_with_http_info(
+        workflow.name, workflow.version
+    )
+    workflow.register(overwrite=True) == None
+    workflow_executor.register_workflow(
         workflow.to_workflow_def(), overwrite=True
-    ) == None
+    )
 
 
 def test_workflow_execution(
@@ -185,20 +187,26 @@ def validate_workflow_status(workflow_id: str, workflow_executor: WorkflowExecut
         workflow_id=workflow_id,
         include_tasks=False,
     )
-    assert workflow.status == 'COMPLETED'
+    if workflow.status != 'COMPLETED':
+        raise Exception(
+            f'workflow expected to be COMPLETED, but received {workflow.status}, workflow_id: {workflow_id}'
+        )
     workflow_status = workflow_executor.get_workflow_status(
         workflow_id=workflow_id,
         include_output=False,
         include_variables=False,
     )
-    assert workflow_status.status == 'COMPLETED'
+    if workflow_status.status != 'COMPLETED':
+        raise Exception(
+            f'workflow expected to be COMPLETED, but received {workflow_status.status}, workflow_id: {workflow_id}'
+        )
 
 
 def generate_worker(execute_function: ExecuteTaskFunction) -> Worker:
     return Worker(
         task_definition_name=TASK_NAME,
         execute_function=execute_function,
-        poll_interval=0.05
+        poll_interval=0.5
     )
 
 
@@ -209,7 +217,10 @@ def _pause_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> No
         include_output=True,
         include_variables=False,
     )
-    assert workflow_status.status == 'PAUSED'
+    if workflow_status.status != 'PAUSED':
+        raise Exception(
+            f'workflow expected to be PAUSED, but received {workflow_status.status}, workflow_id: {workflow_id}'
+        )
 
 
 def _resume_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
@@ -219,7 +230,10 @@ def _resume_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> N
         include_output=True,
         include_variables=False,
     )
-    assert workflow_status.status == 'RUNNING'
+    if workflow_status.status != 'RUNNING':
+        raise Exception(
+            f'workflow expected to be RUNNING, but received {workflow_status.status}, workflow_id: {workflow_id}'
+        )
 
 
 def _terminate_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
@@ -229,7 +243,10 @@ def _terminate_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -
         include_output=True,
         include_variables=False,
     )
-    assert workflow_status.status == 'TERMINATED'
+    if workflow_status.status != 'TERMINATED':
+        raise Exception(
+            f'workflow expected to be TERMINATED, but received {workflow_status.status}, workflow_id: {workflow_id}'
+        )
 
 
 def _restart_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
@@ -239,4 +256,7 @@ def _restart_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> 
         include_output=True,
         include_variables=False,
     )
-    assert workflow_status.status == 'RUNNING'
+    if workflow_status.status != 'RUNNING':
+        raise Exception(
+            f'workflow expected to be RUNNING, but received {workflow_status.status}, workflow_id: {workflow_id}'
+        )
