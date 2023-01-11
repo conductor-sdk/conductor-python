@@ -47,7 +47,7 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
         )
         test_workflow_methods(
             workflow_executor,
-            workflow_quantity=3,
+            workflow_quantity=4,
         )
     except Exception as e:
         raise Exception(f'failed integration tests, reason: {e}')
@@ -210,6 +210,7 @@ def generate_worker(execute_function: ExecuteTaskFunction) -> Worker:
     return Worker(
         task_definition_name=TASK_NAME,
         execute_function=execute_function,
+        poll_interval=0.75
     )
 
 
