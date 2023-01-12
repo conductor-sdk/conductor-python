@@ -1,4 +1,4 @@
-ARG SDK_ORIGIN
+ARG SDK_ORIGIN=local_sdk
 
 FROM python:3.11-alpine as piton
 RUN mkdir /package

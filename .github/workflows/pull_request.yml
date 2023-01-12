@@ -23,7 +23,6 @@ jobs:
           DOCKER_BUILDKIT=1 docker build .
           --progress=plain
           --target=unit_test
-          --build-arg SDK_ORIGIN=local_sdk
   integration-test:
     runs-on: ubuntu-latest
     steps:
@@ -33,7 +32,6 @@ jobs:
         run: >
           DOCKER_BUILDKIT=1 docker build
           --progress=plain
-          --build-arg SDK_ORIGIN=local_sdk
           --build-arg KEY=${{ secrets.KEY }}
           --build-arg SECRET=${{ secrets.SECRET }}
           --build-arg CONDUCTOR_SERVER_URL=${{ secrets.CONDUCTOR_SERVER_URL }}
