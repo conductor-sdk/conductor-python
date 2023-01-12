@@ -36,6 +36,11 @@ class TaskRunner:
             self.metrics_collector = MetricsCollector(
                 metrics_settings
             )
+        self.task_client = TaskResourceApi(
+            ApiClient(
+                configuration=self.configuration
+            )
+        )
 
     def run(self) -> None:
         if self.configuration != None:
@@ -46,6 +51,7 @@ class TaskRunner:
     def run_once(self) -> None:
         task = self.__poll_task()
         if task != None:
+            logger.debug(f'polled task: {task}')
             task_result = self.__execute_task(task)
             self.__update_task(task_result)
         self.__wait_for_polling_interval()
@@ -64,13 +70,13 @@ class TaskRunner:
             start_time = time.time()
             domain = self.worker.get_domain()
             if domain != None:
-                task = self.__get_task_resource_api().poll(
+                task = self.task_client.poll(
                     tasktype=task_definition_name,
                     workerid=self.worker.get_identity(),
                     domain=self.worker.get_domain(),
                 )
             else:
-                task = self.__get_task_resource_api().poll(
+                task = self.task_client.poll(
                     tasktype=task_definition_name,
                     workerid=self.worker.get_identity(),
                 )
@@ -161,7 +167,7 @@ class TaskRunner:
             )
         )
         try:
-            response = self.__get_task_resource_api().update_task(
+            response = self.task_client.update_task(
                 body=task_result
             )
         except Exception as e:
@@ -192,10 +198,3 @@ class TaskRunner:
         polling_interval = self.worker.get_polling_interval_in_seconds()
         logger.debug(f'Sleep for {polling_interval} seconds')
         time.sleep(polling_interval)
-
-    def __get_task_resource_api(self) -> TaskResourceApi:
-        return TaskResourceApi(
-            ApiClient(
-                configuration=self.configuration
-            )
-        )

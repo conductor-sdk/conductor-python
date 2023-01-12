@@ -12,7 +12,6 @@ import re
 import six
 import tempfile
 import traceback
-import urllib3
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -64,7 +63,7 @@ class ApiClient(object):
             configuration = Configuration()
         self.configuration = configuration
 
-        self.rest_client = rest.RESTClientObject(configuration)
+        self.rest_client = rest.RESTClientObject()
 
         self.default_headers = self.__get_default_headers(
             header_name, header_value
@@ -205,6 +204,7 @@ class ApiClient(object):
 
         :return: deserialized object.
         """
+        logger.debug(f'received response: {response}')
         # handle file downloading
         # save response body into a tmp file and return the instance
         if response_type == "file":
@@ -649,11 +649,4 @@ class ApiClient(object):
         }
         if header_name is not None:
             headers[header_name] = header_value
-        parsed = urllib3.util.parse_url(self.configuration.host)
-        if parsed.auth is not None:
-            encrypted_headers = urllib3.util.make_headers(
-                basic_auth=parsed.auth
-            )
-            for key, value in encrypted_headers.items():
-                headers[key] = value
         return headers
