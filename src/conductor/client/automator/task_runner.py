@@ -53,7 +53,7 @@ class TaskRunner:
 
     def run_once(self) -> None:
         task = self.__poll_task()
-        if task != None:
+        if task != None and task.task_id != None:
             task_result = self.__execute_task(task)
             self.__update_task(task_result)
         self.__wait_for_polling_interval()
