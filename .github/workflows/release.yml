@@ -5,58 +5,41 @@ on:
     types: [published]
 
 jobs:
-  build-package-and-publish-release-at-pypi:
+  publish-release-at-pypi:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.x"
-      - name: Install dependencies required to build package
-        run: python3 -m pip install -U setuptools wheel build
-      - name: Build package
-        run: python3 -m build
-        env:
-          CONDUCTOR_PYTHON_VERSION: ${{ github.ref_name }}
-      - name: Install dependencies required to publish package
-        run: python3 -m pip install -U twine
-      - name: Publish package at pypi
-        run: python3 -m twine upload dist/* -u ${{ secrets.pypi_user }} -p ${{ secrets.pypi_pass }}
+      - name: Test
+        run: >
+          DOCKER_BUILDKIT=1 docker build
+          --progress=plain
+          --build-arg CONDUCTOR_PYTHON_VERSION=${{ github.ref_name }}
+          --build-arg PYPI_USER=${{ secrets.pypi_user }}
+          --build-arg PYPI_PASS=${{ secrets.pypi_pass }}
+          --target=publish     
+          .
   wait-for-package-to-become-available-at-pypi:
     needs: build-package-and-publish-release-at-pypi
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.x"
       - name: Wait for package to become available at pypi
         run: sleep 300
-      - name: Install latest package version from pypi
-        run: python3 -m pip install conductor-python==$CONDUCTOR_PYTHON_VERSION
-        env:
-          CONDUCTOR_PYTHON_VERSION: ${{ github.ref_name }}
   validate-release:
-    needs: wait-for-package-to-become-available-at-pypi
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.x"
-      - name: Install latest package version from pypi
-        run: python3 -m pip install conductor-python==$CONDUCTOR_PYTHON_VERSION
-        env:
-          CONDUCTOR_PYTHON_VERSION: ${{ github.ref_name }}
-      - name: Run Integration Tests
-        run: python3 ./tests/integration/main.py
-        env:
-          PYTHON_INTEGRATION_TESTS_SERVER_API_URL: ${{ secrets.PYTHON_INTEGRATION_TESTS_SERVER_API_URL }}
-          PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID: ${{ secrets.PYTHON_INTEGRATION_TESTS_SERVER_KEY_ID }}
-          PYTHON_INTEGRATION_TESTS_SERVER_KEY_SECRET: ${{ secrets.PYTHON_INTEGRATION_TESTS_SERVER_KEY_SECRET }}
+      - name: Test
+        run: >
+          DOCKER_BUILDKIT=1 docker build
+          --progress=plain
+          --build-arg SDK_ORIGIN=remote_sdk
+          --build-arg CONDUCTOR_PYTHON_VERSION=${{ github.ref_name }}
+          --build-arg KEY=${{ secrets.KEY }}
+          --build-arg SECRET=${{ secrets.SECRET }}
+          --build-arg CONDUCTOR_SERVER_URL=${{ secrets.CONDUCTOR_SERVER_URL }}
+          --target=validate_release
+          .
