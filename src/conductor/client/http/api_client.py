@@ -64,7 +64,7 @@ class ApiClient(object):
             configuration = Configuration()
         self.configuration = configuration
 
-        self.rest_client = rest.RESTClientObject(configuration)
+        self.rest_client = rest.RESTClientObject()
 
         self.default_headers = self.__get_default_headers(
             header_name, header_value
@@ -212,9 +212,9 @@ class ApiClient(object):
 
         # fetch data from response object
         try:
-            data = json.loads(response.data)
-        except ValueError:
-            data = response.data
+            data = response.resp.json()
+        except Exception:
+            data = response.resp.text
 
         return self.__deserialize(data, response_type)
 

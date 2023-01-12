@@ -1,5 +1,4 @@
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from six.moves import http_client as httplib
 import logging
 import multiprocessing
 import os
@@ -42,13 +41,6 @@ class Configuration:
         # Set this to True/False to enable/disable SSL hostname verification.
         self.assert_hostname = None
 
-        # urllib3 connection pool's maximum number of connections saved
-        # per pool. urllib3 uses 1 connection as default value, but this is
-        # not the best value when you are making a lot of possibly parallel
-        # requests to the same host, which is often the case here.
-        # cpu_count * 5 is used as default value to increase performance.
-        self.connection_pool_maxsize = multiprocessing.cpu_count() * 5
-
         # Proxy URL
         self.proxy = None
         # Safe chars for path_param
@@ -72,12 +64,8 @@ class Configuration:
         """
         self.__debug = value
         if self.__debug:
-            # turn on httplib debug
-            httplib.HTTPConnection.debuglevel = 1
             self.__log_level = logging.DEBUG
         else:
-            # turn off httplib debug
-            httplib.HTTPConnection.debuglevel = 0
             self.__log_level = logging.INFO
 
     @property
@@ -107,7 +95,6 @@ class Configuration:
             format=self.logger_format,
             level=self.__log_level
         )
-        logging.getLogger('urllib3').setLevel(logging.WARNING)
 
     @staticmethod
     def get_logging_formatted_name(name):
