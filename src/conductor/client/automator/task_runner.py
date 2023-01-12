@@ -46,12 +46,14 @@ class TaskRunner:
         if self.configuration != None:
             self.configuration.apply_logging_config()
         while True:
-            self.run_once()
+            try:
+                self.run_once()
+            except Exception:
+                pass
 
     def run_once(self) -> None:
         task = self.__poll_task()
         if task != None:
-            logger.debug(f'polled task: {task}')
             task_result = self.__execute_task(task)
             self.__update_task(task_result)
         self.__wait_for_polling_interval()
