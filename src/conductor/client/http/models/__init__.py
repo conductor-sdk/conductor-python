@@ -38,6 +38,7 @@ from conductor.client.http.models.upsert_group_request import UpsertGroupRequest
 from conductor.client.http.models.upsert_user_request import UpsertUserRequest
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.workflow_def import WorkflowDef
+from conductor.client.http.models.workflow_run import WorkflowRun
 from conductor.client.http.models.workflow_schedule import WorkflowSchedule
 from conductor.client.http.models.workflow_schedule_execution_model import WorkflowScheduleExecutionModel
 from conductor.client.http.models.workflow_status import WorkflowStatus

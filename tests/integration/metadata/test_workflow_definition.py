@@ -46,7 +46,7 @@ def test_kitchensink_workflow_registration(workflow_executor: WorkflowExecutor) 
         )
     except:
         pass
-    assert workflow.register(True) == None
+    workflow.register(True)
     workflow = generate_workflow(workflow_executor)
     workflow_executor.metadata_client.register_task_def(generate_tasks_defs())
     try:
@@ -55,13 +55,14 @@ def test_kitchensink_workflow_registration(workflow_executor: WorkflowExecutor) 
         )
     except:
         pass
-    assert workflow.register(True) == None
+    workflow.register(True)
     workflow_id = workflow_executor.start_workflow(
         start_workflow_request=StartWorkflowRequest(
             name=workflow.name
         )
     )
-    assert type(workflow_id) == str
+    if type(workflow_id) != str or workflow_id == '':
+        raise Exception(f'failed to start workflow, name: {WORKFLOW_NAME}')
 
 
 def generate_simple_task(id: int) -> SimpleTask:

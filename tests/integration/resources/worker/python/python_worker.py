@@ -19,8 +19,8 @@ class ClassWorker(WorkerInterface):
         return task_result
 
     def get_polling_interval_in_seconds(self) -> float:
-        # poll every 50ms
-        return 0.05
+        # poll every 375ms
+        return 0.375
 
 
 class ClassWorkerWithDomain(WorkerInterface):
@@ -33,8 +33,8 @@ class ClassWorkerWithDomain(WorkerInterface):
         return task_result
 
     def get_polling_interval_in_seconds(self) -> float:
-        # poll every 50ms
-        return 0.05
+        # poll every 850ms
+        return 0.850
 
     def get_domain(self) -> str:
         return 'simple_python_worker'

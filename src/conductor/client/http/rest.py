@@ -115,7 +115,7 @@ class RESTClientObject(object):
         post_params = post_params or {}
         headers = headers or {}
 
-        timeout = None
+        timeout = urllib3.Timeout(30)
         if _request_timeout:
             if isinstance(_request_timeout, (int, ) if six.PY3 else (int, long)):  # noqa: E501,F821
                 timeout = urllib3.Timeout(total=_request_timeout)

@@ -3,6 +3,7 @@ from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
 from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
+from conductor.client.http.models.correlation_ids_search_request import CorrelationIdsSearchRequest
 from conductor.client.http.models import *
 from typing import Any, Dict, List
 from typing_extensions import Self
@@ -116,6 +117,17 @@ class WorkflowExecutor:
             name=workflow_name,
             **kwargs
         )
+
+    def get_by_correlation_ids_and_names(self, body: CorrelationIdsSearchRequest, include_closed: bool = None, include_tasks: bool = None) -> Dict[str, List[Workflow]]:
+        """Given the list of correlation ids and list of workflow names, find and return workflows
+        Returns a map with key as correlationId and value as a list of Workflows
+        When IncludeClosed is set to true, the return value also includes workflows that are completed otherwise only running workflows are returned"""
+        args = {'body': body}
+        if include_closed != None:
+            args['include_closed'] = True
+        if include_tasks != None:
+            args['include_tasks'] = True
+        return self.workflow_client.get_workflows_batch(**args)
 
     def pause(self, workflow_id: str) -> None:
         """Pauses the workflow"""

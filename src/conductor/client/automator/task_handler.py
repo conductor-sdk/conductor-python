@@ -40,6 +40,7 @@ class TaskHandler:
     def stop_processes(self) -> None:
         self.__stop_task_runner_processes()
         self.__stop_metrics_provider_process()
+        logger.debug('stopped processes')
 
     def start_processes(self) -> None:
         self.__start_task_runner_processes()
@@ -120,8 +121,8 @@ class TaskHandler:
             return
         try:
             process.kill()
-            logger.info(f'Killed process: {process}')
+            logger.debug(f'Killed process: {process}')
         except Exception as e:
             logger.debug(f'Failed to kill process: {process}, reason: {e}')
             process.terminate()
-            logger.info('Terminated process: {process}')
+            logger.debug('Terminated process: {process}')
