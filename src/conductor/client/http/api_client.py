@@ -225,7 +225,6 @@ class ApiClient(object):
 
         :return: object.
         """
-        logger.debug(f'deserializing data: {data}, klass: {klass}')
         if data is b'' or data is None:
             return None
 

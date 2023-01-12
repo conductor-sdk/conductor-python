@@ -1,5 +1,4 @@
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from six.moves import http_client as httplib
 import logging
 import multiprocessing
 import os
@@ -65,12 +64,8 @@ class Configuration:
         """
         self.__debug = value
         if self.__debug:
-            # turn on httplib debug
-            httplib.HTTPConnection.debuglevel = 1
             self.__log_level = logging.DEBUG
         else:
-            # turn off httplib debug
-            httplib.HTTPConnection.debuglevel = 0
             self.__log_level = logging.INFO
 
     @property
