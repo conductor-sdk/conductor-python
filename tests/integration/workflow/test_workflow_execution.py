@@ -18,7 +18,7 @@ from time import sleep
 import logging
 import uuid
 
-WORKFLOW_NAME = "python_integration_test_workflow"
+WORKFLOW_NAME = "sdk_python_integration_test_workflow"
 TASK_NAME = "python_integration_test_task"
 WORKFLOW_VERSION = 1234
 WORKFLOW_OWNER_EMAIL = "test@test"
