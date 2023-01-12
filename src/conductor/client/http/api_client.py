@@ -12,6 +12,7 @@ import re
 import six
 import tempfile
 import traceback
+import urllib3
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -648,4 +649,11 @@ class ApiClient(object):
         }
         if header_name is not None:
             headers[header_name] = header_value
+        parsed = urllib3.util.parse_url(self.configuration.host)
+        if parsed.auth is not None:
+            encrypted_headers = urllib3.util.make_headers(
+                basic_auth=parsed.auth
+            )
+            for key, value in encrypted_headers.items():
+                headers[key] = value
         return headers
