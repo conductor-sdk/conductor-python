@@ -204,7 +204,6 @@ class ApiClient(object):
 
         :return: deserialized object.
         """
-        logger.debug(f'received response: {response}')
         # handle file downloading
         # save response body into a tmp file and return the instance
         if response_type == "file":
@@ -212,9 +211,9 @@ class ApiClient(object):
 
         # fetch data from response object
         try:
-            data = json.loads(response.data)
-        except ValueError:
-            data = response.data
+            data = response.resp.json()
+        except Exception:
+            data = response.resp.text
 
         return self.__deserialize(data, response_type)
 
@@ -226,6 +225,7 @@ class ApiClient(object):
 
         :return: object.
         """
+        logger.debug(f'deserializing data: {data}, klass: {klass}')
         if data is b'' or data is None:
             return None
 

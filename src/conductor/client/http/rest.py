@@ -15,7 +15,7 @@ class RESTResponse(io.IOBase):
     def __init__(self, resp):
         self.status = resp.status_code
         self.reason = resp.reason
-        self.data = resp.text
+        self.resp = resp
         self.headers = resp.headers
 
     def getheaders(self):
