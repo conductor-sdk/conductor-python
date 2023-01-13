@@ -20,7 +20,7 @@ jobs:
           --target=publish     
           .
   wait-for-package-to-become-available-at-pypi:
-    needs: build-package-and-publish-release-at-pypi
+    needs: publish-release-at-pypi
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
