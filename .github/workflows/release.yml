@@ -37,10 +37,10 @@ jobs:
         run: >
           DOCKER_BUILDKIT=1 docker build
           --progress=plain
-          --build-arg SDK_ORIGIN=remote_sdk
-          --build-arg CONDUCTOR_PYTHON_VERSION=${{ github.ref_name }}
           --build-arg KEY=${{ secrets.KEY }}
           --build-arg SECRET=${{ secrets.SECRET }}
           --build-arg CONDUCTOR_SERVER_URL=${{ secrets.CONDUCTOR_SERVER_URL }}
-          --target=validate_release
+          --build-arg CONDUCTOR_PYTHON_VERSION=${{ github.ref_name }}
+          --build-arg SDK_ORIGIN=remote_sdk
+          --target=integration_test
           .
