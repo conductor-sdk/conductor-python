@@ -28,6 +28,7 @@ jobs:
       - name: Wait for package to become available at pypi
         run: sleep 300
   validate-release:
+    needs: wait-for-package-to-become-available-at-pypi
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
