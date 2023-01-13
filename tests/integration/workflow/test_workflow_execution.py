@@ -52,7 +52,7 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
             workflow_quantity=10,
             workflow_name=WORKFLOW_NAME,
             workflow_executor=workflow_executor,
-            workflow_completion_timeout=7
+            workflow_completion_timeout=5
         )
         logger.debug('finished workflow execution tests')
         test_workflow_methods(
@@ -84,21 +84,27 @@ def generate_tasks_defs():
 
 
 def test_get_workflow_by_correlation_ids(workflow_executor: WorkflowExecutor):
-    workflow_executor.get_by_correlation_ids(
-        workflow_name=WORKFLOW_NAME,
-        correlation_ids=[
-            '2', '5', '33', '4', '32', '7', '34', '1', '3', '6', '1440'
-        ]
+    _run_with_retry_attempt(
+        workflow_executor.get_by_correlation_ids,
+        {
+            'workflow_name': WORKFLOW_NAME,
+            'correlation_ids': [
+                '2', '5', '33', '4', '32', '7', '34', '1', '3', '6', '1440'
+            ]
+        }
     )
 
 
 def test_workflow_sync_execution(workflow_executor: WorkflowExecutor):
-    workflow_executor.workflow_client.execute_workflow(
-        body=StartWorkflowRequest(name=WORKFLOW_NAME),
-        request_id=str(uuid.uuid4()),
-        name=WORKFLOW_NAME,
-        version=WORKFLOW_VERSION,
-        wait_until_task_ref='',
+    _run_with_retry_attempt(
+        workflow_executor.workflow_client.execute_workflow,
+        {
+            'body': StartWorkflowRequest(name=WORKFLOW_NAME),
+            'request_id': str(uuid.uuid4()),
+            'name': WORKFLOW_NAME,
+            'version': WORKFLOW_VERSION,
+            'wait_until_task_ref': '',
+        }
     )
 
 
@@ -173,7 +179,13 @@ def test_workflow_execution(
     workflow_ids = workflow_executor.start_workflows(*start_workflow_requests)
     sleep(workflow_completion_timeout)
     for workflow_id in workflow_ids:
-        validate_workflow_status(workflow_id, workflow_executor)
+        _run_with_retry_attempt(
+            validate_workflow_status,
+            {
+                'workflow_id': workflow_id,
+                'workflow_executor': workflow_executor
+            }
+        )
 
 
 def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
@@ -295,3 +307,13 @@ def _rerun_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> No
         raise Exception(
             f'workflow expected to be RUNNING, but received {workflow_status.status}, workflow_id: {workflow_id}'
         )
+
+
+def _run_with_retry_attempt(f, params, retries=3) -> None:
+    for attempt in range(retries):
+        try:
+            return f(**params)
+        except Exception as e:
+            if attempt == retries - 1:
+                raise e
+            sleep(attempt + 1)
