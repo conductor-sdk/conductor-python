@@ -309,11 +309,11 @@ def _rerun_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> No
         )
 
 
-def _run_with_retry_attempt(f, params, retries=3) -> None:
+def _run_with_retry_attempt(f, params, retries=5) -> None:
     for attempt in range(retries):
         try:
             return f(**params)
         except Exception as e:
             if attempt == retries - 1:
                 raise e
-            sleep(attempt + 1)
+            sleep((attempt + 1) * 10)

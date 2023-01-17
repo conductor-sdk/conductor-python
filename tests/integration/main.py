@@ -1,8 +1,12 @@
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
+from conductor.client.http.api_client import ApiClient
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
+
 from metadata.test_workflow_definition import run_workflow_definition_tests
 from workflow.test_workflow_execution import run_workflow_execution_tests
+from client.event import test_event_client
+
 import logging
 import os
 
@@ -43,6 +47,7 @@ def generate_configuration():
 def main():
     configuration = generate_configuration()
     workflow_executor = WorkflowExecutor(configuration)
+    test_event_client.test_kafka_queue_configuration(ApiClient(configuration))
     run_workflow_definition_tests(workflow_executor)
     run_workflow_execution_tests(configuration, workflow_executor)
 
