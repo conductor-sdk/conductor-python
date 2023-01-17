@@ -1,7 +1,10 @@
-from queue_worker_configuration import QueueWorkerConfiguration
+from conductor.client.event.queue.queue_worker_configuration import QueueWorkerConfiguration
+
+from abc import ABC
+from typing import Any, Dict
 
 
-class QueueConfiguration:
+class QueueConfiguration(ABC):
     WORKER_CONSUMER_KEY = "consumer"
     WORKER_PRODUCER_KEY = "producer"
 
@@ -15,3 +18,6 @@ class QueueConfiguration:
 
     def add_producer(self, worker_configuration: QueueWorkerConfiguration) -> None:
         self.worker_configuration[self.WORKER_PRODUCER_KEY] = worker_configuration
+
+    def get_worker_configuration(self) -> Dict[str, Any]:
+        raise NotImplementedError

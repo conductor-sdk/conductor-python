@@ -8,7 +8,10 @@ class EventClient:
         self.client = EventResourceApi(api_client)
 
     def delete_queue_configuration(self, queue_configuration: QueueConfiguration) -> None:
-        return self.client.delete_queue_config(queue_configuration)
+        return self.client.delete_queue_config(
+            queue_name=queue_configuration.queue_name,
+            queue_type=queue_configuration.queue_type,
+        )
 
     def get_kafka_queue_configuration(self, queue_topic: str) -> QueueConfiguration:
         return self.get_queue_configuration(
@@ -21,7 +24,7 @@ class EventClient:
 
     def put_queue_configuration(self, queue_configuration: QueueConfiguration):
         return self.client.put_queue_config(
-            # body=,
+            body=queue_configuration.get_worker_configuration(),
             queue_name=queue_configuration.queue_name,
             queue_type=queue_configuration.queue_type,
         )
