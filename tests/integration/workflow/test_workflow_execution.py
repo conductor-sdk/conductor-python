@@ -97,12 +97,9 @@ def test_get_workflow_by_correlation_ids(workflow_executor: WorkflowExecutor):
 
 def test_workflow_sync_execution(workflow_executor: WorkflowExecutor):
     _run_with_retry_attempt(
-        workflow_executor.workflow_client.execute_workflow,
+        workflow_executor.execute_workflow,
         {
-            'body': StartWorkflowRequest(name=WORKFLOW_NAME),
-            'request_id': str(uuid.uuid4()),
-            'name': WORKFLOW_NAME,
-            'version': WORKFLOW_VERSION,
+            'request': StartWorkflowRequest(name=WORKFLOW_NAME, version=WORKFLOW_VERSION, correlation_id='sync_workflow_execution'),
             'wait_until_task_ref': '',
         }
     )

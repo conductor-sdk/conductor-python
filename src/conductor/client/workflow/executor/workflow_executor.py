@@ -7,7 +7,7 @@ from conductor.client.http.models.correlation_ids_search_request import Correlat
 from conductor.client.http.models import *
 from typing import Any, Dict, List
 from typing_extensions import Self
-
+import uuid
 
 class WorkflowExecutor:
     def __init__(self, configuration: Configuration) -> Self:
@@ -41,6 +41,17 @@ class WorkflowExecutor:
                 start_workflow_request=start_workflow_request[i]
             )
         return workflow_id_list
+
+    def execute_workflow(self, request: StartWorkflowRequest, wait_until_task_ref: str) -> WorkflowRun:
+        """Executes a workflow with StartWorkflowRequest and waits for the completion of the workflow or until a
+        specific task in the workflow """
+        return self.workflow_client.execute_workflow(
+            body=request,
+            request_id=str(uuid.uuid4()),
+            version=request.version,
+            name=request.name,
+            wait_until_task_ref=wait_until_task_ref,
+        )
 
     def remove_workflow(self, workflow_id: str, archive_workflow: bool = None) -> None:
         """Removes the workflow permanently from the system"""
