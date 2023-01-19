@@ -239,7 +239,7 @@ class WorkflowResourceApi(object):
         :param StartWorkflowRequest body: (required)
         :param str request_id: (required)
         :param str name: (required)
-        :param int version: (required)
+        :param int version: (required) set to 0 to use the latest version
         :param str wait_until_task_ref:
         :return: WorkflowRun
                  If the method is called asynchronously,
