@@ -423,6 +423,7 @@ class WorkflowBulkResourceApi(object):
         :param async_req bool
         :param list[str] body: (required)
         :param str reason:
+        :param bool trigger_failure_workflow:
         :return: BulkResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -445,12 +446,13 @@ class WorkflowBulkResourceApi(object):
         :param async_req bool
         :param list[str] body: (required)
         :param str reason:
+        :param bool trigger_failure_workflow:
         :return: BulkResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['body', 'reason']  # noqa: E501
+        all_params = ['body', 'reason', 'triggerFailureWorkflow']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -477,6 +479,9 @@ class WorkflowBulkResourceApi(object):
         query_params = []
         if 'reason' in params:
             query_params.append(('reason', params['reason']))  # noqa: E501
+
+        if 'triggerFailureWorkflow' in params:
+            query_params.append(('triggerFailureWorkflow', params['triggerFailureWorkflow']))  # noqa: E501
 
         header_params = {}
 

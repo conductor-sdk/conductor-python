@@ -152,11 +152,13 @@ class WorkflowExecutor:
             workflow_id=workflow_id
         )
 
-    def terminate(self, workflow_id: str, reason: str = None) -> None:
+    def terminate(self, workflow_id: str, reason: str = None, trigger_failure_workflow: bool = None) -> None:
         """Terminate workflow execution"""
         kwargs = {}
         if reason is not None:
             kwargs['reason'] = reason
+        if trigger_failure_workflow is not None:
+            kwargs['triggerFailureWorkflow'] = trigger_failure_workflow
         return self.workflow_client.terminate1(
             workflow_id=workflow_id,
             **kwargs
