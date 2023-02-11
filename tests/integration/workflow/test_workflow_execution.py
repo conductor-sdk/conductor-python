@@ -124,7 +124,7 @@ def test_workflow_methods(
         version=1234,
     ).add(
         task
-    )
+    ).failure_workflow(workflow_name)
     workflow_executor.register_workflow(
         workflow.to_workflow_def(),
         overwrite=True,
@@ -142,10 +142,14 @@ def test_workflow_methods(
         _restart_workflow(workflow_executor, workflow_id)
         _terminate_workflow(workflow_executor, workflow_id)
         _retry_workflow(workflow_executor, workflow_id)
-        _terminate_workflow(workflow_executor, workflow_id)
+        failure_wf_id = _terminate_workflow_with_failure(workflow_executor, workflow_id, True)
+        _terminate_workflow(workflow_executor, failure_wf_id)
         _rerun_workflow(workflow_executor, workflow_id)
         workflow_executor.remove_workflow(
             workflow_id, archive_workflow=False
+        )
+        workflow_executor.remove_workflow(
+            failure_wf_id, archive_workflow=False
         )
 
 
@@ -266,6 +270,18 @@ def _terminate_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -
             f'workflow expected to be TERMINATED, but received {workflow_status.status}, workflow_id: {workflow_id}'
         )
 
+def _terminate_workflow_with_failure(workflow_executor: WorkflowExecutor, workflow_id: str, trigger_failure_workflow: bool) -> str:
+    workflow_executor.terminate(workflow_id, 'test', trigger_failure_workflow)
+    workflow_status = workflow_executor.get_workflow_status(
+        workflow_id,
+        include_output=True,
+        include_variables=False,
+    )
+    if workflow_status.status != 'TERMINATED':
+        raise Exception(
+            f'workflow expected to be TERMINATED, but received {workflow_status.status}, workflow_id: {workflow_id}'
+        )
+    return workflow_status.output.get('conductor.failure_workflow')
 
 def _restart_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
     workflow_executor.restart(workflow_id)
