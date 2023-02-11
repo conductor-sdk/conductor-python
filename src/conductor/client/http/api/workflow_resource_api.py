@@ -2390,6 +2390,7 @@ class WorkflowResourceApi(object):
         :param async_req bool
         :param str workflow_id: (required)
         :param str reason:
+        :param bool trigger_failure_workflow:
         :return: None
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2412,12 +2413,13 @@ class WorkflowResourceApi(object):
         :param async_req bool
         :param str workflow_id: (required)
         :param str reason:
+        :param bool trigger_failure_workflow:
         :return: None
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['workflow_id', 'reason']  # noqa: E501
+        all_params = ['workflow_id', 'reason', 'triggerFailureWorkflow']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2446,6 +2448,9 @@ class WorkflowResourceApi(object):
         query_params = []
         if 'reason' in params:
             query_params.append(('reason', params['reason']))  # noqa: E501
+
+        if 'triggerFailureWorkflow' in params:
+            query_params.append(('triggerFailureWorkflow', params['triggerFailureWorkflow']))  # noqa: E501
 
         header_params = {}
 
