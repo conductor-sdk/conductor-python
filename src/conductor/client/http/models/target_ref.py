@@ -51,8 +51,6 @@ class TargetRef(object):
         :param type: The type of this TargetRef.  # noqa: E501
         :type: str
         """
-        if type is None:
-            raise ValueError("Invalid value for `type`, must not be `None`")  # noqa: E501
         allowed_values = ["WORKFLOW_DEF", "TASK_DEF", "APPLICATION", "USER"]  # noqa: E501
         if type not in allowed_values:
             raise ValueError(
@@ -80,8 +78,6 @@ class TargetRef(object):
         :param id: The id of this TargetRef.  # noqa: E501
         :type: str
         """
-        if id is None:
-            raise ValueError("Invalid value for `id`, must not be `None`")  # noqa: E501
         allowed_values = ["Identifier of the target e.g. `name` in case it's a WORKFLOW_DEF"]  # noqa: E501
         if id not in allowed_values:
             raise ValueError(

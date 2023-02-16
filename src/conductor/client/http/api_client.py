@@ -216,7 +216,11 @@ class ApiClient(object):
         except Exception:
             data = response.resp.text
 
-        return self.__deserialize(data, response_type)
+        try:
+            return self.__deserialize(data, response_type)
+        except ValueError as e:
+            logger.debug('failed to deserialize, reason: ' + str(e))
+            return None
 
     def __deserialize(self, data, klass):
         """Deserializes dict, list, str into an object.
@@ -300,11 +304,11 @@ class ApiClient(object):
             then the method will return the response directly.
         """
         return self.__call_api(resource_path, method,
-                                path_params, query_params, header_params,
-                                body, post_params, files,
-                                response_type, auth_settings,
-                                _return_http_data_only, collection_formats,
-                                _preload_content, _request_timeout)
+                               path_params, query_params, header_params,
+                               body, post_params, files,
+                               response_type, auth_settings,
+                               _return_http_data_only, collection_formats,
+                               _preload_content, _request_timeout)
 
     def request(self, method, url, query_params=None, headers=None,
                 post_params=None, body=None, _preload_content=True,

@@ -51,9 +51,6 @@ class GenerateTokenRequest(object):
         :param key_id: The key_id of this GenerateTokenRequest.  # noqa: E501
         :type: str
         """
-        if key_id is None:
-            raise ValueError("Invalid value for `key_id`, must not be `None`")  # noqa: E501
-
         self._key_id = key_id
 
     @property
@@ -74,9 +71,6 @@ class GenerateTokenRequest(object):
         :param key_secret: The key_secret of this GenerateTokenRequest.  # noqa: E501
         :type: str
         """
-        if key_secret is None:
-            raise ValueError("Invalid value for `key_secret`, must not be `None`")  # noqa: E501
-
         self._key_secret = key_secret
 
     def to_dict(self):

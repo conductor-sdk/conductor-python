@@ -92,9 +92,6 @@ class TaskResult(object):
         :param workflow_instance_id: The workflow_instance_id of this TaskResult.  # noqa: E501
         :type: str
         """
-        if workflow_instance_id is None:
-            raise ValueError("Invalid value for `workflow_instance_id`, must not be `None`")  # noqa: E501
-
         self._workflow_instance_id = workflow_instance_id
 
     @property
@@ -115,9 +112,6 @@ class TaskResult(object):
         :param task_id: The task_id of this TaskResult.  # noqa: E501
         :type: str
         """
-        if task_id is None:
-            raise ValueError("Invalid value for `task_id`, must not be `None`")  # noqa: E501
-
         self._task_id = task_id
 
     @property
