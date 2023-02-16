@@ -51,9 +51,6 @@ class CorrelationIdsSearchRequest(object):
         :param correlation_ids: The correlation_ids of this CorrelationIdsSearchRequest.  # noqa: E501
         :type: list[str]
         """
-        if correlation_ids is None:
-            raise ValueError("Invalid value for `correlation_ids`, must not be `None`")  # noqa: E501
-
         self._correlation_ids = correlation_ids
 
     @property
@@ -74,9 +71,6 @@ class CorrelationIdsSearchRequest(object):
         :param workflow_names: The workflow_names of this CorrelationIdsSearchRequest.  # noqa: E501
         :type: list[str]
         """
-        if workflow_names is None:
-            raise ValueError("Invalid value for `workflow_names`, must not be `None`")  # noqa: E501
-
         self._workflow_names = workflow_names
 
     def to_dict(self):

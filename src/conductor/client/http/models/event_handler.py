@@ -70,9 +70,6 @@ class EventHandler(object):
         :param name: The name of this EventHandler.  # noqa: E501
         :type: str
         """
-        if name is None:
-            raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
-
         self._name = name
 
     @property
@@ -93,9 +90,6 @@ class EventHandler(object):
         :param event: The event of this EventHandler.  # noqa: E501
         :type: str
         """
-        if event is None:
-            raise ValueError("Invalid value for `event`, must not be `None`")  # noqa: E501
-
         self._event = event
 
     @property
@@ -137,9 +131,6 @@ class EventHandler(object):
         :param actions: The actions of this EventHandler.  # noqa: E501
         :type: list[Action]
         """
-        if actions is None:
-            raise ValueError("Invalid value for `actions`, must not be `None`")  # noqa: E501
-
         self._actions = actions
 
     @property

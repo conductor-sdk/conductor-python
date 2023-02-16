@@ -59,9 +59,6 @@ class UpsertUserRequest(object):
         :param name: The name of this UpsertUserRequest.  # noqa: E501
         :type: str
         """
-        if name is None:
-            raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
-
         self._name = name
 
     @property

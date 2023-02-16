@@ -54,9 +54,6 @@ class UpsertGroupRequest(object):
         :param description: The description of this UpsertGroupRequest.  # noqa: E501
         :type: str
         """
-        if description is None:
-            raise ValueError("Invalid value for `description`, must not be `None`")  # noqa: E501
-
         self._description = description
 
     @property

@@ -86,9 +86,6 @@ class SaveScheduleRequest(object):
         :param name: The name of this SaveScheduleRequest.  # noqa: E501
         :type: str
         """
-        if name is None:
-            raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
-
         self._name = name
 
     @property
@@ -109,9 +106,6 @@ class SaveScheduleRequest(object):
         :param cron_expression: The cron_expression of this SaveScheduleRequest.  # noqa: E501
         :type: str
         """
-        if cron_expression is None:
-            raise ValueError("Invalid value for `cron_expression`, must not be `None`")  # noqa: E501
-
         self._cron_expression = cron_expression
 
     @property

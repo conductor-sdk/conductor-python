@@ -81,9 +81,6 @@ class SubjectRef(object):
         :param id: The id of this SubjectRef.  # noqa: E501
         :type: str
         """
-        if id is None:
-            raise ValueError("Invalid value for `id`, must not be `None`")  # noqa: E501
-
         self._id = id
 
     def to_dict(self):

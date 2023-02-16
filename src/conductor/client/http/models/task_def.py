@@ -266,9 +266,6 @@ class TaskDef(object):
         :param name: The name of this TaskDef.  # noqa: E501
         :type: str
         """
-        if name is None:
-            raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
-
         self._name = name
 
     @property
@@ -331,9 +328,6 @@ class TaskDef(object):
         :param timeout_seconds: The timeout_seconds of this TaskDef.  # noqa: E501
         :type: int
         """
-        if timeout_seconds is None:
-            raise ValueError("Invalid value for `timeout_seconds`, must not be `None`")  # noqa: E501
-
         self._timeout_seconds = timeout_seconds
 
     @property

@@ -55,9 +55,6 @@ class AuthorizationRequest(object):
         :param subject: The subject of this AuthorizationRequest.  # noqa: E501
         :type: SubjectRef
         """
-        if subject is None:
-            raise ValueError("Invalid value for `subject`, must not be `None`")  # noqa: E501
-
         self._subject = subject
 
     @property
@@ -78,9 +75,6 @@ class AuthorizationRequest(object):
         :param target: The target of this AuthorizationRequest.  # noqa: E501
         :type: TargetRef
         """
-        if target is None:
-            raise ValueError("Invalid value for `target`, must not be `None`")  # noqa: E501
-
         self._target = target
 
     @property
@@ -103,8 +97,6 @@ class AuthorizationRequest(object):
         :param access: The access of this AuthorizationRequest.  # noqa: E501
         :type: list[str]
         """
-        if access is None:
-            raise ValueError("Invalid value for `access`, must not be `None`")  # noqa: E501
         allowed_values = ["CREATE", "READ", "UPDATE", "DELETE", "EXECUTE"]  # noqa: E501
         if not set(access).issubset(set(allowed_values)):
             raise ValueError(
