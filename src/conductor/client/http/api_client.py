@@ -219,7 +219,7 @@ class ApiClient(object):
         try:
             return self.__deserialize(data, response_type)
         except ValueError as e:
-            logger.debug('failed to deserialize, reason: ' + str(e))
+            logger.debug(f'failed to deserialize data {data} into class {response_type}, reason: {e}')
             return None
 
     def __deserialize(self, data, klass):
