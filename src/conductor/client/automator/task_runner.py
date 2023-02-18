@@ -168,33 +168,35 @@ class TaskRunner:
                 task_definition_name=task_definition_name
             )
         )
-        try:
-            response = self.task_client.update_task(
-                body=task_result
-            )
-        except Exception as e:
-            if self.metrics_collector is not None:
-                self.metrics_collector.increment_task_update_error(
-                    task_definition_name, type(e)
+        for attempt in range(4):
+            if attempt > 0:
+                # Wait for [10s, 20s, 30s] before next attempt
+                time.sleep(attempt * 10)
+            try:
+                response = self.task_client.update_task(body=task_result)
+                logger.debug(
+                    'Updated task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, response: {response}'.format(
+                        task_id=task_result.task_id,
+                        workflow_instance_id=task_result.workflow_instance_id,
+                        task_definition_name=task_definition_name,
+                        response=response
+                    )
                 )
-            logger.info(
-                'Failed to update task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, reason: {reason}'.format(
-                    task_id=task_result.task_id,
-                    workflow_instance_id=task_result.workflow_instance_id,
-                    task_definition_name=task_definition_name,
-                    reason=traceback.format_exc()
+                return response
+            except Exception as e:
+                if self.metrics_collector is not None:
+                    self.metrics_collector.increment_task_update_error(
+                        task_definition_name, type(e)
+                    )
+                logger.debug(
+                    'Failed to update task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, reason: {reason}'.format(
+                        task_id=task_result.task_id,
+                        workflow_instance_id=task_result.workflow_instance_id,
+                        task_definition_name=task_definition_name,
+                        reason=traceback.format_exc()
+                    )
                 )
-            )
-            return None
-        logger.debug(
-            'Updated task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, response: {response}'.format(
-                task_id=task_result.task_id,
-                workflow_instance_id=task_result.workflow_instance_id,
-                task_definition_name=task_definition_name,
-                response=response
-            )
-        )
-        return response
+        return None
 
     def __wait_for_polling_interval(self) -> None:
         polling_interval = self.worker.get_polling_interval_in_seconds()
