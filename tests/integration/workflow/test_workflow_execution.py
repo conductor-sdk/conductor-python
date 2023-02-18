@@ -136,15 +136,16 @@ def test_workflow_methods(
         *start_workflow_requests
     )
     for workflow_id in workflow_ids:
-        _pause_workflow(workflow_executor, workflow_id)
-        _resume_workflow(workflow_executor, workflow_id)
-        _terminate_workflow(workflow_executor, workflow_id)
-        _restart_workflow(workflow_executor, workflow_id)
-        _terminate_workflow(workflow_executor, workflow_id)
-        _retry_workflow(workflow_executor, workflow_id)
-        failure_wf_id = _terminate_workflow_with_failure(workflow_executor, workflow_id, True)
-        _terminate_workflow(workflow_executor, failure_wf_id)
-        _rerun_workflow(workflow_executor, workflow_id)
+        __pause_workflow(workflow_executor, workflow_id)
+        __resume_workflow(workflow_executor, workflow_id)
+        __terminate_workflow(workflow_executor, workflow_id)
+        __restart_workflow(workflow_executor, workflow_id)
+        __terminate_workflow(workflow_executor, workflow_id)
+        __retry_workflow(workflow_executor, workflow_id)
+        failure_wf_id = __terminate_workflow_with_failure(
+            workflow_executor, workflow_id, True)
+        __terminate_workflow(workflow_executor, failure_wf_id)
+        __rerun_workflow(workflow_executor, workflow_id)
         workflow_executor.remove_workflow(
             workflow_id, archive_workflow=False
         )
@@ -232,7 +233,17 @@ def generate_worker(execute_function: ExecuteTaskFunction) -> Worker:
     )
 
 
-def _pause_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+def __pause_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+    _run_with_retry_attempt(
+        __validate_pause_workflow,
+        {
+            "workflow_executor": workflow_executor,
+            "workflow_id": workflow_id,
+        }
+    )
+
+
+def __validate_pause_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
     workflow_executor.pause(workflow_id)
     workflow_status = workflow_executor.get_workflow_status(
         workflow_id,
@@ -245,7 +256,17 @@ def _pause_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> No
         )
 
 
-def _resume_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+def __resume_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+    _run_with_retry_attempt(
+        __validate_resume_workflow,
+        {
+            "workflow_executor": workflow_executor,
+            "workflow_id": workflow_id,
+        }
+    )
+
+
+def __validate_resume_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
     workflow_executor.resume(workflow_id)
     workflow_status = workflow_executor.get_workflow_status(
         workflow_id,
@@ -258,7 +279,17 @@ def _resume_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> N
         )
 
 
-def _terminate_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+def __terminate_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+    _run_with_retry_attempt(
+        __validate_terminate_workflow,
+        {
+            "workflow_executor": workflow_executor,
+            "workflow_id": workflow_id,
+        }
+    )
+
+
+def __validate_terminate_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
     workflow_executor.terminate(workflow_id)
     workflow_status = workflow_executor.get_workflow_status(
         workflow_id,
@@ -270,7 +301,8 @@ def _terminate_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -
             f'workflow expected to be TERMINATED, but received {workflow_status.status}, workflow_id: {workflow_id}'
         )
 
-def _terminate_workflow_with_failure(workflow_executor: WorkflowExecutor, workflow_id: str, trigger_failure_workflow: bool) -> str:
+
+def __terminate_workflow_with_failure(workflow_executor: WorkflowExecutor, workflow_id: str, trigger_failure_workflow: bool) -> str:
     workflow_executor.terminate(workflow_id, 'test', trigger_failure_workflow)
     workflow_status = workflow_executor.get_workflow_status(
         workflow_id,
@@ -283,7 +315,18 @@ def _terminate_workflow_with_failure(workflow_executor: WorkflowExecutor, workfl
         )
     return workflow_status.output.get('conductor.failure_workflow')
 
-def _restart_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+
+def __restart_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+    _run_with_retry_attempt(
+        __validate_restart_workflow,
+        {
+            "workflow_executor": workflow_executor,
+            "workflow_id": workflow_id,
+        }
+    )
+
+
+def __validate_restart_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
     workflow_executor.restart(workflow_id)
     workflow_status = workflow_executor.get_workflow_status(
         workflow_id,
@@ -296,7 +339,17 @@ def _restart_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> 
         )
 
 
-def _retry_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+def __retry_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+    _run_with_retry_attempt(
+        __validate_retry_workflow,
+        {
+            "workflow_executor": workflow_executor,
+            "workflow_id": workflow_id,
+        }
+    )
+
+
+def __validate_retry_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
     workflow_executor.retry(workflow_id)
     workflow_status = workflow_executor.get_workflow_status(
         workflow_id,
@@ -309,7 +362,17 @@ def _retry_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> No
         )
 
 
-def _rerun_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+def __rerun_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
+    _run_with_retry_attempt(
+        __validate_rerun_workflow,
+        {
+            "workflow_executor": workflow_executor,
+            "workflow_id": workflow_id,
+        }
+    )
+
+
+def __validate_rerun_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
     workflow_executor.rerun(RerunWorkflowRequest(), workflow_id)
     workflow_status = workflow_executor.get_workflow_status(
         workflow_id,
