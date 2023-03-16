@@ -42,5 +42,5 @@ jobs:
           --build-arg CONDUCTOR_SERVER_URL=${{ secrets.CONDUCTOR_SERVER_URL }}
           --build-arg CONDUCTOR_PYTHON_VERSION=${{ github.ref_name }}
           --build-arg SDK_ORIGIN=remote_sdk
-          --target=integration_test
+          --target=test
           .

@@ -35,5 +35,5 @@ jobs:
           --build-arg KEY=${{ secrets.KEY }}
           --build-arg SECRET=${{ secrets.SECRET }}
           --build-arg CONDUCTOR_SERVER_URL=${{ secrets.CONDUCTOR_SERVER_URL }}
-          --target=integration_test          
+          --target=test          
           .

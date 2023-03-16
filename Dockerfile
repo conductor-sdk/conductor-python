@@ -26,7 +26,7 @@ COPY /tests /package/tests
 FROM python_test_base as unit_test
 RUN python3 -m unittest discover --verbose --start-directory=./tests/unit
 
-FROM python_test_base as integration_test
+FROM python_test_base as test
 ARG KEY
 ARG SECRET
 ARG CONDUCTOR_SERVER_URL
