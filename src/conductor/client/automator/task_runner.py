@@ -93,7 +93,7 @@ class TaskRunner:
                 self.metrics_collector.increment_task_poll_error(
                     task_definition_name, type(e)
                 )
-            logger.info(
+            logger.debug(
                 f'Failed to poll task for: {task_definition_name}, reason: {traceback.format_exc()}'
             )
             return None

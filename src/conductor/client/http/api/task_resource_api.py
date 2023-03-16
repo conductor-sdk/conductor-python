@@ -4,6 +4,7 @@ import re  # noqa: F401
 
 # python 2 and python 3 compatibility library
 import six
+import socket
 
 from conductor.client.http.api_client import ApiClient
 
@@ -1481,6 +1482,7 @@ class TaskResourceApi(object):
         :param str workflow_id: (required)
         :param str task_ref_name: (required)
         :param str status: (required)
+        :param str workerid:
         :return: str
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1505,6 +1507,7 @@ class TaskResourceApi(object):
         :param str workflow_id: (required)
         :param str task_ref_name: (required)
         :param str status: (required)
+        :param str workerid:
         :return: str
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1553,6 +1556,10 @@ class TaskResourceApi(object):
             path_params['status'] = params['status']  # noqa: E501
 
         query_params = []
+        
+        if 'workerid' not in params:
+            params['workerid'] = socket.gethostname()
+        query_params.append(('workerid', params['workerid']))  # noqa: E501
 
         header_params = {}
 
