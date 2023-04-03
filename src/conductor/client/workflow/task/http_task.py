@@ -33,9 +33,9 @@ class HttpInput:
         '_accept': 'accept',
         '_headers': 'headers',
         '_accept': 'accept',
-        '_content_type': 'content_type',
-        '_connection_time_out': 'connection_time_out',
-        '_read_timeout': 'read_timeout',
+        '_content_type': 'contentType',
+        '_connection_time_out': 'connectionTimeOut',
+        '_read_timeout': 'readTimeout',
     }
 
     def __init__(self,
