@@ -5,6 +5,7 @@ from conductor.client.workflow.executor.workflow_executor import WorkflowExecuto
 from conductor.client.workflow.task.do_while_task import LoopTask
 from conductor.client.workflow.task.dynamic_fork_task import DynamicForkTask
 from conductor.client.workflow.task.fork_task import ForkTask
+from conductor.client.workflow.task.http_task import HttpTask, HttpInput
 from conductor.client.workflow.task.join_task import JoinTask
 from conductor.client.workflow.task.json_jq_task import JsonJQTask
 from conductor.client.workflow.task.set_variable_task import SetVariableTask
@@ -154,6 +155,14 @@ def generate_dynamic_fork_task() -> DynamicForkTask:
     )
 
 
+def generate_http_task() -> HttpTask:
+    return HttpTask(
+        'http_task', HttpInput(
+            uri="https://orkes-api-tester.orkesconductor.com/get"
+        ),
+    )
+
+
 def generate_json_jq_task() -> JsonJQTask:
     return JsonJQTask(
         task_ref_name='jq',
@@ -182,9 +191,11 @@ def generate_sub_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkf
 def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
     workflow = ConductorWorkflow(
         executor=workflow_executor,
-        name=WORKFLOW_NAME,
+        name='test-python-sdk-workflow-as-code',
         description='Python workflow example from code',
         version=1234,
+    ).add(
+        generate_http_task()
     ).add(
         generate_simple_task(12)
     ).add(
