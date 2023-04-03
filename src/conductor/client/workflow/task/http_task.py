@@ -16,6 +16,28 @@ class HttpMethod(str, Enum):
 
 
 class HttpInput:
+    swagger_types = {
+        '_uri': 'str',
+        '_method': 'str',
+        '_accept': 'list[str]',
+        '_headers': 'dict[str, list[str]]',
+        '_accept': 'str',
+        '_content_type': 'str',
+        '_connection_time_out': 'int',
+        '_read_timeout': 'int',
+    }
+
+    attribute_map = {
+        '_uri': 'uri',
+        '_method': 'method',
+        '_accept': 'accept',
+        '_headers': 'headers',
+        '_accept': 'accept',
+        '_content_type': 'content_type',
+        '_connection_time_out': 'connection_time_out',
+        '_read_timeout': 'read_timeout',
+    }
+
     def __init__(self,
                  method: HttpMethod = HttpMethod.GET,
                  uri: str = None,
