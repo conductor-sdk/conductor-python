@@ -3,7 +3,7 @@ from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.metrics_settings import MetricsSettings
 from conductor.client.telemetry.metrics_collector import MetricsCollector
 from conductor.client.worker.worker_interface import WorkerInterface
-from multiprocessing import Process
+from multiprocessing import Process, freeze_support
 from typing import List
 import logging
 
@@ -43,6 +43,8 @@ class TaskHandler:
         logger.debug('stopped processes')
 
     def start_processes(self) -> None:
+        logger.info('Starting worker processes...')
+        freeze_support()
         self.__start_task_runner_processes()
         self.__start_metrics_provider_process()
         logger.info('Started all processes')
