@@ -6,7 +6,7 @@ from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from tests.unit.resources.workers import ClassWorker
 from tests.unit.resources.workers import FaultyExecutionWorker
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 import logging
 import time
 import unittest
@@ -94,7 +94,8 @@ class TestTaskRunner(unittest.TestCase):
             workflow_instance_id=self.WORKFLOW_INSTANCE_ID,
             worker_id=worker.get_identity(),
             status=TaskResultStatus.FAILED,
-            reason_for_incompletion='faulty execution'
+            reason_for_incompletion='faulty execution',
+            logs=ANY
         )
         task_runner = TaskRunner(
             configuration=Configuration(),
@@ -103,6 +104,7 @@ class TestTaskRunner(unittest.TestCase):
         task = self.__get_valid_task()
         task_result = task_runner._TaskRunner__execute_task(task)
         self.assertEqual(task_result, expected_task_result)
+        self.assertIsNotNone(task_result.logs)
 
     def test_execute_task(self):
         expected_task_result = self.__get_valid_task_result()
@@ -167,6 +169,12 @@ class TestTaskRunner(unittest.TestCase):
         finish_time = time.time()
         spent_time = finish_time - start_time
         self.assertGreater(spent_time, expected_time)
+
+    def test_get_task_result_with_invalid_task(self):
+        expected_task_result = None
+        task_runner = self.__get_valid_task_runner()
+        task_result = task_runner._TaskRunner__get_task_result(None)
+        self.assertEqual(task_result, expected_task_result)
 
     def __get_valid_task_runner(self):
         return TaskRunner(

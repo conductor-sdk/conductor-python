@@ -4,6 +4,7 @@ from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
+from conductor.client.http.models.task_exec_log import TaskExecLog
 from conductor.client.telemetry.metrics_collector import MetricsCollector
 from conductor.client.worker.worker_interface import WorkerInterface
 import logging
@@ -147,7 +148,8 @@ class TaskRunner:
             )
             task_result.status = 'FAILED'
             task_result.reason_for_incompletion = str(e)
-            logger.info(
+            task_result.logs = [TaskExecLog(traceback.format_exc(), task_result.task_id, int(time.time()))]
+            logger.error(
                 'Failed to execute task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, reason: {reason}'.format(
                     task_id=task.task_id,
                     workflow_instance_id=task.workflow_instance_id,
