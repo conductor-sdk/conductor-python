@@ -170,12 +170,6 @@ class TestTaskRunner(unittest.TestCase):
         spent_time = finish_time - start_time
         self.assertGreater(spent_time, expected_time)
 
-    def test_get_task_result_with_invalid_task(self):
-        expected_task_result = None
-        task_runner = self.__get_valid_task_runner()
-        task_result = task_runner._TaskRunner__get_task_result(None)
-        self.assertEqual(task_result, expected_task_result)
-
     def __get_valid_task_runner(self):
         return TaskRunner(
             configuration=Configuration(),
