@@ -1635,7 +1635,7 @@ class TaskResourceApi(object):
         :param str task_ref_name: (required)
         :param str status: (required)
         :param str workerid:
-        :return: str
+        :return: Workflow
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -1715,7 +1715,7 @@ class TaskResourceApi(object):
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='str',  # noqa: E501
+            response_type='Workflow',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

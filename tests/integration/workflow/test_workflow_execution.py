@@ -419,7 +419,7 @@ def __update_task_by_ref_name(workflow_executor: WorkflowExecutor, workflow_id: 
             'task_output': {},
             'workflow_id': workflow_id,
             'task_reference_name': task_name,
-            'status': 'FAILED'
+            'status': 'COMPLETED'
         }
     )
 
@@ -431,6 +431,6 @@ def __update_task_by_ref_name_sync(workflow_executor: WorkflowExecutor, workflow
             'task_output': {},
             'workflow_id': workflow_id,
             'task_reference_name': task_name,
-            'status': 'FAILED'
+            'status': 'COMPLETED'
         }
     )

@@ -218,7 +218,7 @@ class WorkflowExecutor:
             status=status,
         )
 
-    def update_task_by_ref_name_sync(self, task_output: Dict[str, Any], workflow_id: str, task_reference_name: str, status: str) -> str:
+    def update_task_by_ref_name_sync(self, task_output: Dict[str, Any], workflow_id: str, task_reference_name: str, status: str) -> Workflow:
         """Update a task By Ref Name"""
         return self.task_client.update_task_sync(
             body=task_output,
