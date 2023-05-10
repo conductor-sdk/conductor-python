@@ -9,7 +9,7 @@ class TestConfiguration(unittest.TestCase):
         configuration = Configuration()
         self.assertEqual(
             configuration.host,
-            'http://localhost:8080/api/'
+            'http://localhost:8080/api'
         )
 
     def test_initialization_with_base_url(self):
@@ -18,24 +18,24 @@ class TestConfiguration(unittest.TestCase):
         )
         self.assertEqual(
             configuration.host,
-            'https://play.orkes.io/api/'
+            'https://play.orkes.io/api'
         )
 
     def test_initialization_with_server_api_url(self):
         configuration = Configuration(
-            server_api_url='https://play.orkes.io/api/'
+            server_api_url='https://play.orkes.io/api'
         )
         self.assertEqual(
             configuration.host,
-            'https://play.orkes.io/api/'
+            'https://play.orkes.io/api'
         )
 
     def test_initialization_with_basic_auth_server_api_url(self):
         configuration = Configuration(
-            server_api_url="https://user:password@play.orkes.io/api/"
+            server_api_url="https://user:password@play.orkes.io/api"
         )
         basic_auth = "user:password"
-        expected_host = f"https://{basic_auth}@play.orkes.io/api/"
+        expected_host = f"https://{basic_auth}@play.orkes.io/api"
         self.assertEqual(
             configuration.host, expected_host,
         )
