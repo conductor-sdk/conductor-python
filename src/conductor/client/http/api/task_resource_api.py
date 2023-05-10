@@ -1610,7 +1610,7 @@ class TaskResourceApi(object):
         :param str task_ref_name: (required)
         :param str status: (required)
         :param str workerid:
-        :return: str
+        :return: Workflow
                  If the method is called asynchronously,
                  returns the request thread.
         """
