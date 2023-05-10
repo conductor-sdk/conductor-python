@@ -413,7 +413,7 @@ def _run_with_retry_attempt(f, params, retries=3) -> None:
 
 
 def __update_task_by_ref_name(workflow_executor: WorkflowExecutor, workflow_id: str, task_name: str):
-    _run_with_retry_attempt(
+    return _run_with_retry_attempt(
         workflow_executor.update_task_by_ref_name,
         params={
             'task_output': {},
@@ -425,7 +425,7 @@ def __update_task_by_ref_name(workflow_executor: WorkflowExecutor, workflow_id: 
 
 
 def __update_task_by_ref_name_sync(workflow_executor: WorkflowExecutor, workflow_id: str, task_name: str):
-    _run_with_retry_attempt(
+    return _run_with_retry_attempt(
         workflow_executor.update_task_by_ref_name_sync,
         params={
             'task_output': {},
