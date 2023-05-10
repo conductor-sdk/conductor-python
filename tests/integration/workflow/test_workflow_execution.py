@@ -139,12 +139,12 @@ def test_workflow_methods(
 
     workflow_id_sync = workflow_executor.start_workflow(
         StartWorkflowRequest(name=workflow_name))
-    result = __update_task_by_ref_name_sync(
+    response = __update_task_by_ref_name_sync(
         workflow_executor,
         workflow_id_sync,
         task_name
     )
-    print('result from update task sync:', result)
+    print(f'workflowId: {workflow_id_sync}, response: {response}')
 
     start_workflow_requests = [''] * workflow_quantity
     for i in range(workflow_quantity):
