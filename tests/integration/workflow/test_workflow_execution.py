@@ -111,11 +111,11 @@ def test_workflow_methods(
 ) -> None:
     if workflow_quantity < 1:
         return
-    task_name = 'python_integration_test_task'
+    task_name = f'python_integration_test_task{uuid.uuid4()}'
     task = SimpleTask(task_name, task_name)
     workflow_executor.metadata_client.register_task_def(
         [task.to_workflow_task()])
-    workflow_name = 'python_integration_test_wf'
+    workflow_name = f'python_integration_test_wf_{uuid.uuid4()}'
     workflow = ConductorWorkflow(
         executor=workflow_executor,
         name=workflow_name,
@@ -128,27 +128,30 @@ def test_workflow_methods(
         workflow.to_workflow_def(),
         overwrite=True,
     )
+
+    workflow_id_async = workflow_executor.start_workflow(
+        StartWorkflowRequest(name=workflow_name))
+    __update_task_by_ref_name(
+        workflow_executor,
+        workflow_id_async,
+        task_name
+    )
+
+    workflow_id_sync = workflow_executor.start_workflow(
+        StartWorkflowRequest(name=workflow_name))
+    result = __update_task_by_ref_name_sync(
+        workflow_executor,
+        workflow_id_sync,
+        task_name
+    )
+    print('result from update task sync:', result)
+
     start_workflow_requests = [''] * workflow_quantity
     for i in range(workflow_quantity):
         start_workflow_requests[i] = StartWorkflowRequest(name=workflow_name)
     workflow_ids = workflow_executor.start_workflows(
         *start_workflow_requests
     )
-    workflow_id_async = workflow_executor.start_workflow(
-        start_workflow_requests[0])
-    __update_task_by_ref_name(
-        workflow_executor,
-        workflow_id_async,
-        task_name
-    )
-    workflow_id_sync = workflow_executor.start_workflow(
-        start_workflow_requests[0])
-    __update_task_by_ref_name_sync(
-        workflow_executor,
-        workflow_id_sync,
-        task_name
-    )
-    __rerun_workflow(workflow_executor, workflow_ids[1])
     for workflow_id in workflow_ids:
         __pause_workflow(workflow_executor, workflow_id)
         __resume_workflow(workflow_executor, workflow_id)
