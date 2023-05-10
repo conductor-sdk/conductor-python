@@ -109,14 +109,13 @@ def test_workflow_methods(
     workflow_executor: WorkflowExecutor,
     workflow_quantity: int,
 ) -> None:
-    task = SimpleTask(
-        'python_integration_test_abc1asjdkajskdjsad',
-        'python_integration_test_abc1asjdkajskdjsad'
-    )
+    if workflow_quantity < 1:
+        return
+    task_name = f'python_integration_test_task{uuid.uuid4()}'
+    task = SimpleTask(task_name, task_name)
     workflow_executor.metadata_client.register_task_def(
-        [task.to_workflow_task()]
-    )
-    workflow_name = 'python_integration_test_abc1asjdk'
+        [task.to_workflow_task()])
+    workflow_name = f'python_integration_test_wf_{uuid.uuid4()}'
     workflow = ConductorWorkflow(
         executor=workflow_executor,
         name=workflow_name,
@@ -129,6 +128,24 @@ def test_workflow_methods(
         workflow.to_workflow_def(),
         overwrite=True,
     )
+
+    workflow_id_async = workflow_executor.start_workflow(
+        StartWorkflowRequest(name=workflow_name))
+    __update_task_by_ref_name(
+        workflow_executor,
+        workflow_id_async,
+        task_name
+    )
+
+    workflow_id_sync = workflow_executor.start_workflow(
+        StartWorkflowRequest(name=workflow_name))
+    response = __update_task_by_ref_name_sync(
+        workflow_executor,
+        workflow_id_sync,
+        task_name
+    )
+    print(f'workflowId: {workflow_id_sync}, response: {response}')
+
     start_workflow_requests = [''] * workflow_quantity
     for i in range(workflow_quantity):
         start_workflow_requests[i] = StartWorkflowRequest(name=workflow_name)
@@ -385,11 +402,35 @@ def __validate_rerun_workflow(workflow_executor: WorkflowExecutor, workflow_id: 
         )
 
 
-def _run_with_retry_attempt(f, params, retries=5) -> None:
+def _run_with_retry_attempt(f, params, retries=3) -> None:
     for attempt in range(retries):
         try:
             return f(**params)
         except Exception as e:
             if attempt == retries - 1:
                 raise e
-            sleep((attempt + 1) * 10)
+            sleep(1 << attempt)
+
+
+def __update_task_by_ref_name(workflow_executor: WorkflowExecutor, workflow_id: str, task_name: str):
+    return _run_with_retry_attempt(
+        workflow_executor.update_task_by_ref_name,
+        params={
+            'task_output': {},
+            'workflow_id': workflow_id,
+            'task_reference_name': task_name,
+            'status': 'COMPLETED'
+        }
+    )
+
+
+def __update_task_by_ref_name_sync(workflow_executor: WorkflowExecutor, workflow_id: str, task_name: str):
+    return _run_with_retry_attempt(
+        workflow_executor.update_task_by_ref_name_sync,
+        params={
+            'task_output': {},
+            'workflow_id': workflow_id,
+            'task_reference_name': task_name,
+            'status': 'COMPLETED'
+        }
+    )
