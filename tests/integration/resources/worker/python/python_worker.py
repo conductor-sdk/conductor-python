@@ -2,6 +2,7 @@ from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.worker.worker_interface import WorkerInterface
+from conductor.client.worker.worker_task import WorkerTask
 
 
 class FaultyExecutionWorker(WorkerInterface):
@@ -38,6 +39,11 @@ class ClassWorkerWithDomain(WorkerInterface):
 
     def get_domain(self) -> str:
         return 'simple_python_worker'
+
+
+@WorkerTask(task_type='python_integration_test_task')
+def test_worker(input) -> object:
+    return {'message': 'python is so cool :)'}
 
 
 def worker_with_task_input_and_task_result_output(task: Task) -> TaskResult:
