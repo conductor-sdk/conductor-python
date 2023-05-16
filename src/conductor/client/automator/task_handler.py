@@ -9,6 +9,7 @@ from multiprocessing import Process, freeze_support
 from typing import List
 import logging
 import inspect
+import sys
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -138,22 +139,22 @@ class TaskHandler:
 
     def __scan_for_annotated_workers(self):
         workers = []
-        for name, obj in inspect.getmembers():
-            if not inspect.isfunction(obj):
-                continue
-            annotations = getattr(obj, '__annotations__', {})
-            if not isinstance(annotations.get('return'), WorkerTask):
-                continue
-            worker_settings = annotations['return']
-            worker = Worker(
-                task_definition_name=worker_settings.task_type
-                domain=worker_settings.domain,
-                poll_interval=worker_settings.poll_interval,
-                
-            )
-
-        # Create worker instance based on the annotated function
-        worker_params = annotations['return']  # Access the WorkerTask instance
-        worker = MyWorker(obj, worker_params.a, worker_params.b)
-        workers.append(worker)
-
+        for _, module in inspect.getmembers(sys.modules['__main__'], inspect.ismodule):
+            for name, obj in inspect.getmembers(module):
+                if not inspect.isfunction(obj):
+                    continue
+                logger.debug(f'found a method with name {name}')
+                annotations = getattr(obj, '__annotations__', {})
+                if not isinstance(annotations.get('return'), WorkerTask):
+                    continue
+                worker_settings = annotations['return']
+                logger.debug(f'found a worker with name {name}')
+                worker = Worker(
+                    task_definition_name=worker_settings.task_type,
+                    domain=worker_settings.domain,
+                    poll_interval=worker_settings.poll_interval,
+                    worker_id=worker_settings.worker_id,
+                    execute_function=obj,
+                )
+                workers.append(worker)
+        return workers

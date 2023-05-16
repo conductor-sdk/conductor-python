@@ -77,7 +77,7 @@ class TaskRunner:
                 params['domain'] = domain
             task = self.task_client.poll(
                 tasktype=task_definition_name,
-                params=params
+                **params
             )
             finish_time = time.time()
             time_spent = finish_time - start_time

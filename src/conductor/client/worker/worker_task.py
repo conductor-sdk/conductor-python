@@ -8,3 +8,6 @@ class WorkerTask(ExecuteTaskFunction):
         self.domain = domain
         self.poll_interval = poll_interval_seconds
         self.workerid = workerid
+
+    def __call__(self, *args, **kwargs):
+        pass
