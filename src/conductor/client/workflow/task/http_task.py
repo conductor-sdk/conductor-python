@@ -25,6 +25,7 @@ class HttpInput:
         '_content_type': 'str',
         '_connection_time_out': 'int',
         '_read_timeout': 'int',
+        '_body': 'str',
     }
 
     attribute_map = {
@@ -36,6 +37,7 @@ class HttpInput:
         '_content_type': 'contentType',
         '_connection_time_out': 'connectionTimeOut',
         '_read_timeout': 'readTimeOut',
+        '_body': 'body',
     }
 
     def __init__(self,
