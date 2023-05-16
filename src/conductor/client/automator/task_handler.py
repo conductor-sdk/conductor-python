@@ -3,9 +3,12 @@ from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.metrics_settings import MetricsSettings
 from conductor.client.telemetry.metrics_collector import MetricsCollector
 from conductor.client.worker.worker_interface import WorkerInterface
+from conductor.client.worker.worker_task import WorkerTask
+from conductor.client.worker.worker import Worker
 from multiprocessing import Process, freeze_support
 from typing import List
 import logging
+import inspect
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -19,10 +22,14 @@ class TaskHandler:
             self,
             workers: List[WorkerInterface],
             configuration: Configuration = None,
-            metrics_settings: MetricsSettings = None
+            metrics_settings: MetricsSettings = None,
+            scan_for_annotated_workers: bool = None,
     ):
         if not isinstance(workers, list):
             workers = [workers]
+        if scan_for_annotated_workers is not False:
+            for worker in self.__scan_for_annotated_workers():
+                workers.append(worker)
         self.__create_task_runner_processes(
             workers, configuration, metrics_settings
         )
@@ -128,3 +135,25 @@ class TaskHandler:
             logger.debug(f'Failed to kill process: {process}, reason: {e}')
             process.terminate()
             logger.debug('Terminated process: {process}')
+
+    def __scan_for_annotated_workers(self):
+        workers = []
+        for name, obj in inspect.getmembers():
+            if not inspect.isfunction(obj):
+                continue
+            annotations = getattr(obj, '__annotations__', {})
+            if not isinstance(annotations.get('return'), WorkerTask):
+                continue
+            worker_settings = annotations['return']
+            worker = Worker(
+                task_definition_name=worker_settings.task_type
+                domain=worker_settings.domain,
+                poll_interval=worker_settings.poll_interval,
+                
+            )
+
+        # Create worker instance based on the annotated function
+        worker_params = annotations['return']  # Access the WorkerTask instance
+        worker = MyWorker(obj, worker_params.a, worker_params.b)
+        workers.append(worker)
+
