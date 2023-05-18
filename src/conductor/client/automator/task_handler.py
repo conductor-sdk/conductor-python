@@ -158,6 +158,8 @@ def __get_client_topmost_package_filepath():
 
 def __get_annotated_workers_from_subtree(pkg):
     workers = []
+    if not pkg:
+        return workers
     pkg_path = os.path.dirname(pkg)
     for root, _, files in os.walk(pkg_path):
         for file in files:
