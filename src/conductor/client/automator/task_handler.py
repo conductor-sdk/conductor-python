@@ -2,20 +2,28 @@ from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.metrics_settings import MetricsSettings
 from conductor.client.telemetry.metrics_collector import MetricsCollector
+from conductor.client.worker.worker import Worker
 from conductor.client.worker.worker_interface import WorkerInterface
 from conductor.client.worker.worker_task import WorkerTask
-from conductor.client.worker.worker import Worker
 from multiprocessing import Process, freeze_support
 from typing import List
-import logging
+import ast
 import inspect
-import sys
+import logging
+import os
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
         __name__
     )
 )
+
+
+def get_annotated_workers():
+    pkg = __get_client_topmost_package_filepath()
+    workers = __get_annotated_workers_from_subtree(pkg)
+    logger.debug(f'Found {len(workers)} workers')
+    return workers
 
 
 class TaskHandler:
@@ -29,7 +37,7 @@ class TaskHandler:
         if not isinstance(workers, list):
             workers = [workers]
         if scan_for_annotated_workers is not False:
-            for worker in self.__scan_for_annotated_workers():
+            for worker in get_annotated_workers():
                 workers.append(worker)
         self.__create_task_runner_processes(
             workers, configuration, metrics_settings
@@ -137,24 +145,55 @@ class TaskHandler:
             process.terminate()
             logger.debug('Terminated process: {process}')
 
-    def __scan_for_annotated_workers(self):
-        workers = []
-        for _, module in inspect.getmembers(sys.modules['__main__'], inspect.ismodule):
-            for name, obj in inspect.getmembers(module):
-                if not inspect.isfunction(obj):
+
+def __get_client_topmost_package_filepath():
+    module = inspect.getmodule(inspect.stack()[-1][0])
+    while module:
+        if not getattr(module, '__parent__', None):
+            logger.debug(f'parent module not found for {module}')
+            return getattr(module, '__file__', None)
+        module = getattr(module, '__parent__', None)
+    return None
+
+
+def __get_annotated_workers_from_subtree(pkg):
+    workers = []
+    pkg_path = os.path.dirname(pkg)
+    for root, _, files in os.walk(pkg_path):
+        for file in files:
+            logger.debug(f'file: {file}')
+            if not file.endswith('.py') or file == '__init__.py':
+                continue
+            module_path = os.path.join(root, file)
+            with open(module_path, 'r') as file:
+                source = file.read()
+            tree = ast.parse(source)
+            for node in ast.walk(tree):
+                if not isinstance(node, ast.FunctionDef):
                     continue
-                logger.debug(f'found a method with name {name}')
-                annotations = getattr(obj, '__annotations__', {})
-                if not isinstance(annotations.get('return'), WorkerTask):
-                    continue
-                worker_settings = annotations['return']
-                logger.debug(f'found a worker with name {name}')
-                worker = Worker(
-                    task_definition_name=worker_settings.task_type,
-                    domain=worker_settings.domain,
-                    poll_interval=worker_settings.poll_interval,
-                    worker_id=worker_settings.worker_id,
-                    execute_function=obj,
-                )
-                workers.append(worker)
-        return workers
+                for decorator in node.decorator_list:
+                    decorator_type, params = __extract_decorator_info(
+                        decorator)
+                    if decorator_type != 'WorkerTask':
+                        continue
+                    logger.debug(
+                        f'found worker: {node.name}, decorator type: {decorator_type}, params: {params}')
+    return workers
+
+
+def __extract_decorator_info(decorator):
+    if not isinstance(decorator, ast.Call):
+        return None, None
+    decorator_type = None
+    decorator_params = {}
+    decorator_func = decorator.func
+    if isinstance(decorator_func, ast.Attribute):
+        decorator_type = decorator_func.attr
+    elif isinstance(decorator_func, ast.Name):
+        decorator_type = decorator_func.id
+    if decorator.keywords:
+        for keyword in decorator.keywords:
+            param_name = keyword.arg
+            param_value = keyword.value
+            decorator_params[param_name] = param_value
+    return decorator_type, decorator_params
