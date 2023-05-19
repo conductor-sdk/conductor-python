@@ -41,7 +41,7 @@ class ClassWorkerWithDomain(WorkerInterface):
         return 'simple_python_worker'
 
 
-@WorkerTask(task_type='python_integration_test_task')
+@WorkerTask(task_definition_name='random_task')
 def test_worker(input) -> object:
     return {'message': 'python is so cool :)'}
 

@@ -11,6 +11,7 @@ import ast
 import inspect
 import logging
 import os
+import copy
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -163,14 +164,13 @@ def __get_annotated_workers_from_subtree(pkg):
     pkg_path = os.path.dirname(pkg)
     for root, _, files in os.walk(pkg_path):
         for file in files:
-            logger.debug(f'file: {file}')
             if not file.endswith('.py') or file == '__init__.py':
                 continue
             module_path = os.path.join(root, file)
             with open(module_path, 'r') as file:
-                source = file.read()
-            tree = ast.parse(source)
-            for node in ast.walk(tree):
+                source_code = file.read()
+            module = ast.parse(source_code, filename=module_path)
+            for node in ast.walk(module):
                 if not isinstance(node, ast.FunctionDef):
                     continue
                 for decorator in node.decorator_list:
@@ -178,8 +178,15 @@ def __get_annotated_workers_from_subtree(pkg):
                         decorator)
                     if decorator_type != 'WorkerTask':
                         continue
-                    logger.debug(
-                        f'found worker: {node.name}, decorator type: {decorator_type}, params: {params}')
+                    try:
+                        worker = __create_worker_from_ast_node(
+                            node, params)
+                        if worker:
+                            workers.append(worker)
+                    except Exception as e:
+                        logger.debug(
+                            f'Failed to create worker from function: {node.name}. Reason: {str(e)}')
+                        continue
     return workers
 
 
@@ -196,6 +203,17 @@ def __extract_decorator_info(decorator):
     if decorator.keywords:
         for keyword in decorator.keywords:
             param_name = keyword.arg
-            param_value = keyword.value
+            param_value = keyword.value.value
             decorator_params[param_name] = param_value
     return decorator_type, decorator_params
+
+
+def __create_worker_from_ast_node(node, params):
+    auxiliar_node = copy.deepcopy(node)
+    auxiliar_node.decorator_list = []
+    function_source_code = ast.unparse(auxiliar_node)
+    exec(function_source_code)
+    execute_function = locals()[node.name]
+    params['execute_function'] = execute_function
+    worker = Worker(**params)
+    return worker

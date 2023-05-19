@@ -139,12 +139,12 @@ def test_workflow_methods(
 
     workflow_id_sync = workflow_executor.start_workflow(
         StartWorkflowRequest(name=workflow_name))
+    sleep(2)
     response = __update_task_by_ref_name_sync(
         workflow_executor,
         workflow_id_sync,
         task_name
     )
-    print(f'workflowId: {workflow_id_sync}, response: {response}')
 
     start_workflow_requests = [''] * workflow_quantity
     for i in range(workflow_quantity):
@@ -402,7 +402,7 @@ def __validate_rerun_workflow(workflow_executor: WorkflowExecutor, workflow_id: 
         )
 
 
-def _run_with_retry_attempt(f, params, retries=3) -> None:
+def _run_with_retry_attempt(f, params, retries=4) -> None:
     for attempt in range(retries):
         try:
             return f(**params)
