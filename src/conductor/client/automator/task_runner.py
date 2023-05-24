@@ -72,17 +72,13 @@ class TaskRunner:
         try:
             start_time = time.time()
             domain = self.worker.get_domain()
+            params = {'workerid': self.worker.get_identity()}
             if domain != None:
-                task = self.task_client.poll(
-                    tasktype=task_definition_name,
-                    workerid=self.worker.get_identity(),
-                    domain=self.worker.get_domain(),
-                )
-            else:
-                task = self.task_client.poll(
-                    tasktype=task_definition_name,
-                    workerid=self.worker.get_identity(),
-                )
+                params['domain'] = domain
+            task = self.task_client.poll(
+                tasktype=task_definition_name,
+                **params
+            )
             finish_time = time.time()
             time_spent = finish_time - start_time
             if self.metrics_collector is not None:
@@ -148,7 +144,8 @@ class TaskRunner:
             )
             task_result.status = 'FAILED'
             task_result.reason_for_incompletion = str(e)
-            task_result.logs = [TaskExecLog(traceback.format_exc(), task_result.task_id, int(time.time()))]
+            task_result.logs = [TaskExecLog(
+                traceback.format_exc(), task_result.task_id, int(time.time()))]
             logger.error(
                 'Failed to execute task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, reason: {reason}'.format(
                     task_id=task.task_id,

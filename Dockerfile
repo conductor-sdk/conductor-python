@@ -1,6 +1,7 @@
 ARG SDK_ORIGIN=local_sdk
 
 FROM python:3.11-alpine as python_base
+RUN apk add --no-cache tk
 RUN mkdir /package
 COPY /src /package/src
 COPY /setup* /package/

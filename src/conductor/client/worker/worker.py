@@ -34,14 +34,19 @@ class Worker(WorkerInterface):
                  execute_function: ExecuteTaskFunction,
                  poll_interval: float = None,
                  domain: str = None,
+                 worker_id: str = None,
                  ) -> Self:
         super().__init__(task_definition_name)
         if poll_interval == None:
-            poll_interval = super().get_polling_interval_in_seconds()
-        self.poll_interval = deepcopy(poll_interval)
-        if domain == None:
-            domain = super().get_domain()
+            self.poll_interval = deepcopy(
+                super().get_polling_interval_in_seconds())
+        else:
+            self.poll_interval = deepcopy(poll_interval)
         self.domain = deepcopy(domain)
+        if worker_id is None:
+            self.worker_id = deepcopy(super().get_identity())
+        else:
+            self.worker_id = deepcopy(worker_id)
         self.execute_function = deepcopy(execute_function)
 
     def execute(self, task: Task) -> TaskResult:
@@ -61,6 +66,9 @@ class Worker(WorkerInterface):
         task_result.status = TaskResultStatus.COMPLETED
         task_result.output_data = self.execute_function(task)
         return task_result
+
+    def get_identity(self) -> str:
+        return self.worker_id
 
     def get_polling_interval_in_seconds(self) -> float:
         return self.poll_interval
