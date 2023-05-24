@@ -41,8 +41,8 @@ class ClassWorkerWithDomain(WorkerInterface):
         return 'simple_python_worker'
 
 
-@WorkerTask(task_definition_name='random_task')
-def test_worker(input) -> object:
+@WorkerTask(task_definition_name='test_python_decorated_worker')
+def decorated_worker(input) -> object:
     return {'message': 'python is so cool :)'}
 
 

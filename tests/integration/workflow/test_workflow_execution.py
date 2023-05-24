@@ -62,6 +62,7 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
         logger.debug('finished workflow methods tests')
         test_workflow_sync_execution(workflow_executor)
         logger.debug('finished workflow sync execution test')
+        test_decorated_worker(workflow_executor)
     except Exception as e:
         task_handler.stop_processes()
         raise Exception(f'failed integration tests, reason: {e}')
@@ -186,6 +187,29 @@ def test_workflow_registration(workflow_executor: WorkflowExecutor):
     )
 
 
+def test_decorated_worker(
+        workflow_executor: WorkflowExecutor,
+        workflow_name: str = 'TestPythonDecoratedWorkerWf',
+) -> None:
+    wf = generate_workflow(
+        workflow_executor=workflow_executor,
+        workflow_name=workflow_name,
+        task_name='test_python_decorated_worker',
+    )
+    wf.register(True)
+    workflow_id = workflow_executor.start_workflow(
+        StartWorkflowRequest(name=workflow_name))
+    logger.debug(f'started workflow with id: {workflow_id}')
+    sleep(5)
+    _run_with_retry_attempt(
+        validate_workflow_status,
+        {
+            'workflow_id': workflow_id,
+            'workflow_executor': workflow_executor
+        }
+    )
+
+
 def test_workflow_execution(
     workflow_quantity: int,
     workflow_name: str,
@@ -207,17 +231,17 @@ def test_workflow_execution(
         )
 
 
-def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
+def generate_workflow(workflow_executor: WorkflowExecutor, workflow_name: str = WORKFLOW_NAME, task_name: str = TASK_NAME) -> ConductorWorkflow:
     return ConductorWorkflow(
         executor=workflow_executor,
-        name=WORKFLOW_NAME,
+        name=workflow_name,
         version=WORKFLOW_VERSION,
     ).owner_email(
         WORKFLOW_OWNER_EMAIL
     ).add(
         SimpleTask(
-            task_def_name=TASK_NAME,
-            task_reference_name=TASK_NAME,
+            task_def_name=task_name,
+            task_reference_name=task_name,
         )
     )
 
