@@ -1,4 +1,5 @@
 from conductor.client.configuration.configuration import Configuration
+from conductor.client.http.thread import AwaitableThread
 from conductor.client.http import rest
 from six.moves.urllib.parse import quote
 from typing import Dict
@@ -219,7 +220,8 @@ class ApiClient(object):
         try:
             return self.__deserialize(data, response_type)
         except ValueError as e:
-            logger.debug(f'failed to deserialize data {data} into class {response_type}, reason: {e}')
+            logger.debug(
+                f'failed to deserialize data {data} into class {response_type}, reason: {e}')
             return None
 
     def __deserialize(self, data, klass):
@@ -303,12 +305,26 @@ class ApiClient(object):
             If parameter async_req is False or missing,
             then the method will return the response directly.
         """
-        return self.__call_api(resource_path, method,
-                               path_params, query_params, header_params,
-                               body, post_params, files,
-                               response_type, auth_settings,
-                               _return_http_data_only, collection_formats,
-                               _preload_content, _request_timeout)
+        if not async_req:
+            return self.__call_api(resource_path, method,
+                                   path_params, query_params, header_params,
+                                   body, post_params, files,
+                                   response_type, auth_settings,
+                                   _return_http_data_only, collection_formats,
+                                   _preload_content, _request_timeout)
+        thread = AwaitableThread(
+            target=self.__call_api,
+            args=(
+                resource_path, method,
+                path_params, query_params, header_params,
+                body, post_params, files,
+                response_type, auth_settings,
+                _return_http_data_only, collection_formats,
+                _preload_content, _request_timeout
+            )
+        )
+        thread.start()
+        return thread
 
     def request(self, method, url, query_params=None, headers=None,
                 post_params=None, body=None, _preload_content=True,
