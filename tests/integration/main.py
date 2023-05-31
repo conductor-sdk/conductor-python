@@ -6,6 +6,7 @@ from conductor.client.workflow.executor.workflow_executor import WorkflowExecuto
 from metadata.test_workflow_definition import run_workflow_definition_tests
 from workflow.test_workflow_execution import run_workflow_execution_tests
 from client.event import test_event_client
+from client import test_async
 
 import logging
 import os
@@ -47,7 +48,9 @@ def generate_configuration():
 def main():
     configuration = generate_configuration()
     workflow_executor = WorkflowExecutor(configuration)
-    test_event_client.test_kafka_queue_configuration(ApiClient(configuration))
+    api_client = ApiClient(configuration)
+    test_event_client.test_kafka_queue_configuration(api_client)
+    test_async.test_async_method(api_client)
     run_workflow_definition_tests(workflow_executor)
     run_workflow_execution_tests(configuration, workflow_executor)
 
