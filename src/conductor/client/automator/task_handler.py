@@ -174,9 +174,9 @@ def __get_annotated_workers_from_subtree(pkg):
                 if not isinstance(node, ast.FunctionDef):
                     continue
                 for decorator in node.decorator_list:
-                    decorator_type, params = __extract_decorator_info(
+                    params = __extract_decorator_info(
                         decorator)
-                    if decorator_type != 'WorkerTask':
+                    if params is None:
                         continue
                     try:
                         worker = __create_worker_from_ast_node(
@@ -194,18 +194,20 @@ def __extract_decorator_info(decorator):
     if not isinstance(decorator, ast.Call):
         return None, None
     decorator_type = None
-    decorator_params = {}
     decorator_func = decorator.func
     if isinstance(decorator_func, ast.Attribute):
         decorator_type = decorator_func.attr
     elif isinstance(decorator_func, ast.Name):
         decorator_type = decorator_func.id
+    if decorator_type != 'WorkerTask':
+        return None
+    decorator_params = {}
     if decorator.keywords:
         for keyword in decorator.keywords:
             param_name = keyword.arg
             param_value = keyword.value.value
             decorator_params[param_name] = param_value
-    return decorator_type, decorator_params
+    return decorator_params
 
 
 def __create_worker_from_ast_node(node, params):
