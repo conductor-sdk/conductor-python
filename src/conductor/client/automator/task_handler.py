@@ -8,6 +8,7 @@ from conductor.client.worker.worker_task import WorkerTask
 from multiprocessing import Process, freeze_support
 from typing import List
 import ast
+import astor
 import inspect
 import logging
 import os
@@ -37,7 +38,7 @@ class TaskHandler:
     ):
         if not isinstance(workers, list):
             workers = [workers]
-        if scan_for_annotated_workers is not False:
+        if scan_for_annotated_workers is True:
             for worker in get_annotated_workers():
                 workers.append(worker)
         self.__create_task_runner_processes(
@@ -174,9 +175,9 @@ def __get_annotated_workers_from_subtree(pkg):
                 if not isinstance(node, ast.FunctionDef):
                     continue
                 for decorator in node.decorator_list:
-                    decorator_type, params = __extract_decorator_info(
+                    params = __extract_decorator_info(
                         decorator)
-                    if decorator_type != 'WorkerTask':
+                    if params is None:
                         continue
                     try:
                         worker = __create_worker_from_ast_node(
@@ -194,18 +195,24 @@ def __extract_decorator_info(decorator):
     if not isinstance(decorator, ast.Call):
         return None, None
     decorator_type = None
-    decorator_params = {}
     decorator_func = decorator.func
     if isinstance(decorator_func, ast.Attribute):
         decorator_type = decorator_func.attr
     elif isinstance(decorator_func, ast.Name):
         decorator_type = decorator_func.id
+    if decorator_type != 'WorkerTask':
+        return None
+    decorator_params = {}
+    if decorator.args:
+        for arg in decorator.args:
+            arg_value = astor.to_source(arg).strip()
+            decorator_params[arg_value] = ast.literal_eval(arg)
     if decorator.keywords:
         for keyword in decorator.keywords:
             param_name = keyword.arg
-            param_value = keyword.value.value
+            param_value = ast.literal_eval(keyword.value)
             decorator_params[param_name] = param_value
-    return decorator_type, decorator_params
+    return decorator_params
 
 
 def __create_worker_from_ast_node(node, params):

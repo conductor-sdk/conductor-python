@@ -40,7 +40,8 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
             generate_worker(worker_with_task_input_and_generic_output),
             generate_worker(worker_with_task_input_and_task_result_output),
         ],
-        configuration=configuration
+        configuration=configuration,
+        scan_for_annotated_workers=True,
     )
     task_handler.start_processes()
     try:
