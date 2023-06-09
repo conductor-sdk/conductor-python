@@ -1,11 +1,10 @@
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.thread import AwaitableThread
 from conductor.client.http import rest
+from conductor.client.http.thread import AwaitableThread
 from six.moves.urllib.parse import quote
 from typing import Dict
 import conductor.client.http.models as http_models
 import datetime
-import json
 import logging
 import mimetypes
 import os
@@ -20,6 +19,10 @@ logger = logging.getLogger(
         __name__
     )
 )
+
+
+def get_expiration_time():
+    return datetime.datetime.now() + datetime.timedelta(minutes=30)
 
 
 class ApiClient(object):
@@ -72,7 +75,9 @@ class ApiClient(object):
         )
 
         self.cookie = cookie
-        self.__refresh_auth_token()
+
+        self.__auth_token = None
+        self.__auth_token_expiration_time = None
 
     def __call_api(
             self, resource_path, method, path_params=None,
@@ -117,13 +122,6 @@ class ApiClient(object):
             post_params = self.sanitize_for_serialization(post_params)
             post_params = self.parameters_to_tuples(post_params,
                                                     collection_formats)
-
-        # auth setting
-        self.update_params_for_auth(
-            header_params,
-            query_params,
-            self.__get_authentication_headers()
-        )
 
         # body
         if body:
@@ -305,6 +303,11 @@ class ApiClient(object):
             If parameter async_req is False or missing,
             then the method will return the response directly.
         """
+        self.update_params_for_auth(
+            header_params,
+            query_params,
+            self.__get_authentication_headers()
+        )
         if not async_req:
             return self.__call_api(resource_path, method,
                                    path_params, query_params, header_params,
@@ -626,25 +629,28 @@ class ApiClient(object):
         return instance
 
     def __get_authentication_headers(self):
-        if self.configuration.AUTH_TOKEN is None:
+        if self.configuration.authentication_settings is None:
+            return None
+        self.__refresh_auth_token()
+        if self.__has_valid_token() is False:
             return None
         return {
             'header': {
-                'X-Authorization': self.configuration.AUTH_TOKEN
+                'X-Authorization': self.__auth_token
             }
         }
 
     def __refresh_auth_token(self) -> None:
-        if self.configuration.AUTH_TOKEN != None:
-            return
         if self.configuration.authentication_settings == None:
             return
+        if self.__has_valid_token() is True:
+            return
         token = self.__get_new_token()
-        self.configuration.update_token(token)
+        self.update_token(token)
 
     def __get_new_token(self) -> str:
         try:
-            response = self.call_api(
+            response = self.__call_api(
                 '/token', 'POST',
                 header_params={
                     'Content-Type': self.select_header_content_type(['*/*'])
@@ -677,3 +683,13 @@ class ApiClient(object):
             for key, value in encrypted_headers.items():
                 headers[key] = value
         return headers
+
+    def __has_valid_token(self):
+        if self.__auth_token == None:
+            return False
+        current_time = datetime.datetime.now()
+        return current_time < self.__auth_token_expiration_time
+
+    def update_token(self, token: str):
+        self.__auth_token = token
+        self.__auth_token_expiration_time = get_expiration_time()
