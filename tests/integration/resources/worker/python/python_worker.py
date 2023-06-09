@@ -46,8 +46,8 @@ def simple_decorated_worker(input) -> object:
     return {'message': 'python is so cool :)'}
 
 
-@WorkerTask(task_definition_name='test_python_decorated_worker', poll_interval_seconds=0.050)
-def decorated_worker_with_poll_interval() -> object:
+@WorkerTask(task_definition_name='test_python_decorated_worker', poll_interval=0.050)
+def decorated_worker_with_poll_interval(input) -> object:
     return {'message': 'python is so cool :)'}
 
 
