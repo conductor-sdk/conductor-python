@@ -31,12 +31,14 @@ def get_annotated_workers():
 class TaskHandler:
     def __init__(
             self,
-            workers: List[WorkerInterface],
+            workers: List[WorkerInterface] = None,
             configuration: Configuration = None,
             metrics_settings: MetricsSettings = None,
             scan_for_annotated_workers: bool = None,
     ):
-        if not isinstance(workers, list):
+        if workers is None:
+            workers = []
+        elif not isinstance(workers, list):
             workers = [workers]
         if scan_for_annotated_workers is True:
             for worker in get_annotated_workers():
