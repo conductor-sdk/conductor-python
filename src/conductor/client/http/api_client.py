@@ -646,7 +646,8 @@ class ApiClient(object):
         if self.__has_valid_token() is True:
             return
         token = self.__get_new_token()
-        self.update_token(token)
+        self.__auth_token = token
+        self.__auth_token_expiration_time = get_expiration_time()
 
     def __get_new_token(self) -> str:
         try:
@@ -689,7 +690,3 @@ class ApiClient(object):
             return False
         current_time = datetime.datetime.now()
         return current_time < self.__auth_token_expiration_time
-
-    def update_token(self, token: str):
-        self.__auth_token = token
-        self.__auth_token_expiration_time = get_expiration_time()
