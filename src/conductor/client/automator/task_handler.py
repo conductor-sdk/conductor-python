@@ -36,7 +36,7 @@ class TaskHandler:
             metrics_settings: MetricsSettings = None,
             scan_for_annotated_workers: bool = None,
     ):
-        if workers == None:
+        if workers is None:
             workers = []
         elif not isinstance(workers, list):
             workers = [workers]
