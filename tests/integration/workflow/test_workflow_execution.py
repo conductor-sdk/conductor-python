@@ -229,10 +229,15 @@ def test_workflow_execution(
     workflow_executor: WorkflowExecutor,
     workflow_completion_timeout: float,
 ) -> None:
-    start_workflow_requests = [''] * workflow_quantity
+    start_workflow_request = StartWorkflowRequest(name=workflow_name)
+    workflow_ids = [''] * workflow_quantity
     for i in range(workflow_quantity):
-        start_workflow_requests[i] = StartWorkflowRequest(name=workflow_name)
-    workflow_ids = workflow_executor.start_workflows(*start_workflow_requests)
+        workflow_ids[i] = _run_with_retry_attempt(
+            workflow_executor.start_workflow,
+            {
+                "start_workflow_request": start_workflow_request,
+            }
+        )
     sleep(workflow_completion_timeout)
     for workflow_id in workflow_ids:
         _run_with_retry_attempt(
