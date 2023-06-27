@@ -1,4 +1,4 @@
-from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
+from ..configuration.settings.authentication_settings import AuthenticationSettings
 import logging
 import os
 

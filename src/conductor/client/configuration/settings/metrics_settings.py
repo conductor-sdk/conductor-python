@@ -1,4 +1,4 @@
-from conductor.client.configuration.configuration import Configuration
+from ..configuration import Configuration
 from pathlib import Path
 import logging
 import os

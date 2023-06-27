@@ -1,5 +1,4 @@
-from conductor.client.event.queue.queue_worker_configuration import QueueWorkerConfiguration
-
+from .queue_worker_configuration import QueueWorkerConfiguration
 from abc import ABC
 from typing import Any, Dict
 

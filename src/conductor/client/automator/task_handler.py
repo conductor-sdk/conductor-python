@@ -1,31 +1,19 @@
-from conductor.client.automator.task_runner import TaskRunner
-from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.metrics_settings import MetricsSettings
-from conductor.client.telemetry.metrics_collector import MetricsCollector
-from conductor.client.worker.worker import Worker
-from conductor.client.worker.worker_interface import WorkerInterface
-from conductor.client.worker.worker_task import WorkerTask
-from multiprocessing import Process, freeze_support
+from ..configuration.configuration import Configuration
+from ..configuration.settings.metrics_settings import MetricsSettings
+from ..telemetry.metrics_collector import MetricsCollector
+from ..worker.worker_discovery import get_annotated_workers
+from ..worker.worker_interface import WorkerInterface
+from .task_runner import TaskRunner
+from multiprocessing import Process
 from typing import List
-import ast
-import astor
-import inspect
 import logging
-import os
-import copy
+import multiprocessing
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
         __name__
     )
 )
-
-
-def get_annotated_workers():
-    pkg = __get_client_topmost_package_filepath()
-    workers = __get_annotated_workers_from_subtree(pkg)
-    logger.debug(f'Found {len(workers)} workers')
-    return workers
 
 
 class TaskHandler:
@@ -64,7 +52,7 @@ class TaskHandler:
 
     def start_processes(self) -> None:
         logger.info('Starting worker processes...')
-        freeze_support()
+        multiprocessing.freeze_support()
         self.__start_task_runner_processes()
         self.__start_metrics_provider_process()
         logger.info('Started all processes')
@@ -148,81 +136,3 @@ class TaskHandler:
             logger.debug(f'Failed to kill process: {process}, reason: {e}')
             process.terminate()
             logger.debug('Terminated process: {process}')
-
-
-def __get_client_topmost_package_filepath():
-    module = inspect.getmodule(inspect.stack()[-1][0])
-    while module:
-        if not getattr(module, '__parent__', None):
-            logger.debug(f'parent module not found for {module}')
-            return getattr(module, '__file__', None)
-        module = getattr(module, '__parent__', None)
-    return None
-
-
-def __get_annotated_workers_from_subtree(pkg):
-    workers = []
-    if not pkg:
-        return workers
-    pkg_path = os.path.dirname(pkg)
-    for root, _, files in os.walk(pkg_path):
-        for file in files:
-            if not file.endswith('.py') or file == '__init__.py':
-                continue
-            module_path = os.path.join(root, file)
-            with open(module_path, 'r') as file:
-                source_code = file.read()
-            module = ast.parse(source_code, filename=module_path)
-            for node in ast.walk(module):
-                if not isinstance(node, ast.FunctionDef):
-                    continue
-                for decorator in node.decorator_list:
-                    params = __extract_decorator_info(
-                        decorator)
-                    if params is None:
-                        continue
-                    try:
-                        worker = __create_worker_from_ast_node(
-                            node, params)
-                        if worker:
-                            workers.append(worker)
-                    except Exception as e:
-                        logger.debug(
-                            f'Failed to create worker from function: {node.name}. Reason: {str(e)}')
-                        continue
-    return workers
-
-
-def __extract_decorator_info(decorator):
-    if not isinstance(decorator, ast.Call):
-        return None, None
-    decorator_type = None
-    decorator_func = decorator.func
-    if isinstance(decorator_func, ast.Attribute):
-        decorator_type = decorator_func.attr
-    elif isinstance(decorator_func, ast.Name):
-        decorator_type = decorator_func.id
-    if decorator_type != 'WorkerTask':
-        return None
-    decorator_params = {}
-    if decorator.args:
-        for arg in decorator.args:
-            arg_value = astor.to_source(arg).strip()
-            decorator_params[arg_value] = ast.literal_eval(arg)
-    if decorator.keywords:
-        for keyword in decorator.keywords:
-            param_name = keyword.arg
-            param_value = ast.literal_eval(keyword.value)
-            decorator_params[param_name] = param_value
-    return decorator_params
-
-
-def __create_worker_from_ast_node(node, params):
-    auxiliar_node = copy.deepcopy(node)
-    auxiliar_node.decorator_list = []
-    function_source_code = ast.unparse(auxiliar_node)
-    exec(function_source_code)
-    execute_function = locals()[node.name]
-    params['execute_function'] = execute_function
-    worker = Worker(**params)
-    return worker

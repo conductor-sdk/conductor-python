@@ -1,12 +1,12 @@
-from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.metrics_settings import MetricsSettings
-from conductor.client.http.api_client import ApiClient
-from conductor.client.http.api.task_resource_api import TaskResourceApi
-from conductor.client.http.models.task import Task
-from conductor.client.http.models.task_result import TaskResult
-from conductor.client.http.models.task_exec_log import TaskExecLog
-from conductor.client.telemetry.metrics_collector import MetricsCollector
-from conductor.client.worker.worker_interface import WorkerInterface
+from ..configuration.configuration import Configuration
+from ..configuration.settings.metrics_settings import MetricsSettings
+from ..http.api_client import ApiClient
+from ..http.api.task_resource_api import TaskResourceApi
+from ..http.models.task import Task
+from ..http.models.task_result import TaskResult
+from ..http.models.task_exec_log import TaskExecLog
+from ..telemetry.metrics_collector import MetricsCollector
+from ..worker.worker_interface import WorkerInterface
 import logging
 import sys
 import time

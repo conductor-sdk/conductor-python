@@ -1,6 +1,6 @@
-from conductor.client.http.api_client import ApiClient
-from conductor.client.http.api.event_resource_api import EventResourceApi
-from conductor.client.event.queue.queue_configuration import QueueConfiguration
+from ..http.api_client import ApiClient
+from ..http.api.event_resource_api import EventResourceApi
+from .queue.queue_configuration import QueueConfiguration
 
 
 class EventClient:
