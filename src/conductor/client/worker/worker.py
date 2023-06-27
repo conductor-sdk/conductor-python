@@ -1,8 +1,8 @@
+from ..http.models.task import Task
+from ..http.models.task_result import TaskResult
+from ..http.models.task_result_status import TaskResultStatus
+from .worker_interface import WorkerInterface
 from copy import deepcopy
-from conductor.client.http.models.task import Task
-from conductor.client.http.models.task_result import TaskResult
-from conductor.client.http.models.task_result_status import TaskResultStatus
-from conductor.client.worker.worker_interface import WorkerInterface
 from typing import Any, Callable, Union
 from typing_extensions import Self
 import inspect

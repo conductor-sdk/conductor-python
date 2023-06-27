@@ -1,5 +1,5 @@
-from conductor.client.http.models.task import Task
-from conductor.client.http.models.task_result import TaskResult
+from ..http.models.task import Task
+from ..http.models.task_result import TaskResult
 import abc
 import socket
 

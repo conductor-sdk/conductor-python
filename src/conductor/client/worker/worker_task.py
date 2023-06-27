@@ -1,5 +1,5 @@
 from typing import Callable, TypeVar
-from conductor.client.worker.worker import ExecuteTaskFunction
+from .worker import ExecuteTaskFunction
 
 
 class WorkerTask(ExecuteTaskFunction):
