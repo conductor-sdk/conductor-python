@@ -5,7 +5,7 @@ import re  # noqa: F401
 # python 2 and python 3 compatibility library
 import six
 
-from conductor.client.http.api_client import ApiClient
+from ..api_client import ApiClient
 
 
 class WorkflowResourceApi(object):
@@ -960,7 +960,7 @@ class WorkflowResourceApi(object):
             _preload_content=params.get('_preload_content', True),
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
-    
+
     def get_workflows_batch(self, body, **kwargs):  # noqa: E501
         """Lists workflows for the given correlation id list and workflow name list  # noqa: E501
 

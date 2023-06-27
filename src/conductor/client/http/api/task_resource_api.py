@@ -6,7 +6,7 @@ import re  # noqa: F401
 import six
 import socket
 
-from conductor.client.http.api_client import ApiClient
+from ..api_client import ApiClient
 
 
 class TaskResourceApi(object):
@@ -1556,7 +1556,7 @@ class TaskResourceApi(object):
             path_params['status'] = params['status']  # noqa: E501
 
         query_params = []
-        
+
         if 'workerid' not in params:
             params['workerid'] = socket.gethostname()
         query_params.append(('workerid', params['workerid']))  # noqa: E501
