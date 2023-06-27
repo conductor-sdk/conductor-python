@@ -1,4 +1,4 @@
-from ..http.models.start_workflow_request import StartWorkflowRequest
+from ...http.models.start_workflow_request import StartWorkflowRequest
 from .task import TaskInterface
 from .task_type import TaskType
 from typing_extensions import Self
