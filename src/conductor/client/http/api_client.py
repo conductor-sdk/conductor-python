@@ -1,9 +1,9 @@
-from conductor.client.configuration.configuration import Configuration
-from conductor.client.http import rest
-from conductor.client.http.thread import AwaitableThread
+from . import models as http_models
+from ..configuration.configuration import Configuration
+from .rest import RESTClientObject, ApiException
+from .thread import AwaitableThread
 from six.moves.urllib.parse import quote
 from typing import Dict
-import conductor.client.http.models as http_models
 import datetime
 import logging
 import mimetypes
@@ -68,7 +68,7 @@ class ApiClient(object):
             configuration = Configuration()
         self.configuration = configuration
 
-        self.rest_client = rest.RESTClientObject()
+        self.rest_client = RESTClientObject()
 
         self.default_headers = self.__get_default_headers(
             header_name, header_value
@@ -564,7 +564,7 @@ class ApiClient(object):
         except ImportError:
             return string
         except ValueError:
-            raise rest.ApiException(
+            raise ApiException(
                 status=0,
                 reason="Failed to parse `{0}` as date object".format(string)
             )
@@ -583,7 +583,7 @@ class ApiClient(object):
         except ImportError:
             return string
         except ValueError:
-            raise rest.ApiException(
+            raise ApiException(
                 status=0,
                 reason=(
                     "Failed to parse `{0}` as datetime object"

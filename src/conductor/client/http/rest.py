@@ -1,13 +1,13 @@
-from conductor.client.configuration.configuration import Configuration
+from ..configuration.configuration import Configuration
 from six.moves.urllib.parse import urlencode
 import certifi
 import io
 import json
 import logging
 import re
+import requests
 import six
 import ssl
-import requests
 
 
 class RESTResponse(io.IOBase):
