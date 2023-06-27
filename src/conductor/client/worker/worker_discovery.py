@@ -5,6 +5,7 @@ import ast
 import astor
 import inspect
 import logging
+import re
 import os
 
 logger = logging.getLogger(
@@ -45,6 +46,7 @@ def __get_annotated_workers_from_subtree(pkg):
             with open(module_path, 'r') as file:
                 source_code = file.read()
             module = ast.parse(source_code, filename=module_path)
+            import_statements = None
             for node in ast.walk(module):
                 if not isinstance(node, ast.FunctionDef):
                     continue
@@ -54,8 +56,11 @@ def __get_annotated_workers_from_subtree(pkg):
                     if params is None:
                         continue
                     try:
+                        if import_statements is None:
+                            import_statements = __extract_imports_from_ast(
+                                source_code)
                         worker = __create_worker_from_ast_node(
-                            node, params)
+                            node, params, imports=import_statements)
                         if worker:
                             workers.append(worker)
                     except Exception as e:
@@ -86,13 +91,15 @@ def __extract_decorator_info(decorator):
             param_name = keyword.arg
             param_value = ast.literal_eval(keyword.value)
             decorator_params[param_name] = param_value
+    logger.debug(f'Decorator: {decorator}')
+    logger.debug(f'Decorator Params: {decorator_params}')
     return decorator_params
 
 
-def __create_worker_from_ast_node(node, params):
+def __create_worker_from_ast_node(node, params, imports=None):
     logger.debug(
         f'trying to create worker from function: {node.name}, with params: {params}')
-    params['execute_function'] = __retrieve_function_from_ast(node)
+    params['execute_function'] = __retrieve_function_from_ast(node, imports)
     worker = Worker(**params)
     return worker
 
@@ -100,30 +107,30 @@ def __create_worker_from_ast_node(node, params):
 def __retrieve_function_from_ast(node, imports=None):
     if imports is None:
         imports = []
+    logger.debug('skibiribab: 1')
     function_name = node.name
+    logger.debug('skibiribab: 2')
     function_source = ast.unparse(node)
-    function_imports = __extract_imports_from_ast(node)
-    all_imports = function_imports + imports
-    logger.debug(f'all imports: {all_imports}')
+    logger.debug('skibiribab: 3')
     temp_module = ast.parse(function_source, filename='<ast>', mode='exec')
-    import_nodes = [ast.parse(import_str) for import_str in all_imports]
+    logger.debug('skibiribab: 4')
+    for statement in ast.walk(temp_module):
+        if hasattr(statement, 'lineno'):
+            statement.lineno = 1
+    logger.debug('skibiribab: 5')
+    import_nodes = [ast.parse(import_str) for import_str in imports]
+    logger.debug('skibiribab: 6')
     temp_module.body = import_nodes + temp_module.body
+    logger.debug('skibiribab: 7')
     code = compile(temp_module, filename='<ast>', mode='exec')
+    logger.debug('skibiribab: 8')
     exec(code, globals())
+    logger.debug('skibiribab: 9')
     function = globals()[function_name]
     return function
 
 
-def __extract_imports_from_ast(node: ast.AST) -> List[str]:
-    import_statements = []
-    for child_node in ast.iter_child_nodes(node):
-        if isinstance(child_node, ast.Import):
-            import_names = [alias.name for alias in child_node.names]
-            import_statement = f"import {', '.join(import_names)}"
-            import_statements.append(import_statement)
-        elif isinstance(child_node, ast.ImportFrom):
-            module = child_node.module or ''
-            import_names = [alias.name for alias in child_node.names]
-            import_statement = f"from {module} import {', '.join(import_names)}"
-            import_statements.append(import_statement)
+def __extract_imports_from_ast(source_code: str) -> List[str]:
+    import_statements = re.findall(
+        r'^\s*(?:import|from)\s+.+', source_code, re.MULTILINE)
     return import_statements

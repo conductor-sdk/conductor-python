@@ -1,7 +1,7 @@
 from ..configuration.configuration import Configuration
 from ..configuration.settings.metrics_settings import MetricsSettings
 from ..telemetry.metrics_collector import MetricsCollector
-from ..worker.worker_discovery import get_annotated_workers
+from ..worker import worker_discovery
 from ..worker.worker_interface import WorkerInterface
 from .task_runner import TaskRunner
 from multiprocessing import Process
@@ -29,7 +29,7 @@ class TaskHandler:
         elif not isinstance(workers, list):
             workers = [workers]
         if scan_for_annotated_workers is True:
-            for worker in get_annotated_workers():
+            for worker in worker_discovery.get_annotated_workers():
                 workers.append(worker)
         self.__create_task_runner_processes(
             workers, configuration, metrics_settings
