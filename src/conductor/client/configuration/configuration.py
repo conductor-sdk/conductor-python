@@ -1,12 +1,9 @@
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 import logging
-import multiprocessing
 import os
 
 
 class Configuration:
-    AUTH_TOKEN = None
-
     def __init__(
             self,
             base_url: str = "http://localhost:8080",
@@ -101,4 +98,4 @@ class Configuration:
         return f'[{os.getpid()}] {name}'
 
     def update_token(self, token: str) -> None:
-        self.AUTH_TOKEN = token
+        pass

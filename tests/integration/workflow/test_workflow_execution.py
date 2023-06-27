@@ -148,12 +148,15 @@ def test_workflow_methods(
         task_name
     )
 
-    start_workflow_requests = [''] * workflow_quantity
+    workflow_ids = [''] * workflow_quantity
+    start_workflow_request = StartWorkflowRequest(name=workflow_name)
     for i in range(workflow_quantity):
-        start_workflow_requests[i] = StartWorkflowRequest(name=workflow_name)
-    workflow_ids = workflow_executor.start_workflows(
-        *start_workflow_requests
-    )
+        workflow_ids[i] = _run_with_retry_attempt(
+            workflow_executor.start_workflow,
+            {
+                "start_workflow_request": start_workflow_request,
+            }
+        )
     for workflow_id in workflow_ids:
         __pause_workflow(workflow_executor, workflow_id)
         __resume_workflow(workflow_executor, workflow_id)
@@ -182,9 +185,18 @@ def test_workflow_registration(workflow_executor: WorkflowExecutor):
     except Exception as e:
         if '404' not in str(e):
             raise e
-    workflow.register(overwrite=True) == None
-    workflow_executor.register_workflow(
-        workflow.to_workflow_def(), overwrite=True
+    _run_with_retry_attempt(
+        workflow.register,
+        {
+            'overwrite': True,
+        }
+    )
+    _run_with_retry_attempt(
+        workflow_executor.register_workflow,
+        {
+            'workflow': workflow.to_workflow_def(),
+            'overwrite': True,
+        }
     )
 
 
@@ -217,10 +229,15 @@ def test_workflow_execution(
     workflow_executor: WorkflowExecutor,
     workflow_completion_timeout: float,
 ) -> None:
-    start_workflow_requests = [''] * workflow_quantity
+    start_workflow_request = StartWorkflowRequest(name=workflow_name)
+    workflow_ids = [''] * workflow_quantity
     for i in range(workflow_quantity):
-        start_workflow_requests[i] = StartWorkflowRequest(name=workflow_name)
-    workflow_ids = workflow_executor.start_workflows(*start_workflow_requests)
+        workflow_ids[i] = _run_with_retry_attempt(
+            workflow_executor.start_workflow,
+            {
+                "start_workflow_request": start_workflow_request,
+            }
+        )
     sleep(workflow_completion_timeout)
     for workflow_id in workflow_ids:
         _run_with_retry_attempt(
