@@ -1,7 +1,7 @@
+from ...http.models.workflow_task import WorkflowTask
+from .task import TaskInterface
+from .task_type import TaskType
 from copy import deepcopy
-from conductor.client.http.models.workflow_task import WorkflowTask
-from conductor.client.workflow.task.task import TaskInterface
-from conductor.client.workflow.task.task_type import TaskType
 from typing_extensions import Self
 
 

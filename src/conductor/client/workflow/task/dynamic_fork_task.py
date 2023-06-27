@@ -1,9 +1,9 @@
-from typing import List
-from conductor.client.http.models.workflow_task import WorkflowTask
-from conductor.client.workflow.task.join_task import JoinTask
-from conductor.client.workflow.task.task import TaskInterface
-from conductor.client.workflow.task.task_type import TaskType
+from ...http.models.workflow_task import WorkflowTask
+from .join_task import JoinTask
+from .task import TaskInterface
+from .task_type import TaskType
 from copy import deepcopy
+from typing import List
 from typing_extensions import Self
 
 

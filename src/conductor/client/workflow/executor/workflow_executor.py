@@ -1,10 +1,10 @@
-from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.api_client import ApiClient
-from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
-from conductor.client.http.api.task_resource_api import TaskResourceApi
-from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
-from conductor.client.http.models.correlation_ids_search_request import CorrelationIdsSearchRequest
-from conductor.client.http.models import *
+from ...configuration.configuration import Configuration
+from ...http.api_client import ApiClient
+from ...http.api.metadata_resource_api import MetadataResourceApi
+from ...http.api.task_resource_api import TaskResourceApi
+from ...http.api.workflow_resource_api import WorkflowResourceApi
+from ...http.models import *
+from ...http.models.correlation_ids_search_request import CorrelationIdsSearchRequest
 from typing import Any, Dict, List
 from typing_extensions import Self
 import uuid

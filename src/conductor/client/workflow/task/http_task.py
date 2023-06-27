@@ -1,5 +1,5 @@
-from conductor.client.workflow.task.task import TaskInterface
-from conductor.client.workflow.task.task_type import TaskType
+from .task import TaskInterface
+from .task_type import TaskType
 from copy import deepcopy
 from enum import Enum
 from typing import Any, Dict, List

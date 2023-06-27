@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from conductor.client.http.models.workflow_task import WorkflowTask
-from conductor.client.workflow.task.task_type import TaskType
+from ...http.models.workflow_task import WorkflowTask
+from .task_type import TaskType
 from copy import deepcopy
 from typing import Any, Dict, List
 from typing_extensions import Self

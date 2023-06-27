@@ -1,6 +1,6 @@
 from typing_extensions import Self
-from conductor.client.workflow.task.task_type import TaskType
-from conductor.client.workflow.task.task import TaskInterface
+from .task_type import TaskType
+from .task import TaskInterface
 
 
 class SimpleTask(TaskInterface):

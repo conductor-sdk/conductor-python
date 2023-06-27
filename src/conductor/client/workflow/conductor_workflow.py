@@ -1,9 +1,9 @@
-from conductor.client.http.models.workflow_def import WorkflowDef
-from conductor.client.http.models.workflow_task import WorkflowTask
-from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from conductor.client.workflow.task.task import TaskInterface
-from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
-from conductor.client.http.models import *
+from ..http.models import *
+from ..http.models.workflow_def import WorkflowDef
+from ..http.models.workflow_task import WorkflowTask
+from .executor.workflow_executor import WorkflowExecutor
+from .task.task import TaskInterface
+from .task.timeout_policy import TimeoutPolicy
 from copy import deepcopy
 from typing import Any, Dict, List
 from typing_extensions import Self
