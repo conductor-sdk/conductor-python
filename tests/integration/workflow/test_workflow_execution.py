@@ -45,21 +45,15 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
     )
     task_handler.start_processes()
     try:
+        test_workflow_execution_with_input_parameter(workflow_executor)
+        logger.debug('finished workflow execution with input parameter test')
         test_get_workflow_by_correlation_ids(workflow_executor)
         logger.debug('finished workflow correlation ids test')
         test_workflow_registration(workflow_executor)
         logger.debug('finished workflow registration tests')
-        test_workflow_execution(
-            workflow_quantity=10,
-            workflow_name=WORKFLOW_NAME,
-            workflow_executor=workflow_executor,
-            workflow_completion_timeout=7
-        )
+        test_workflow_execution(workflow_executor)
         logger.debug('finished workflow execution tests')
-        test_workflow_methods(
-            workflow_executor,
-            workflow_quantity=2,
-        )
+        test_workflow_methods(workflow_executor)
         logger.debug('finished workflow methods tests')
         test_workflow_sync_execution(workflow_executor)
         logger.debug('finished workflow sync execution test')
@@ -109,7 +103,7 @@ def test_workflow_sync_execution(workflow_executor: WorkflowExecutor):
 
 def test_workflow_methods(
     workflow_executor: WorkflowExecutor,
-    workflow_quantity: int,
+    workflow_quantity: int = 2,
 ) -> None:
     if workflow_quantity < 1:
         return
@@ -224,10 +218,10 @@ def test_decorated_worker(
 
 
 def test_workflow_execution(
-    workflow_quantity: int,
-    workflow_name: str,
     workflow_executor: WorkflowExecutor,
-    workflow_completion_timeout: float,
+    workflow_quantity: int = 10,
+    workflow_name: str = WORKFLOW_NAME,
+    workflow_completion_timeout: float = 7
 ) -> None:
     start_workflow_request = StartWorkflowRequest(name=workflow_name)
     workflow_ids = [''] * workflow_quantity
@@ -247,6 +241,23 @@ def test_workflow_execution(
                 'workflow_executor': workflow_executor
             }
         )
+
+
+def test_workflow_execution_with_input_parameter(
+    workflow_executor: WorkflowExecutor,
+    workflow_completion_timeout: float = 7
+):
+    workflow_name = 'python_sdk_workflow_name_with_input_parameters'
+    task_name = 'python_sdk_task_name_with_input_parameters'
+    workflow = generate_workflow(workflow_executor, workflow_name, task_name)
+    workflow.register(overwrite=True)
+    start_workflow_request = StartWorkflowRequest(name=workflow_name)
+    start_workflow_request.input = {'randomInputKey': 0}
+    workflow_id = _run_with_retry_attempt(
+        workflow_executor.start_workflow,
+    )
+    logger.debug(f'started workflow with id: {workflow_id}')
+    sleep(workflow_completion_timeout)
 
 
 def generate_workflow(workflow_executor: WorkflowExecutor, workflow_name: str = WORKFLOW_NAME, task_name: str = TASK_NAME) -> ConductorWorkflow:
