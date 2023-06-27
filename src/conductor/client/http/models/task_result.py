@@ -1,4 +1,4 @@
-from conductor.client.http.models.task_result_status import TaskResultStatus
+from .task_result_status import TaskResultStatus
 import pprint
 import re  # noqa: F401
 import six
