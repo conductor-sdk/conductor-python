@@ -3,10 +3,12 @@ from ..worker.worker import Worker
 from typing import List
 import ast
 import astor
+import types
+import dis
 import inspect
 import logging
-import re
 import os
+import re
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -107,26 +109,26 @@ def __create_worker_from_ast_node(node, params, imports=None):
 def __retrieve_function_from_ast(node, imports=None):
     if imports is None:
         imports = []
-    logger.debug('skibiribab: 1')
     function_name = node.name
-    logger.debug('skibiribab: 2')
     function_source = ast.unparse(node)
-    logger.debug('skibiribab: 3')
-    temp_module = ast.parse(function_source, filename='<ast>', mode='exec')
-    logger.debug('skibiribab: 4')
-    for statement in ast.walk(temp_module):
-        if hasattr(statement, 'lineno'):
-            statement.lineno = 1
-    logger.debug('skibiribab: 5')
-    import_nodes = [ast.parse(import_str) for import_str in imports]
-    logger.debug('skibiribab: 6')
-    temp_module.body = import_nodes + temp_module.body
-    logger.debug('skibiribab: 7')
+    function_source_with_imports = '\n'.join(
+        imports) + '\n\n' + function_source
+    logger.debug(f'function: {function_source_with_imports}')
+    temp_module = ast.parse(
+        function_source_with_imports,
+        filename='<ast>', mode='exec')
+    nodes = []
+    traverse_ast(temp_module, nodes)
     code = compile(temp_module, filename='<ast>', mode='exec')
-    logger.debug('skibiribab: 8')
-    exec(code, globals())
-    logger.debug('skibiribab: 9')
-    function = globals()[function_name]
+    logger.debug(f'code: {code}')
+    dis.dis(code)
+    function = None
+    for instr in code.co_consts:
+        if isinstance(instr, types.CodeType) and instr.co_name == function_name:
+            function = types.FunctionType(instr, globals())
+            break
+    logger.debug(
+        f'got function: {function} from function_name: {function_name}')
     return function
 
 
@@ -134,3 +136,11 @@ def __extract_imports_from_ast(source_code: str) -> List[str]:
     import_statements = re.findall(
         r'^\s*(?:import|from)\s+.+', source_code, re.MULTILINE)
     return import_statements
+
+
+def traverse_ast(node, nodes):
+    if not hasattr(node, 'lineno'):
+        node.lineno = len(nodes) + 1
+    nodes.append(0)
+    for child in ast.iter_child_nodes(node):
+        traverse_ast(child, nodes)
