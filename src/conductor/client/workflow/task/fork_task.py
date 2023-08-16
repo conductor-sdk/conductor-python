@@ -30,7 +30,6 @@ class ForkTask(TaskInterface):
                 )
             workflow_task.fork_tasks.append(converted_inner_forked_tasks)
             workflow_task.join_on.append(
-                get_join_task(
-                    converted_inner_forked_tasks[-1].task_reference_name)
+                converted_inner_forked_tasks[-1].task_reference_name
             )
         return workflow_task
