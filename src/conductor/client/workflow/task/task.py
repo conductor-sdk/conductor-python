@@ -105,7 +105,7 @@ class TaskInterface(ABC):
         return WorkflowTask(
             name=self._name,
             task_reference_name=self._task_reference_name,
-            workflow_task_type=self._task_type.value,
+            type=self._task_type.value,
             description=self._description,
             input_parameters=self._input_parameters,
             optional=self._optional,
