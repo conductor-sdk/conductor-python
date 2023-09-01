@@ -6,6 +6,7 @@ from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from tests.unit.resources.workers import ClassWorker
 from tests.unit.resources.workers import FaultyExecutionWorker
+from conductor.client.http.rest import ApiException, RESTClientObject
 from unittest.mock import patch, ANY
 import logging
 import time
@@ -81,6 +82,16 @@ class TestTaskRunner(unittest.TestCase):
             task_runner = self.__get_valid_task_runner()
             task = task_runner._TaskRunner__poll_task()
             self.assertEqual(task, expected_task)
+
+    def test_poll_task_with_unauthorized_access(self):
+        with patch.object(
+            RESTClientObject,
+            'request',
+            side_effect=ApiException(status=401)
+        ):
+            task_runner = self.__get_valid_task_runner()
+            task = task_runner._TaskRunner__poll_task()
+            self.assertIsNone(task)
 
     def test_execute_task_with_invalid_task(self):
         task_runner = self.__get_valid_task_runner()

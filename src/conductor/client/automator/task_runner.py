@@ -7,6 +7,7 @@ from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_exec_log import TaskExecLog
 from conductor.client.telemetry.metrics_collector import MetricsCollector
 from conductor.client.worker.worker_interface import WorkerInterface
+from conductor.client.http.rest import ApiException
 import logging
 import sys
 import time
@@ -85,6 +86,16 @@ class TaskRunner:
                 self.metrics_collector.record_task_poll_time(
                     task_definition_name, time_spent
                 )
+        except ApiException as e:
+            if self.metrics_collector is not None:
+                self.metrics_collector.increment_task_poll_error(
+                    task_definition_name, type(e)
+                )
+            logger.error(f'{task_definition_name} worker cannot connect to conductor API, status code: {e.status}, detail: {e.body}')
+            logger.debug(
+                f'Failed to poll task for: {task_definition_name}, reason: {traceback.format_exc()}'
+            )
+            return None
         except Exception as e:
             if self.metrics_collector is not None:
                 self.metrics_collector.increment_task_poll_error(
