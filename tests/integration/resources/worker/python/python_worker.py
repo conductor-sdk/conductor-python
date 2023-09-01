@@ -46,9 +46,9 @@ def simple_decorated_worker(input) -> object:
     return {'message': 'python is so cool :)'}
 
 
-@WorkerTask('test_python_decorated_worker', poll_interval_seconds=0.050)
-def decorated_worker_with_poll_interval() -> object:
-    return {'message': 'python is so cool :)'}
+# @WorkerTask('test_python_decorated_worker', poll_interval_seconds=0.050)
+# def decorated_worker_with_poll_interval() -> object:
+#     return {'message': 'python is so cool :)'}
 
 
 def worker_with_task_input_and_task_result_output(task: Task) -> TaskResult:
