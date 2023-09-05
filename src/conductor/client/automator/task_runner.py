@@ -94,7 +94,7 @@ class TaskRunner:
                 self.metrics_collector.increment_task_poll_error(
                     task_definition_name, type(e)
                 )
-            logger.debug(
+            logger.error(
                 f'Failed to poll task for: {task_definition_name}, reason: {traceback.format_exc()}'
             )
             return None
@@ -190,7 +190,7 @@ class TaskRunner:
                     self.metrics_collector.increment_task_update_error(
                         task_definition_name, type(e)
                     )
-                logger.debug(
+                logger.error(
                     'Failed to update task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, reason: {reason}'.format(
                         task_id=task_result.task_id,
                         workflow_instance_id=task_result.workflow_instance_id,
