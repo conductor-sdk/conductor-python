@@ -1,5 +1,7 @@
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.http.models.workflow_task import WorkflowTask
+from conductor.client.workflow.task.fork_task import ForkTask
+from conductor.client.workflow.task.join_task import JoinTask
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
@@ -7,6 +9,7 @@ from conductor.client.http.models import *
 from copy import deepcopy
 from typing import Any, Dict, List
 from typing_extensions import Self
+from shortuuid import uuid
 
 
 class ConductorWorkflow:
@@ -192,7 +195,15 @@ class ConductorWorkflow:
         return workflow_task_list
 
     # Append task with the right shift operator `>>`
-    def __rshift__(self, task: TaskInterface) -> Self:
+    def __rshift__(self, task: TaskInterface | List[TaskInterface] | List[List[TaskInterface]]) -> Self:
+        if isinstance(task, list):
+            forked_tasks = []
+            for fork_task in task:
+                if isinstance(fork_task, list):
+                    forked_tasks.append(fork_task)
+                else:
+                    forked_tasks.append([fork_task])
+            return self.__add_fork_join_tasks(forked_tasks)
         return self.__add_task(task)
 
     # Append task
@@ -203,4 +214,26 @@ class ConductorWorkflow:
         if not issubclass(type(task), TaskInterface):
             raise Exception('invalid type')
         self._tasks.append(deepcopy(task))
+        return self
+
+    def __add_fork_join_tasks(self, forked_tasks: List[List[TaskInterface]]) -> Self:
+        for single_fork in forked_tasks:
+            for task in single_fork:
+                if not issubclass(type(task), TaskInterface):
+                    raise Exception('invalid type')
+
+        suffix = str(uuid())
+
+        fork_task = ForkTask(
+            task_ref_name='forked_' + suffix,
+            forked_tasks=forked_tasks
+        )
+        
+        join_task = JoinTask(
+            task_ref_name='join_' + suffix,
+            join_on=fork_task.to_workflow_task().join_on
+        )
+        
+        self._tasks.append(fork_task)
+        self._tasks.append(join_task)
         return self

@@ -129,6 +129,12 @@ def generate_fork_task(workflow_executor: WorkflowExecutor) -> ForkTask:
         ]
     )
 
+def generate_join_task(workflow_executor: WorkflowExecutor, fork_task: ForkTask) -> JoinTask:
+    return JoinTask(
+        task_ref_name='join_forked',
+        join_on=fork_task.to_workflow_task().join_on
+    )
+
 
 def generate_sub_workflow_task() -> SubWorkflowTask:
     return SubWorkflowTask(
@@ -157,9 +163,9 @@ def generate_dynamic_fork_task() -> DynamicForkTask:
     )
 
 
-def generate_http_task() -> HttpTask:
+def generate_http_task(task_ref_name='http_task') -> HttpTask:
     return HttpTask(
-        'http_task', HttpInput(
+        task_ref_name, HttpInput(
             uri="https://orkes-api-tester.orkesconductor.com/get"
         ),
     )
@@ -191,19 +197,35 @@ def generate_sub_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkf
 
 
 def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
+    fork_task = generate_fork_task(workflow_executor)
+    
     workflow = ConductorWorkflow(
         executor=workflow_executor,
         name='test-python-sdk-workflow-as-code',
         description='Python workflow example from code',
         version=1234,
     ).add(
-        generate_http_task()
+        generate_http_task("http_task_0")
     ).add(
         generate_simple_task(12)
     ).add(
         generate_set_variable_task()
     ).add(
-        generate_fork_task(workflow_executor)
+        fork_task
+    ).add(
+        generate_join_task(workflow_executor, fork_task)
     ).owner_email(WORKFLOW_OWNER_EMAIL)
+
     workflow >> generate_sub_workflow_task() >> generate_json_jq_task()
+
+    forked_task_1 = generate_http_task("http_task_1")
+    forked_task_2 = generate_http_task("http_task_2")
+    forked_task_31 = generate_http_task("http_task_31")
+    forked_task_32 = generate_http_task("http_task_32")
+    forked_task_41 = generate_http_task("http_task_41")
+    forked_task_42 = generate_http_task("http_task_42")
+
+    workflow >> [forked_task_1, forked_task_2]
+    workflow >> [[forked_task_31, forked_task_32], [forked_task_41, forked_task_42]]
+
     return workflow
