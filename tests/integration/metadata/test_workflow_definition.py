@@ -64,6 +64,8 @@ def test_kitchensink_workflow_registration(workflow_executor: WorkflowExecutor) 
     )
     if type(workflow_id) != str or workflow_id == '':
         raise Exception(f'failed to start workflow, name: {WORKFLOW_NAME}')
+    
+    workflow_executor.terminate(workflow_id=workflow_id, reason="End test")
 
 
 def generate_simple_task(id: int) -> SimpleTask:
