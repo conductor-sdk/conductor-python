@@ -30,7 +30,7 @@ def main():
     llm_index_text = LlmIndexText("llm_index_text", "llm_index_text_ref", "pineconedb", "", "test", EmbeddingModel("openai", "text-embedding-ada-002"), "hello world", "hello")
     llm_gen_embeddings = LlmGenerateEmbeddings("llm_generate_embeddings", "llm_generate_embeddings_ref", "openai", "text-davinci-003", "${llm_text_complete_ref.output.result}")
     
-    workflow = ConductorWorkflow(executor=workflow_executor,name='llm_text_complete_wf_2',description='llm workflow',version=1)
+    workflow = ConductorWorkflow(executor=workflow_executor,name='llm_text_complete_wf',description='llm workflow',version=1)
     workflow >> llm_text_comp >> llm_index_text >> llm_gen_embeddings
 
     workflow.register(True)
