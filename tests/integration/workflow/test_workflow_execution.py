@@ -50,18 +50,18 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
         logger.debug('finished workflow correlation ids test')
         test_workflow_registration(workflow_executor)
         logger.debug('finished workflow registration tests')
-        # test_workflow_execution(
-        #     workflow_quantity=10,
-        #     workflow_name=WORKFLOW_NAME,
-        #     workflow_executor=workflow_executor,
-        #     workflow_completion_timeout=7
-        # )
-        # logger.debug('finished workflow execution tests')
-        # test_workflow_methods(
-        #     workflow_executor,
-        #     workflow_quantity=2,
-        # )
-        # logger.debug('finished workflow methods tests')
+        test_workflow_execution(
+            workflow_quantity=10,
+            workflow_name=WORKFLOW_NAME,
+            workflow_executor=workflow_executor,
+            workflow_completion_timeout=2.0
+        )
+        logger.debug('finished workflow execution tests')
+        test_workflow_methods(
+            workflow_executor,
+            workflow_quantity=2,
+        )
+        logger.debug('finished workflow methods tests')
         test_workflow_sync_execution(workflow_executor)
         logger.debug('finished workflow sync execution test')
         # test_decorated_worker(workflow_executor)
