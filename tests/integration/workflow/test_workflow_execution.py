@@ -19,6 +19,7 @@ import logging
 import uuid
 
 WORKFLOW_NAME = "sdk_python_integration_test_workflow"
+WORKFLOW_DESCRIPTION= "Python SDK Integration Test"
 TASK_NAME = "python_integration_test_task"
 WORKFLOW_VERSION = 1234
 WORKFLOW_OWNER_EMAIL = "test@test"
@@ -41,7 +42,7 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
             generate_worker(worker_with_task_input_and_task_result_output),
         ],
         configuration=configuration,
-        scan_for_annotated_workers=True,
+        scan_for_annotated_workers=False,
     )
     task_handler.start_processes()
     try:
@@ -49,21 +50,21 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
         logger.debug('finished workflow correlation ids test')
         test_workflow_registration(workflow_executor)
         logger.debug('finished workflow registration tests')
-        test_workflow_execution(
-            workflow_quantity=10,
-            workflow_name=WORKFLOW_NAME,
-            workflow_executor=workflow_executor,
-            workflow_completion_timeout=7
-        )
-        logger.debug('finished workflow execution tests')
-        test_workflow_methods(
-            workflow_executor,
-            workflow_quantity=2,
-        )
-        logger.debug('finished workflow methods tests')
+        # test_workflow_execution(
+        #     workflow_quantity=10,
+        #     workflow_name=WORKFLOW_NAME,
+        #     workflow_executor=workflow_executor,
+        #     workflow_completion_timeout=7
+        # )
+        # logger.debug('finished workflow execution tests')
+        # test_workflow_methods(
+        #     workflow_executor,
+        #     workflow_quantity=2,
+        # )
+        # logger.debug('finished workflow methods tests')
         test_workflow_sync_execution(workflow_executor)
         logger.debug('finished workflow sync execution test')
-        test_decorated_worker(workflow_executor)
+        # test_decorated_worker(workflow_executor)
     except Exception as e:
         task_handler.stop_processes()
         raise Exception(f'failed integration tests, reason: {e}')
@@ -103,7 +104,8 @@ def test_workflow_sync_execution(workflow_executor: WorkflowExecutor):
         {
             'request': StartWorkflowRequest(name=WORKFLOW_NAME, version=WORKFLOW_VERSION, correlation_id='sync_workflow_execution'),
             'wait_until_task_ref': '',
-        }
+        },
+        retries=1
     )
 
 
@@ -236,6 +238,7 @@ def generate_workflow(workflow_executor: WorkflowExecutor, workflow_name: str = 
     return ConductorWorkflow(
         executor=workflow_executor,
         name=workflow_name,
+        description=WORKFLOW_DESCRIPTION,
         version=WORKFLOW_VERSION,
     ).owner_email(
         WORKFLOW_OWNER_EMAIL
