@@ -25,6 +25,8 @@ python3 -m pip install conductor-python
 Everything related to server settings should be done within the `Configuration` class by setting the required parameter (when initializing an object) like this:
 
 ```python
+from conductor.client.configuration.configuration import Configuration
+
 configuration = Configuration(
     server_api_url='https://play.orkes.io/api',
     debug=True
