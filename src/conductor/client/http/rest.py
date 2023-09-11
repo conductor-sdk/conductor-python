@@ -23,6 +23,10 @@ class RESTResponse(io.IOBase):
 
 
 class RESTClientObject(object):
+    def __init__(self, connection = None):
+        self.connection = connection or requests.Session()
+
+
     def request(self, method, url, query_params=None, headers=None,
                 body=None, post_params=None, _preload_content=True,
                 _request_timeout=None):
@@ -70,7 +74,7 @@ class RESTClientObject(object):
                     request_body = '{}'
                     if body is not None:
                         request_body = json.dumps(body)
-                    r = requests.request(
+                    r = self.connection.request(
                         method, url,
                         data=request_body,
                         timeout=timeout,
@@ -84,7 +88,7 @@ class RESTClientObject(object):
                     raise ApiException(status=0, reason=msg)
             # For `GET`, `HEAD`
             else:
-                r = requests.request(
+                r = self.connection.request(
                     method, url,
                     params=query_params,
                     timeout=timeout,
