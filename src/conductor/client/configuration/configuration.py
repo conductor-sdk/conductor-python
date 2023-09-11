@@ -46,6 +46,9 @@ class Configuration:
         # Safe chars for path_param
         self.safe_chars_for_path_param = ''
 
+        # Provide an alterative to requests.Session() for HTTP connection.
+        self.http_connection = None
+
     @property
     def debug(self):
         """Debug status

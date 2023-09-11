@@ -16,6 +16,26 @@ workflow = ConductorWorkflow(
 )
 ```
 
+If your setup requires special authentication or self-signed certs it might be worth providing your own http connection object as follows: 
+
+
+```python
+import requests
+from custom_auth import CustomAdapter  # your custom auth adapter
+
+session = requests.Session()
+session.mount("https://", CustomAdapter())
+configuration = Configuration()
+configuration.http_connection = session
+
+workflow_executor = WorkflowExecutor(configuration)
+workflow = ConductorWorkflow(
+    executor=workflow_executor,
+    name='python_workflow_example_from_code',
+    description='Python workflow example from code'
+)
+```
+
 After creating an instance of a `ConductorWorkflow`, you can start adding tasks to it. There are two possible ways to do that:
 * method: `add`
 * operator: `>>`
