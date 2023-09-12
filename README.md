@@ -43,6 +43,9 @@ Configure the authentication settings if your Conductor server requires authenti
 See [Access Control](https://orkes.io/content/docs/getting-started/concepts/access-control) for more details on role-based access control with Conductor and generating API keys for your environment.
 
 ```python
+from conductor.client.configuration.configuration import Configuration
+from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
+
 configuration = Configuration(
     authentication_settings=AuthenticationSettings(
         key_id='key',
