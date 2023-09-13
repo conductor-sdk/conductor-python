@@ -773,7 +773,7 @@ class MetadataResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/metadata/tags/workflow/{name}', 'GET',
+            '/metadata/workflow/{name}/tags', 'GET',
             path_params,
             query_params,
             header_params,

@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
 from conductor.client.http.models.workflow_def import WorkflowDef
+from conductor.client.http.models.workflow_tag import WorkflowTag
+from conductor.client.http.models.task_def import TaskDef
 
 class MetadataClient(ABC):
     @abstractmethod
@@ -8,7 +10,7 @@ class MetadataClient(ABC):
         pass
 
     @abstractmethod
-    def unregisterWorkflowDef(self, workflowId: str):
+    def unregisterWorkflowDef(self, workflowId: str, version: int):
         pass
 
     @abstractmethod
@@ -16,7 +18,7 @@ class MetadataClient(ABC):
         pass
 
     @abstractmethod
-    def getWorkflowDef(self, name: str, version: Optional[int] = None) -> WorkflowDef:
+    def getWorkflowDef(self, name: str, version: Optional[int] = None) -> (WorkflowDef, str):
         pass
 
     @abstractmethod
@@ -36,11 +38,11 @@ class MetadataClient(ABC):
         pass
 
     @abstractmethod
-    def getTaskDef(self, taskType):
+    def getTaskDef(self, taskType: str) -> TaskDef:
         pass
 
     @abstractmethod
-    def getAllTaskDefs(self):
+    def getAllTaskDefs(self) -> List[TaskDef]:
         pass
 
     @abstractmethod
@@ -56,7 +58,7 @@ class MetadataClient(ABC):
         pass
     
     @abstractmethod
-    def getWorkflowTags(self):
+    def getWorkflowTags(self, workflowName: str) -> List[WorkflowTag]:
         pass
     
     @abstractmethod
