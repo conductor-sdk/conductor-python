@@ -6,8 +6,10 @@ from conductor.client.http.orkes_metadata_client import OrkesMetadataClient
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models.workflow_def import WorkflowDef
+from conductor.client.http.models.task_def import TaskDef
 
 WORKFLOW_NAME = 'ut_wf'
+TASK_NAME = 'ut_task'
 
 class TestOrkesMetadataClient(unittest.TestCase):
     
@@ -18,6 +20,7 @@ class TestOrkesMetadataClient(unittest.TestCase):
         
     def setUp(self):
         self.workflowDef = WorkflowDef(name=WORKFLOW_NAME, version=1)
+        self.taskDef = TaskDef(TASK_NAME)
         logging.disable(logging.CRITICAL)
 
     def tearDown(self):
@@ -48,3 +51,17 @@ class TestOrkesMetadataClient(unittest.TestCase):
         mock.return_value = [self.workflowDef, workflowDef2]
         wfs = self.metadata_client.getAllWorkflowDefs()
         self.assertEqual(len(wfs), 2)
+
+    @patch.object(MetadataResourceApi, 'get_task_def')
+    def test_getTaskDef(self, mock):
+        mock.return_value = self.taskDef
+        taskDefinition = self.metadata_client.getTaskDef(TASK_NAME)
+        self.assertEqual(taskDefinition, self.taskDef)
+        mock.assert_called_with(TASK_NAME)
+        
+    @patch.object(MetadataResourceApi, 'get_task_defs')
+    def test_getAllTaskDefs(self, mock):
+        taskDef2 = TaskDef("ut_task2")
+        mock.return_value = [self.taskDef, taskDef2]
+        tasks = self.metadata_client.getAllTaskDefs()
+        self.assertEqual(len(tasks), 2)
