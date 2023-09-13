@@ -1,7 +1,8 @@
 import logging
 import unittest
 
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, MagicMock
+from conductor.client.http.rest import ApiException, RESTResponse
 from conductor.client.http.orkes_metadata_client import OrkesMetadataClient
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
 from conductor.client.configuration.configuration import Configuration
@@ -10,6 +11,7 @@ from conductor.client.http.models.task_def import TaskDef
 
 WORKFLOW_NAME = 'ut_wf'
 TASK_NAME = 'ut_task'
+ERROR_BODY= '{"message":"No such workflow found by name"}'
 
 class TestOrkesMetadataClient(unittest.TestCase):
     
@@ -30,10 +32,16 @@ class TestOrkesMetadataClient(unittest.TestCase):
         message = "metadataResourceApi is not of type MetadataResourceApi"
         self.assertIsInstance(self.metadata_client.metadataResourceApi, MetadataResourceApi, message)
 
+    @patch.object(MetadataResourceApi, 'unregister_workflow_def')
+    def test_unregisterWorkflowDef(self, mock):
+        self.metadata_client.unregisterWorkflowDef(WORKFLOW_NAME, 1)
+        self.assertTrue(mock.called)
+        mock.assert_called_with(WORKFLOW_NAME, 1)
+        
     @patch.object(MetadataResourceApi, 'get')
     def test_getWorkflowDef_without_version(self, mock):
         mock.return_value = self.workflowDef
-        wf = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
+        wf, _ = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
         self.assertEqual(wf, self.workflowDef)
         self.assertTrue(mock.called)
         mock.assert_called_with(WORKFLOW_NAME)
@@ -41,10 +49,17 @@ class TestOrkesMetadataClient(unittest.TestCase):
     @patch.object(MetadataResourceApi, 'get')
     def test_getWorkflowDef_with_version(self, mock):
         mock.return_value = self.workflowDef
-        wf = self.metadata_client.getWorkflowDef(WORKFLOW_NAME, 1)
+        wf, _ = self.metadata_client.getWorkflowDef(WORKFLOW_NAME, 1)
         self.assertEqual(wf, self.workflowDef)
         mock.assert_called_with(WORKFLOW_NAME, version=1)
-
+    
+    @patch.object(MetadataResourceApi, 'get')
+    def test_getWorkflowDef_non_existent(self, mock):
+        mock.side_effect = MagicMock(side_effect=ApiException(status=404, reason=ERROR_BODY))
+        wf, error = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
+        self.assertIsNone(wf, "workflow is not None")
+        self.assertEqual(error, "Error in fetching workflow: " + ERROR_BODY)
+        
     @patch.object(MetadataResourceApi, 'get_all_workflows')
     def test_getAllWorkflowDefs(self, mock):
         workflowDef2 = WorkflowDef(name='ut_wf_2', version=1)
