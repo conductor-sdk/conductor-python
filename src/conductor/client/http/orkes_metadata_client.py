@@ -38,11 +38,11 @@ class OrkesMetadataClient(MetadataClient):
     def updateTaskDef(self):
         pass
 
-    def getTaskDef(self):
-        pass
+    def getTaskDef(self, taskType):
+        return self.metadataResourceApi.get_task_def(taskType)
 
     def getAllTaskDefs(self):
-        pass
+        return self.metadataResourceApi.get_task_defs()
 
     def getTags(self):
         pass

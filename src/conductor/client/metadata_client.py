@@ -36,7 +36,7 @@ class MetadataClient(ABC):
         pass
 
     @abstractmethod
-    def getTaskDef(self):
+    def getTaskDef(self, taskType):
         pass
 
     @abstractmethod
@@ -48,11 +48,11 @@ class MetadataClient(ABC):
         pass
 
     @abstractmethod
-    def addWorkflowTag(self):
+    def setWorkflowTags(self):
         pass
     
     @abstractmethod
-    def deleteWorkflowTag(self):
+    def deleteWorkflowTags(self):
         pass
     
     @abstractmethod
@@ -64,11 +64,11 @@ class MetadataClient(ABC):
         pass
 
     @abstractmethod
-    def addTaskTag(self):
+    def setTaskTags(self):
         pass
     
     @abstractmethod
-    def deleteTaskTag(self):
+    def deleteTaskTags(self):
         pass
 
     @abstractmethod
