@@ -26,15 +26,15 @@ class MetadataClient(ABC):
         pass
 
     @abstractmethod
-    def registerTaskDef(self):
+    def registerTaskDef(self, taskDef: TaskDef):
         pass
 
     @abstractmethod
-    def unregisterTaskDef(self):
+    def updateTaskDef(self, taskDef: TaskDef):
         pass
 
     @abstractmethod
-    def updateTaskDef(self):
+    def unregisterTaskDef(self, taskType: str):
         pass
 
     @abstractmethod

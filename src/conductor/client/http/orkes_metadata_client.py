@@ -40,14 +40,14 @@ class OrkesMetadataClient(MetadataClient):
     def getAllWorkflowDefs(self) -> List[WorkflowDef]:
         return self.metadataResourceApi.get_all_workflows()
 
-    def registerTaskDef(self):
-        pass
+    def registerTaskDef(self, taskDef: TaskDef):
+        self.metadataResourceApi.register_task_def(taskDef)
 
-    def unregisterTaskDef(self):
-        pass
+    def updateTaskDef(self, taskDef: TaskDef):
+        self.metadataResourceApi.update_task_def(taskDef)
 
-    def updateTaskDef(self):
-        pass
+    def unregisterTaskDef(self, taskType: str):
+        self.metadataResourceApi.unregister_task_def(taskType)
 
     def getTaskDef(self, taskType: str) -> TaskDef:
         return self.metadataResourceApi.get_task_def(taskType)
