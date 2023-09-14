@@ -14,8 +14,8 @@ class OrkesMetadataClient(MetadataClient):
         api_client = ApiClient(configuration)
         self.metadataResourceApi = MetadataResourceApi(api_client)
         
-    def registerWorkflowDef(self, workflowDef: WorkflowDef, overwrite: bool):
-        pass
+    def registerWorkflowDef(self, workflowDef: WorkflowDef, overwrite: Optional[bool] = True):
+        self.metadataResourceApi.create(workflowDef, overwrite)
 
     def unregisterWorkflowDef(self, name: str, version: int):
         self.metadataResourceApi.unregister_workflow_def(name, version)
@@ -26,7 +26,6 @@ class OrkesMetadataClient(MetadataClient):
     def getWorkflowDef(self, name: str, version: Optional[int] = None) -> (Optional[WorkflowDef], str):
         workflow = None
         error = None
-        
         try:
             if version:
                 workflow = self.metadataResourceApi.get(name, version=version)

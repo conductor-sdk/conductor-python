@@ -6,7 +6,7 @@ from conductor.client.http.models.task_def import TaskDef
 
 class MetadataClient(ABC):
     @abstractmethod
-    def registerWorkflowDef(self, workflowDef: WorkflowDef, overwrite: bool):
+    def registerWorkflowDef(self, workflowDef: WorkflowDef, overwrite: Optional[bool]):
         pass
 
     @abstractmethod
@@ -18,7 +18,7 @@ class MetadataClient(ABC):
         pass
 
     @abstractmethod
-    def getWorkflowDef(self, name: str, version: Optional[int] = None) -> (WorkflowDef, str):
+    def getWorkflowDef(self, name: str, version: Optional[int]) -> (Optional[WorkflowDef], str):
         pass
 
     @abstractmethod
