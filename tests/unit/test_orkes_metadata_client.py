@@ -3,7 +3,7 @@ import unittest
 
 from unittest.mock import Mock, patch, MagicMock
 from conductor.client.http.rest import ApiException, RESTResponse
-from conductor.client.http.orkes_metadata_client import OrkesMetadataClient
+from conductor.client.orkes.orkes_metadata_client import OrkesMetadataClient
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models.workflow_def import WorkflowDef
