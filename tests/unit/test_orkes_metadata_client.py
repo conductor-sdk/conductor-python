@@ -5,10 +5,12 @@ from unittest.mock import Mock, patch, MagicMock
 from conductor.client.http.rest import ApiException, RESTResponse
 from conductor.client.orkes.orkes_metadata_client import OrkesMetadataClient
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
+from conductor.client.http.api.tags_api import TagsApi
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models.workflow_def import WorkflowDef
+from conductor.client.http.models.tag_string import TagString
+from conductor.client.http.models.tag_object import TagObject
 from conductor.client.http.models.task_def import TaskDef
-from conductor.client.workflow.task.task_type import TaskType
 
 WORKFLOW_NAME = 'ut_wf'
 TASK_NAME = 'ut_task'
@@ -24,6 +26,7 @@ class TestOrkesMetadataClient(unittest.TestCase):
     def setUp(self):
         self.workflowDef = WorkflowDef(name=WORKFLOW_NAME, version=1)
         self.taskDef = TaskDef(TASK_NAME)
+        self.wfTagObj = TagObject("test", "METADATA", "val")
         logging.disable(logging.CRITICAL)
 
     def tearDown(self):
@@ -116,10 +119,65 @@ class TestOrkesMetadataClient(unittest.TestCase):
         taskDefinition = self.metadata_client.getTaskDef(TASK_NAME)
         self.assertEqual(taskDefinition, self.taskDef)
         mock.assert_called_with(TASK_NAME)
-        
+
     @patch.object(MetadataResourceApi, 'get_task_defs')
     def test_getAllTaskDefs(self, mock):
         taskDef2 = TaskDef("ut_task2")
         mock.return_value = [self.taskDef, taskDef2]
         tasks = self.metadata_client.getAllTaskDefs()
         self.assertEqual(len(tasks), 2)
+
+    @patch.object(TagsApi, 'add_workflow_tag')
+    def test_addWorkflowTag(self, mock):
+        self.metadata_client.addWorkflowTag(self.wfTagObj, WORKFLOW_NAME)
+        mock.assert_called_with(self.wfTagObj, WORKFLOW_NAME)
+
+    @patch.object(TagsApi, 'delete_workflow_tag')
+    def test_deleteWorkflowTag(self, mock):
+        wfTagOStr = TagString("test", "METADATA", "val")
+        self.metadata_client.deleteWorkflowTag(wfTagOStr, WORKFLOW_NAME)
+        mock.assert_called_with(wfTagOStr, WORKFLOW_NAME)
+
+    @patch.object(TagsApi, 'set_workflow_tags')
+    def test_setWorkflowTags(self, mock):
+        wfTagObj2 = TagObject("test2", "METADATA", "val2")
+        wfTagObjs = [self.wfTagObj, wfTagObj2]
+        self.metadata_client.setWorkflowTags(wfTagObjs, WORKFLOW_NAME)
+        mock.assert_called_with(wfTagObjs, WORKFLOW_NAME)
+
+    @patch.object(TagsApi, 'get_workflow_tags')
+    def test_getWorkflowTags(self, mock):
+        wfTagObj2 = TagObject("test2", "METADATA", "val2")
+        mock.return_value = [self.wfTagObj, wfTagObj2]
+        tags = self.metadata_client.getWorkflowTags(WORKFLOW_NAME)
+        mock.assert_called_with(WORKFLOW_NAME)
+        self.assertEqual(len(tags), 2)
+
+    @patch.object(TagsApi, 'add_task_tag')
+    def test_addTaskTag(self, mock):
+        taskTag = TagObject("tag1", "METADATA", "val1")
+        self.metadata_client.addTaskTag(taskTag, TASK_NAME)
+        mock.assert_called_with(taskTag, TASK_NAME)
+
+    @patch.object(TagsApi, 'delete_task_tag')
+    def test_deleteTaskTag(self, mock):
+        taskTagStr = TagString("tag1", "METADATA", "val1")
+        self.metadata_client.deleteTaskTag(taskTagStr, TASK_NAME)
+        mock.assert_called_with(taskTagStr, TASK_NAME)
+
+    @patch.object(TagsApi, 'set_task_tags')
+    def test_setTaskTags(self, mock):
+        taskTag1 = TagObject("tag1", "METADATA", "val1")
+        taskTag2 = TagObject("tag2", "METADATA", "val2")
+        taskTagObjs = [taskTag1, taskTag2]
+        self.metadata_client.setTaskTags(taskTagObjs, TASK_NAME)
+        mock.assert_called_with(taskTagObjs, TASK_NAME)
+
+    @patch.object(TagsApi, 'get_task_tags')
+    def test_getTaskTags(self, mock):
+        taskTag1 = TagObject("tag1", "METADATA", "val1")
+        taskTag2 = TagObject("tag2", "METADATA", "val2")
+        mock.return_value = [taskTag1, taskTag2]
+        tags = self.metadata_client.getTaskTags(TASK_NAME)
+        mock.assert_called_with(TASK_NAME)
+        self.assertEqual(len(tags), 2)
