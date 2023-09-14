@@ -32,6 +32,18 @@ class TestOrkesMetadataClient(unittest.TestCase):
         message = "metadataResourceApi is not of type MetadataResourceApi"
         self.assertIsInstance(self.metadata_client.metadataResourceApi, MetadataResourceApi, message)
 
+    @patch.object(MetadataResourceApi, 'create')
+    def test_registerWorkflowDef(self, mock):
+        self.metadata_client.registerWorkflowDef(self.workflowDef)
+        self.assertTrue(mock.called)
+        mock.assert_called_with(self.workflowDef, True)
+
+    @patch.object(MetadataResourceApi, 'create')
+    def test_registerWorkflowDef_without_overwrite(self, mock):
+        self.metadata_client.registerWorkflowDef(self.workflowDef, False)
+        self.assertTrue(mock.called)
+        mock.assert_called_with(self.workflowDef, False)
+
     @patch.object(MetadataResourceApi, 'unregister_workflow_def')
     def test_unregisterWorkflowDef(self, mock):
         self.metadata_client.unregisterWorkflowDef(WORKFLOW_NAME, 1)
