@@ -10,11 +10,11 @@ class MetadataClient(ABC):
         pass
 
     @abstractmethod
-    def unregisterWorkflowDef(self, workflowId: str, version: int):
+    def updateWorkflowDef(self, workflowDef: WorkflowDef, overwrite: Optional[bool]):
         pass
 
     @abstractmethod
-    def updateWorkflowDef(self):
+    def unregisterWorkflowDef(self, workflowId: str, version: int):
         pass
 
     @abstractmethod
@@ -80,4 +80,3 @@ class MetadataClient(ABC):
     @abstractmethod
     def setTaskTags(self):
         pass
-    

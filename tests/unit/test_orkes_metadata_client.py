@@ -45,6 +45,18 @@ class TestOrkesMetadataClient(unittest.TestCase):
         self.assertTrue(mock.called)
         mock.assert_called_with(self.workflowDef, False)
 
+    @patch.object(MetadataResourceApi, 'update1')
+    def test_updateWorkflowDef(self, mock):
+        self.metadata_client.updateWorkflowDef(self.workflowDef)
+        self.assertTrue(mock.called)
+        mock.assert_called_with(self.workflowDef, True)
+
+    @patch.object(MetadataResourceApi, 'update1')
+    def test_updateWorkflowDef_without_overwrite(self, mock):
+        self.metadata_client.updateWorkflowDef(self.workflowDef, False)
+        self.assertTrue(mock.called)
+        mock.assert_called_with(self.workflowDef, False)
+
     @patch.object(MetadataResourceApi, 'unregister_workflow_def')
     def test_unregisterWorkflowDef(self, mock):
         self.metadata_client.unregisterWorkflowDef(WORKFLOW_NAME, 1)
