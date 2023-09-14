@@ -17,11 +17,11 @@ class OrkesMetadataClient(MetadataClient):
     def registerWorkflowDef(self, workflowDef: WorkflowDef, overwrite: Optional[bool] = True):
         self.metadataResourceApi.create(workflowDef, overwrite)
 
+    def updateWorkflowDef(self, workflowDef: WorkflowDef, overwrite: Optional[bool] = True):
+        self.metadataResourceApi.update1(workflowDef, overwrite)
+
     def unregisterWorkflowDef(self, name: str, version: int):
         self.metadataResourceApi.unregister_workflow_def(name, version)
-
-    def updateWorkflowDef(self):
-        pass
 
     def getWorkflowDef(self, name: str, version: Optional[int] = None) -> (Optional[WorkflowDef], str):
         workflow = None
