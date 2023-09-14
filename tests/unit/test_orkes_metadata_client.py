@@ -8,6 +8,7 @@ from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.http.models.task_def import TaskDef
+from conductor.client.workflow.task.task_type import TaskType
 
 WORKFLOW_NAME = 'ut_wf'
 TASK_NAME = 'ut_task'
@@ -78,6 +79,24 @@ class TestOrkesMetadataClient(unittest.TestCase):
         mock.return_value = [self.workflowDef, workflowDef2]
         wfs = self.metadata_client.getAllWorkflowDefs()
         self.assertEqual(len(wfs), 2)
+    
+    @patch.object(MetadataResourceApi, 'register_task_def')
+    def test_registerTaskDef(self, mock):
+        self.metadata_client.registerTaskDef(self.taskDef)
+        self.assertTrue(mock.called)
+        mock.assert_called_with(self.taskDef)
+    
+    @patch.object(MetadataResourceApi, 'update_task_def')
+    def test_updateTaskDef(self, mock):
+        self.metadata_client.updateTaskDef(self.taskDef)
+        self.assertTrue(mock.called)
+        mock.assert_called_with(self.taskDef)
+    
+    @patch.object(MetadataResourceApi, 'unregister_task_def')
+    def test_unregisterTaskDef(self, mock):
+        self.metadata_client.unregisterTaskDef(TASK_NAME)
+        self.assertTrue(mock.called)
+        mock.assert_called_with(TASK_NAME)
 
     @patch.object(MetadataResourceApi, 'get_task_def')
     def test_getTaskDef(self, mock):
