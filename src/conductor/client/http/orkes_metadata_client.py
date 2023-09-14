@@ -54,24 +54,3 @@ class OrkesMetadataClient(MetadataClient):
 
     def getAllTaskDefs(self) -> List[TaskDef]:
         return self.metadataResourceApi.get_task_defs()
-
-    def getTags(self):
-        pass
-    
-    def getWorkflowTags(self, workflowName: str) -> List[WorkflowTag]:
-        return self.metadataResourceApi.get_workflow_metadata(workflowName)
-    
-    def setWorkflowTags(self):
-        pass
-    
-    def deleteWorkflowTags(self):
-        pass
-
-    def getTaskTags(self):
-        pass
-    
-    def setTaskTags(self):
-        pass
-    
-    def deleteTaskTags(self):
-        pass

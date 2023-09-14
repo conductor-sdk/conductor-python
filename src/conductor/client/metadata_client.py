@@ -44,39 +44,3 @@ class MetadataClient(ABC):
     @abstractmethod
     def getAllTaskDefs(self) -> List[TaskDef]:
         pass
-
-    @abstractmethod
-    def getTags(self):
-        pass
-
-    @abstractmethod
-    def setWorkflowTags(self):
-        pass
-    
-    @abstractmethod
-    def deleteWorkflowTags(self):
-        pass
-    
-    @abstractmethod
-    def getWorkflowTags(self, workflowName: str) -> List[WorkflowTag]:
-        pass
-    
-    @abstractmethod
-    def setWorkflowTags(self):
-        pass
-
-    @abstractmethod
-    def setTaskTags(self):
-        pass
-    
-    @abstractmethod
-    def deleteTaskTags(self):
-        pass
-
-    @abstractmethod
-    def getTaskTags(self):
-        pass
-
-    @abstractmethod
-    def setTaskTags(self):
-        pass
