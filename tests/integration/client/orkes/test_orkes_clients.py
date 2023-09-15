@@ -3,54 +3,90 @@ from conductor.client.configuration.settings.authentication_settings import Auth
 from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
 from conductor.client.orkes.orkes_metadata_client import OrkesMetadataClient
+from conductor.client.http.models.task_def import TaskDef
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.simple_task import SimpleTask
 
-import json
-
 WORKFLOW_NAME = 'IntegrationTestMetadataClientWf'
+TASK_TYPE = 'IntegrationTestTask'
 
 class TestOrkesClients:
     def __init__(self, configuration: Configuration):
         self.workflow_executor = WorkflowExecutor(configuration)
         self.metadata_client = OrkesMetadataClient(configuration)
-        self.workflow = ConductorWorkflow(
+
+    def run(self) -> None:
+        self.test_task_definition_lifecycle()
+        self.test_workflow_definition_lifecycle()
+
+    def test_task_definition_lifecycle(self):
+        taskDef = TaskDef(
+            name= TASK_TYPE,
+            description="Integration Test Task",
+            input_keys=["a", "b"]
+        )
+
+        self.__test_register_task_definition(taskDef)
+        self.__test_get_task_definition()
+        self.__test_update_task_definition(taskDef)
+        self.__test_unregister_task_definition()
+
+    def test_workflow_definition_lifecycle(self):
+        workflow = ConductorWorkflow(
             executor=self.workflow_executor,
             name=WORKFLOW_NAME,
             description='Test Create Workflow',
             version=1
         )
-        self.workflow.input_parameters(["a", "b"])
-        self.workflow >> SimpleTask("simple_task", "simple_task_ref")
-        self.workflowDef = self.workflow.to_workflow_def()
-        
-    def run(self) -> None:
-        self.__test_register_workflow_definition()
+        workflow.input_parameters(["a", "b"])
+        workflow >> SimpleTask("simple_task", "simple_task_ref")
+        workflowDef = workflow.to_workflow_def()
+
+        self.__test_register_workflow_definition(workflowDef)
         self.__test_get_workflow_definition()
-        self.__test_update_workflow_definition()
+        self.__test_update_workflow_definition(workflow)
         self.__test_unregister_workflow_definition()
         self.__test_get_invalid_workflow_definition()
 
-    def __test_register_workflow_definition(self):
-        self.metadata_client.registerWorkflowDef(self.workflowDef, True)
+    def __test_register_task_definition(self, taskDef: TaskDef):
+        self.metadata_client.registerTaskDef(taskDef)
+
+    def __test_get_task_definition(self):
+        taskDef = self.metadata_client.getTaskDef(TASK_TYPE)
+        assert taskDef.name == TASK_TYPE
+        assert len(taskDef.input_keys) == 2
+
+    def __test_update_task_definition(self, taskDef: TaskDef):
+        taskDef.description = "Integration Test Task New Description"
+        taskDef.input_keys = ["a", "b", "c"]
+        self.metadata_client.updateTaskDef(taskDef)
+        fetchedTaskDef = self.metadata_client.getTaskDef(taskDef.name)
+        assert fetchedTaskDef.description == taskDef.description
+        assert len(fetchedTaskDef.input_keys) == 3
+
+    def __test_unregister_task_definition(self):
+        self.metadata_client.unregisterTaskDef(TASK_TYPE)
+
+    def __test_register_workflow_definition(self, workflowDef: WorkflowDef):
+        self.metadata_client.registerWorkflowDef(workflowDef, True)
 
     def __test_get_workflow_definition(self):
         wfDef, _ = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
-        assert wfDef.name == self.workflowDef.name
+        assert wfDef.name == WORKFLOW_NAME
         assert len(wfDef.tasks) == 1
 
-    def __test_update_workflow_definition(self):
-        self.workflow >> SimpleTask("simple_task", "simple_task_ref_2")
-        updatedWorkflowDef = self.workflow.to_workflow_def()
+    def __test_update_workflow_definition(self, workflow: ConductorWorkflow):
+        workflow >> SimpleTask("simple_task", "simple_task_ref_2")
+        updatedWorkflowDef = workflow.to_workflow_def()
         self.metadata_client.updateWorkflowDef(updatedWorkflowDef, True)
         wfDef, _ = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
         assert len(wfDef.tasks) == 2
 
     def __test_unregister_workflow_definition(self):
         self.metadata_client.unregisterWorkflowDef(WORKFLOW_NAME, 1)
-        
+
     def __test_get_invalid_workflow_definition(self):
         wfDef, error = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
         assert wfDef == None
