@@ -137,7 +137,7 @@ metadata_client.unregisterTaskDef('python_task_example_from_code')
 
 ## Tag Management
 
-### Add tags to your workflow
+### Set tags on your workflow
 
 You should be able to set tags on your workflow:
 
@@ -150,6 +150,15 @@ tags = [
 ]
 
 metadata_client.setWorkflowTags(tags, 'python_workflow_example_from_code')
+```
+
+### Add single tag to your workflow
+
+You should be able to add a single tag to your workflow:
+
+```python
+tag = TagObject("wftag", "METADATA", "val")
+metadata_client.addWorkflowTag(tag, 'python_workflow_example_from_code')
 ```
 
 ### Fetch tags added to your workflow
@@ -173,13 +182,10 @@ metadata_client.deleteWorkflowTag(tagStr, 'python_workflow_example_from_code')
 
 ### Add tags to your task
 
-You should be able to add tags on your task:
+You should be able to set tags for your task:
 
 ```python
 from conductor.client.http.models.tag_object import TagObject
-
-# Single Tag
-metadata_client.addTaskTag(TagObject("tag1", "METADATA", "val1"), 'PYTHON_TASK')
 
 tags = [
     TagObject("tag2", "METADATA", "val2"),
@@ -190,7 +196,15 @@ metadata_client.setTaskTags(tags, 'PYTHON_TASK')
 ```
 setTaskTags will override any previously added tags.
 
-### Fetch tags added to your workflow
+### Add single tag to your task
+
+You should be able to add a tag to your task:
+
+```python
+metadata_client.addTaskTag(TagObject("tag1", "METADATA", "val1"), 'PYTHON_TASK')
+```
+
+### Fetch tags added to your task
 
 You should be able to fetch tags added to your workflow:
 
@@ -198,7 +212,7 @@ You should be able to fetch tags added to your workflow:
 tags = metadata_client.getTaskTags('PYTHON_TASK')
 ```
 
-### Delete tag from your workflow
+### Delete tag from your task
 
 You should be able to delete a tag on your task:
 
