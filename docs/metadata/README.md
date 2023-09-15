@@ -1,5 +1,7 @@
 # Authoring Workflows
 
+## Workflow Definition Management
+
 ### Register Workflow Definition
 
 In order to define a workflow, you must provide a `OrkesMetadataClient` and a `WorkflowExecutor`, which requires a `Configuration` object with the Conductor Server info. Here's an example on how to do that:
@@ -10,7 +12,6 @@ from conductor.client.configuration.settings.authentication_settings import Auth
 from conductor.client.orkes.orkes_metadata_client import OrkesMetadataClient
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from conductor.client.workflow.task.simple_task import SimpleTask
 
 configuration = Configuration(
     server_api_url=SERVER_API_URL,
@@ -34,6 +35,8 @@ After creating an instance of a `ConductorWorkflow`, you can start adding tasks 
 * operator: `>>`
 
 ```python
+from conductor.client.workflow.task.simple_task import SimpleTask
+
 simple_task_1 = SimpleTask(
     task_def_name='python_simple_task_from_code_1',
     task_reference_name='python_simple_task_from_code_1'
@@ -55,13 +58,25 @@ workflow.input_parameters(["a", "b"])
 You should be able to register your workflow at the Conductor Server:
 
 ```python
+from conductor.client.http.models.workflow_def import WorkflowDef
+
 workflowDef = workflow.to_workflow_def()
 metadata_client.registerWorkflowDef(workflowDef, True)
 ```
 
+### Get Workflow Definition
+
+You should be able to get your workflow definiton that you added previously:
+
+```python
+wfDef, errorStr = metadata_client.getWorkflowDef('python_workflow_example_from_code')
+```
+
+In case there is an error in fetching the definition, errorStr will be populated.
+
 ### Update Workflow Definition
 
-You should be able to unregister your workflow by passing name and version:
+You should be able to update your workflow after adding new tasks:
 
 ```python
 workflow >> SimpleTask("simple_task", "simple_task_ref_2")
@@ -75,4 +90,121 @@ You should be able to unregister your workflow by passing name and version:
 
 ```python
 metadata_client.unregisterWorkflowDef('python_workflow_example_from_code', 1)
+```
+
+## Task Definition Management
+
+### Register Task Definition
+
+You should be able to register your task at the Conductor Server:
+
+```python
+from conductor.client.http.models.task_def import TaskDef
+
+taskDef = TaskDef(
+    name= "PYTHON_TASK",
+    description="Python Task Example",
+    input_keys=["a", "b"]
+)
+metadata_client.registerTaskDef(taskDef)
+```
+
+### Get Task Definition
+
+You should be able to get your task definiton that you added previously:
+
+```python
+taskDef = metadata_client.getTaskDef('PYTHON_TASK')
+```
+
+### Update Task Definition
+
+You should be able to update your task definition by modifying field values:
+
+```python
+taskDef.description = "Python Task Example New Description"
+taskDef.input_keys = ["a", "b", "c"]
+metadata_client.updateTaskDef(taskDef)
+```
+
+### Unregister Task Definition
+
+You should be able to unregister your task at the Conductor Server:
+
+```python
+metadata_client.unregisterTaskDef('python_task_example_from_code')
+```
+
+## Tag Management
+
+### Add tags to your workflow
+
+You should be able to set tags on your workflow:
+
+```python
+from conductor.client.http.models.tag_object import TagObject
+
+tags = [
+    TagObject("wftag1", "METADATA", "val1"),
+    TagObject("wftag2", "METADATA", "val2")
+]
+
+metadata_client.setWorkflowTags(tags, 'python_workflow_example_from_code')
+```
+
+### Fetch tags added to your workflow
+
+You should be able to fetch tags added to your workflow:
+
+```python
+tags = metadata_client.getWorkflowTags('python_workflow_example_from_code')
+```
+
+### Delete tag from your workflow
+
+You should be able to delete a tag on your workflow:
+
+```python
+from conductor.client.http.models.tag_string import TagString
+
+tagStr = TagString("wftag2", "METADATA", "val2")
+metadata_client.deleteWorkflowTag(tagStr, 'python_workflow_example_from_code')
+```
+
+### Add tags to your task
+
+You should be able to add tags on your task:
+
+```python
+from conductor.client.http.models.tag_object import TagObject
+
+# Single Tag
+metadata_client.addTaskTag(TagObject("tag1", "METADATA", "val1"), 'PYTHON_TASK')
+
+tags = [
+    TagObject("tag2", "METADATA", "val2"),
+    TagObject("tag3", "METADATA", "val3")
+]
+# Multiple Tags
+metadata_client.setTaskTags(tags, 'PYTHON_TASK')
+```
+setTaskTags will override any previously added tags.
+
+### Fetch tags added to your workflow
+
+You should be able to fetch tags added to your workflow:
+
+```python
+tags = metadata_client.getTaskTags('PYTHON_TASK')
+```
+
+### Delete tag from your workflow
+
+You should be able to delete a tag on your task:
+
+```python
+from conductor.client.http.models.tag_string import TagString
+
+tagStr = TagString("tag1", "METADATA", "val1"),
+metadata_client.deleteTaskTag(tagStr, 'PYTHON_TASK')
 ```
