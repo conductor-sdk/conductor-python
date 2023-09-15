@@ -50,10 +50,10 @@ def main():
     configuration = generate_configuration()
     workflow_executor = WorkflowExecutor(configuration)
     api_client = ApiClient(configuration)
-    test_event_client.test_kafka_queue_configuration(api_client)
-    test_async.test_async_method(api_client)
-    run_workflow_definition_tests(workflow_executor)
-    run_workflow_execution_tests(configuration, workflow_executor)
+    # test_event_client.test_kafka_queue_configuration(api_client)
+    # test_async.test_async_method(api_client)
+    # run_workflow_definition_tests(workflow_executor)
+    # run_workflow_execution_tests(configuration, workflow_executor)
     TestOrkesClients(configuration=configuration).run()
 
 

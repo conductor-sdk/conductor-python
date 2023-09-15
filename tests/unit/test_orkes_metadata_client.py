@@ -99,7 +99,7 @@ class TestOrkesMetadataClient(unittest.TestCase):
     def test_registerTaskDef(self, mock):
         self.metadata_client.registerTaskDef(self.taskDef)
         self.assertTrue(mock.called)
-        mock.assert_called_with(self.taskDef)
+        mock.assert_called_with([self.taskDef])
     
     @patch.object(MetadataResourceApi, 'update_task_def')
     def test_updateTaskDef(self, mock):
