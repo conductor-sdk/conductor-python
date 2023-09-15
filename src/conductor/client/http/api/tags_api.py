@@ -122,7 +122,7 @@ class TagsApi(object):
         auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/metadata/task/{taskName}/tags', 'POST',
+            '/metadata/task/{taskName}/tags', 'POST',
             path_params,
             query_params,
             header_params,
@@ -227,7 +227,7 @@ class TagsApi(object):
         auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/metadata/workflow/{name}/tags', 'POST',
+            '/metadata/workflow/{name}/tags', 'POST',
             path_params,
             query_params,
             header_params,
@@ -332,7 +332,7 @@ class TagsApi(object):
         auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/metadata/task/{taskName}/tags', 'DELETE',
+            '/metadata/task/{taskName}/tags', 'DELETE',
             path_params,
             query_params,
             header_params,
@@ -437,7 +437,7 @@ class TagsApi(object):
         auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/metadata/workflow/{name}/tags', 'DELETE',
+            '/metadata/workflow/{name}/tags', 'DELETE',
             path_params,
             query_params,
             header_params,
@@ -522,7 +522,7 @@ class TagsApi(object):
         auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/metadata/tags', 'GET',
+            '/metadata/tags', 'GET',
             path_params,
             query_params,
             header_params,
@@ -615,7 +615,7 @@ class TagsApi(object):
         auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/metadata/task/{taskName}/tags', 'GET',
+            '/metadata/task/{taskName}/tags', 'GET',
             path_params,
             query_params,
             header_params,
@@ -708,7 +708,7 @@ class TagsApi(object):
         auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/metadata/workflow/{name}/tags', 'GET',
+            '/metadata/workflow/{name}/tags', 'GET',
             path_params,
             query_params,
             header_params,
@@ -813,7 +813,7 @@ class TagsApi(object):
         auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/metadata/task/{taskName}/tags', 'PUT',
+            '/metadata/task/{taskName}/tags', 'PUT',
             path_params,
             query_params,
             header_params,
@@ -918,7 +918,7 @@ class TagsApi(object):
         auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/metadata/workflow/{name}/tags', 'PUT',
+            '/metadata/workflow/{name}/tags', 'PUT',
             path_params,
             query_params,
             header_params,
