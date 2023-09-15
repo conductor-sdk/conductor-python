@@ -6,7 +6,8 @@ Building the task workers in Python mainly consists of the following steps:
 
 1. Setup conductor-python package
 2. Create and run task workers
-3. Create workflows using code
+3. Create task and workflow definitions
+4. Execute workflows using code
 
 ## Setup Conductor Python Package​
 
@@ -75,6 +76,9 @@ metrics_settings = MetricsSettings(
 ## Create and Run Task Workers
 
 The next step is to [create and run task workers](https://github.com/conductor-sdk/conductor-python/tree/main/docs/worker).
+
+## Create task and workflow definitions
+We can use the metadata client to [manage task and workflow definitions](https://github.com/conductor-sdk/conductor-python/tree/main/docs/metadata).
 
 ## Create Workflows using Code
 
