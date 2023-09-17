@@ -71,16 +71,16 @@ class OrkesMetadataClient(MetadataClient):
     def setWorkflowMetadataTags(self, tags: List[MetadataTag], workflowName: str):
         self.tagsApi.set_workflow_tags(tags, workflowName)
 
-    def addTaskMetadataTag(self, tags: MetadataTag, taskName: str):
-        self.tagsApi.add_task_tag(tags, taskName)
+    def addTaskTag(self, tag: MetadataTag, taskName: str):
+        self.tagsApi.add_task_tag(tag, taskName)
     
-    def deleteTaskMetadataTag(self, tag: MetadataTag, taskName: str):
+    def deleteTaskTag(self, tag: MetadataTag, taskName: str):
         tagStr = TagString(tag.key, tag.type, tag.value)
         self.tagsApi.delete_task_tag(tagStr, taskName)
 
-    def getTaskMetadataTags(self, taskName: str) -> List[MetadataTag]:
+    def getTaskTags(self, taskName: str) -> List[MetadataTag]:
         return self.tagsApi.get_task_tags(taskName)
         
-    def setTaskMetadataTags(self, tags: List[MetadataTag], taskName: str):
+    def setTaskTags(self, tags: List[MetadataTag], taskName: str):
         self.tagsApi.set_task_tags(tags, taskName)
             

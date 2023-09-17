@@ -192,7 +192,7 @@ tags = [
     MetadataTag("tag3", "val3")
 ]
 
-metadata_client.setTaskMetadataTags(tags, 'PYTHON_TASK')
+metadata_client.setTaskTags(tags, 'PYTHON_TASK')
 ```
 setTaskTags will override any previously added tags.
 
@@ -201,7 +201,7 @@ setTaskTags will override any previously added tags.
 You should be able to add a tag to your task:
 
 ```python
-metadata_client.addTaskMetadataTag(MetadataTag("tag1", "val1"), 'PYTHON_TASK')
+metadata_client.addTaskTag(MetadataTag("tag1", "val1"), 'PYTHON_TASK')
 ```
 
 ### Fetch tags added to your task
@@ -209,7 +209,7 @@ metadata_client.addTaskMetadataTag(MetadataTag("tag1", "val1"), 'PYTHON_TASK')
 You should be able to fetch tags added to your workflow:
 
 ```python
-tags = metadata_client.getTaskMetadataTags('PYTHON_TASK')
+tags = metadata_client.getTaskTags('PYTHON_TASK')
 ```
 
 ### Delete tag from your task
@@ -220,5 +220,5 @@ You should be able to delete a tag on your task:
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 
 tag = MetadataTag("tag1", "val1"),
-metadata_client.deleteTaskMetadataTag(tag, 'PYTHON_TASK')
+metadata_client.deleteTaskTag(tag, 'PYTHON_TASK')
 ```
