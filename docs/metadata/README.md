@@ -142,14 +142,14 @@ metadata_client.unregisterTaskDef('python_task_example_from_code')
 You should be able to set tags on your workflow:
 
 ```python
-from conductor.client.http.models.tag_object import TagObject
+from conductor.client.orkes.models.metadata_tag import MetadataTag
 
 tags = [
-    TagObject("wftag1", "METADATA", "val1"),
-    TagObject("wftag2", "METADATA", "val2")
+    MetadataTag("wftag1", "val1"),
+    MetadataTag("wftag2", "val2")
 ]
 
-metadata_client.setWorkflowTags(tags, 'python_workflow_example_from_code')
+metadata_client.setWorkflowMetadataTags(tags, 'python_workflow_example_from_code')
 ```
 
 ### Add single tag to your workflow
@@ -157,8 +157,8 @@ metadata_client.setWorkflowTags(tags, 'python_workflow_example_from_code')
 You should be able to add a single tag to your workflow:
 
 ```python
-tag = TagObject("wftag", "METADATA", "val")
-metadata_client.addWorkflowTag(tag, 'python_workflow_example_from_code')
+tag = MetadataTag("wftag", "val")
+metadata_client.addWorkflowMetadataTag(tag, 'python_workflow_example_from_code')
 ```
 
 ### Fetch tags added to your workflow
@@ -166,7 +166,7 @@ metadata_client.addWorkflowTag(tag, 'python_workflow_example_from_code')
 You should be able to fetch tags added to your workflow:
 
 ```python
-tags = metadata_client.getWorkflowTags('python_workflow_example_from_code')
+tags = metadata_client.getWorkflowMetadataTags('python_workflow_example_from_code')
 ```
 
 ### Delete tag from your workflow
@@ -174,10 +174,10 @@ tags = metadata_client.getWorkflowTags('python_workflow_example_from_code')
 You should be able to delete a tag on your workflow:
 
 ```python
-from conductor.client.http.models.tag_string import TagString
+from conductor.client.orkes.models.metadata_tag import MetadataTag
 
-tagStr = TagString("wftag2", "METADATA", "val2")
-metadata_client.deleteWorkflowTag(tagStr, 'python_workflow_example_from_code')
+tag = MetadataTag("wftag2", "val2")
+metadata_client.deleteWorkflowMetadataTag(tag, 'python_workflow_example_from_code')
 ```
 
 ### Add tags to your task
@@ -185,14 +185,14 @@ metadata_client.deleteWorkflowTag(tagStr, 'python_workflow_example_from_code')
 You should be able to set tags for your task:
 
 ```python
-from conductor.client.http.models.tag_object import TagObject
+from conductor.client.orkes.models.metadata_tag import MetadataTag
 
 tags = [
-    TagObject("tag2", "METADATA", "val2"),
-    TagObject("tag3", "METADATA", "val3")
+    MetadataTag("tag2", "val2"),
+    MetadataTag("tag3", "val3")
 ]
-# Multiple Tags
-metadata_client.setTaskTags(tags, 'PYTHON_TASK')
+
+metadata_client.setTaskMetadataTags(tags, 'PYTHON_TASK')
 ```
 setTaskTags will override any previously added tags.
 
@@ -201,7 +201,7 @@ setTaskTags will override any previously added tags.
 You should be able to add a tag to your task:
 
 ```python
-metadata_client.addTaskTag(TagObject("tag1", "METADATA", "val1"), 'PYTHON_TASK')
+metadata_client.addTaskMetadataTag(MetadataTag("tag1", "val1"), 'PYTHON_TASK')
 ```
 
 ### Fetch tags added to your task
@@ -209,7 +209,7 @@ metadata_client.addTaskTag(TagObject("tag1", "METADATA", "val1"), 'PYTHON_TASK')
 You should be able to fetch tags added to your workflow:
 
 ```python
-tags = metadata_client.getTaskTags('PYTHON_TASK')
+tags = metadata_client.getTaskMetadataTags('PYTHON_TASK')
 ```
 
 ### Delete tag from your task
@@ -217,8 +217,8 @@ tags = metadata_client.getTaskTags('PYTHON_TASK')
 You should be able to delete a tag on your task:
 
 ```python
-from conductor.client.http.models.tag_string import TagString
+from conductor.client.orkes.models.metadata_tag import MetadataTag
 
-tagStr = TagString("tag1", "METADATA", "val1"),
-metadata_client.deleteTaskTag(tagStr, 'PYTHON_TASK')
+tag = MetadataTag("tag1", "val1"),
+metadata_client.deleteTaskMetadataTag(tag, 'PYTHON_TASK')
 ```
