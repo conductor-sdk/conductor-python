@@ -116,8 +116,8 @@ class TestOrkesClients:
     def __test_workflow_tags(self):
         singleTag = MetadataTag("wftag", "val")
 
-        self.metadata_client.addWorkflowMetadataTag(singleTag, WORKFLOW_NAME)
-        fetchedTags = self.metadata_client.getWorkflowMetadataTags(WORKFLOW_NAME)
+        self.metadata_client.addWorkflowTag(singleTag, WORKFLOW_NAME)
+        fetchedTags = self.metadata_client.getWorkflowTags(WORKFLOW_NAME)
         assert len(fetchedTags) == 1
         assert fetchedTags[0].key == singleTag.key
 
@@ -126,10 +126,10 @@ class TestOrkesClients:
             MetadataTag("wftag3", "val3")
         ]
 
-        self.metadata_client.setWorkflowMetadataTags(tags, WORKFLOW_NAME)
-        fetchedTags = self.metadata_client.getWorkflowMetadataTags(WORKFLOW_NAME)
+        self.metadata_client.setWorkflowTags(tags, WORKFLOW_NAME)
+        fetchedTags = self.metadata_client.getWorkflowTags(WORKFLOW_NAME)
         assert len(fetchedTags) == 2
 
         tagStr = MetadataTag("wftag2", "val2")
-        self.metadata_client.deleteWorkflowMetadataTag(tagStr, WORKFLOW_NAME)
-        assert(len(self.metadata_client.getWorkflowMetadataTags(WORKFLOW_NAME))) == 1
+        self.metadata_client.deleteWorkflowTag(tagStr, WORKFLOW_NAME)
+        assert(len(self.metadata_client.getWorkflowTags(WORKFLOW_NAME))) == 1
