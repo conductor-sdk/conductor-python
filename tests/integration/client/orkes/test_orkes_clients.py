@@ -1,15 +1,12 @@
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
-from conductor.client.orkes.orkes_metadata_client import OrkesMetadataClient
 from conductor.client.http.models.task_def import TaskDef
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.simple_task import SimpleTask
-from conductor.client.http.api.tags_api import TagsApi
-from conductor.client.http.models.tag_string import TagString
-from conductor.client.http.models.tag_object import TagObject
+from conductor.client.orkes.orkes_metadata_client import OrkesMetadataClient
+from conductor.client.orkes.models.metadata_tag import MetadataTag
 
 WORKFLOW_NAME = 'IntegrationTestMetadataClientWf'
 TASK_TYPE = 'IntegrationTestTask'
@@ -97,42 +94,42 @@ class TestOrkesClients:
         assert error != None
 
     def __test_task_tags(self):
-        tagObjs = [
-            TagObject("tag1", "METADATA", "val1"),
-            TagObject("tag2", "METADATA", "val2"),
-            TagObject("tag3", "METADATA", "val3")
+        tags = [
+            MetadataTag("tag1", "val1"),
+            MetadataTag("tag2", "val2"),
+            MetadataTag("tag3", "val3")
         ]
 
-        self.metadata_client.addTaskTag(tagObjs[0], TASK_TYPE)
-        fetchedTags = self.metadata_client.getTaskTags(TASK_TYPE)
+        self.metadata_client.addTaskMetadataTag(tags[0], TASK_TYPE)
+        fetchedTags = self.metadata_client.getTaskMetadataTags(TASK_TYPE)
         assert len(fetchedTags) == 1
-        assert fetchedTags[0].key == tagObjs[0].key
+        assert fetchedTags[0].key == tags[0].key
 
-        self.metadata_client.setTaskTags(tagObjs, TASK_TYPE)
-        fetchedTags = self.metadata_client.getTaskTags(TASK_TYPE)
+        self.metadata_client.setTaskMetadataTags(tags, TASK_TYPE)
+        fetchedTags = self.metadata_client.getTaskMetadataTags(TASK_TYPE)
         assert len(fetchedTags) == 3
 
-        tagStr = TagString("tag2", "METADATA", "val2")
-        self.metadata_client.deleteTaskTag(tagStr, TASK_TYPE)
-        assert(len(self.metadata_client.getTaskTags(TASK_TYPE))) == 2
+        tagStr = MetadataTag("tag2", "val2")
+        self.metadata_client.deleteTaskMetadataTag(tagStr, TASK_TYPE)
+        assert(len(self.metadata_client.getTaskMetadataTags(TASK_TYPE))) == 2
 
     def __test_workflow_tags(self):
-        singleTag = TagObject("wftag", "METADATA", "val")
+        singleTag = MetadataTag("wftag", "val")
 
-        self.metadata_client.addWorkflowTag(singleTag, WORKFLOW_NAME)
-        fetchedTags = self.metadata_client.getWorkflowTags(WORKFLOW_NAME)
+        self.metadata_client.addWorkflowMetadataTag(singleTag, WORKFLOW_NAME)
+        fetchedTags = self.metadata_client.getWorkflowMetadataTags(WORKFLOW_NAME)
         assert len(fetchedTags) == 1
         assert fetchedTags[0].key == singleTag.key
 
-        tagObjs = [
-            TagObject("wftag2", "METADATA", "val2"),
-            TagObject("wftag3", "METADATA", "val3")
+        tags = [
+            MetadataTag("wftag2", "val2"),
+            MetadataTag("wftag3", "val3")
         ]
 
-        self.metadata_client.setWorkflowTags(tagObjs, WORKFLOW_NAME)
-        fetchedTags = self.metadata_client.getWorkflowTags(WORKFLOW_NAME)
+        self.metadata_client.setWorkflowMetadataTags(tags, WORKFLOW_NAME)
+        fetchedTags = self.metadata_client.getWorkflowMetadataTags(WORKFLOW_NAME)
         assert len(fetchedTags) == 2
 
-        tagStr = TagString("wftag2", "METADATA", "val2")
-        self.metadata_client.deleteWorkflowTag(tagStr, WORKFLOW_NAME)
-        assert(len(self.metadata_client.getWorkflowTags(WORKFLOW_NAME))) == 1
+        tagStr = MetadataTag("wftag2", "val2")
+        self.metadata_client.deleteWorkflowMetadataTag(tagStr, WORKFLOW_NAME)
+        assert(len(self.metadata_client.getWorkflowMetadataTags(WORKFLOW_NAME))) == 1

@@ -7,9 +7,9 @@ from conductor.client.metadata_client import MetadataClient
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.http.models.task_def import TaskDef
 from conductor.client.http.models.tag_string import TagString
-from conductor.client.http.models.tag_object import TagObject
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
 from conductor.client.http.api.tags_api import TagsApi
+from conductor.client.orkes.models.metadata_tag import MetadataTag
 
 class OrkesMetadataClient(MetadataClient):
     def __init__(self, configuration: Configuration):
@@ -57,28 +57,30 @@ class OrkesMetadataClient(MetadataClient):
 
     def getAllTaskDefs(self) -> List[TaskDef]:
         return self.metadataResourceApi.get_task_defs()
-    
-    def addWorkflowTag(self, tagObj: TagObject, workflowName: str):
-        self.tagsApi.add_workflow_tag(tagObj, workflowName)
+        
+    def addWorkflowMetadataTag(self, tag: MetadataTag, workflowName: str):
+        self.tagsApi.add_workflow_tag(tag, workflowName)
 
-    def deleteWorkflowTag(self, tagStr: TagString, workflowName: str):
+    def deleteWorkflowMetadataTag(self, tag: MetadataTag, workflowName: str):
+        tagStr = TagString(tag.key, tag.type, tag.value)
         self.tagsApi.delete_workflow_tag(tagStr, workflowName)
 
-    def getWorkflowTags(self, workflowName: str) -> List[TagObject]:
+    def getWorkflowMetadataTags(self, workflowName: str) -> List[MetadataTag]:
         return self.tagsApi.get_workflow_tags(workflowName)
 
-    def setWorkflowTags(self, tagObjs: List[TagObject], workflowName: str):
-        self.tagsApi.set_workflow_tags(tagObjs, workflowName)
+    def setWorkflowMetadataTags(self, tags: List[MetadataTag], workflowName: str):
+        self.tagsApi.set_workflow_tags(tags, workflowName)
 
-    def addTaskTag(self, tagObj: TagObject, taskName: str):
-        self.tagsApi.add_task_tag(tagObj, taskName)
+    def addTaskMetadataTag(self, tags: MetadataTag, taskName: str):
+        self.tagsApi.add_task_tag(tags, taskName)
     
-    def deleteTaskTag(self, tagStr: TagString, taskName: str):
+    def deleteTaskMetadataTag(self, tag: MetadataTag, taskName: str):
+        tagStr = TagString(tag.key, tag.type, tag.value)
         self.tagsApi.delete_task_tag(tagStr, taskName)
 
-    def getTaskTags(self, taskName: str) -> List[TagObject]:
+    def getTaskMetadataTags(self, taskName: str) -> List[MetadataTag]:
         return self.tagsApi.get_task_tags(taskName)
         
-    def setTaskTags(self, tagObjs: List[TagObject], taskName: str):
-        self.tagsApi.set_task_tags(tagObjs, taskName)
+    def setTaskMetadataTags(self, tags: List[MetadataTag], taskName: str):
+        self.tagsApi.set_task_tags(tags, taskName)
             
