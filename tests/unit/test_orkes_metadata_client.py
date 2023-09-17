@@ -154,31 +154,31 @@ class TestOrkesMetadataClient(unittest.TestCase):
         self.assertEqual(len(tags), 2)
 
     @patch.object(TagsApi, 'add_task_tag')
-    def test_addTaskMetadataTag(self, mock):
+    def test_addTaskTag(self, mock):
         taskTag = MetadataTag("tag1", "val1")
-        self.metadata_client.addTaskMetadataTag(taskTag, TASK_NAME)
+        self.metadata_client.addTaskTag(taskTag, TASK_NAME)
         mock.assert_called_with(taskTag, TASK_NAME)
 
     @patch.object(TagsApi, 'delete_task_tag')
-    def test_deleteTaskMetadataTag(self, mock):
+    def test_deleteTaskTag(self, mock):
         taskTag = MetadataTag("tag1", "val1")
         taskTagStr = TagString("tag1", "METADATA", "val1")
-        self.metadata_client.deleteTaskMetadataTag(taskTag, TASK_NAME)
+        self.metadata_client.deleteTaskTag(taskTag, TASK_NAME)
         mock.assert_called_with(taskTagStr, TASK_NAME)
 
     @patch.object(TagsApi, 'set_task_tags')
-    def test_setTaskMetadataTags(self, mock):
+    def test_setTaskTags(self, mock):
         taskTag1 = MetadataTag("tag1", "val1")
         taskTag2 = MetadataTag("tag2", "val2")
         taskTagObjs = [taskTag1, taskTag2]
-        self.metadata_client.setTaskMetadataTags(taskTagObjs, TASK_NAME)
+        self.metadata_client.setTaskTags(taskTagObjs, TASK_NAME)
         mock.assert_called_with(taskTagObjs, TASK_NAME)
 
     @patch.object(TagsApi, 'get_task_tags')
-    def test_getTaskMetadataTags(self, mock):
+    def test_getTaskTags(self, mock):
         taskTag1 = MetadataTag("tag1", "val1")
         taskTag2 = MetadataTag("tag2", "val2")
         mock.return_value = [taskTag1, taskTag2]
-        tags = self.metadata_client.getTaskMetadataTags(TASK_NAME)
+        tags = self.metadata_client.getTaskTags(TASK_NAME)
         mock.assert_called_with(TASK_NAME)
         self.assertEqual(len(tags), 2)
