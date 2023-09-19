@@ -5,7 +5,7 @@ from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.simple_task import SimpleTask
-from conductor.client.orkes.orkes_metadata_client import OrkesMetadataClient
+from conductor.client.orkes.metadata_client import MetadataClient
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 
 WORKFLOW_NAME = 'IntegrationTestMetadataClientWf'
@@ -14,7 +14,7 @@ TASK_TYPE = 'IntegrationTestTask'
 class TestOrkesClients:
     def __init__(self, configuration: Configuration):
         self.workflow_executor = WorkflowExecutor(configuration)
-        self.metadata_client = OrkesMetadataClient(configuration)
+        self.metadata_client = MetadataClient(configuration)
 
     def run(self) -> None:
         self.test_task_definition_lifecycle()
@@ -48,6 +48,7 @@ class TestOrkesClients:
         self.__test_get_workflow_definition()
         self.__test_update_workflow_definition(workflow)
         self.__test_workflow_tags()
+        self.__test_workflow_rate_limit()
         self.__test_unregister_workflow_definition()
         self.__test_get_invalid_workflow_definition()
 
@@ -122,14 +123,27 @@ class TestOrkesClients:
         assert fetchedTags[0].key == singleTag.key
 
         tags = [
+            MetadataTag("wftag", "val"),
             MetadataTag("wftag2", "val2"),
             MetadataTag("wftag3", "val3")
         ]
 
         self.metadata_client.setWorkflowTags(tags, WORKFLOW_NAME)
         fetchedTags = self.metadata_client.getWorkflowTags(WORKFLOW_NAME)
-        assert len(fetchedTags) == 2
+        assert len(fetchedTags) == 3
 
-        tagStr = MetadataTag("wftag2", "val2")
-        self.metadata_client.deleteWorkflowTag(tagStr, WORKFLOW_NAME)
-        assert(len(self.metadata_client.getWorkflowTags(WORKFLOW_NAME))) == 1
+        tag = MetadataTag("wftag2", "val2")
+        self.metadata_client.deleteWorkflowTag(tag, WORKFLOW_NAME)
+        assert(len(self.metadata_client.getWorkflowTags(WORKFLOW_NAME))) == 2
+
+    def __test_workflow_rate_limit(self):
+        assert(self.metadata_client.getWorkflowRateLimit(WORKFLOW_NAME), None)
+
+        self.metadata_client.setWorkflowRateLimit(2, WORKFLOW_NAME)
+        assert(self.metadata_client.getWorkflowRateLimit(WORKFLOW_NAME), 2)
+
+        self.metadata_client.setWorkflowRateLimit(10, WORKFLOW_NAME)
+        assert(self.metadata_client.getWorkflowRateLimit(WORKFLOW_NAME), 10)
+
+        self.metadata_client.removeWorkflowRateLimit(WORKFLOW_NAME)
+        assert(self.metadata_client.getWorkflowRateLimit(WORKFLOW_NAME), None)

@@ -4,12 +4,12 @@
 
 ### Register Workflow Definition
 
-In order to define a workflow, you must provide a `OrkesMetadataClient` and a `WorkflowExecutor`, which requires a `Configuration` object with the Conductor Server info. Here's an example on how to do that:
+In order to define a workflow, you must provide a `MetadataClient` and a `WorkflowExecutor`, which requires a `Configuration` object with the Conductor Server info. Here's an example on how to do that:
 
 ```python
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from conductor.client.orkes.orkes_metadata_client import OrkesMetadataClient
+from conductor.client.orkes.metadata_client import MetadataClient
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 
@@ -21,7 +21,7 @@ configuration = Configuration(
         key_secret=KEY_SECRET
     ),
 )
-metadata_client = OrkesMetadataClient(configuration)
+metadata_client = MetadataClient(configuration)
 workflow_executor = WorkflowExecutor(configuration)
 workflow = ConductorWorkflow(
     executor=workflow_executor,
@@ -222,3 +222,32 @@ from conductor.client.orkes.models.metadata_tag import MetadataTag
 tag = MetadataTag("tag1", "val1"),
 metadata_client.deleteTaskTag(tag, 'PYTHON_TASK')
 ```
+
+## Rate Limit Management
+
+### Set rate limit for your workflow
+
+You should be able to add a rate limit to your workflow:
+
+```python
+metadata_client.setWorkflowRateLimit(5, 'python_workflow_example_from_code')
+```
+
+Here the execution limit is set as 5, which means that no more than 5 workflows will be allowed to execute at any given time.
+
+### Get rate limit added to your workflow
+
+You should be able to retrieve the rate limit that was set for your workflow previously:
+
+```python
+rate_limit = metadata_client.getWorkflowRateLimit('python_workflow_example_from_code')
+```
+
+### Remove the rate limit on your workflow
+
+You should be able to remove the rate limit on your workflow:
+
+```python
+from conductor.client.orkes.models.metadata_tag import MetadataTag
+
+metadata_client.removeWorkflowRateLimit('python_workflow_example_from_code')
