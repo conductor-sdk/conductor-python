@@ -204,7 +204,7 @@ You should be able to add a tag to your task:
 metadata_client.addTaskTag(MetadataTag("tag1", "val1"), 'PYTHON_TASK')
 ```
 
-### Fetch tags added to your task
+### Get tags added to your task
 
 You should be able to fetch tags added to your workflow:
 
