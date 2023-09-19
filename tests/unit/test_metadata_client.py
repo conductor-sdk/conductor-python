@@ -3,13 +3,14 @@ import unittest
 
 from unittest.mock import Mock, patch, MagicMock
 from conductor.client.http.rest import ApiException, RESTResponse
-from conductor.client.orkes.orkes_metadata_client import OrkesMetadataClient
+from conductor.client.orkes.metadata_client import MetadataClient
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
 from conductor.client.http.api.tags_api import TagsApi
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.http.models.tag_string import TagString
 from conductor.client.orkes.models.metadata_tag import MetadataTag
+from conductor.client.orkes.models.ratelimit_tag import RateLimitTag
 from conductor.client.http.models.task_def import TaskDef
 
 WORKFLOW_NAME = 'ut_wf'
@@ -21,7 +22,7 @@ class TestOrkesMetadataClient(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         configuration = Configuration("http://localhost:8080/api")
-        cls.metadata_client = OrkesMetadataClient(configuration)
+        cls.metadata_client = MetadataClient(configuration)
         
     def setUp(self):
         self.workflowDef = WorkflowDef(name=WORKFLOW_NAME, version=1)
@@ -182,3 +183,33 @@ class TestOrkesMetadataClient(unittest.TestCase):
         tags = self.metadata_client.getTaskTags(TASK_NAME)
         mock.assert_called_with(TASK_NAME)
         self.assertEqual(len(tags), 2)
+
+    @patch.object(TagsApi, 'add_workflow_tag')
+    def test_setWorkflowRateLimit(self, mock):
+        rateLimitTag = RateLimitTag(WORKFLOW_NAME, 5)
+        self.metadata_client.setWorkflowRateLimit(5, WORKFLOW_NAME)
+        mock.assert_called_with(rateLimitTag, WORKFLOW_NAME)
+
+    @patch.object(TagsApi, 'get_workflow_tags')
+    def test_getWorkflowRateLimit(self, mock):
+        metadataTag = MetadataTag("test", "val")
+        rateLimitTag = RateLimitTag(WORKFLOW_NAME, 5)
+        mock.return_value = [metadataTag, rateLimitTag]
+        rateLimit = self.metadata_client.getWorkflowRateLimit(WORKFLOW_NAME)
+        self.assertEqual(rateLimit, 5)
+
+    @patch.object(TagsApi, 'get_workflow_tags')
+    def test_getWorkflowRateLimit_not_set(self, mock):
+        mock.return_value = []
+        rateLimit = self.metadata_client.getWorkflowRateLimit(WORKFLOW_NAME)
+        mock.assert_called_with(WORKFLOW_NAME)
+        self.assertIsNone(rateLimit)
+
+    @patch.object(MetadataClient, 'getWorkflowRateLimit')
+    @patch.object(TagsApi, 'delete_workflow_tag')
+    def test_removeWorkflowRateLimit(self, patchedTagsApi, patchedMetadataClient):
+        patchedMetadataClient.return_value = 5
+        self.metadata_client.removeWorkflowRateLimit(WORKFLOW_NAME)
+        rateLimitTag = RateLimitTag(WORKFLOW_NAME, 5)
+        patchedTagsApi.assert_called_with(rateLimitTag, WORKFLOW_NAME)
+

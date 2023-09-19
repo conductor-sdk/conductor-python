@@ -3,15 +3,15 @@ from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.rest import ApiException
 from conductor.client.http.api_client import ApiClient
 
-from conductor.client.metadata_client import MetadataClient
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.http.models.task_def import TaskDef
 from conductor.client.http.models.tag_string import TagString
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
 from conductor.client.http.api.tags_api import TagsApi
 from conductor.client.orkes.models.metadata_tag import MetadataTag
+from conductor.client.orkes.models.ratelimit_tag import RateLimitTag
 
-class OrkesMetadataClient(MetadataClient):
+class MetadataClient():
     def __init__(self, configuration: Configuration):
         api_client = ApiClient(configuration)
         self.metadataResourceApi = MetadataResourceApi(api_client)
@@ -83,4 +83,22 @@ class OrkesMetadataClient(MetadataClient):
         
     def setTaskTags(self, tags: List[MetadataTag], taskName: str):
         self.tagsApi.set_task_tags(tags, taskName)
-            
+
+    def setWorkflowRateLimit(self, rateLimit: int, workflowName: str):
+        rateLimitTag = RateLimitTag(workflowName, rateLimit)
+        self.tagsApi.add_workflow_tag(rateLimitTag, workflowName)
+
+    def getWorkflowRateLimit(self, workflowName: str) -> Optional[int]:
+        tags = self.tagsApi.get_workflow_tags(workflowName)
+        for tag in tags:
+            if tag.type == "RATE_LIMIT" and tag.key == workflowName:
+                return tag.value
+
+        return None
+
+    def removeWorkflowRateLimit(self, workflowName: str):
+        currentRateLimit = self.getWorkflowRateLimit(workflowName)
+
+        if currentRateLimit:
+            rateLimitTag = RateLimitTag(workflowName, currentRateLimit)
+            self.tagsApi.delete_workflow_tag(rateLimitTag, workflowName)
