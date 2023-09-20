@@ -17,7 +17,7 @@ WORKFLOW_NAME = 'ut_wf'
 TASK_NAME = 'ut_task'
 ERROR_BODY= '{"message":"No such workflow found by name"}'
 
-class TestOrkesMetadataClient(unittest.TestCase):
+class TestMetadataClient(unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):

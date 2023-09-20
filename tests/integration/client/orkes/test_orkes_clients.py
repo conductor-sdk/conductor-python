@@ -5,8 +5,9 @@ from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.simple_task import SimpleTask
-from conductor.client.orkes.metadata_client import MetadataClient
 from conductor.client.orkes.models.metadata_tag import MetadataTag
+from conductor.client.orkes.metadata_client import MetadataClient
+from conductor.client.orkes.workflow_client import WorkflowClient
 
 WORKFLOW_NAME = 'IntegrationTestMetadataClientWf'
 TASK_TYPE = 'IntegrationTestTask'
@@ -15,10 +16,11 @@ class TestOrkesClients:
     def __init__(self, configuration: Configuration):
         self.workflow_executor = WorkflowExecutor(configuration)
         self.metadata_client = MetadataClient(configuration)
+        self.workflow_client = WorkflowClient(configuration)
 
     def run(self) -> None:
         self.test_task_definition_lifecycle()
-        self.test_workflow_definition_lifecycle()
+        self.test_workflow_lifecycle()
 
     def test_task_definition_lifecycle(self):
         taskDef = TaskDef(
@@ -33,7 +35,7 @@ class TestOrkesClients:
         self.__test_task_tags()
         self.__test_unregister_task_definition()
 
-    def test_workflow_definition_lifecycle(self):
+    def test_workflow_lifecycle(self):
         workflow = ConductorWorkflow(
             executor=self.workflow_executor,
             name=WORKFLOW_NAME,
@@ -47,6 +49,7 @@ class TestOrkesClients:
         self.__test_register_workflow_definition(workflowDef)
         self.__test_get_workflow_definition()
         self.__test_update_workflow_definition(workflow)
+        self.__test_workflow_execution_lifecycle()
         self.__test_workflow_tags()
         self.__test_workflow_rate_limit()
         self.__test_unregister_workflow_definition()
@@ -147,3 +150,35 @@ class TestOrkesClients:
 
         self.metadata_client.removeWorkflowRateLimit(WORKFLOW_NAME)
         assert(self.metadata_client.getWorkflowRateLimit(WORKFLOW_NAME), None)
+
+    def __test_workflow_execution_lifecycle(self):
+        wfInput = { "a" : 5, "b": "+", "c" : [7, 8] }
+        workflow_uuid = self.workflow_client.startWorkflow(WORKFLOW_NAME, wfInput)
+        assert workflow_uuid is not None
+
+        workflow, _ = self.workflow_client.getWorkflow(workflow_uuid, False)
+        assert workflow.input["a"] == 5
+        assert workflow.input["b"] == "+"
+        assert workflow.input["c"] == [7, 8]
+        assert workflow.status == "RUNNING"
+
+        self.workflow_client.pauseWorkflow(workflow_uuid)
+        workflow, _ = self.workflow_client.getWorkflow(workflow_uuid, False)
+        assert workflow.status == "PAUSED"
+
+        self.workflow_client.resumeWorkflow(workflow_uuid)
+        workflow, _ = self.workflow_client.getWorkflow(workflow_uuid, False)
+        assert workflow.status == "RUNNING"
+
+        self.workflow_client.terminateWorkflow(workflow_uuid, "Integration Test")
+        workflow, _ = self.workflow_client.getWorkflow(workflow_uuid, False)
+        assert workflow.status == "TERMINATED"
+
+        self.workflow_client.restartWorkflow(workflow_uuid)
+        workflow, _ = self.workflow_client.getWorkflow(workflow_uuid, False)
+        assert workflow.status == "RUNNING"
+
+        self.workflow_client.deleteWorkflow(workflow_uuid)
+        workflow, error = self.workflow_client.getWorkflow(workflow_uuid, False)
+        assert workflow == None
+        assert "Workflow with Id: {} not found.".format(workflow_uuid) in error
