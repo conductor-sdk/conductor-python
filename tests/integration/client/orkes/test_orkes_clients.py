@@ -8,15 +8,17 @@ from conductor.client.workflow.task.simple_task import SimpleTask
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.metadata_client import MetadataClient
 from conductor.client.orkes.workflow_client import WorkflowClient
+from shortuuid import uuid
 
-WORKFLOW_NAME = 'IntegrationTestMetadataClientWf'
-TASK_TYPE = 'IntegrationTestTask'
+WORKFLOW_NAME = 'IntegrationTestOrkesClientsWf_' + str(uuid())
+TASK_TYPE = 'IntegrationTestOrkesClientsTask_' + str(uuid())
 
 class TestOrkesClients:
     def __init__(self, configuration: Configuration):
         self.workflow_executor = WorkflowExecutor(configuration)
         self.metadata_client = MetadataClient(configuration)
         self.workflow_client = WorkflowClient(configuration)
+        self.workflow_id = None
 
     def run(self) -> None:
         self.test_task_definition_lifecycle()
@@ -75,7 +77,7 @@ class TestOrkesClients:
         self.metadata_client.unregisterTaskDef(TASK_TYPE)
 
     def __test_register_workflow_definition(self, workflowDef: WorkflowDef):
-        self.metadata_client.registerWorkflowDef(workflowDef, True)
+        self.workflow_id = self.metadata_client.registerWorkflowDef(workflowDef, True)
 
     def __test_get_workflow_definition(self):
         wfDef, _ = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
@@ -84,10 +86,13 @@ class TestOrkesClients:
 
     def __test_update_workflow_definition(self, workflow: ConductorWorkflow):
         workflow >> SimpleTask("simple_task", "simple_task_ref_2")
+        workflow >> SimpleTask("simple_task", "simple_task_ref_3")
+        workflow.workflow_id = self.workflow_id
         updatedWorkflowDef = workflow.to_workflow_def()
         self.metadata_client.updateWorkflowDef(updatedWorkflowDef, True)
         wfDef, _ = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
-        assert len(wfDef.tasks) == 2
+        print(len(wfDef.tasks))
+        assert len(wfDef.tasks) == 3
 
     def __test_unregister_workflow_definition(self):
         self.metadata_client.unregisterWorkflowDef(WORKFLOW_NAME, 1)
@@ -153,7 +158,7 @@ class TestOrkesClients:
 
     def __test_workflow_execution_lifecycle(self):
         wfInput = { "a" : 5, "b": "+", "c" : [7, 8] }
-        workflow_uuid = self.workflow_client.startWorkflow(WORKFLOW_NAME, wfInput)
+        workflow_uuid = self.workflow_client.startWorkflowByName(WORKFLOW_NAME, wfInput)
         assert workflow_uuid is not None
 
         workflow, _ = self.workflow_client.getWorkflow(workflow_uuid, False)
@@ -175,6 +180,10 @@ class TestOrkesClients:
         assert workflow.status == "TERMINATED"
 
         self.workflow_client.restartWorkflow(workflow_uuid)
+        workflow, _ = self.workflow_client.getWorkflow(workflow_uuid, False)
+        assert workflow.status == "RUNNING"
+        
+        self.workflow_client.skipTaskFromWorkflow(workflow_uuid, "simple_task_ref_2")
         workflow, _ = self.workflow_client.getWorkflow(workflow_uuid, False)
         assert workflow.status == "RUNNING"
 

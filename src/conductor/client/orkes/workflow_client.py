@@ -2,18 +2,20 @@ from typing import Optional, List
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.rest import ApiException
 from conductor.client.http.models.workflow import Workflow
+from conductor.client.http.models.workflow_run import WorkflowRun
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
 from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
+from conductor.client.interfaces.workflow_client_interface import WorkflowClientInterface
 
 
-class WorkflowClient:
+class WorkflowClient(WorkflowClientInterface):
     def __init__(self, configuration: Configuration):
         api_client = ApiClient(configuration)
         self.workflowResourceApi = WorkflowResourceApi(api_client)
 
-    def startWorkflow(
+    def startWorkflowByName(
         self,
         name: str,
         input: dict[str, object],
@@ -31,8 +33,19 @@ class WorkflowClient:
 
         return self.workflowResourceApi.start_workflow1(input, name, **kwargs)
 
-    def startWorkflowFromWorkflowDef(self, startWorkflowRequest: StartWorkflowRequest) -> str:
+    def startWorkflow(self, startWorkflowRequest: StartWorkflowRequest) -> str:
         return self.workflowResourceApi.start_workflow(startWorkflowRequest)
+
+    def executeWorkflow(
+        self,
+        startWorkflowRequest: StartWorkflowRequest,
+        requestId: str,
+        name: str,
+        version: int,
+        waitUntilTaskRef: Optional[str] = None
+    ) -> WorkflowRun:
+        kwargs = { "wait_until_task_ref" : waitUntilTaskRef } if waitUntilTaskRef else {}
+        return self.workflowResourceApi.execute_workflow(startWorkflowRequest, requestId, name, version, **kwargs)
 
     def pauseWorkflow(self, workflowId: str):
         self.workflowResourceApi.pause_workflow1(workflowId)
@@ -67,3 +80,6 @@ class WorkflowClient:
 
     def deleteWorkflow(self, workflowId: str, archiveWorkflow: Optional[bool] = True):
         self.workflowResourceApi.delete(workflowId, archive_workflow=archiveWorkflow)
+
+    def skipTaskFromWorkflow(self, workflowId: str, taskReferenceName: str):
+        self.workflowResourceApi.skip_task_from_workflow(workflowId, taskReferenceName)

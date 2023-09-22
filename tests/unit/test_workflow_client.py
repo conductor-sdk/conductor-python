@@ -13,6 +13,7 @@ from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.http.models.tag_string import TagString
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.models.ratelimit_tag import RateLimitTag
+from conductor.client.http.models.workflow_run import WorkflowRun
 from conductor.client.http.models.task_def import TaskDef
 
 WORKFLOW_NAME = 'ut_wf'
@@ -40,30 +41,51 @@ class TestWorkflowClient(unittest.TestCase):
         self.assertIsInstance(self.workflow_client.workflowResourceApi, WorkflowResourceApi, message)
 
     @patch.object(WorkflowResourceApi, 'start_workflow1')
-    def test_startWorkflow_with_name(self, mock):
-        self.workflow_client.startWorkflow(WORKFLOW_NAME, self.input)
+    def test_startWorkflowByName(self, mock):
+        mock.return_value = WORKFLOW_UUID
+        wfId = self.workflow_client.startWorkflowByName(WORKFLOW_NAME, self.input)
         mock.assert_called_with(self.input, WORKFLOW_NAME)
+        self.assertEqual(wfId, WORKFLOW_UUID)
     
     @patch.object(WorkflowResourceApi, 'start_workflow1')
-    def test_startWorkflow_with_version(self, mock):
-        self.workflow_client.startWorkflow(WORKFLOW_NAME, self.input, version=1)
+    def test_startWorkflowByName_with_version(self, mock):
+        mock.return_value = WORKFLOW_UUID
+        wfId = self.workflow_client.startWorkflowByName(WORKFLOW_NAME, self.input, version=1)
         mock.assert_called_with(self.input, WORKFLOW_NAME, version=1)
+        self.assertEqual(wfId, WORKFLOW_UUID)
 
     @patch.object(WorkflowResourceApi, 'start_workflow1')
-    def test_startWorkflow_with_correlation_id(self, mock):
-        self.workflow_client.startWorkflow(WORKFLOW_NAME, self.input, correlationId=CORRELATION_ID)
+    def test_startWorkflowByName_with_correlation_id(self, mock):
+        mock.return_value = WORKFLOW_UUID
+        wfId = self.workflow_client.startWorkflowByName(WORKFLOW_NAME, self.input, correlationId=CORRELATION_ID)
         mock.assert_called_with(self.input, WORKFLOW_NAME, correlation_id=CORRELATION_ID)
+        self.assertEqual(wfId, WORKFLOW_UUID)
     
     @patch.object(WorkflowResourceApi, 'start_workflow1')
-    def test_startWorkflow_with_version_and_priority(self, mock):
-        self.workflow_client.startWorkflow(WORKFLOW_NAME, self.input, version=1, priority=1)
+    def test_startWorkflowByName_with_version_and_priority(self, mock):
+        mock.return_value = WORKFLOW_UUID
+        wfId = self.workflow_client.startWorkflowByName(WORKFLOW_NAME, self.input, version=1, priority=1)
         mock.assert_called_with(self.input, WORKFLOW_NAME, version=1, priority=1)
+        self.assertEqual(wfId, WORKFLOW_UUID)
         
     @patch.object(WorkflowResourceApi, 'start_workflow')
-    def test_startWorkflowFromWorkflowDef(self, mock):
+    def test_startWorkflow(self, mock):
+        mock.return_value = WORKFLOW_UUID
         startWorkflowReq = StartWorkflowRequest()
-        self.workflow_client.startWorkflowFromWorkflowDef(startWorkflowReq)
+        wfId = self.workflow_client.startWorkflow(startWorkflowReq)
         mock.assert_called_with(startWorkflowReq)
+        self.assertEqual(wfId, WORKFLOW_UUID)
+    
+    @patch.object(WorkflowResourceApi, 'execute_workflow')
+    def test_executeWorkflow(self, mock):
+        expectedWfRun = WorkflowRun()
+        mock.return_value = expectedWfRun
+        startWorkflowReq = StartWorkflowRequest()
+        workflowRun = self.workflow_client.executeWorkflow(
+            startWorkflowReq, "request_id", WORKFLOW_NAME, 1
+        )
+        mock.assert_called_with(startWorkflowReq,"request_id", WORKFLOW_NAME, 1)
+        self.assertEqual(workflowRun, expectedWfRun)
 
     @patch.object(WorkflowResourceApi, 'pause_workflow1')
     def test_pauseWorkflow(self, mock):
@@ -145,3 +167,9 @@ class TestWorkflowClient(unittest.TestCase):
     def test_deleteWorkflow_without_archival(self, mock):
         workflow = self.workflow_client.deleteWorkflow(WORKFLOW_UUID, False)
         mock.assert_called_with(WORKFLOW_UUID, archive_workflow=False)
+
+    @patch.object(WorkflowResourceApi, 'skip_task_from_workflow')
+    def test_skipTaskFromWorkflow(self, mock):
+        taskRefName = TASK_NAME + "_ref"
+        workflow = self.workflow_client.skipTaskFromWorkflow(WORKFLOW_UUID, taskRefName)
+        mock.assert_called_with(WORKFLOW_UUID, taskRefName)
