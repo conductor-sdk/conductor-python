@@ -7,11 +7,12 @@ from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.http.models.task_def import TaskDef
 from conductor.client.http.models.tag_string import TagString
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
-from conductor.client.http.api.tags_api import TagsApi
+from conductor.client.orkes.api.tags_api import TagsApi
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.models.ratelimit_tag import RateLimitTag
+from conductor.client.interfaces.metadata_client_interface import MetadataClientInterface
 
-class MetadataClient():
+class MetadataClient(MetadataClientInterface):
     def __init__(self, configuration: Configuration):
         api_client = ApiClient(configuration)
         self.metadataResourceApi = MetadataResourceApi(api_client)

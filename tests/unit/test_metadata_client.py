@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch, MagicMock
 from conductor.client.http.rest import ApiException, RESTResponse
 from conductor.client.orkes.metadata_client import MetadataClient
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
-from conductor.client.http.api.tags_api import TagsApi
+from conductor.client.orkes.api.tags_api import TagsApi
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.http.models.tag_string import TagString

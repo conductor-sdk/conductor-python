@@ -9,6 +9,7 @@ from client.event import test_event_client
 from client import test_async
 
 import logging
+import sys
 import os
 
 _logger = logging.getLogger(
@@ -16,7 +17,6 @@ _logger = logging.getLogger(
         __name__
     )
 )
-
 
 def generate_configuration():
     required_envs = {
@@ -46,14 +46,19 @@ def generate_configuration():
 
 
 def main():
+    args = sys.argv[1:]
     configuration = generate_configuration()
     workflow_executor = WorkflowExecutor(configuration)
     api_client = ApiClient(configuration)
-    test_event_client.test_kafka_queue_configuration(api_client)
-    test_async.test_async_method(api_client)
-    run_workflow_definition_tests(workflow_executor)
-    run_workflow_execution_tests(configuration, workflow_executor)
-    TestOrkesClients(configuration=configuration).run()
+
+    if len(args) == 1 and args[0] == '--orkes-clients-only':
+        TestOrkesClients(configuration=configuration).run()
+    else:
+        test_event_client.test_kafka_queue_configuration(api_client)
+        test_async.test_async_method(api_client)
+        run_workflow_definition_tests(workflow_executor)
+        run_workflow_execution_tests(configuration, workflow_executor)
+        TestOrkesClients(configuration=configuration).run()
 
 
 if __name__ == "__main__":
