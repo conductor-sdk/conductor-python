@@ -60,9 +60,9 @@ You should be able to register your workflow at the Conductor Server:
 workflow.register(true)
 ```
 
-### Workflow Executor 
+### Workflow Client
 
-#### Using Workflow Executor to start previously registered workflow
+#### Using Workflow Client to start previously registered workflow
 ```python
 workflow_id = workflow_executor.start_workflow(
     start_workflow_request=StartWorkflowRequest(

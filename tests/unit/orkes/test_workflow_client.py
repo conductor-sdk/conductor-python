@@ -10,9 +10,6 @@ from conductor.client.http.models.rerun_workflow_request import RerunWorkflowReq
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models.workflow_def import WorkflowDef
-from conductor.client.http.models.tag_string import TagString
-from conductor.client.orkes.models.metadata_tag import MetadataTag
-from conductor.client.orkes.models.ratelimit_tag import RateLimitTag
 from conductor.client.http.models.workflow_run import WorkflowRun
 from conductor.client.http.models.task_def import TaskDef
 
@@ -20,7 +17,6 @@ WORKFLOW_NAME = 'ut_wf'
 WORKFLOW_UUID = 'ut_wf_uuid'
 TASK_NAME = 'ut_task'
 CORRELATION_ID= 'correlation_id'
-ERROR_BODY= '{"message":"No such workflow found by name"}'
 
 class TestWorkflowClient(unittest.TestCase):
     
