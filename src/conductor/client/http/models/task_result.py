@@ -26,7 +26,8 @@ class TaskResult(object):
         'output_data': 'dict(str, object)',
         'logs': 'list[TaskExecLog]',
         'external_output_payload_storage_path': 'str',
-        'sub_workflow_id': 'str'
+        'sub_workflow_id': 'str',
+        'extend_lease': 'bool'
     }
 
     attribute_map = {
@@ -39,10 +40,11 @@ class TaskResult(object):
         'output_data': 'outputData',
         'logs': 'logs',
         'external_output_payload_storage_path': 'externalOutputPayloadStoragePath',
-        'sub_workflow_id': 'subWorkflowId'
+        'sub_workflow_id': 'subWorkflowId',
+        'extend_lease': 'extendLease'
     }
 
-    def __init__(self, workflow_instance_id=None, task_id=None, reason_for_incompletion=None, callback_after_seconds=None, worker_id=None, status=None, output_data=None, logs=None, external_output_payload_storage_path=None, sub_workflow_id=None):  # noqa: E501
+    def __init__(self, workflow_instance_id=None, task_id=None, reason_for_incompletion=None, callback_after_seconds=None, worker_id=None, status=None, output_data=None, logs=None, external_output_payload_storage_path=None, sub_workflow_id=None, extend_lease=None):  # noqa: E501
         """TaskResult - a model defined in Swagger"""  # noqa: E501
         self._workflow_instance_id = None
         self._task_id = None
@@ -57,6 +59,8 @@ class TaskResult(object):
         self.discriminator = None
         self.workflow_instance_id = workflow_instance_id
         self.task_id = task_id
+        self._extend_lease = None
+        self.extend_lease = extend_lease
         if reason_for_incompletion is not None:
             self.reason_for_incompletion = reason_for_incompletion
         if callback_after_seconds is not None:
@@ -73,6 +77,8 @@ class TaskResult(object):
             self.external_output_payload_storage_path = external_output_payload_storage_path
         if sub_workflow_id is not None:
             self.sub_workflow_id = sub_workflow_id
+        if extend_lease is not None:
+            self.extend_lease = extend_lease
 
     @property
     def workflow_instance_id(self):
@@ -289,6 +295,21 @@ class TaskResult(object):
         """
 
         self._sub_workflow_id = sub_workflow_id
+    
+    @property
+    def extend_lease(self):
+        return self._extend_lease
+    
+    @extend_lease.setter
+    def extend_lease(self, extend_lease):
+        """Sets the extend_lease of this TaskResult.
+
+
+        :param extend_lease: The extend_lease of this TaskResult.  # noqa: E501
+        :type: str
+        """
+
+        self._extend_lease = extend_lease
 
     def to_dict(self):
         """Returns the model properties as a dict"""
