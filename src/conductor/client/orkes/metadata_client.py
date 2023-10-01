@@ -93,7 +93,7 @@ class MetadataClient(MetadataClientInterface):
         tags = self.tagsApi.get_workflow_tags(workflowName)
         for tag in tags:
             if tag.type == "RATE_LIMIT" and tag.key == workflowName:
-                return tag.value
+                return int(tag.value)
 
         return None
 
