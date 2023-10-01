@@ -56,11 +56,10 @@ class TaskResult(object):
         self._logs = None
         self._external_output_payload_storage_path = None
         self._sub_workflow_id = None
+        self._extend_lease = None
         self.discriminator = None
         self.workflow_instance_id = workflow_instance_id
         self.task_id = task_id
-        self._extend_lease = None
-        self.extend_lease = extend_lease
         if reason_for_incompletion is not None:
             self.reason_for_incompletion = reason_for_incompletion
         if callback_after_seconds is not None:
