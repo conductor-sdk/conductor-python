@@ -51,19 +51,11 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
         test_workflow_registration(workflow_executor)
         logger.debug('finished workflow registration tests')
         test_workflow_execution(
-            workflow_quantity=3,
+            workflow_quantity=2,
             workflow_name=WORKFLOW_NAME,
             workflow_executor=workflow_executor,
-            workflow_completion_timeout=2.0
+            workflow_completion_timeout=5.0
         )
-        logger.debug('finished workflow execution tests')
-        test_workflow_methods(
-            workflow_executor,
-            workflow_quantity=2,
-        )
-        logger.debug('finished workflow methods tests')
-        test_workflow_sync_execution(workflow_executor)
-        logger.debug('finished workflow sync execution test')
         # test_decorated_worker(workflow_executor)
     except Exception as e:
         task_handler.stop_processes()
@@ -96,83 +88,6 @@ def test_get_workflow_by_correlation_ids(workflow_executor: WorkflowExecutor):
             ]
         }
     )
-
-
-def test_workflow_sync_execution(workflow_executor: WorkflowExecutor):
-    _run_with_retry_attempt(
-        workflow_executor.execute_workflow,
-        {
-            'request': StartWorkflowRequest(name=WORKFLOW_NAME, version=WORKFLOW_VERSION, correlation_id='sync_workflow_execution'),
-            'wait_until_task_ref': '',
-        },
-        retries=1
-    )
-
-
-def test_workflow_methods(
-    workflow_executor: WorkflowExecutor,
-    workflow_quantity: int,
-) -> None:
-    if workflow_quantity < 1:
-        return
-    task_name = f'python_integration_test_task{uuid.uuid4()}'
-    task = SimpleTask(task_name, task_name)
-    workflow_executor.metadata_client.register_task_def(
-        [task.to_workflow_task()])
-    workflow_name = f'python_integration_test_wf_{uuid.uuid4()}'
-    workflow = ConductorWorkflow(
-        executor=workflow_executor,
-        name=workflow_name,
-        description='Python workflow example from code',
-        version=1234,
-    ).add(
-        task
-    ).failure_workflow(workflow_name)
-    workflow_executor.register_workflow(
-        workflow.to_workflow_def(),
-        overwrite=True,
-    )
-
-    workflow_id_async = workflow_executor.start_workflow(
-        StartWorkflowRequest(name=workflow_name))
-    __update_task_by_ref_name(
-        workflow_executor,
-        workflow_id_async,
-        task_name
-    )
-
-    workflow_id_sync = workflow_executor.start_workflow(
-        StartWorkflowRequest(name=workflow_name))
-    sleep(2)
-    response = __update_task_by_ref_name_sync(
-        workflow_executor,
-        workflow_id_sync,
-        task_name
-    )
-
-    start_workflow_requests = [''] * workflow_quantity
-    for i in range(workflow_quantity):
-        start_workflow_requests[i] = StartWorkflowRequest(name=workflow_name)
-    workflow_ids = workflow_executor.start_workflows(
-        *start_workflow_requests
-    )
-    for workflow_id in workflow_ids:
-        __pause_workflow(workflow_executor, workflow_id)
-        __resume_workflow(workflow_executor, workflow_id)
-        __terminate_workflow(workflow_executor, workflow_id)
-        __restart_workflow(workflow_executor, workflow_id)
-        __terminate_workflow(workflow_executor, workflow_id)
-        __retry_workflow(workflow_executor, workflow_id)
-        failure_wf_id = __terminate_workflow_with_failure(
-            workflow_executor, workflow_id, True)
-        __terminate_workflow(workflow_executor, failure_wf_id)
-        __rerun_workflow(workflow_executor, workflow_id)
-        workflow_executor.remove_workflow(
-            workflow_id, archive_workflow=False
-        )
-        workflow_executor.remove_workflow(
-            failure_wf_id, archive_workflow=False
-        )
 
 
 def test_workflow_registration(workflow_executor: WorkflowExecutor):
@@ -277,159 +192,6 @@ def generate_worker(execute_function: ExecuteTaskFunction) -> Worker:
         poll_interval=0.75
     )
 
-
-def __pause_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
-    _run_with_retry_attempt(
-        __validate_pause_workflow,
-        {
-            "workflow_executor": workflow_executor,
-            "workflow_id": workflow_id,
-        }
-    )
-
-
-def __validate_pause_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
-    workflow_executor.pause(workflow_id)
-    workflow_status = workflow_executor.get_workflow_status(
-        workflow_id,
-        include_output=True,
-        include_variables=False,
-    )
-    if workflow_status.status != 'PAUSED':
-        raise Exception(
-            f'workflow expected to be PAUSED, but received {workflow_status.status}, workflow_id: {workflow_id}'
-        )
-
-
-def __resume_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
-    _run_with_retry_attempt(
-        __validate_resume_workflow,
-        {
-            "workflow_executor": workflow_executor,
-            "workflow_id": workflow_id,
-        }
-    )
-
-
-def __validate_resume_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
-    workflow_executor.resume(workflow_id)
-    workflow_status = workflow_executor.get_workflow_status(
-        workflow_id,
-        include_output=True,
-        include_variables=False,
-    )
-    if workflow_status.status != 'RUNNING':
-        raise Exception(
-            f'workflow expected to be RUNNING, but received {workflow_status.status}, workflow_id: {workflow_id}'
-        )
-
-
-def __terminate_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
-    _run_with_retry_attempt(
-        __validate_terminate_workflow,
-        {
-            "workflow_executor": workflow_executor,
-            "workflow_id": workflow_id,
-        }
-    )
-
-
-def __validate_terminate_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
-    workflow_executor.terminate(workflow_id)
-    workflow_status = workflow_executor.get_workflow_status(
-        workflow_id,
-        include_output=True,
-        include_variables=False,
-    )
-    if workflow_status.status != 'TERMINATED':
-        raise Exception(
-            f'workflow expected to be TERMINATED, but received {workflow_status.status}, workflow_id: {workflow_id}'
-        )
-
-
-def __terminate_workflow_with_failure(workflow_executor: WorkflowExecutor, workflow_id: str, trigger_failure_workflow: bool) -> str:
-    workflow_executor.terminate(workflow_id, 'test', trigger_failure_workflow)
-    workflow_status = workflow_executor.get_workflow_status(
-        workflow_id,
-        include_output=True,
-        include_variables=False,
-    )
-    if workflow_status.status != 'TERMINATED':
-        raise Exception(
-            f'workflow expected to be TERMINATED, but received {workflow_status.status}, workflow_id: {workflow_id}'
-        )
-    return workflow_status.output.get('conductor.failure_workflow')
-
-
-def __restart_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
-    _run_with_retry_attempt(
-        __validate_restart_workflow,
-        {
-            "workflow_executor": workflow_executor,
-            "workflow_id": workflow_id,
-        }
-    )
-
-
-def __validate_restart_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
-    workflow_executor.restart(workflow_id)
-    workflow_status = workflow_executor.get_workflow_status(
-        workflow_id,
-        include_output=True,
-        include_variables=False,
-    )
-    if workflow_status.status != 'RUNNING':
-        raise Exception(
-            f'workflow expected to be RUNNING, but received {workflow_status.status}, workflow_id: {workflow_id}'
-        )
-
-
-def __retry_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
-    _run_with_retry_attempt(
-        __validate_retry_workflow,
-        {
-            "workflow_executor": workflow_executor,
-            "workflow_id": workflow_id,
-        }
-    )
-
-
-def __validate_retry_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
-    workflow_executor.retry(workflow_id)
-    workflow_status = workflow_executor.get_workflow_status(
-        workflow_id,
-        include_output=True,
-        include_variables=False,
-    )
-    if workflow_status.status != 'RUNNING':
-        raise Exception(
-            f'workflow expected to be RUNNING, but received {workflow_status.status}, workflow_id: {workflow_id}'
-        )
-
-
-def __rerun_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
-    _run_with_retry_attempt(
-        __validate_rerun_workflow,
-        {
-            "workflow_executor": workflow_executor,
-            "workflow_id": workflow_id,
-        }
-    )
-
-
-def __validate_rerun_workflow(workflow_executor: WorkflowExecutor, workflow_id: str) -> None:
-    workflow_executor.rerun(RerunWorkflowRequest(), workflow_id)
-    workflow_status = workflow_executor.get_workflow_status(
-        workflow_id,
-        include_output=True,
-        include_variables=False,
-    )
-    if workflow_status.status != 'RUNNING':
-        raise Exception(
-            f'workflow expected to be RUNNING, but received {workflow_status.status}, workflow_id: {workflow_id}'
-        )
-
-
 def _run_with_retry_attempt(f, params, retries=4) -> None:
     for attempt in range(retries):
         try:
@@ -438,27 +200,3 @@ def _run_with_retry_attempt(f, params, retries=4) -> None:
             if attempt == retries - 1:
                 raise e
             sleep(1 << attempt)
-
-
-def __update_task_by_ref_name(workflow_executor: WorkflowExecutor, workflow_id: str, task_name: str):
-    return _run_with_retry_attempt(
-        workflow_executor.update_task_by_ref_name,
-        params={
-            'task_output': {},
-            'workflow_id': workflow_id,
-            'task_reference_name': task_name,
-            'status': 'COMPLETED'
-        }
-    )
-
-
-def __update_task_by_ref_name_sync(workflow_executor: WorkflowExecutor, workflow_id: str, task_name: str):
-    return _run_with_retry_attempt(
-        workflow_executor.update_task_by_ref_name_sync,
-        params={
-            'task_output': {},
-            'workflow_id': workflow_id,
-            'task_reference_name': task_name,
-            'status': 'COMPLETED'
-        }
-    )

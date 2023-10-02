@@ -184,11 +184,14 @@ class TestMetadataClient(unittest.TestCase):
         mock.assert_called_with(TASK_NAME)
         self.assertEqual(len(tags), 2)
 
+    @patch.object(TagsApi, 'get_workflow_tags')
     @patch.object(TagsApi, 'add_workflow_tag')
-    def test_setWorkflowRateLimit(self, mock):
+    def test_setWorkflowRateLimit(self, mockSet, mockRemove):
+        mockRemove.return_value = []
         rateLimitTag = RateLimitTag(WORKFLOW_NAME, 5)
         self.metadata_client.setWorkflowRateLimit(5, WORKFLOW_NAME)
-        mock.assert_called_with(rateLimitTag, WORKFLOW_NAME)
+        mockRemove.assert_called_with(WORKFLOW_NAME)
+        mockSet.assert_called_with(rateLimitTag, WORKFLOW_NAME)
 
     @patch.object(TagsApi, 'get_workflow_tags')
     def test_getWorkflowRateLimit(self, mock):

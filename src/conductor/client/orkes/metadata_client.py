@@ -86,6 +86,7 @@ class MetadataClient(MetadataClientInterface):
         self.tagsApi.set_task_tags(tags, taskName)
 
     def setWorkflowRateLimit(self, rateLimit: int, workflowName: str):
+        self.removeWorkflowRateLimit(workflowName)
         rateLimitTag = RateLimitTag(workflowName, rateLimit)
         self.tagsApi.add_workflow_tag(rateLimitTag, workflowName)
 
@@ -93,7 +94,7 @@ class MetadataClient(MetadataClientInterface):
         tags = self.tagsApi.get_workflow_tags(workflowName)
         for tag in tags:
             if tag.type == "RATE_LIMIT" and tag.key == workflowName:
-                return int(tag.value)
+                return tag.value
 
         return None
 

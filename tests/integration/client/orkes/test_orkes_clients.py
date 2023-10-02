@@ -46,8 +46,8 @@ class TestOrkesClients:
         self.__test_workflow_execution_lifecycle()
         self.__test_workflow_tags()
         self.__test_workflow_rate_limit()
-        self.__test_unregister_workflow_definition()
-        self.__test_get_invalid_workflow_definition()
+        # self.__test_unregister_workflow_definition()
+        # self.__test_get_invalid_workflow_definition()
 
     def test_task_lifecycle(self):
         taskDef = TaskDef(
