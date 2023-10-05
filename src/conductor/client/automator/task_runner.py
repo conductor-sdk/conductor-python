@@ -91,7 +91,7 @@ class TaskRunner:
                 self.metrics_collector.increment_task_poll_error(
                     task_definition_name, type(e)
                 )
-            logger.error(f'{task_definition_name} worker cannot connect to conductor API, status code: {e.status}, detail: {e.body}')
+            logger.info(f'{task_definition_name} worker cannot connect to conductor API, status code: {e.status}, detail: {e.body}')
             logger.debug(
                 f'Failed to poll task for: {task_definition_name}, reason: {traceback.format_exc()}'
             )
@@ -198,7 +198,7 @@ class TaskRunner:
                     self.metrics_collector.increment_task_update_error(
                         task_definition_name, type(e)
                     )
-                logger.error(f'{task_definition_name} worker cannot connect to conductor API, status code: {e.status}, detail: {e.body}')
+                logger.info(f'{task_definition_name} worker cannot connect to conductor API, status code: {e.status}, detail: {e.body}')
                 logger.debug(
                     f'Failed to poll task for: {task_definition_name}, reason: {traceback.format_exc()}'
                 )
