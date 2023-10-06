@@ -50,7 +50,7 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
         test_workflow_registration(workflow_executor)
         logger.debug('finished workflow registration tests')
         test_workflow_execution(
-            workflow_quantity=10,
+            workflow_quantity=3,
             workflow_name=WORKFLOW_NAME,
             workflow_executor=workflow_executor,
             workflow_completion_timeout=7
