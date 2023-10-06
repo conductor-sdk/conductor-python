@@ -1,3 +1,4 @@
+from requests.structures import CaseInsensitiveDict
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.thread import AwaitableThread
 from conductor.client.http import rest
@@ -182,7 +183,7 @@ class ApiClient(object):
         elif isinstance(obj, (datetime.datetime, datetime.date)):
             return obj.isoformat()
 
-        if isinstance(obj, dict):
+        if isinstance(obj, dict) or isinstance(obj, CaseInsensitiveDict):
             obj_dict = obj
         else:
             # Convert model obj to dict except
