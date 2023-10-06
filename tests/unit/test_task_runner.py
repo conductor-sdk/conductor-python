@@ -193,7 +193,7 @@ class TestTaskRunner(unittest.TestCase):
                 'secret_number': 1234,
                 'is_it_true': False,
                 'dictionary_ojb': {'name': 'sdk_worker', 'idx': 465},
-                'case_insensitive_dictionary_ojb': CaseInsensitiveDict(data={'NaMe': 'sdk_worker', 'iDX': 465})
+                'case_insensitive_dictionary_ojb': CaseInsensitiveDict(data={'NaMe': 'sdk_worker', 'iDX': 465}),
             }
         )
 
