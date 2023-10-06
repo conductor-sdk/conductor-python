@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.task.fork_task import ForkTask
@@ -9,15 +11,15 @@ from conductor.client.http.models import *
 from copy import deepcopy
 from typing import Any, Dict, List
 from typing_extensions import Self
-from shortuuid import uuid
+from uuid import uuid4
 
 
 class ConductorWorkflow:
     SCHEMA_VERSION = 2
 
     def __init__(self,
-                 executor: WorkflowExecutor,
-                 name: str,
+                 executor: WorkflowExecutor = None,
+                 name: str = '',
                  version: int = None,
                  description: str = None) -> Self:
         self._executor = executor
@@ -48,6 +50,15 @@ class ConductorWorkflow:
     @property
     def version(self) -> int:
         return self._version
+
+    @property
+    def executor(self) -> WorkflowExecutor:
+        return self._executor
+
+    @executor.setter
+    def executor(self, executor: WorkflowExecutor) -> Self:
+        self._executor = executor
+        return self
 
     @version.setter
     def version(self, version: int) -> None:
@@ -165,9 +176,18 @@ class ConductorWorkflow:
         start_workflow_request.workflow_def = self.to_workflow_def()
         return self._executor.start_workflow(start_workflow_request)
 
+    def execute(self, workflow_input: dict) -> dict:
+        request = StartWorkflowRequest()
+        request.workflow_def = self.to_workflow_def()
+        request.input = workflow_input
+        request.name = request.workflow_def.name
+        request.version = 1
+        run = self._executor.execute_workflow(request, wait_until_task_ref='')
+        return run.output
+
     # Converts the workflow to the JSON serializable format
     def to_workflow_def(self) -> WorkflowDef:
-        return WorkflowDef(
+        workflow_def = WorkflowDef(
             name=self._name,
             description=self._description,
             version=self._version,
@@ -182,6 +202,8 @@ class ConductorWorkflow:
             variables=self._variables,
             input_template=self._input_template,
         )
+        workflow_def.output_parameters = self._output_parameters
+        return workflow_def
 
     def __get_workflow_task_list(self) -> List[WorkflowTask]:
         workflow_task_list = []
@@ -222,18 +244,18 @@ class ConductorWorkflow:
                 if not issubclass(type(task), TaskInterface):
                     raise Exception('invalid type')
 
-        suffix = str(uuid())
+        suffix = str(uuid4())
 
         fork_task = ForkTask(
             task_ref_name='forked_' + suffix,
             forked_tasks=forked_tasks
         )
-        
+
         join_task = JoinTask(
             task_ref_name='join_' + suffix,
             join_on=fork_task.to_workflow_task().join_on
         )
-        
+
         self._tasks.append(fork_task)
         self._tasks.append(join_task)
         return self

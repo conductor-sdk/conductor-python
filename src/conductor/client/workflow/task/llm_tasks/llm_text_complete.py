@@ -6,7 +6,9 @@ from typing_extensions import Self
 
 
 class LlmTextComplete(TaskInterface):
-    def __init__(self, task_name: str, task_ref_name: str, llm_provider: str, model: str, prompt: Prompt, stop_words: Optional[List[str]], max_tokens: Optional[int], temperature: int = 0, top_p: int = 0) -> Self:
+    def __init__(self, task_name: str, task_ref_name: str, llm_provider: str, model: str, prompt: Prompt,
+                 stop_words: Optional[List[str]] = [], max_tokens: Optional[int] = 100,
+                 temperature: int = 0, top_p: int = 1) -> Self:
         optional_input_params = {}
 
         if stop_words:

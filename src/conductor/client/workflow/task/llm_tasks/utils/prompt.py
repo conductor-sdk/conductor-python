@@ -9,7 +9,7 @@ class Prompt(object):
         'variables': 'promptVariables'
     }
 
-    def __init__(self, name: str, variables: dict[str, str]):
+    def __init__(self, name: str, variables: dict[str, object]):
         self._name= name
         self._variables = variables
 

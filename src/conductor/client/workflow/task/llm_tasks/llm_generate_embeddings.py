@@ -1,7 +1,5 @@
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.task_type import TaskType
-from conductor.client.workflow.task.embedding_model import EmbeddingModel
-from typing import Any, Dict, List
 from typing_extensions import Self
 
 
