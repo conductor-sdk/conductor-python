@@ -2,8 +2,8 @@ from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.worker.worker_interface import WorkerInterface
-from typing import Any
-
+from typing import Any, Dict
+from requests.structures import CaseInsensitiveDict
 
 class FaultyExecutionWorker(WorkerInterface):
     def execute(self, task: Task) -> TaskResult:
@@ -16,6 +16,8 @@ class SimplePythonWorker(WorkerInterface):
         task_result.add_output_data('worker_style', 'class')
         task_result.add_output_data('secret_number', 1234)
         task_result.add_output_data('is_it_true', False)
+        task_result.add_output_data('dictionary_ojb', {'name': 'sdk_worker', 'idx': 465})
+        task_result.add_output_data('case_insensitive_dictionary_ojb', CaseInsensitiveDict(data={'NaMe': 'sdk_worker', 'iDX': 465}))
         task_result.status = TaskResultStatus.COMPLETED
         return task_result
 
@@ -33,6 +35,8 @@ class ClassWorker(WorkerInterface):
         task_result.add_output_data('worker_style', 'class')
         task_result.add_output_data('secret_number', 1234)
         task_result.add_output_data('is_it_true', False)
+        task_result.add_output_data('dictionary_ojb', {'name': 'sdk_worker', 'idx': 465})
+        task_result.add_output_data('case_insensitive_dictionary_ojb',CaseInsensitiveDict(data={'NaMe': 'sdk_worker', 'iDX': 465}))
         task_result.status = TaskResultStatus.COMPLETED
         return task_result
 

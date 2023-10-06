@@ -10,7 +10,7 @@ from unittest.mock import patch, ANY
 import logging
 import time
 import unittest
-
+from requests.structures import CaseInsensitiveDict
 
 class TestTaskRunner(unittest.TestCase):
     TASK_ID = 'VALID_TASK_ID'
@@ -192,6 +192,8 @@ class TestTaskRunner(unittest.TestCase):
                 'worker_style': 'class',
                 'secret_number': 1234,
                 'is_it_true': False,
+                'dictionary_ojb': {'name': 'sdk_worker', 'idx': 465},
+                'case_insensitive_dictionary_ojb': CaseInsensitiveDict(data={'NaMe': 'sdk_worker', 'iDX': 465}),
             }
         )
 
