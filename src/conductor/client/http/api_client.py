@@ -66,7 +66,7 @@ class ApiClient(object):
             configuration = Configuration()
         self.configuration = configuration
 
-        self.rest_client = rest.RESTClientObject(connection=configuration.http_connection)
+        self.rest_client = rest.RESTClientObject()
 
         self.default_headers = self.__get_default_headers(
             header_name, header_value
