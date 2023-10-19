@@ -280,7 +280,7 @@ class TestOrkesClients:
 
         # Update second task of second workflow
         self.task_client.updateTaskSync(
-            workflow_uuid, polledTask.reference_task_name, "COMPLETED", "task 1 op 2nd wf"
+            workflow_uuid, "simple_task_ref_2", "COMPLETED", "task 1 op 2nd wf"
         )
         
         assert self.task_client.getQueueSizeForTask(TASK_TYPE) == 0
