@@ -1,6 +1,5 @@
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.models import RerunWorkflowRequest
 from conductor.client.http.models import StartWorkflowRequest
 from conductor.client.http.models import TaskDef
 from conductor.client.worker.worker import ExecuteTaskFunction
@@ -16,7 +15,6 @@ from resources.worker.python.python_worker import worker_with_task_input_and_gen
 from resources.worker.python.python_worker import worker_with_task_input_and_task_result_output
 from time import sleep
 import logging
-import uuid
 
 WORKFLOW_NAME = "sdk_python_integration_test_workflow"
 WORKFLOW_DESCRIPTION= "Python SDK Integration Test"

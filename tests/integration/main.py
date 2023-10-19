@@ -5,7 +5,6 @@ from conductor.client.workflow.executor.workflow_executor import WorkflowExecuto
 from metadata.test_workflow_definition import run_workflow_definition_tests
 from workflow.test_workflow_execution import run_workflow_execution_tests
 from client.orkes.test_orkes_clients import TestOrkesClients
-from client.event import test_event_client
 from client import test_async
 
 import logging
@@ -54,7 +53,6 @@ def main():
     if len(args) == 1 and args[0] == '--orkes-clients-only':
         TestOrkesClients(configuration=configuration).run()
     else:
-        test_event_client.test_kafka_queue_configuration(api_client)
         test_async.test_async_method(api_client)
         run_workflow_definition_tests(workflow_executor)
         run_workflow_execution_tests(configuration, workflow_executor)
