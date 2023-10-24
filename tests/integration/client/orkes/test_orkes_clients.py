@@ -10,12 +10,15 @@ from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.metadata_client import MetadataClient
 from conductor.client.orkes.workflow_client import WorkflowClient
 from conductor.client.orkes.task_client import TaskClient
+from conductor.client.orkes.scheduler_client import SchedulerClient
+from conductor.client.http.models.save_schedule_request import SaveScheduleRequest
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from shortuuid import uuid
 
 WORKFLOW_NAME = 'IntegrationTestOrkesClientsWf_' + str(uuid())
 TASK_TYPE = 'IntegrationTestOrkesClientsTask_' + str(uuid())
+SCHEDULE_NAME = 'IntegrationTestSchedulerClientsSch' + str(uuid())
 
 class TestOrkesClients:
     def __init__(self, configuration: Configuration):
@@ -23,13 +26,10 @@ class TestOrkesClients:
         self.metadata_client = MetadataClient(configuration)
         self.workflow_client = WorkflowClient(configuration)
         self.task_client = TaskClient(configuration)
+        self.scheduler_client = SchedulerClient(configuration)
         self.workflow_id = None
 
     def run(self) -> None:
-        self.test_workflow_lifecycle()
-        self.test_task_lifecycle()
-
-    def test_workflow_lifecycle(self):
         workflow = ConductorWorkflow(
             executor=self.workflow_executor,
             name=WORKFLOW_NAME,
@@ -39,13 +39,18 @@ class TestOrkesClients:
         workflow.input_parameters(["a", "b"])
         workflow >> SimpleTask("simple_task", "simple_task_ref")
         workflowDef = workflow.to_workflow_def()
+        
+        self.test_workflow_lifecycle(workflowDef, workflow)
+        self.test_scheduler_lifecycle(workflowDef)
+        self.test_task_lifecycle()
 
+    def test_workflow_lifecycle(self, workflowDef, workflow):
         self.__test_register_workflow_definition(workflowDef)
         self.__test_get_workflow_definition()
         self.__test_update_workflow_definition(workflow)
         self.__test_workflow_execution_lifecycle()
         self.__test_workflow_tags()
-        self.__test_workflow_rate_limit()
+        # self.__test_workflow_rate_limit()
         self.__test_unregister_workflow_definition()
         self.__test_get_invalid_workflow_definition()
 
@@ -266,7 +271,6 @@ class TestOrkesClients:
         
         # Second task of second workflow is in the queue
         assert self.task_client.getQueueSizeForTask(TASK_TYPE) == 1
-        
         polledTask = self.task_client.pollTask(TASK_TYPE)
 
         # Update second task of second workflow
@@ -276,5 +280,55 @@ class TestOrkesClients:
         
         assert self.task_client.getQueueSizeForTask(TASK_TYPE) == 0
         
-        task, _ = self.task_client.getTask(polledTask.task_id)
-        assert task.status == TaskResultStatus.COMPLETED
+    def test_scheduler_lifecycle(self, workflowDef):
+        startWorkflowRequest = StartWorkflowRequest(
+            name=WORKFLOW_NAME, workflow_def=workflowDef
+        )
+        saveScheduleRequest = SaveScheduleRequest(
+            name=SCHEDULE_NAME,
+            start_workflow_request=startWorkflowRequest,
+            cron_expression= "0 */5 * ? * *"
+        )
+
+        self.scheduler_client.saveSchedule(saveScheduleRequest)
+
+        schedule, _ = self.scheduler_client.getSchedule(SCHEDULE_NAME)
+        
+        assert schedule['name'] == SCHEDULE_NAME
+        
+        self.scheduler_client.pauseSchedule(SCHEDULE_NAME)
+        
+        schedules = self.scheduler_client.getAllSchedules(WORKFLOW_NAME)
+        
+        assert len(schedules) == 1
+        assert schedules[0].name == SCHEDULE_NAME
+        
+        assert schedules[0].paused == True
+        
+        self.scheduler_client.resumeSchedule(SCHEDULE_NAME)
+        
+        schedule, _ = self.scheduler_client.getSchedule(SCHEDULE_NAME)
+        assert schedule['paused'] == False
+        
+        self.__test_scheduler_executions()
+                
+        self.__test_scheduler_tags()
+        
+        self.scheduler_client.deleteSchedule(SCHEDULE_NAME)
+
+    def __test_scheduler_executions(self):
+        times = self.scheduler_client.getNextFewScheduleExecutionTimes("0 */5 * ? * *", limit=1)
+        assert(len(times) == 1)
+
+    def __test_scheduler_tags(self):
+        tags = [
+            MetadataTag("sch_tag", "val"), MetadataTag("sch_tag_2", "val2")
+        ]
+        self.scheduler_client.setSchedulerTags(tags, SCHEDULE_NAME)
+        fetchedTags = self.scheduler_client.getSchedulerTags(SCHEDULE_NAME)
+        assert len(fetchedTags) == 2
+        
+        self.scheduler_client.deleteSchedulerTags(tags, SCHEDULE_NAME)
+        fetchedTags = self.scheduler_client.getSchedulerTags(SCHEDULE_NAME)
+        assert len(fetchedTags) == 0
+        

@@ -82,4 +82,8 @@ We can use the metadata client to [manage task and workflow definitions](https:/
 
 ## Create Workflows using Code
 
-Finally, you can [create workflows using code](https://github.com/conductor-sdk/conductor-python/tree/main/docs/workflow).
+You can [create workflows using code](https://github.com/conductor-sdk/conductor-python/tree/main/docs/workflow).
+
+## Task Management
+
+You can [manage tasks using code](https://github.com/conductor-sdk/conductor-python/tree/main/docs/task).
