@@ -87,3 +87,7 @@ You can [create workflows using code](https://github.com/conductor-sdk/conductor
 ## Task Management
 
 You can [manage tasks using code](https://github.com/conductor-sdk/conductor-python/tree/main/docs/task).
+
+## Schedule Management
+
+You can [manage schedules using code](https://github.com/conductor-sdk/conductor-python/tree/main/docs/schedule).
