@@ -2,7 +2,6 @@ from typing import Optional, List
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.rest import ApiException
 from conductor.client.http.api_client import ApiClient
-from conductor.client.http.models.tag_string import TagString
 from conductor.client.http.api.scheduler_resource_api import SchedulerResourceApi
 from conductor.client.orkes.api.tags_api import TagsApi
 from conductor.client.orkes.models.metadata_tag import MetadataTag
