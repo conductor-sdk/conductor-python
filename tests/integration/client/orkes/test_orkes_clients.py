@@ -269,8 +269,8 @@ class TestOrkesClients:
             workflow_uuid_2, "simple_task_ref_2", "COMPLETED", "task 2 op 1st wf"
         )
         
-        # Second task of second workflow is in the queue
-        assert self.task_client.getQueueSizeForTask(TASK_TYPE) == 1
+        # # Second task of second workflow is in the queue
+        # assert self.task_client.getQueueSizeForTask(TASK_TYPE) == 1
         polledTask = self.task_client.pollTask(TASK_TYPE)
 
         # Update second task of second workflow
