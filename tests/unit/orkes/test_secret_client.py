@@ -56,7 +56,7 @@ class TestSecretClient(unittest.TestCase):
         mock.return_value = secret_list
         secret_names = self.secret_client.listSecretsThatUserCanGrantAccessTo()
         self.assertTrue(mock.called)
-        self.assertSetEqual(secret_names, set(secret_list))
+        self.assertListEqual(secret_names, secret_list)
     
     @patch.object(SecretResourceApi, 'delete_secret')
     def test_deleteSecret(self, mock):

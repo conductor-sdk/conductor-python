@@ -5,7 +5,6 @@ from conductor.client.http.api.secret_resource_api import SecretResourceApi
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.interfaces.secret_client_interface import SecretClientInterface
 
-
 class SecretClient(SecretClientInterface):
     def __init__(self, configuration: Configuration):
         api_client = ApiClient(configuration)
@@ -21,7 +20,7 @@ class SecretClient(SecretClientInterface):
         return set(self.secretResourceApi.list_all_secret_names())
     
     def listSecretsThatUserCanGrantAccessTo(self) -> List[str]:
-        return set(self.secretResourceApi.list_secrets_that_user_can_grant_access_to())
+        return self.secretResourceApi.list_secrets_that_user_can_grant_access_to()
 
     def deleteSecret(self, key: str):
         self.secretResourceApi.delete_secret(key)
