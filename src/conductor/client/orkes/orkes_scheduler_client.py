@@ -6,11 +6,11 @@ from conductor.client.http.api.scheduler_resource_api import SchedulerResourceAp
 from conductor.client.orkes.api.tags_api import TagsApi
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.http.models.workflow_schedule import WorkflowSchedule
-from conductor.client.interfaces.scheduler_client_interface import SchedulerClientInterface
+from conductor.client.scheduler_client import SchedulerClient
 from conductor.client.http.models.save_schedule_request import SaveScheduleRequest
 from conductor.client.http.models.search_result_workflow_schedule_execution_model import SearchResultWorkflowScheduleExecutionModel
 
-class SchedulerClient(SchedulerClientInterface):
+class OrkesSchedulerClient(SchedulerClient):
     def __init__(self, configuration: Configuration):
         api_client = ApiClient(configuration)
         self.schedulerResourceApi = SchedulerResourceApi(api_client)

@@ -7,10 +7,10 @@ from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_exec_log import TaskExecLog
 from conductor.client.http.models.task_result_status import TaskResultStatus
-from conductor.client.interfaces.task_client_interface import TaskClientInterface
+from conductor.client.task_client import TaskClient
 from conductor.client.http.models.workflow import Workflow
 
-class TaskClient(TaskClientInterface):
+class OrkesTaskClient(TaskClient):
     def __init__(self, configuration: Configuration):
         api_client = ApiClient(configuration)
         self.taskResourceApi = TaskResourceApi(api_client)

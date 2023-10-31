@@ -10,9 +10,9 @@ from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
 from conductor.client.orkes.api.tags_api import TagsApi
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.models.ratelimit_tag import RateLimitTag
-from conductor.client.interfaces.metadata_client_interface import MetadataClientInterface
+from conductor.client.metadata_client import MetadataClient
 
-class MetadataClient(MetadataClientInterface):
+class OrkesMetadataClient(MetadataClient):
     def __init__(self, configuration: Configuration):
         api_client = ApiClient(configuration)
         self.metadataResourceApi = MetadataResourceApi(api_client)

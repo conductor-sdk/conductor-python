@@ -3,7 +3,7 @@ import unittest
 
 from unittest.mock import Mock, patch, MagicMock
 
-from conductor.client.orkes.task_client import TaskClient
+from conductor.client.orkes.orkes_task_client import OrkesTaskClient
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models.task import Task
 from conductor.client.http.rest import ApiException
@@ -20,12 +20,12 @@ TASK_NAME_2 = 'ut_task_2'
 WORKER_ID = "ut_worker_id"
 DOMAIN = "test_domain"
 
-class TestTaskClient(unittest.TestCase):
+class TestOrkesTaskClient(unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
         configuration = Configuration("http://localhost:8080/api")
-        cls.task_client = TaskClient(configuration)
+        cls.task_client = OrkesTaskClient(configuration)
         
     def setUp(self):
         self.tasks = [

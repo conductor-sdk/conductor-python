@@ -3,7 +3,7 @@ from typing import Optional, List
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.http.models.task_def import TaskDef
 
-class MetadataClientInterface(ABC):
+class MetadataClient(ABC):
     @abstractmethod
     def registerWorkflowDef(self, workflowDef: WorkflowDef, overwrite: Optional[bool]):
         pass

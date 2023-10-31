@@ -3,7 +3,7 @@ import unittest
 
 from unittest.mock import Mock, patch, MagicMock
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.orkes.event_client import EventClient
+from conductor.client.orkes.orkes_event_client import OrkesEventClient
 from conductor.client.http.api.event_resource_api import EventResourceApi
 from conductor.client.http.models.event_handler import EventHandler
 
@@ -14,12 +14,12 @@ QUEUE_TYPE = 'kafka'
 QUEUE_NAME = 'topic_0'
 ERROR_BODY= '{"message":"No such event found by key"}'
 
-class TestEventClient(unittest.TestCase):
+class TestOrkesEventClient(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         configuration = Configuration("http://localhost:8080/api")
-        cls.event_client = EventClient(configuration)
+        cls.event_client = OrkesEventClient(configuration)
         cls.event_handlers = [
             EventHandler(name=EVENT_HANDLER_1_NAME, event=EVENT_NAME, active=True),
             EventHandler(name=EVENT_HANDLER_2_NAME, event=EVENT_NAME, active=False)

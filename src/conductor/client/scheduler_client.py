@@ -5,7 +5,7 @@ from conductor.client.http.models.save_schedule_request import SaveScheduleReque
 from conductor.client.http.models.search_result_workflow_schedule_execution_model import SearchResultWorkflowScheduleExecutionModel
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 
-class SchedulerClientInterface(ABC):
+class SchedulerClient(ABC):
     @abstractmethod
     def saveSchedule(self, saveScheduleRequest: SaveScheduleRequest):
         pass

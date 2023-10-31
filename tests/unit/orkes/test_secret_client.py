@@ -4,19 +4,19 @@ import unittest
 from unittest.mock import patch
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api.secret_resource_api import SecretResourceApi
-from conductor.client.orkes.secret_client import SecretClient
+from conductor.client.orkes.orkes_secret_client import OrkesSecretClient
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 
 SECRET_KEY = 'ut_secret_key'
 SECRET_VALUE = 'ut_secret_value'
 ERROR_BODY= '{"message":"No such secret found by key"}'
 
-class TestSecretClient(unittest.TestCase):
+class TestOrkesSecretClient(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         configuration = Configuration("http://localhost:8080/api")
-        cls.secret_client = SecretClient(configuration)
+        cls.secret_client = OrkesSecretClient(configuration)
         
     def setUp(self):
         logging.disable(logging.CRITICAL)

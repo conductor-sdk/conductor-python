@@ -5,9 +5,9 @@ from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.event_resource_api import EventResourceApi
 from conductor.client.http.models.event_handler import EventHandler
-from conductor.client.interfaces.event_client_interface import EventClientInterface
+from conductor.client.event_client import EventClient
 
-class EventClient(EventClientInterface):
+class OrkesEventClient(EventClient):
     def __init__(self, configuration: Configuration):
         api_client = ApiClient(configuration)
         self.eventResourceApi = EventResourceApi(api_client)

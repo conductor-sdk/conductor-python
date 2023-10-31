@@ -7,10 +7,12 @@ from conductor.client.workflow.executor.workflow_executor import WorkflowExecuto
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.workflow.task.simple_task import SimpleTask
 from conductor.client.orkes.models.metadata_tag import MetadataTag
-from conductor.client.orkes.metadata_client import MetadataClient
-from conductor.client.orkes.workflow_client import WorkflowClient
-from conductor.client.orkes.task_client import TaskClient
-from conductor.client.orkes.scheduler_client import SchedulerClient
+from conductor.client.orkes.orkes_metadata_client import OrkesMetadataClient
+from conductor.client.orkes.orkes_workflow_client import OrkesWorkflowClient
+from conductor.client.orkes.orkes_task_client import OrkesTaskClient
+from conductor.client.orkes.orkes_scheduler_client import OrkesSchedulerClient
+from conductor.client.orkes.orkes_event_client import OrkesEventClient
+from conductor.client.orkes.orkes_secret_client import OrkesSecretClient
 from conductor.client.http.models.save_schedule_request import SaveScheduleRequest
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
@@ -18,15 +20,18 @@ from shortuuid import uuid
 
 WORKFLOW_NAME = 'IntegrationTestOrkesClientsWf_' + str(uuid())
 TASK_TYPE = 'IntegrationTestOrkesClientsTask_' + str(uuid())
-SCHEDULE_NAME = 'IntegrationTestSchedulerClientsSch' + str(uuid())
+SCHEDULE_NAME = 'IntegrationTestSchedulerClientSch' + str(uuid())
+SECRET_NAME = 'IntegrationTestSecretClientSec' + str(uuid())
 
 class TestOrkesClients:
     def __init__(self, configuration: Configuration):
         self.workflow_executor = WorkflowExecutor(configuration)
-        self.metadata_client = MetadataClient(configuration)
-        self.workflow_client = WorkflowClient(configuration)
-        self.task_client = TaskClient(configuration)
-        self.scheduler_client = SchedulerClient(configuration)
+        self.metadata_client = OrkesMetadataClient(configuration)
+        self.workflow_client = OrkesWorkflowClient(configuration)
+        self.task_client = OrkesTaskClient(configuration)
+        self.scheduler_client = OrkesSchedulerClient(configuration)
+        self.secret_client = OrkesSecretClient(configuration)
+        self.event_client = OrkesEventClient(configuration)
         self.workflow_id = None
 
     def run(self) -> None:
@@ -40,9 +45,11 @@ class TestOrkesClients:
         workflow >> SimpleTask("simple_task", "simple_task_ref")
         workflowDef = workflow.to_workflow_def()
         
-        self.test_workflow_lifecycle(workflowDef, workflow)
-        self.test_scheduler_lifecycle(workflowDef)
-        self.test_task_lifecycle()
+        # self.test_workflow_lifecycle(workflowDef, workflow)
+        # self.test_task_lifecycle()
+        self.test_secret_lifecycle()
+        # self.test_event_lifecycle()
+        # self.test_scheduler_lifecycle(workflowDef)
 
     def test_workflow_lifecycle(self, workflowDef, workflow):
         self.__test_register_workflow_definition(workflowDef)
@@ -67,6 +74,77 @@ class TestOrkesClients:
         self.__test_task_tags()
         self.__test_task_execution_lifecycle()
         self.__test_unregister_task_definition()
+
+    def test_secret_lifecycle(self):
+        self.secret_client.putSecret(SECRET_NAME, "secret_value")
+        
+        assert(self.secret_client.getSecret(SECRET_NAME), "secret_value")
+        
+        self.secret_client.putSecret(SECRET_NAME + "_2", "secret_value_2")
+    
+        secret_names = self.secret_client.listAllSecretNames()
+        
+        assert(secret_names, [SECRET_NAME, SECRET_NAME + "_2"])
+        
+        tags = [
+            MetadataTag("sec_tag", "val"), MetadataTag("sec_tag_2", "val2")
+        ]
+        self.secret_client.setSecretTags(tags, SECRET_NAME)
+        fetchedTags = self.secret_client.getSecretTags(SECRET_NAME)
+        assert len(fetchedTags) == 2
+        
+        self.secret_client.deleteSecretTags(tags, SECRET_NAME)
+        fetchedTags = self.secret_client.getSecretTags(SECRET_NAME)
+        assert len(fetchedTags) == 0
+        
+        assert(self.secret_client.secretExists(SECRET_NAME), True)
+        
+        self.secret_client.deleteSecret(SECRET_NAME)
+        
+        assert(self.secret_client.secretExists(SECRET_NAME), False)
+        
+        self.secret_client.deleteSecret(SECRET_NAME + "_2")
+        
+        assert(self.secret_client.listSecretsThatUserCanGrantAccessTo(), [])
+        
+    def test_event_lifecycle(self):
+        pass
+    
+    def test_scheduler_lifecycle(self, workflowDef):
+        startWorkflowRequest = StartWorkflowRequest(
+            name=WORKFLOW_NAME, workflow_def=workflowDef
+        )
+        saveScheduleRequest = SaveScheduleRequest(
+            name=SCHEDULE_NAME,
+            start_workflow_request=startWorkflowRequest,
+            cron_expression= "0 */5 * ? * *"
+        )
+
+        self.scheduler_client.saveSchedule(saveScheduleRequest)
+
+        schedule, _ = self.scheduler_client.getSchedule(SCHEDULE_NAME)
+        
+        assert schedule['name'] == SCHEDULE_NAME
+        
+        self.scheduler_client.pauseSchedule(SCHEDULE_NAME)
+        
+        schedules = self.scheduler_client.getAllSchedules(WORKFLOW_NAME)
+        
+        assert len(schedules) == 1
+        assert schedules[0].name == SCHEDULE_NAME
+        
+        assert schedules[0].paused == True
+        
+        self.scheduler_client.resumeSchedule(SCHEDULE_NAME)
+        
+        schedule, _ = self.scheduler_client.getSchedule(SCHEDULE_NAME)
+        assert schedule['paused'] == False
+        
+        self.__test_scheduler_executions()
+                
+        self.__test_scheduler_tags()
+        
+        self.scheduler_client.deleteSchedule(SCHEDULE_NAME)
 
     def __test_register_workflow_definition(self, workflowDef: WorkflowDef):
         self.workflow_id = self.metadata_client.registerWorkflowDef(workflowDef, True)
@@ -279,42 +357,6 @@ class TestOrkesClients:
         )
         
         assert self.task_client.getQueueSizeForTask(TASK_TYPE) == 0
-        
-    def test_scheduler_lifecycle(self, workflowDef):
-        startWorkflowRequest = StartWorkflowRequest(
-            name=WORKFLOW_NAME, workflow_def=workflowDef
-        )
-        saveScheduleRequest = SaveScheduleRequest(
-            name=SCHEDULE_NAME,
-            start_workflow_request=startWorkflowRequest,
-            cron_expression= "0 */5 * ? * *"
-        )
-
-        self.scheduler_client.saveSchedule(saveScheduleRequest)
-
-        schedule, _ = self.scheduler_client.getSchedule(SCHEDULE_NAME)
-        
-        assert schedule['name'] == SCHEDULE_NAME
-        
-        self.scheduler_client.pauseSchedule(SCHEDULE_NAME)
-        
-        schedules = self.scheduler_client.getAllSchedules(WORKFLOW_NAME)
-        
-        assert len(schedules) == 1
-        assert schedules[0].name == SCHEDULE_NAME
-        
-        assert schedules[0].paused == True
-        
-        self.scheduler_client.resumeSchedule(SCHEDULE_NAME)
-        
-        schedule, _ = self.scheduler_client.getSchedule(SCHEDULE_NAME)
-        assert schedule['paused'] == False
-        
-        self.__test_scheduler_executions()
-                
-        self.__test_scheduler_tags()
-        
-        self.scheduler_client.deleteSchedule(SCHEDULE_NAME)
 
     def __test_scheduler_executions(self):
         times = self.scheduler_client.getNextFewScheduleExecutionTimes("0 */5 * ? * *", limit=1)

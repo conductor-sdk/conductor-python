@@ -9,7 +9,7 @@ from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
 
 
-class WorkflowClientInterface(ABC):
+class WorkflowClient(ABC):
     @abstractmethod
     def startWorkflow(self, startWorkflowRequest: StartWorkflowRequest) -> str:
         pass

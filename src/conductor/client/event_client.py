@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 from conductor.client.http.models.event_handler import EventHandler
 
-class EventClientInterface(ABC):
+class EventClient(ABC):
     @abstractmethod
     def registerEventHandler(self, eventHandler: EventHandler):
         pass

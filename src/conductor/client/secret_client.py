@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 
-class SecretClientInterface(ABC):
+class SecretClient(ABC):
     @abstractmethod
     def putSecret(self, key: str, value: str):
         pass

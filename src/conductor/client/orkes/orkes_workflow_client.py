@@ -7,10 +7,9 @@ from conductor.client.http.models.start_workflow_request import StartWorkflowReq
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
 from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
-from conductor.client.interfaces.workflow_client_interface import WorkflowClientInterface
+from conductor.client.workflow_client import WorkflowClient
 
-
-class WorkflowClient(WorkflowClientInterface):
+class OrkesWorkflowClient(WorkflowClient):
     def __init__(self, configuration: Configuration):
         api_client = ApiClient(configuration)
         self.workflowResourceApi = WorkflowResourceApi(api_client)

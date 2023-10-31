@@ -3,7 +3,7 @@ import unittest
 
 from unittest.mock import Mock, patch, MagicMock
 from conductor.client.http.rest import ApiException, RESTResponse
-from conductor.client.orkes.metadata_client import MetadataClient
+from conductor.client.orkes.orkes_metadata_client import OrkesMetadataClient
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
 from conductor.client.orkes.api.tags_api import TagsApi
 from conductor.client.configuration.configuration import Configuration
@@ -17,12 +17,12 @@ WORKFLOW_NAME = 'ut_wf'
 TASK_NAME = 'ut_task'
 ERROR_BODY= '{"message":"No such workflow found by name"}'
 
-class TestMetadataClient(unittest.TestCase):
+class TestOrkesMetadataClient(unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
         configuration = Configuration("http://localhost:8080/api")
-        cls.metadata_client = MetadataClient(configuration)
+        cls.metadata_client = OrkesMetadataClient(configuration)
         
     def setUp(self):
         self.workflowDef = WorkflowDef(name=WORKFLOW_NAME, version=1)
@@ -208,7 +208,7 @@ class TestMetadataClient(unittest.TestCase):
         mock.assert_called_with(WORKFLOW_NAME)
         self.assertIsNone(rateLimit)
 
-    @patch.object(MetadataClient, 'getWorkflowRateLimit')
+    @patch.object(OrkesMetadataClient, 'getWorkflowRateLimit')
     @patch.object(TagsApi, 'delete_workflow_tag')
     def test_removeWorkflowRateLimit(self, patchedTagsApi, patchedMetadataClient):
         patchedMetadataClient.return_value = 5

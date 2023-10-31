@@ -6,7 +6,7 @@ from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.http.models.task_exec_log import TaskExecLog
 
-class TaskClientInterface(ABC):
+class TaskClient(ABC):
     @abstractmethod
     def pollTask(self, taskType: str, workerId: Optional[str] = None, domain: Optional[str] = None) -> Optional[Task]:
         pass

@@ -3,9 +3,9 @@ from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.secret_resource_api import SecretResourceApi
 from conductor.client.orkes.models.metadata_tag import MetadataTag
-from conductor.client.interfaces.secret_client_interface import SecretClientInterface
+from conductor.client.secret_client import SecretClient
 
-class SecretClient(SecretClientInterface):
+class OrkesSecretClient(SecretClient):
     def __init__(self, configuration: Configuration):
         api_client = ApiClient(configuration)
         self.secretResourceApi = SecretResourceApi(api_client)
