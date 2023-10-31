@@ -6,7 +6,7 @@
 ```python
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from conductor.client.orkes.workflow_client import WorkflowClient
+from conductor.client.orkes.orkes_workflow_client import OrkesWorkflowClient
 
 configuration = Configuration(
     server_api_url=SERVER_API_URL,
@@ -17,7 +17,7 @@ configuration = Configuration(
     ),
 )
 
-workflow_client = WorkflowClient(configuration)
+workflow_client = OrkesWorkflowClient(configuration)
 ```
 
 ### Start Workflow Execution

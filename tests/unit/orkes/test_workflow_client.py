@@ -3,7 +3,7 @@ import unittest
 
 from unittest.mock import Mock, patch, MagicMock
 from conductor.client.http.rest import ApiException, RESTResponse
-from conductor.client.orkes.workflow_client import OrkesWorkflowClient
+from conductor.client.orkes.orkes_workflow_client import OrkesWorkflowClient
 from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest

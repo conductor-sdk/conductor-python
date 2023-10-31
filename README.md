@@ -91,3 +91,7 @@ You can [manage tasks using code](https://github.com/conductor-sdk/conductor-pyt
 ## Schedule Management
 
 You can [manage schedules using code](https://github.com/conductor-sdk/conductor-python/tree/main/docs/schedule).
+
+## Secret Management
+
+You can [manage secrets using code](https://github.com/conductor-sdk/conductor-python/tree/main/docs/secret).

@@ -9,7 +9,7 @@ In order to define a workflow, you must provide a `MetadataClient` and a `Workfl
 ```python
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from conductor.client.orkes.metadata_client import MetadataClient
+from conductor.client.orkes.orkes_metadata_client import OrkesMetadataClient
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 
@@ -21,7 +21,7 @@ configuration = Configuration(
         key_secret=KEY_SECRET
     ),
 )
-metadata_client = MetadataClient(configuration)
+metadata_client = OrkesMetadataClient(configuration)
 workflow_executor = WorkflowExecutor(configuration)
 workflow = ConductorWorkflow(
     executor=workflow_executor,
