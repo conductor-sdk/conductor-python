@@ -1,13 +1,11 @@
 import logging
 import unittest
 
-from unittest.mock import Mock, patch, MagicMock
-from conductor.client.http.rest import ApiException, RESTResponse
+from unittest.mock import patch
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.orkes.secret_client import SecretClient
 from conductor.client.http.api.secret_resource_api import SecretResourceApi
+from conductor.client.orkes.secret_client import SecretClient
 from conductor.client.orkes.models.metadata_tag import MetadataTag
-from conductor.client.http.models.task_def import TaskDef
 
 SECRET_KEY = 'ut_secret_key'
 SECRET_VALUE = 'ut_secret_value'
