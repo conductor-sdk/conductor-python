@@ -30,13 +30,13 @@ def is_callable_return_value_of_type(callable: ExecuteTaskFunction, object_type:
 
 class Worker(WorkerInterface):
     def __init__(self,
-                 task_definition_name: str,
+                 task_definition_names: str,
                  execute_function: ExecuteTaskFunction,
                  poll_interval: float = None,
                  domain: str = None,
                  worker_id: str = None,
                  ) -> Self:
-        super().__init__(task_definition_name)
+        super().__init__(task_definition_names)
         if poll_interval == None:
             self.poll_interval = deepcopy(
                 super().get_polling_interval_in_seconds())

@@ -2,11 +2,13 @@ from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 import abc
 import socket
+from typing import Union, List
 
 
 class WorkerInterface(abc.ABC):
-    def __init__(self, task_definition_name: str):
-        self.task_definition_name = task_definition_name
+    def __init__(self, task_definition_names: Union[str, list]):
+        self.task_definition_names = task_definition_names
+        self.next_task_index = 0
 
     @abc.abstractmethod
     def execute(self, task: Task) -> TaskResult:
@@ -42,7 +44,16 @@ class WorkerInterface(abc.ABC):
 
         :return: TaskResult
         """
-        return self.task_definition_name
+        if isinstance(self.task_definition_names, list):
+            if self.next_task_index >= len(self.task_definition_names):
+                self.next_task_index = 0
+            task_definition_name = self.task_definition_names[self.next_task_index]
+            if self.next_task_index == (len(self.task_definition_names) - 1):
+                self.next_task_index = 0
+            else:
+                self.next_task_index += 1
+            return task_definition_name
+        return self.task_definition_names
 
     def get_task_result_from_task(self, task: Task) -> TaskResult:
         """
