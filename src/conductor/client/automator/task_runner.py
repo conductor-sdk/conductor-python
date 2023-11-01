@@ -53,6 +53,7 @@ class TaskRunner:
                 pass
 
     def run_once(self) -> None:
+        del self.worker.get_task_definition_name
         task = self.__poll_task()
         if task != None and task.task_id != None:
             task_result = self.__execute_task(task)

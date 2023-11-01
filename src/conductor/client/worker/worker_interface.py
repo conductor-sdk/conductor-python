@@ -1,13 +1,16 @@
-from conductor.client.http.models.task import Task
-from conductor.client.http.models.task_result import TaskResult
 import abc
 import socket
-from typing import Union, List
+from typing import Union
+
+from functools import cached_property
+
+from conductor.client.http.models.task import Task
+from conductor.client.http.models.task_result import TaskResult
 
 
 class WorkerInterface(abc.ABC):
-    def __init__(self, task_definition_names: Union[str, list]):
-        self.task_definition_names = task_definition_names
+    def __init__(self, task_definition_name: Union[str, list]):
+        self.task_definition_name = task_definition_name
         self.next_task_index = 0
 
     @abc.abstractmethod
@@ -38,22 +41,20 @@ class WorkerInterface(abc.ABC):
         """
         return 0.1
 
+    @cached_property
     def get_task_definition_name(self) -> str:
         """
         Retrieve the name of the task definition the worker is currently working on.
 
         :return: TaskResult
         """
-        if isinstance(self.task_definition_names, list):
-            if self.next_task_index >= len(self.task_definition_names):
+        if isinstance(self.task_definition_name, list):
+            if self.next_task_index >= len(self.task_definition_name):
                 self.next_task_index = 0
-            task_definition_name = self.task_definition_names[self.next_task_index]
-            if self.next_task_index == (len(self.task_definition_names) - 1):
-                self.next_task_index = 0
-            else:
-                self.next_task_index += 1
+            task_definition_name = self.task_definition_name[self.next_task_index]
+            self.next_task_index = (self.next_task_index + 1) % len(self.task_definition_names)
             return task_definition_name
-        return self.task_definition_names
+        return self.task_definition_name
 
     def get_task_result_from_task(self, task: Task) -> TaskResult:
         """
