@@ -20,7 +20,7 @@ class OrkesSchedulerClient(SchedulerClient):
         self.schedulerResourceApi.save_schedule(saveScheduleRequest)
     
     def getSchedule(self, name: str) -> (Optional[WorkflowSchedule], str):
-        schedule, error = None, None
+        schedule, error = None, ""
         try:
             schedule = self.schedulerResourceApi.get_schedule(name)
         except ApiException as e:

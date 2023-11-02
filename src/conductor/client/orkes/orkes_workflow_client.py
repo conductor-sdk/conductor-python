@@ -10,7 +10,12 @@ from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
 from conductor.client.workflow_client import WorkflowClient
 
 class OrkesWorkflowClient(WorkflowClient):
-    def __init__(self, configuration: Configuration):
+    def __init__(
+        self,
+                 configuration: Configuration, 
+                 connectionTimeout: Optional[int] = None, 
+                 readTimeout: Optional[int] = None
+        ):
         api_client = ApiClient(configuration)
         self.workflowResourceApi = WorkflowResourceApi(api_client)
 

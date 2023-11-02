@@ -45,8 +45,7 @@ class OrkesTaskClient(TaskClient):
         return self.taskResourceApi.batch_poll(taskType, **kwargs)
 
     def getTask(self, taskId: str) -> (Optional[Task], str):
-        task = None
-        error = None
+        task, error = None, ""
 
         try:
             task = self.taskResourceApi.get_task(taskId)

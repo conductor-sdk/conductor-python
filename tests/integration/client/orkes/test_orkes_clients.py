@@ -1,10 +1,8 @@
+from shortuuid import uuid
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from conductor.client.http.models.task_def import TaskDef
-from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.workflow.task.simple_task import SimpleTask
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.orkes_metadata_client import OrkesMetadataClient
@@ -12,16 +10,27 @@ from conductor.client.orkes.orkes_workflow_client import OrkesWorkflowClient
 from conductor.client.orkes.orkes_task_client import OrkesTaskClient
 from conductor.client.orkes.orkes_scheduler_client import OrkesSchedulerClient
 from conductor.client.orkes.orkes_secret_client import OrkesSecretClient
-from conductor.client.http.models.save_schedule_request import SaveScheduleRequest
+from conductor.client.orkes.orkes_authorization_client import OrkesAuthorizationClient
+from conductor.client.http.models.task_def import TaskDef
 from conductor.client.http.models.task_result import TaskResult
+from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.http.models.task_result_status import TaskResultStatus
-from shortuuid import uuid
+from conductor.client.http.models.save_schedule_request import SaveScheduleRequest
+from conductor.client.http.models.conductor_application import ConductorApplication
+from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
+from conductor.client.http.models.upsert_user_request import UpsertUserRequest
+from conductor.client.http.models.upsert_group_request import UpsertGroupRequest
+from conductor.client.http.models.create_or_update_application_request import CreateOrUpdateApplicationRequest
+
 
 SUFFIX = str(uuid())
 WORKFLOW_NAME = 'IntegrationTestOrkesClientsWf_' + SUFFIX
 TASK_TYPE = 'IntegrationTestOrkesClientsTask_' + SUFFIX
 SCHEDULE_NAME = 'IntegrationTestSchedulerClientSch_' + SUFFIX
 SECRET_NAME = 'IntegrationTestSecretClientSec_' + SUFFIX
+APPLICATION_NAME = 'IntegrationTestAuthClientApp_' + SUFFIX
+USER_ID = 'integrationtest_' + SUFFIX[0:5].lower() + "@orkes.io"
+GROUP_ID = 'integrationtest_group_' + SUFFIX[0:5].lower()
 
 class TestOrkesClients:
     def __init__(self, configuration: Configuration):
@@ -31,6 +40,7 @@ class TestOrkesClients:
         self.task_client = OrkesTaskClient(configuration)
         self.scheduler_client = OrkesSchedulerClient(configuration)
         self.secret_client = OrkesSecretClient(configuration)
+        self.authorization_client = OrkesAuthorizationClient(configuration)
         self.workflow_id = None
 
     def run(self) -> None:
@@ -48,6 +58,8 @@ class TestOrkesClients:
         self.test_task_lifecycle()
         self.test_secret_lifecycle()
         self.test_scheduler_lifecycle(workflowDef)
+        self.test_application_lifecycle()
+        self.test_user_group_lifecycle()
 
     def test_workflow_lifecycle(self, workflowDef, workflow):
         self.__test_register_workflow_definition(workflowDef)
@@ -151,6 +163,67 @@ class TestOrkesClients:
         
         self.scheduler_client.deleteSchedule(SCHEDULE_NAME)
 
+    def test_application_lifecycle(self):
+        req = CreateOrUpdateApplicationRequest(APPLICATION_NAME)
+        created_app = self.authorization_client.createApplication(req)
+        assert created_app.name == APPLICATION_NAME
+        
+        application = self.authorization_client.getApplication(created_app.id)
+        assert application.id == created_app.id
+        
+        apps = self.authorization_client.listApplications()
+        assert True in [app.id == created_app.id for app in apps]
+        
+        req.name = APPLICATION_NAME + "_updated"
+        app_updated = self.authorization_client.updateApplication(req, created_app.id)
+        assert app_updated.name == req.name
+        
+        self.authorization_client.addRoleToApplicationUser(created_app.id, "USER")
+        app_user_id = "app:" + created_app.id
+        app_user = self.authorization_client.getUser(app_user_id)
+        assert True in [r.name == "USER" for r in app_user.roles]
+
+        self.authorization_client.removeRoleFromApplicationUser(created_app.id, "USER")
+        app_user = self.authorization_client.getUser(app_user_id)
+        assert True not in [r.name == "USER" for r in app_user.roles]
+        
+        self.authorization_client.deleteApplication(created_app.id)
+
+    def test_user_group_lifecycle(self):
+        req = UpsertUserRequest("Integration User", ["USER"])
+        created_user = self.authorization_client.upsertUser(req, USER_ID)
+        assert created_user.id == USER_ID
+
+        user = self.authorization_client.getUser(USER_ID)
+        assert user.id == USER_ID
+        assert user.name == req.name
+        
+        users = self.authorization_client.listUsers()
+        assert [user.id == USER_ID for u in users]
+        
+        req.name = "Integration " + "Updated"
+        updated_user = self.authorization_client.upsertUser(req, USER_ID)
+        assert updated_user.name == req.name
+        
+        # Test Groups
+        req = UpsertGroupRequest("Integration Test Group", ["USER"])
+        created_group = self.authorization_client.upsertGroup(req, GROUP_ID)
+        assert created_group.id == GROUP_ID
+        
+        group = self.authorization_client.getGroup(GROUP_ID)
+        assert group.id == GROUP_ID
+        
+        groups = self.authorization_client.listGroups()
+        assert True in [group.id == GROUP_ID for group in groups]
+        
+        self.authorization_client.addUserToGroup(GROUP_ID, USER_ID)
+        users = self.authorization_client.getUsersInGroup(GROUP_ID)
+        assert users[0].id == USER_ID
+        
+        self.authorization_client.removeUserFromGroup(GROUP_ID, USER_ID)
+        self.authorization_client.deleteUser(USER_ID)
+        self.authorization_client.deleteGroup(GROUP_ID)
+        
     def __test_register_workflow_definition(self, workflowDef: WorkflowDef):
         self.workflow_id = self.metadata_client.registerWorkflowDef(workflowDef, True)
 

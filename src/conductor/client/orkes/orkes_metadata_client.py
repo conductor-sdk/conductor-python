@@ -28,8 +28,8 @@ class OrkesMetadataClient(MetadataClient):
         self.metadataResourceApi.unregister_workflow_def(name, version)
 
     def getWorkflowDef(self, name: str, version: Optional[int] = None) -> (Optional[WorkflowDef], str):
-        workflow = None
-        error = None
+        workflow, error = None, ""
+
         try:
             if version:
                 workflow = self.metadataResourceApi.get(name, version=version)
