@@ -55,14 +55,14 @@ class OrkesAuthorizationClient(AuthorizationClient):
     def removeRoleFromApplicationUser(self, applicationId: str, role: str):
         self.applicationResourceApi.remove_role_from_application_user(applicationId, role)
 
-    # def setApplicationTags(self, tags: List[MetadataTag], applicationId: str):
-    #     pass
+    def setApplicationTags(self, tags: List[MetadataTag], applicationId: str):
+        self.applicationResourceApi.put_tags_for_application(tags, applicationId)
 
-    # def getApplicationTags(self, applicationId: str) -> List[MetadataTag]:
-    #     pass
+    def getApplicationTags(self, applicationId: str) -> List[MetadataTag]:
+        return self.applicationResourceApi.get_tags_for_application(applicationId)
 
-    # def deleteApplicationTags(self, tags: List[MetadataTag], applicationId: str):
-    #     pass
+    def deleteApplicationTags(self, tags: List[MetadataTag], applicationId: str):
+        self.applicationResourceApi.delete_tags_for_application(tags, applicationId)
 
     # def createAccessKey(self, applicationId: str) -> AccessKeyResponse:
     #     return self.applicationResourceApi.create_access_key(applicationId)

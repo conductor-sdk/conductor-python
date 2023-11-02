@@ -94,30 +94,30 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
         self.authorization_client.removeRoleFromApplicationUser(APP_ID, "USER")
         mock.assert_called_with(APP_ID, "USER")
 
-    # @patch.object(ApplicationResourceApi, 'put_tag_for_secret')
-    # def test_setApplicationTags(self, mock):
-    #     tag1 = MetadataTag("tag1", "val1")
-    #     tag2 = MetadataTag("tag2", "val2")
-    #     tags = [tag1, tag2]
-    #     self.authorization_client.setApplicationTags(tags, APP_ID)
-    #     mock.assert_called_with(tags, SECRET_KEY)
+    @patch.object(ApplicationResourceApi, 'put_tags_for_application')
+    def test_setApplicationTags(self, mock):
+        tag1 = MetadataTag("tag1", "val1")
+        tag2 = MetadataTag("tag2", "val2")
+        tags = [tag1, tag2]
+        self.authorization_client.setApplicationTags(tags, APP_ID)
+        mock.assert_called_with(tags, APP_ID)
         
-    # @patch.object(ApplicationResourceApi, 'get_tags')
-    # def test_getSecretTags(self, mock):
-    #     tag1 = MetadataTag("tag1", "val1")
-    #     tag1 = MetadataTag("tag2", "val2")
-    #     mock.return_value = [tag1, tag1]
-    #     tags = self.authorization_client.getSecretTags(SECRET_KEY)
-    #     mock.assert_called_with(SECRET_KEY)
-    #     self.assertEqual(len(tags), 2)
+    @patch.object(ApplicationResourceApi, 'get_tags_for_application')
+    def test_getApplicationTags(self, mock):
+        tag1 = MetadataTag("tag1", "val1")
+        tag1 = MetadataTag("tag2", "val2")
+        mock.return_value = [tag1, tag1]
+        tags = self.authorization_client.getApplicationTags(APP_ID)
+        mock.assert_called_with(APP_ID)
+        self.assertEqual(len(tags), 2)
     
-    # @patch.object(ApplicationResourceApi, 'delete_tag_for_secret')
-    # def test_deleteSecretTags(self, mock):
-    #     tag1 = MetadataTag("tag1", "val1")
-    #     tag2 = MetadataTag("tag2", "val2")
-    #     tags = [tag1, tag2]
-    #     self.authorization_client.deleteSecretTags(tags, SECRET_KEY)
-    #     mock.assert_called_with(tags, SECRET_KEY)
+    @patch.object(ApplicationResourceApi, 'delete_tags_for_application')
+    def test_deleteApplicationTags(self, mock):
+        tag1 = MetadataTag("tag1", "val1")
+        tag2 = MetadataTag("tag2", "val2")
+        tags = [tag1, tag2]
+        self.authorization_client.deleteApplicationTags(tags, APP_ID)
+        mock.assert_called_with(tags, APP_ID)
     
     @patch.object(UserResourceApi, 'upsert_user')
     def test_upsertUser(self, mock):

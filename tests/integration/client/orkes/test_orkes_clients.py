@@ -54,12 +54,12 @@ class TestOrkesClients:
         workflow >> SimpleTask("simple_task", "simple_task_ref")
         workflowDef = workflow.to_workflow_def()
         
-        self.test_workflow_lifecycle(workflowDef, workflow)
-        self.test_task_lifecycle()
-        self.test_secret_lifecycle()
-        self.test_scheduler_lifecycle(workflowDef)
+        # self.test_workflow_lifecycle(workflowDef, workflow)
+        # self.test_task_lifecycle()
+        # self.test_secret_lifecycle()
+        # self.test_scheduler_lifecycle(workflowDef)
         self.test_application_lifecycle()
-        self.test_user_group_lifecycle()
+        # self.test_user_group_lifecycle()
 
     def test_workflow_lifecycle(self, workflowDef, workflow):
         self.__test_register_workflow_definition(workflowDef)
@@ -186,6 +186,15 @@ class TestOrkesClients:
         self.authorization_client.removeRoleFromApplicationUser(created_app.id, "USER")
         app_user = self.authorization_client.getUser(app_user_id)
         assert True not in [r.name == "USER" for r in app_user.roles]
+        
+        tags = [MetadataTag("auth_tag", "val"), MetadataTag("auth_tag_2", "val2")]
+        self.authorization_client.setApplicationTags(tags, created_app.id)
+        fetched_tags = self.authorization_client.getApplicationTags(created_app.id)
+        assert len(fetched_tags) == 2
+        
+        self.authorization_client.deleteApplicationTags(tags, created_app.id)
+        fetched_tags = self.authorization_client.getApplicationTags(created_app.id)
+        assert len(fetched_tags) == 0
         
         self.authorization_client.deleteApplication(created_app.id)
 

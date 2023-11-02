@@ -48,17 +48,17 @@ class AuthorizationClient(ABC):
     def removeRoleFromApplicationUser(self, applicationId: str, role: str):
         pass
     
-    # @abstractmethod
-    # def setApplicationTags(self, tags: List[MetadataTag], applicationId: str):
-    #     pass
+    @abstractmethod
+    def setApplicationTags(self, tags: List[MetadataTag], applicationId: str):
+        pass
 
-    # @abstractmethod
-    # def getApplicationTags(self, applicationId: str) -> List[MetadataTag]:
-    #     pass
+    @abstractmethod
+    def getApplicationTags(self, applicationId: str) -> List[MetadataTag]:
+        pass
 
-    # @abstractmethod
-    # def deleteApplicationTags(self, tags: List[MetadataTag], applicationId: str):
-    #     pass
+    @abstractmethod
+    def deleteApplicationTags(self, tags: List[MetadataTag], applicationId: str):
+        pass
 
     # @abstractmethod
     # def createAccessKey(self, applicationId: str) -> AccessKeyResponse:
