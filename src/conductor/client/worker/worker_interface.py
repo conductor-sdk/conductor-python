@@ -10,6 +10,7 @@ class WorkerInterface(abc.ABC):
     def __init__(self, task_definition_name: Union[str, list]):
         self.task_definition_name = task_definition_name
         self.next_task_index = 0
+        self._task_definition_name_cache = None
 
     @abc.abstractmethod
     def execute(self, task: Task) -> TaskResult:
@@ -49,13 +50,12 @@ class WorkerInterface(abc.ABC):
 
     @property
     def task_definition_name_cache(self):
-        if not hasattr(self, "_task_definition_name"):
+        if self._task_definition_name_cache is None:
             self._task_definition_name_cache = self.compute_task_definition_name()
         return self._task_definition_name_cache
 
     def clear_task_definition_name_cache(self):
-        if hasattr(self, "_task_definition_name_cache"):
-            delattr(self, "_task_definition_name_cache")
+        self._task_definition_name_cache = None
 
     def compute_task_definition_name(self):
         if isinstance(self.task_definition_name, list):

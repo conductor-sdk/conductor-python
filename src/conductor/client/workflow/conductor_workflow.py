@@ -1,5 +1,3 @@
-from conductor.client.http.models.workflow_def import WorkflowDef
-from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.task.fork_task import ForkTask
 from conductor.client.workflow.task.join_task import JoinTask
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
@@ -7,7 +5,7 @@ from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
 from conductor.client.http.models import *
 from copy import deepcopy
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 from typing_extensions import Self
 from shortuuid import uuid
 
@@ -195,7 +193,7 @@ class ConductorWorkflow:
         return workflow_task_list
 
     # Append task with the right shift operator `>>`
-    def __rshift__(self, task: TaskInterface | List[TaskInterface] | List[List[TaskInterface]]) -> Self:
+    def __rshift__(self, task: Union[TaskInterface, List[TaskInterface], List[List[TaskInterface]]]) -> Self:
         if isinstance(task, list):
             forked_tasks = []
             for fork_task in task:
