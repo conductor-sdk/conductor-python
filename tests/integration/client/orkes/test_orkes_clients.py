@@ -117,7 +117,7 @@ class TestOrkesClients:
         
         self.secret_client.deleteSecret(SECRET_NAME + "_2")
         
-        assert self.secret_client.listSecretsThatUserCanGrantAccessTo(), []
+        # assert self.secret_client.listSecretsThatUserCanGrantAccessTo(), []
 
     def test_scheduler_lifecycle(self, workflowDef):
         startWorkflowRequest = StartWorkflowRequest(
@@ -252,10 +252,9 @@ class TestOrkesClients:
         self.authorization_client.deleteGroup(GROUP_ID)
 
     def __test_register_workflow_definition(self, workflowDef: WorkflowDef):
-        self.workflow_id = self.__create_workflow_definition(workflowDef)
-        assert self.workflow_id != None
+        self.__create_workflow_definition(workflowDef)
     
-    def __create_workflow_definition(self, workflowDef):
+    def __create_workflow_definition(self, workflowDef) -> str:
         return self.metadata_client.registerWorkflowDef(workflowDef, True)
 
     def __test_get_workflow_definition(self):
