@@ -7,14 +7,19 @@ from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api.user_resource_api import UserResourceApi
 from conductor.client.http.api.group_resource_api import GroupResourceApi
 from conductor.client.http.api.application_resource_api import ApplicationResourceApi
-from conductor.client.orkes.orkes_authorization_client import OrkesAuthorizationClient
-from conductor.client.orkes.models.metadata_tag import MetadataTag
+from conductor.client.http.api.authorization_resource_api import AuthorizationResourceApi
 from conductor.client.http.models.upsert_user_request import UpsertUserRequest
 from conductor.client.http.models.upsert_group_request import UpsertGroupRequest
-from conductor.client.http.models.conductor_user import ConductorUser
+from conductor.client.http.models.authorization_request import AuthorizationRequest
 from conductor.client.http.models.group import Group
+from conductor.client.http.models.subject_ref import SubjectRef, SubjectType
+from conductor.client.http.models.target_ref import TargetRef, TargetType
+from conductor.client.http.models.conductor_user import ConductorUser
 from conductor.client.http.models.conductor_application import ConductorApplication
 from conductor.client.http.models.create_or_update_application_request import CreateOrUpdateApplicationRequest
+from conductor.client.orkes.models.access_type import AccessType
+from conductor.client.orkes.models.metadata_tag import MetadataTag
+from conductor.client.orkes.orkes_authorization_client import OrkesAuthorizationClient
 
 APP_ID = 'c6e75472'
 APP_NAME = 'ut_application_name'
@@ -48,13 +53,15 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
         self.assertIsInstance(self.authorization_client.userResourceApi, UserResourceApi, message)
         message = "groupResourceApi is not of type GroupResourceApi"
         self.assertIsInstance(self.authorization_client.groupResourceApi, GroupResourceApi, message)
+        message = "authorizationResourceApi is not of type AuthorizationResourceApi"
+        self.assertIsInstance(self.authorization_client.authorizationResourceApi, AuthorizationResourceApi, message)
 
     @patch.object(ApplicationResourceApi, 'create_application')
     def test_createApplication(self, mock):
         createReq = CreateOrUpdateApplicationRequest()
         mock.return_value = self.conductor_application
         app = self.authorization_client.createApplication(createReq)
-        self.assertEquals(app, self.conductor_application)
+        self.assertEqual(app, self.conductor_application)
         mock.assert_called_with(createReq)
 
     @patch.object(ApplicationResourceApi, 'get_application')
@@ -81,7 +88,7 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
         updateReq = CreateOrUpdateApplicationRequest(APP_NAME)
         mock.return_value = self.conductor_application
         app = self.authorization_client.updateApplication(updateReq, APP_ID)
-        self.assertEquals(app, self.conductor_application)
+        self.assertEqual(app, self.conductor_application)
         mock.assert_called_with(updateReq, APP_ID)
 
     @patch.object(ApplicationResourceApi, 'add_role_to_application_user')
@@ -124,7 +131,7 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
         upsertReq = UpsertUserRequest(USER_NAME, ["ADMIN"])
         mock.return_value = self.conductor_user
         user = self.authorization_client.upsertUser(upsertReq, USER_ID)
-        self.assertEquals(user, self.conductor_user)
+        self.assertEqual(user, self.conductor_user)
         mock.assert_called_with(upsertReq, USER_ID)
 
     @patch.object(UserResourceApi, 'get_user')
@@ -158,7 +165,7 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
         upsertReq = UpsertGroupRequest(GROUP_NAME, ["USER"])
         mock.return_value = self.conductor_group
         group = self.authorization_client.upsertGroup(upsertReq, GROUP_ID)
-        self.assertEquals(group, self.conductor_group)
+        self.assertEqual(group, self.conductor_group)
         mock.assert_called_with(upsertReq, GROUP_ID)
 
     @patch.object(GroupResourceApi, 'get_group')
@@ -197,3 +204,50 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
     def test_removeUserFromGroup(self, mock):
         self.authorization_client.removeUserFromGroup(GROUP_ID, USER_ID)
         mock.assert_called_with(GROUP_ID, USER_ID)
+        
+    # @patch.object(GroupResourceApi, 'get_granted_permissions1')
+    # def test_getGrantedPermissionsForGroup(self, mock):
+    #     self.authorization_client.getGrantedPermissionsForGroup(GROUP_ID)
+    #     mock.assert_called_with(GROUP_ID)
+    
+    @patch.object(AuthorizationResourceApi, 'get_permissions')
+    def test_getPermissions(self, mock):
+        mock.return_value = {
+            "EXECUTE": [
+                { "type": "USER", "id": USER_ID },
+            ],
+            "READ": [
+                { "type": "USER", "id": USER_ID },
+                { "type": "GROUP", "id": GROUP_ID }
+            ]
+        }
+        permissions = self.authorization_client.getPermissions(
+            TargetRef(TargetType.WORKFLOW_DEF, "workflow_name")
+        )
+        mock.assert_called_with(TargetType.WORKFLOW_DEF.name, "workflow_name")
+        expected_permissions_dict = {
+            AccessType.EXECUTE.name: [
+                SubjectRef(SubjectType.USER, USER_ID),
+            ],
+            AccessType.READ.name: [
+                SubjectRef(SubjectType.USER, USER_ID),
+                SubjectRef(SubjectType.GROUP, GROUP_ID)
+            ]
+        }
+        self.assertDictEqual(permissions, expected_permissions_dict)
+
+    @patch.object(AuthorizationResourceApi, 'grant_permissions')
+    def test_grantPermissions(self, mock):
+        subject = SubjectRef(SubjectType.USER, USER_ID)
+        target = TargetRef(TargetType.WORKFLOW_DEF, "workflow_name")
+        access = [AccessType.READ, AccessType.EXECUTE]
+        self.authorization_client.grantPermissions(subject, target, access)
+        mock.assert_called_with(AuthorizationRequest(subject, target, access))
+
+    @patch.object(AuthorizationResourceApi, 'remove_permissions')
+    def test_removePermissions(self, mock):
+        subject = SubjectRef(SubjectType.USER, USER_ID)
+        target = TargetRef(TargetType.WORKFLOW_DEF, "workflow_name")
+        access = [AccessType.READ, AccessType.EXECUTE]
+        self.authorization_client.removePermissions(subject, target, access)
+        mock.assert_called_with(AuthorizationRequest(subject, target, access))

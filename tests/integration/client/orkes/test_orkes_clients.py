@@ -4,6 +4,7 @@ from conductor.client.configuration.settings.authentication_settings import Auth
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.simple_task import SimpleTask
+from conductor.client.orkes.models.access_type import AccessType
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.orkes_metadata_client import OrkesMetadataClient
 from conductor.client.orkes.orkes_workflow_client import OrkesWorkflowClient
@@ -14,9 +15,10 @@ from conductor.client.orkes.orkes_authorization_client import OrkesAuthorization
 from conductor.client.http.models.task_def import TaskDef
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.workflow_def import WorkflowDef
+from conductor.client.http.models.target_ref import TargetRef, TargetType
+from conductor.client.http.models.subject_ref import SubjectRef, SubjectType
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.http.models.save_schedule_request import SaveScheduleRequest
-from conductor.client.http.models.conductor_application import ConductorApplication
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.http.models.upsert_user_request import UpsertUserRequest
 from conductor.client.http.models.upsert_group_request import UpsertGroupRequest
@@ -54,12 +56,12 @@ class TestOrkesClients:
         workflow >> SimpleTask("simple_task", "simple_task_ref")
         workflowDef = workflow.to_workflow_def()
         
-        # self.test_workflow_lifecycle(workflowDef, workflow)
-        # self.test_task_lifecycle()
-        # self.test_secret_lifecycle()
-        # self.test_scheduler_lifecycle(workflowDef)
+        self.test_workflow_lifecycle(workflowDef, workflow)
+        self.test_task_lifecycle()
+        self.test_secret_lifecycle()
+        self.test_scheduler_lifecycle(workflowDef)
         self.test_application_lifecycle()
-        # self.test_user_group_lifecycle()
+        self.test_user_group_permissions_lifecycle(workflowDef)
 
     def test_workflow_lifecycle(self, workflowDef, workflow):
         self.__test_register_workflow_definition(workflowDef)
@@ -198,7 +200,7 @@ class TestOrkesClients:
         
         self.authorization_client.deleteApplication(created_app.id)
 
-    def test_user_group_lifecycle(self):
+    def test_user_group_permissions_lifecycle(self, workflowDef):
         req = UpsertUserRequest("Integration User", ["USER"])
         created_user = self.authorization_client.upsertUser(req, USER_ID)
         assert created_user.id == USER_ID
@@ -229,12 +231,32 @@ class TestOrkesClients:
         users = self.authorization_client.getUsersInGroup(GROUP_ID)
         assert users[0].id == USER_ID
         
+        # Test Granting Permissions
+        workflowDef.name = WORKFLOW_NAME + "_permissions"
+        self.__create_workflow_definition(workflowDef)
+        
+        subject = SubjectRef(SubjectType.GROUP, GROUP_ID)
+        target = TargetRef(TargetType.WORKFLOW_DEF, WORKFLOW_NAME + "_permissions")
+        access = [AccessType.EXECUTE]
+        
+        self.authorization_client.grantPermissions(subject, target, access)
+        perms = self.authorization_client.getPermissions(target)
+        assert True in [s == subject for s in perms[AccessType.EXECUTE]]
+        
+        self.authorization_client.removePermissions(subject, target, access)
+        perms = self.authorization_client.getPermissions(target)
+        assert True not in [s == subject for s in perms[AccessType.EXECUTE]]
+        
         self.authorization_client.removeUserFromGroup(GROUP_ID, USER_ID)
         self.authorization_client.deleteUser(USER_ID)
         self.authorization_client.deleteGroup(GROUP_ID)
-        
+
     def __test_register_workflow_definition(self, workflowDef: WorkflowDef):
-        self.workflow_id = self.metadata_client.registerWorkflowDef(workflowDef, True)
+        self.workflow_id = self.__create_workflow_definition(workflowDef)
+        assert self.workflow_id != None
+    
+    def __create_workflow_definition(self, workflowDef):
+        return self.metadata_client.registerWorkflowDef(workflowDef, True)
 
     def __test_get_workflow_definition(self):
         wfDef, _ = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
@@ -248,7 +270,6 @@ class TestOrkesClients:
         updatedWorkflowDef = workflow.to_workflow_def()
         self.metadata_client.updateWorkflowDef(updatedWorkflowDef, True)
         wfDef, _ = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
-        print(len(wfDef.tasks))
         assert len(wfDef.tasks) == 3
 
     def __test_unregister_workflow_definition(self):

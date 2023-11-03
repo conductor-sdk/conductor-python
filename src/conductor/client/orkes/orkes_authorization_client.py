@@ -1,5 +1,6 @@
 from typing import Dict, List, Optional
 from conductor.client.orkes.models.metadata_tag import MetadataTag
+from conductor.client.orkes.models.access_type import AccessType
 from conductor.client.orkes.models.access_key_response import AccessKeyResponse
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.rest import ApiException
@@ -7,9 +8,11 @@ from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.user_resource_api import UserResourceApi
 from conductor.client.http.api.group_resource_api import GroupResourceApi
 from conductor.client.http.api.application_resource_api import ApplicationResourceApi
+from conductor.client.http.api.authorization_resource_api import AuthorizationResourceApi
 from conductor.client.http.models.group import Group
 from conductor.client.http.models.subject_ref import SubjectRef
 from conductor.client.http.models.conductor_user import ConductorUser
+from conductor.client.http.models.target_ref import TargetRef, TargetType
 from conductor.client.http.models.conductor_application import ConductorApplication
 from conductor.client.http.models.upsert_user_request import UpsertUserRequest
 from conductor.client.http.models.upsert_group_request import UpsertGroupRequest
@@ -23,6 +26,7 @@ class OrkesAuthorizationClient(AuthorizationClient):
         self.applicationResourceApi = ApplicationResourceApi(api_client)
         self.userResourceApi = UserResourceApi(api_client)
         self.groupResourceApi = GroupResourceApi(api_client)
+        self.authorizationResourceApi = AuthorizationResourceApi(api_client)
 
     # Applications
     def createApplication(
@@ -121,16 +125,27 @@ class OrkesAuthorizationClient(AuthorizationClient):
         self.groupResourceApi.remove_user_from_group(groupId, userId)
     
     # def getGrantedPermissionsForGroup(self, groupId: str):
-    #     pass
-    
+    #     return self.groupResourceApi.get_granted_permissions1(groupId)
+
     # Permissions
     
-    def getPermissions(self, type: str, id: str) -> Dict[str, List[SubjectRef]]:
-        pass
+    def getPermissions(self, target: TargetRef) -> Dict[str, List[SubjectRef]]:
+        resp_obj = self.authorizationResourceApi.get_permissions(target.type.name, target.id)
+        permissions = {}
+        for access_type, subjects in resp_obj.items():
+            subject_list = []
+            for sub in subjects:
+                subject_list.append(
+                    SubjectRef(sub["type"], sub["id"])
+                )
+            permissions[access_type] = subject_list
+        return permissions
     
-    
-    def grantPermissions(self, authorizationRequest: AuthorizationRequest):
-        pass
+    def grantPermissions(self, subject: SubjectRef, target: TargetRef, access: List[AccessType]):
+        req = AuthorizationRequest(subject, target, access)
+        self.authorizationResourceApi.grant_permissions(req)
 
-    def removePermissions(self, authorizationRequest: AuthorizationRequest):
-        pass
+    def removePermissions(self, subject: SubjectRef, target: TargetRef, access: List[AccessType]):
+        req = AuthorizationRequest(subject, target, access)
+        self.authorizationResourceApi.remove_permissions(req)
+        
