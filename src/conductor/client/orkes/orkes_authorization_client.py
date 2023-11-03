@@ -22,11 +22,11 @@ from conductor.client.authorization_client import AuthorizationClient
 
 class OrkesAuthorizationClient(AuthorizationClient):
     def __init__(self, configuration: Configuration):
-        api_client = ApiClient(configuration)
-        self.applicationResourceApi = ApplicationResourceApi(api_client)
-        self.userResourceApi = UserResourceApi(api_client)
-        self.groupResourceApi = GroupResourceApi(api_client)
-        self.authorizationResourceApi = AuthorizationResourceApi(api_client)
+        self.api_client = ApiClient(configuration)
+        self.applicationResourceApi = ApplicationResourceApi(self.api_client)
+        self.userResourceApi = UserResourceApi(self.api_client)
+        self.groupResourceApi = GroupResourceApi(self.api_client)
+        self.authorizationResourceApi = AuthorizationResourceApi(self.api_client)
 
     # Applications
     def createApplication(
@@ -83,10 +83,12 @@ class OrkesAuthorizationClient(AuthorizationClient):
     # Users
     
     def upsertUser(self, upsertUserRequest: UpsertUserRequest, userId: str) -> ConductorUser:
-        return self.userResourceApi.upsert_user(upsertUserRequest, userId)
+        user_obj = self.userResourceApi.upsert_user(upsertUserRequest, userId)
+        return self.api_client.deserialize_class(user_obj, "ConductorUser")
     
     def getUser(self, userId: str) -> ConductorUser:
-        return self.userResourceApi.get_user(userId)
+        user_obj = self.userResourceApi.get_user(userId)
+        return self.api_client.deserialize_class(user_obj, "ConductorUser")
     
     def listUsers(self, apps: Optional[bool] = False) -> List[ConductorUser]:
         kwargs = { "apps": apps }

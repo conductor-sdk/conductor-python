@@ -11,7 +11,9 @@ from conductor.client.http.api.authorization_resource_api import AuthorizationRe
 from conductor.client.http.models.upsert_user_request import UpsertUserRequest
 from conductor.client.http.models.upsert_group_request import UpsertGroupRequest
 from conductor.client.http.models.authorization_request import AuthorizationRequest
+from conductor.client.http.models.role import Role
 from conductor.client.http.models.group import Group
+from conductor.client.http.models.permission import Permission
 from conductor.client.http.models.subject_ref import SubjectRef, SubjectType
 from conductor.client.http.models.target_ref import TargetRef, TargetType
 from conductor.client.http.models.conductor_user import ConductorUser
@@ -24,10 +26,10 @@ from conductor.client.orkes.orkes_authorization_client import OrkesAuthorization
 APP_ID = 'c6e75472'
 APP_NAME = 'ut_application_name'
 USER_ID = 'us_user@orkes.io'
+USER_UUID = 'ac8b5803-c391-4237-8d3d-90f74b07d5ad'
 USER_NAME = 'UT USER'
 GROUP_ID = 'ut_group'
 GROUP_NAME = 'Test Group'
-USER_NAME = 'UT USER'
 ERROR_BODY= '{"message":"No such application found by id"}'
 
 class TestOrkesAuthorizationClient(unittest.TestCase):
@@ -37,7 +39,24 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
         configuration = Configuration("http://localhost:8080/api")
         cls.authorization_client = OrkesAuthorizationClient(configuration)
         cls.conductor_application = ConductorApplication(APP_ID, APP_NAME)
-        cls.conductor_user = ConductorUser(USER_NAME, ["ADMIN"])
+        cls.roles = [
+            Role(
+                "USER", [
+                    Permission(name="METADATA_MANAGEMENT"),
+                    Permission(name="WORKFLOW_MANAGEMENT"),
+                    Permission(name="METADATA_VIEW")
+                ]
+            )
+        ]
+        cls.conductor_user = ConductorUser(
+            id=USER_ID,
+            name=USER_NAME,
+            uuid=USER_UUID,
+            roles=cls.roles,
+            application_user=False,
+            encrypted_id=False,
+            encrypted_id_display_value=USER_ID
+        )
         cls.conductor_group= Group(GROUP_ID, GROUP_NAME, ["USER"])
         
     def setUp(self):
@@ -129,17 +148,23 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
     @patch.object(UserResourceApi, 'upsert_user')
     def test_upsertUser(self, mock):
         upsertReq = UpsertUserRequest(USER_NAME, ["ADMIN"])
-        mock.return_value = self.conductor_user
+        mock.return_value = self.conductor_user.to_dict()
         user = self.authorization_client.upsertUser(upsertReq, USER_ID)
-        self.assertEqual(user, self.conductor_user)
         mock.assert_called_with(upsertReq, USER_ID)
+        self.assertEqual(user.name, USER_NAME)
+        self.assertEqual(user.id, USER_ID)
+        self.assertEqual(user.uuid, USER_UUID)
+        self.assertEqual(user.roles, self.roles)
 
     @patch.object(UserResourceApi, 'get_user')
     def test_getUser(self, mock):
-        mock.return_value = self.conductor_user
+        mock.return_value = self.conductor_user.to_dict()
         user = self.authorization_client.getUser(USER_ID)
         mock.assert_called_with(USER_ID)
-        self.assertEqual(user, self.conductor_user)
+        self.assertEqual(user.name, USER_NAME)
+        self.assertEqual(user.id, USER_ID)
+        self.assertEqual(user.uuid, USER_UUID)
+        self.assertEqual(user.roles, self.roles)
 
     @patch.object(UserResourceApi, 'list_users')
     def test_listUsers_with_apps(self, mock):

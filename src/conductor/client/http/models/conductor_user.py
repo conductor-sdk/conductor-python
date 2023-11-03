@@ -21,7 +21,9 @@ class ConductorUser(object):
         'roles': 'list[Role]',
         'groups': 'list[Group]',
         'uuid': 'str',
-        'application_user': 'bool'
+        'application_user': 'bool',
+        'encrypted_id': 'bool',
+        'encrypted_id_display_value': 'str'
     }
 
     attribute_map = {
@@ -30,10 +32,12 @@ class ConductorUser(object):
         'roles': 'roles',
         'groups': 'groups',
         'uuid': 'uuid',
-        'application_user': 'applicationUser'
+        'application_user': 'applicationUser',
+        'encrypted_id': 'encryptedId',
+        'encrypted_id_display_value': 'encryptedIdDisplayValue'
     }
 
-    def __init__(self, id=None, name=None, roles=None, groups=None, uuid=None, application_user=None):  # noqa: E501
+    def __init__(self, id=None, name=None, roles=None, groups=None, uuid=None, application_user=None, encrypted_id=None, encrypted_id_display_value=None):  # noqa: E501
         """ConductorUser - a model defined in Swagger"""  # noqa: E501
         self._id = None
         self._name = None
@@ -54,6 +58,10 @@ class ConductorUser(object):
             self.uuid = uuid
         if application_user is not None:
             self.application_user = application_user
+        if encrypted_id is not None:
+            self.encrypted_id = encrypted_id
+        if encrypted_id_display_value is not None:
+            self.encrypted_id_display_value = encrypted_id_display_value
 
     @property
     def id(self):
@@ -180,6 +188,48 @@ class ConductorUser(object):
         """
 
         self._application_user = application_user
+
+    @property
+    def encrypted_id(self):
+        """Gets the encrypted_id of this ConductorUser.  # noqa: E501
+
+
+        :return: The encrypted_id of this ConductorUser.  # noqa: E501
+        :rtype: bool
+        """
+        return self._encrypted_id
+
+    @encrypted_id.setter
+    def encrypted_id(self, encrypted_id):
+        """Sets the encrypted_id of this ConductorUser.
+
+
+        :param encrypted_id: The encrypted_id of this ConductorUser.  # noqa: E501
+        :type: bool
+        """
+
+        self._encrypted_id = encrypted_id
+
+    @property
+    def encrypted_id_display_value(self):
+        """Gets the encrypted_id_display_value of this ConductorUser.  # noqa: E501
+
+
+        :return: The encrypted_id_display_value of this ConductorUser.  # noqa: E501
+        :rtype: str
+        """
+        return self._encrypted_id_display_value
+
+    @encrypted_id_display_value.setter
+    def encrypted_id_display_value(self, encrypted_id_display_value):
+        """Sets the encrypted_id_display_value of this ConductorUser.
+
+
+        :param encrypted_id_display_value: The encrypted_id_display_value of this ConductorUser.  # noqa: E501
+        :type: str
+        """
+
+        self._encrypted_id_display_value = encrypted_id_display_value
 
     def to_dict(self):
         """Returns the model properties as a dict"""

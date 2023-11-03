@@ -225,6 +225,9 @@ class ApiClient(object):
                 f'failed to deserialize data {data} into class {response_type}, reason: {e}')
             return None
 
+    def deserialize_class(self, data, klass):
+        return self.__deserialize(data, klass)
+
     def __deserialize(self, data, klass):
         """Deserializes dict, list, str into an object.
 
