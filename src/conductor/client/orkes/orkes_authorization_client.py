@@ -106,11 +106,13 @@ class OrkesAuthorizationClient(AuthorizationClient):
     # Groups
     
     def upsertGroup(self, upsertGroupRequest: UpsertGroupRequest, groupId: str) -> Group:
-        return self.groupResourceApi.upsert_group(upsertGroupRequest, groupId)
+        group_obj = self.groupResourceApi.upsert_group(upsertGroupRequest, groupId)
+        return self.api_client.deserialize_class(group_obj, "Group")
         
     def getGroup(self, groupId: str) -> Group:
-        return self.groupResourceApi.get_group(groupId)
-    
+        group_obj = self.groupResourceApi.get_group(groupId)
+        return self.api_client.deserialize_class(group_obj, "Group")
+
     def listGroups(self) -> List[Group]:
         return self.groupResourceApi.list_groups()
 
@@ -121,7 +123,13 @@ class OrkesAuthorizationClient(AuthorizationClient):
         self.groupResourceApi.add_user_to_group(groupId, userId)
 
     def getUsersInGroup(self, groupId: str) -> List[ConductorUser]:
-        return self.groupResourceApi.get_users_in_group(groupId)
+        user_objs = self.groupResourceApi.get_users_in_group(groupId)
+        group_users = []
+        for u in user_objs:
+            c_user = self.api_client.deserialize_class(u, "ConductorUser")
+            group_users.append(c_user)
+        
+        return group_users
 
     def removeUserFromGroup(self, groupId: str, userId: str):
         self.groupResourceApi.remove_user_from_group(groupId, userId)

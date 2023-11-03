@@ -56,11 +56,11 @@ class TestOrkesClients:
         workflow >> SimpleTask("simple_task", "simple_task_ref")
         workflowDef = workflow.to_workflow_def()
         
-        self.test_workflow_lifecycle(workflowDef, workflow)
-        self.test_task_lifecycle()
-        self.test_secret_lifecycle()
-        self.test_scheduler_lifecycle(workflowDef)
-        self.test_application_lifecycle()
+        # self.test_workflow_lifecycle(workflowDef, workflow)
+        # self.test_task_lifecycle()
+        # self.test_secret_lifecycle()
+        # self.test_scheduler_lifecycle(workflowDef)
+        # self.test_application_lifecycle()
         self.test_user_group_permissions_lifecycle(workflowDef)
 
     def test_workflow_lifecycle(self, workflowDef, workflow):

@@ -45,6 +45,8 @@ class ConductorUser(object):
         self._groups = None
         self._uuid = None
         self._application_user = None
+        self._encrypted_id = None
+        self._encrypted_id_display_value = None
         self.discriminator = None
         if id is not None:
             self.id = id

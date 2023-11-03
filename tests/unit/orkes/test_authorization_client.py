@@ -57,7 +57,16 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
             encrypted_id=False,
             encrypted_id_display_value=USER_ID
         )
-        cls.conductor_group= Group(GROUP_ID, GROUP_NAME, ["USER"])
+        cls.group_roles =  [
+            Role(
+                "USER", [
+                    Permission(name="CREATE_TASK_DEF"),
+                    Permission(name="CREATE_WORKFLOW_DEF"),
+                    Permission(name="WORKFLOW_SEARCH")
+                ]
+            )
+        ]
+        cls.conductor_group = Group(GROUP_ID, GROUP_NAME, cls.group_roles)
         
     def setUp(self):
         logging.disable(logging.CRITICAL)
@@ -188,17 +197,23 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
     @patch.object(GroupResourceApi, 'upsert_group')
     def test_upsertGroup(self, mock):
         upsertReq = UpsertGroupRequest(GROUP_NAME, ["USER"])
-        mock.return_value = self.conductor_group
+        mock.return_value = self.conductor_group.to_dict()
         group = self.authorization_client.upsertGroup(upsertReq, GROUP_ID)
-        self.assertEqual(group, self.conductor_group)
         mock.assert_called_with(upsertReq, GROUP_ID)
+        self.assertEqual(group, self.conductor_group)
+        self.assertEqual(group.description, GROUP_NAME)
+        self.assertEqual(group.id, GROUP_ID)
+        self.assertEqual(group.roles, self.group_roles)
 
     @patch.object(GroupResourceApi, 'get_group')
     def test_getGroup(self, mock):
-        mock.return_value = self.conductor_group
+        mock.return_value = self.conductor_group.to_dict()
         group = self.authorization_client.getGroup(GROUP_ID)
         mock.assert_called_with(GROUP_ID)
         self.assertEqual(group, self.conductor_group)
+        self.assertEqual(group.description, GROUP_NAME)
+        self.assertEqual(group.id, GROUP_ID)
+        self.assertEqual(group.roles, self.group_roles)
 
     @patch.object(GroupResourceApi, 'list_groups')
     def test_listGroups(self, mock):
@@ -220,10 +235,14 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
 
     @patch.object(GroupResourceApi, 'get_users_in_group')
     def test_getUsersInGroup(self, mock):
-        mock.return_value = [self.conductor_user]
+        mock.return_value = [self.conductor_user.to_dict()]
         users = self.authorization_client.getUsersInGroup(GROUP_ID)
         mock.assert_called_with(GROUP_ID)
-        self.assertListEqual(users, [self.conductor_user])
+        self.assertEqual(len(users), 1)
+        self.assertEqual(users[0].name, USER_NAME)
+        self.assertEqual(users[0].id, USER_ID)
+        self.assertEqual(users[0].uuid, USER_UUID)
+        self.assertEqual(users[0].roles, self.roles)
 
     @patch.object(GroupResourceApi, 'remove_user_from_group')
     def test_removeUserFromGroup(self, mock):
