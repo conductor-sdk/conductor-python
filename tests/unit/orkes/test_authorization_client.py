@@ -21,6 +21,7 @@ from conductor.client.http.models.conductor_application import ConductorApplicat
 from conductor.client.http.models.create_or_update_application_request import CreateOrUpdateApplicationRequest
 from conductor.client.orkes.models.access_type import AccessType
 from conductor.client.orkes.models.metadata_tag import MetadataTag
+from conductor.client.orkes.models.granted_permission import GrantedPermission
 from conductor.client.orkes.orkes_authorization_client import OrkesAuthorizationClient
 
 APP_ID = 'c6e75472'
@@ -30,6 +31,7 @@ USER_UUID = 'ac8b5803-c391-4237-8d3d-90f74b07d5ad'
 USER_NAME = 'UT USER'
 GROUP_ID = 'ut_group'
 GROUP_NAME = 'Test Group'
+WF_NAME = 'workflow_name'
 ERROR_BODY= '{"message":"No such application found by id"}'
 
 class TestOrkesAuthorizationClient(unittest.TestCase):
@@ -249,11 +251,56 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
         self.authorization_client.removeUserFromGroup(GROUP_ID, USER_ID)
         mock.assert_called_with(GROUP_ID, USER_ID)
         
-    # @patch.object(GroupResourceApi, 'get_granted_permissions1')
-    # def test_getGrantedPermissionsForGroup(self, mock):
-    #     self.authorization_client.getGrantedPermissionsForGroup(GROUP_ID)
-    #     mock.assert_called_with(GROUP_ID)
-    
+    @patch.object(GroupResourceApi, 'get_granted_permissions1')
+    def test_getGrantedPermissionsForGroup(self, mock):
+        mock.return_value = {
+            "grantedAccess": [
+                {
+                    "target": {
+                        "type": "WORKFLOW_DEF",
+                        "id": WF_NAME
+                    },
+                    "access": [
+                        "EXECUTE",
+                        "UPDATE",
+                        "READ"
+                    ]
+                }
+            ]
+        }
+        perms = self.authorization_client.getGrantedPermissionsForGroup(GROUP_ID)
+        mock.assert_called_with(GROUP_ID)
+        expected_perm = GrantedPermission(
+            target=TargetRef(TargetType.WORKFLOW_DEF, WF_NAME),
+            access = ["EXECUTE", "UPDATE", "READ"]
+        )
+        self.assertEqual(perms, [expected_perm])
+
+    @patch.object(UserResourceApi, 'get_granted_permissions')
+    def test_getGrantedPermissionsForUser(self, mock):
+        mock.return_value = {
+            "grantedAccess": [
+                {
+                    "target": {
+                        "type": "WORKFLOW_DEF",
+                        "id": WF_NAME
+                    },
+                    "access": [
+                        "EXECUTE",
+                        "UPDATE",
+                        "READ"
+                    ]
+                }
+            ]
+        }
+        perms = self.authorization_client.getGrantedPermissionsForUser(USER_ID)
+        mock.assert_called_with(USER_ID)
+        expected_perm = GrantedPermission(
+            target=TargetRef(TargetType.WORKFLOW_DEF, WF_NAME),
+            access = ["EXECUTE", "UPDATE", "READ"]
+        )
+        self.assertEqual(perms, [expected_perm])
+
     @patch.object(AuthorizationResourceApi, 'get_permissions')
     def test_getPermissions(self, mock):
         mock.return_value = {
@@ -266,7 +313,7 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
             ]
         }
         permissions = self.authorization_client.getPermissions(
-            TargetRef(TargetType.WORKFLOW_DEF, "workflow_name")
+            TargetRef(TargetType.WORKFLOW_DEF, WF_NAME)
         )
         mock.assert_called_with(TargetType.WORKFLOW_DEF.name, "workflow_name")
         expected_permissions_dict = {
@@ -283,7 +330,7 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
     @patch.object(AuthorizationResourceApi, 'grant_permissions')
     def test_grantPermissions(self, mock):
         subject = SubjectRef(SubjectType.USER, USER_ID)
-        target = TargetRef(TargetType.WORKFLOW_DEF, "workflow_name")
+        target = TargetRef(TargetType.WORKFLOW_DEF, WF_NAME)
         access = [AccessType.READ, AccessType.EXECUTE]
         self.authorization_client.grantPermissions(subject, target, access)
         mock.assert_called_with(AuthorizationRequest(subject, target, access))
@@ -291,7 +338,7 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
     @patch.object(AuthorizationResourceApi, 'remove_permissions')
     def test_removePermissions(self, mock):
         subject = SubjectRef(SubjectType.USER, USER_ID)
-        target = TargetRef(TargetType.WORKFLOW_DEF, "workflow_name")
+        target = TargetRef(TargetType.WORKFLOW_DEF, WF_NAME)
         access = [AccessType.READ, AccessType.EXECUTE]
         self.authorization_client.removePermissions(subject, target, access)
         mock.assert_called_with(AuthorizationRequest(subject, target, access))

@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.models.access_type import AccessType
+from conductor.client.orkes.models.granted_permission import GrantedPermission
 from conductor.client.orkes.models.access_key_response import AccessKeyResponse
 from conductor.client.http.models.group import Group
 from conductor.client.http.models.target_ref import TargetRef, TargetType
@@ -94,10 +95,6 @@ class AuthorizationClient(ABC):
     @abstractmethod
     def deleteUser(self, userId: str):
         pass
-
-    # @abstractmethod
-    # def getGrantedPermissionsForUser(self, userId: str):
-    #     pass
     
     # @abstractmethod
     # def sendInviteEmail(self, userId: str, conductorUser: ConductorUser):
@@ -132,11 +129,16 @@ class AuthorizationClient(ABC):
     def removeUserFromGroup(self, groupId: str, userId: str):
         pass
 
-    # @abstractmethod
-    # def getGrantedPermissionsForGroup(self, groupId: str):
-    #     pass
-
     # Permissions
+
+    @abstractmethod
+    def getGrantedPermissionsForGroup(self, groupId: str) -> List[GrantedPermission]:
+        pass
+
+    @abstractmethod
+    def getGrantedPermissionsForUser(self, userId: str) -> List[GrantedPermission]:
+        pass
+
     @abstractmethod
     def getPermissions(self, target: TargetRef) -> Dict[str, List[SubjectRef]]:
         pass

@@ -56,11 +56,11 @@ class TestOrkesClients:
         workflow >> SimpleTask("simple_task", "simple_task_ref")
         workflowDef = workflow.to_workflow_def()
         
-        # self.test_workflow_lifecycle(workflowDef, workflow)
-        # self.test_task_lifecycle()
-        # self.test_secret_lifecycle()
-        # self.test_scheduler_lifecycle(workflowDef)
-        # self.test_application_lifecycle()
+        self.test_workflow_lifecycle(workflowDef, workflow)
+        self.test_task_lifecycle()
+        self.test_secret_lifecycle()
+        self.test_scheduler_lifecycle(workflowDef)
+        self.test_application_lifecycle()
         self.test_user_group_permissions_lifecycle(workflowDef)
 
     def test_workflow_lifecycle(self, workflowDef, workflow):
@@ -235,17 +235,38 @@ class TestOrkesClients:
         workflowDef.name = WORKFLOW_NAME + "_permissions"
         self.__create_workflow_definition(workflowDef)
         
-        subject = SubjectRef(SubjectType.GROUP, GROUP_ID)
         target = TargetRef(TargetType.WORKFLOW_DEF, WORKFLOW_NAME + "_permissions")
-        access = [AccessType.EXECUTE]
+        subject_group = SubjectRef(SubjectType.GROUP, GROUP_ID)
+        access_group = [AccessType.EXECUTE]
         
-        self.authorization_client.grantPermissions(subject, target, access)
-        perms = self.authorization_client.getPermissions(target)
-        assert True in [s == subject for s in perms[AccessType.EXECUTE]]
+        subject_user = SubjectRef(SubjectType.USER, USER_ID)
+        access_user = [AccessType.EXECUTE, AccessType.READ]
         
-        self.authorization_client.removePermissions(subject, target, access)
-        perms = self.authorization_client.getPermissions(target)
-        assert True not in [s == subject for s in perms[AccessType.EXECUTE]]
+        self.authorization_client.grantPermissions(subject_group, target, access_group)
+        self.authorization_client.grantPermissions(subject_user, target, access_user)
+        
+        target_perms = self.authorization_client.getPermissions(target)
+        assert True in [s == subject_group for s in target_perms[AccessType.EXECUTE]]
+        assert True in [s == subject_user for s in target_perms[AccessType.EXECUTE]]
+        assert True in [s == subject_user for s in target_perms[AccessType.READ]]
+        
+        group_perms = self.authorization_client.getGrantedPermissionsForGroup(GROUP_ID)
+        assert len(group_perms) == 1
+        assert group_perms[0].target == target
+        assert group_perms[0].access == access_group
+        
+        user_perms = self.authorization_client.getGrantedPermissionsForUser(USER_ID)
+        assert len(user_perms) == 1
+        assert user_perms[0].target == target
+        assert sorted(user_perms[0].access) == sorted(access_user)
+        
+        self.authorization_client.removePermissions(subject_group, target, access_group)
+        self.authorization_client.removePermissions(subject_user, target, access_user)
+        target_perms = self.authorization_client.getPermissions(target)
+        
+        assert True not in [s == subject_group for s in target_perms[AccessType.EXECUTE]]
+        assert True not in [s == subject_user for s in target_perms[AccessType.EXECUTE]]
+        assert True not in [s == subject_user for s in target_perms[AccessType.READ]]
         
         self.authorization_client.removeUserFromGroup(GROUP_ID, USER_ID)
         self.authorization_client.deleteUser(USER_ID)

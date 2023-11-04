@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.models.access_type import AccessType
+from conductor.client.orkes.models.granted_permission import GrantedPermission
 from conductor.client.orkes.models.access_key_response import AccessKeyResponse
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.rest import ApiException
@@ -100,9 +101,6 @@ class OrkesAuthorizationClient(AuthorizationClient):
     # def sendInviteEmail(self, userId: str, conductorUser: ConductorUser):
     #     pass
     
-    # def getGrantedPermissionsForUser(self, userId: str):
-    #     pass
-    
     # Groups
     
     def upsertGroup(self, upsertGroupRequest: UpsertGroupRequest, groupId: str) -> Group:
@@ -134,10 +132,25 @@ class OrkesAuthorizationClient(AuthorizationClient):
     def removeUserFromGroup(self, groupId: str, userId: str):
         self.groupResourceApi.remove_user_from_group(groupId, userId)
     
-    # def getGrantedPermissionsForGroup(self, groupId: str):
-    #     return self.groupResourceApi.get_granted_permissions1(groupId)
-
     # Permissions
+    
+    def getGrantedPermissionsForGroup(self, groupId: str) -> List[GrantedPermission]:
+        granted_access_obj = self.groupResourceApi.get_granted_permissions1(groupId)
+        granted_permissions = []
+        for ga in granted_access_obj['grantedAccess']:
+            target = TargetRef(ga["target"] ["type"], ga["target"] ["id"])
+            access = ga["access"]
+            granted_permissions.append(GrantedPermission(target, access))
+        return granted_permissions
+    
+    def getGrantedPermissionsForUser(self, userId: str) -> List[GrantedPermission]:
+        granted_access_obj = self.userResourceApi.get_granted_permissions(userId)
+        granted_permissions = []
+        for ga in granted_access_obj['grantedAccess']:
+            target = TargetRef(ga["target"] ["type"], ga["target"] ["id"])
+            access = ga["access"]
+            granted_permissions.append(GrantedPermission(target, access))
+        return granted_permissions
     
     def getPermissions(self, target: TargetRef) -> Dict[str, List[SubjectRef]]:
         resp_obj = self.authorizationResourceApi.get_permissions(target.type.name, target.id)
