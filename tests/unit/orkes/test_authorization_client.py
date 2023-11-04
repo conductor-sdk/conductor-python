@@ -21,11 +21,17 @@ from conductor.client.http.models.conductor_application import ConductorApplicat
 from conductor.client.http.models.create_or_update_application_request import CreateOrUpdateApplicationRequest
 from conductor.client.orkes.models.access_type import AccessType
 from conductor.client.orkes.models.metadata_tag import MetadataTag
+from conductor.client.orkes.models.access_key import AccessKey
+from conductor.client.orkes.models.access_key_status import AccessKeyStatus
+from conductor.client.orkes.models.created_access_key import CreatedAccessKey
 from conductor.client.orkes.models.granted_permission import GrantedPermission
 from conductor.client.orkes.orkes_authorization_client import OrkesAuthorizationClient
 
 APP_ID = 'c6e75472'
 APP_NAME = 'ut_application_name'
+ACCESS_KEY_ID = '9c32f5b2-128d-42bd-988f-083857f4c541'
+ACCESS_KEY_ID_2 = 'be41f18c-be18-4c68-9847-8fd91f3c21bc'
+ACCESS_KEY_SECRET = 'iSEONALN8Lz91uXraPBcyEau28luuOtMGnGA7mUSbJTZ76fb'
 USER_ID = 'us_user@orkes.io'
 USER_UUID = 'ac8b5803-c391-4237-8d3d-90f74b07d5ad'
 USER_NAME = 'UT USER'
@@ -41,6 +47,11 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
         configuration = Configuration("http://localhost:8080/api")
         cls.authorization_client = OrkesAuthorizationClient(configuration)
         cls.conductor_application = ConductorApplication(APP_ID, APP_NAME)
+        cls.access_key = CreatedAccessKey(ACCESS_KEY_ID, ACCESS_KEY_SECRET)
+        cls.app_keys = [
+            AccessKey(ACCESS_KEY_ID, AccessKeyStatus.ACTIVE, 1698926045112),
+            AccessKey(ACCESS_KEY_ID_2, AccessKeyStatus.ACTIVE, 1699100552620)
+        ]
         cls.roles = [
             Role(
                 "USER", [
@@ -155,7 +166,51 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
         tags = [tag1, tag2]
         self.authorization_client.deleteApplicationTags(tags, APP_ID)
         mock.assert_called_with(tags, APP_ID)
+
+    @patch.object(ApplicationResourceApi, 'create_access_key')
+    def test_createAccessKey(self, mock):
+        mock.return_value = {
+            "id": ACCESS_KEY_ID,
+            "secret": ACCESS_KEY_SECRET
+        }
+        created_key = self.authorization_client.createAccessKey(APP_ID)
+        mock.assert_called_with(APP_ID)
+        self.assertEqual(created_key, self.access_key)
+
+    @patch.object(ApplicationResourceApi, 'get_access_keys')
+    def test_getAccessKeys(self, mock):
+        mock.return_value = [
+            {
+                "id": ACCESS_KEY_ID,
+                "createdAt": 1698926045112,
+                "status": "ACTIVE"
+            },
+            {
+                "id": ACCESS_KEY_ID_2,
+                "createdAt": 1699100552620,
+                "status": "ACTIVE"
+            }
+        ]
+        access_keys = self.authorization_client.getAccessKeys(APP_ID)
+        mock.assert_called_with(APP_ID)
+        self.assertListEqual(access_keys, self.app_keys)
     
+    @patch.object(ApplicationResourceApi, 'toggle_access_key_status')
+    def test_toggleAccessKeyStatus(self, mock):
+        mock.return_value = {
+            "id": ACCESS_KEY_ID,
+            "createdAt": 1698926045112,
+            "status": "INACTIVE"
+        }
+        access_key = self.authorization_client.toggleAccessKeyStatus(APP_ID, ACCESS_KEY_ID)
+        mock.assert_called_with(APP_ID, ACCESS_KEY_ID)
+        self.assertEqual(access_key.status, AccessKeyStatus.INACTIVE)
+        
+    @patch.object(ApplicationResourceApi, 'delete_access_key')
+    def test_deleteAccessKey(self, mock):
+        self.authorization_client.deleteAccessKey(APP_ID, ACCESS_KEY_ID)
+        mock.assert_called_with(APP_ID, ACCESS_KEY_ID)
+
     @patch.object(UserResourceApi, 'upsert_user')
     def test_upsertUser(self, mock):
         upsertReq = UpsertUserRequest(USER_NAME, ["ADMIN"])

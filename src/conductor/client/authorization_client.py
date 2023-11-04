@@ -3,9 +3,10 @@ from typing import Dict, List, Optional
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.models.access_type import AccessType
 from conductor.client.orkes.models.granted_permission import GrantedPermission
-from conductor.client.orkes.models.access_key_response import AccessKeyResponse
+from conductor.client.orkes.models.access_key import AccessKey
+from conductor.client.orkes.models.created_access_key import CreatedAccessKey
 from conductor.client.http.models.group import Group
-from conductor.client.http.models.target_ref import TargetRef, TargetType
+from conductor.client.http.models.target_ref import TargetRef
 from conductor.client.http.models.subject_ref import SubjectRef
 from conductor.client.http.models.conductor_user import ConductorUser
 from conductor.client.http.models.conductor_application import ConductorApplication
@@ -63,21 +64,21 @@ class AuthorizationClient(ABC):
     def deleteApplicationTags(self, tags: List[MetadataTag], applicationId: str):
         pass
 
-    # @abstractmethod
-    # def createAccessKey(self, applicationId: str) -> AccessKeyResponse:
-    #     pass
+    @abstractmethod
+    def createAccessKey(self, applicationId: str) -> CreatedAccessKey:
+        pass
     
-    # @abstractmethod
-    # def getAccessKeys(self, applicationId: str) -> List[AccessKeyResponse]:
-    #     pass
+    @abstractmethod
+    def getAccessKeys(self, applicationId: str) -> List[AccessKey]:
+        pass
     
-    # @abstractmethod
-    # def toggleAccessKeyStatus(self, applicationId: str, keyId: str) -> AccessKeyResponse:
-    #     pass
+    @abstractmethod
+    def toggleAccessKeyStatus(self, applicationId: str, keyId: str) -> AccessKey:
+        pass
 
-    # @abstractmethod
-    # def deleteAccessKey(self, applicationId: str, keyId: str):
-    #     pass
+    @abstractmethod
+    def deleteAccessKey(self, applicationId: str, keyId: str):
+        pass
     
     # Users
     @abstractmethod
@@ -95,10 +96,6 @@ class AuthorizationClient(ABC):
     @abstractmethod
     def deleteUser(self, userId: str):
         pass
-    
-    # @abstractmethod
-    # def sendInviteEmail(self, userId: str, conductorUser: ConductorUser):
-    #     pass
     
     # Groups
     @abstractmethod
@@ -130,6 +127,13 @@ class AuthorizationClient(ABC):
         pass
 
     # Permissions
+    @abstractmethod
+    def grantPermissions(self, subject: SubjectRef, target: TargetRef, access: List[AccessType]):
+        pass
+    
+    @abstractmethod
+    def getPermissions(self, target: TargetRef) -> Dict[str, List[SubjectRef]]:
+        pass
 
     @abstractmethod
     def getGrantedPermissionsForGroup(self, groupId: str) -> List[GrantedPermission]:
@@ -137,14 +141,6 @@ class AuthorizationClient(ABC):
 
     @abstractmethod
     def getGrantedPermissionsForUser(self, userId: str) -> List[GrantedPermission]:
-        pass
-
-    @abstractmethod
-    def getPermissions(self, target: TargetRef) -> Dict[str, List[SubjectRef]]:
-        pass
-    
-    @abstractmethod
-    def grantPermissions(self, subject: SubjectRef, target: TargetRef, access: List[AccessType]):
         pass
 
     @abstractmethod

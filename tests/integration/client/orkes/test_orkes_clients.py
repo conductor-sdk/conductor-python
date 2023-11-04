@@ -5,6 +5,7 @@ from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.simple_task import SimpleTask
 from conductor.client.orkes.models.access_type import AccessType
+from conductor.client.orkes.models.access_key_status import AccessKeyStatus
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.orkes_metadata_client import OrkesMetadataClient
 from conductor.client.orkes.orkes_workflow_client import OrkesWorkflowClient
@@ -197,6 +198,17 @@ class TestOrkesClients:
         self.authorization_client.deleteApplicationTags(tags, created_app.id)
         fetched_tags = self.authorization_client.getApplicationTags(created_app.id)
         assert len(fetched_tags) == 0
+        
+        created_access_key = self.authorization_client.createAccessKey(created_app.id)
+        access_keys = self.authorization_client.getAccessKeys(created_app.id)
+        assert(access_keys[0].id == created_access_key.id)
+        assert(access_keys[0].status == AccessKeyStatus.ACTIVE)
+        
+        access_key = self.authorization_client.toggleAccessKeyStatus(created_app.id, created_access_key.id)
+        access_keys = self.authorization_client.getAccessKeys(created_app.id)
+        assert(access_keys[0].status == AccessKeyStatus.INACTIVE)
+        
+        self.authorization_client.deleteAccessKey(created_app.id, created_access_key.id)
         
         self.authorization_client.deleteApplication(created_app.id)
 

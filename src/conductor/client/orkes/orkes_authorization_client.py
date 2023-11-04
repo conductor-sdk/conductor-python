@@ -2,7 +2,8 @@ from typing import Dict, List, Optional
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.models.access_type import AccessType
 from conductor.client.orkes.models.granted_permission import GrantedPermission
-from conductor.client.orkes.models.access_key_response import AccessKeyResponse
+from conductor.client.orkes.models.access_key import AccessKey
+from conductor.client.orkes.models.created_access_key import CreatedAccessKey
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.rest import ApiException
 from conductor.client.http.api_client import ApiClient
@@ -69,17 +70,27 @@ class OrkesAuthorizationClient(AuthorizationClient):
     def deleteApplicationTags(self, tags: List[MetadataTag], applicationId: str):
         self.applicationResourceApi.delete_tags_for_application(tags, applicationId)
 
-    # def createAccessKey(self, applicationId: str) -> AccessKeyResponse:
-    #     return self.applicationResourceApi.create_access_key(applicationId)
+    def createAccessKey(self, applicationId: str) -> CreatedAccessKey:
+        key_obj = self.applicationResourceApi.create_access_key(applicationId)
+        created_access_key = CreatedAccessKey(key_obj["id"], key_obj["secret"])
+        return created_access_key
     
-    # def getAccessKeys(self, applicationId: str) -> List[AccessKeyResponse]:
-    #     return self.applicationResourceApi.get_access_keys(applicationId)
+    def getAccessKeys(self, applicationId: str) -> List[AccessKey]:
+        access_keys_obj = self.applicationResourceApi.get_access_keys(applicationId)
+        
+        access_keys = []
+        for key_obj in access_keys_obj:
+            access_key = AccessKey(key_obj["id"], key_obj["status"], key_obj["createdAt"])
+            access_keys.append(access_key)
     
-    # def toggleAccessKeyStatus(self, applicationId: str, keyId: str) -> AccessKeyResponse:
-    #     return self.applicationResourceApi.toggle_access_key_status(applicationId, keyId)
+        return access_keys
+    
+    def toggleAccessKeyStatus(self, applicationId: str, keyId: str) -> AccessKey:
+        key_obj = self.applicationResourceApi.toggle_access_key_status(applicationId, keyId)
+        return AccessKey(key_obj["id"], key_obj["status"], key_obj["createdAt"])
 
-    # def deleteAccessKey(self, applicationId: str, keyId: str):
-    #     self.applicationResourceApi.delete_access_key(applicationId, keyId)
+    def deleteAccessKey(self, applicationId: str, keyId: str):
+        self.applicationResourceApi.delete_access_key(applicationId, keyId)
     
     # Users
     
@@ -97,9 +108,6 @@ class OrkesAuthorizationClient(AuthorizationClient):
 
     def deleteUser(self, userId: str):
         self.userResourceApi.delete_user(userId)
-    
-    # def sendInviteEmail(self, userId: str, conductorUser: ConductorUser):
-    #     pass
     
     # Groups
     
@@ -134,6 +142,22 @@ class OrkesAuthorizationClient(AuthorizationClient):
     
     # Permissions
     
+    def grantPermissions(self, subject: SubjectRef, target: TargetRef, access: List[AccessType]):
+        req = AuthorizationRequest(subject, target, access)
+        self.authorizationResourceApi.grant_permissions(req)
+        
+    def getPermissions(self, target: TargetRef) -> Dict[str, List[SubjectRef]]:
+        resp_obj = self.authorizationResourceApi.get_permissions(target.type.name, target.id)
+        permissions = {}
+        for access_type, subjects in resp_obj.items():
+            subject_list = []
+            for sub in subjects:
+                subject_list.append(
+                    SubjectRef(sub["type"], sub["id"])
+                )
+            permissions[access_type] = subject_list
+        return permissions
+
     def getGrantedPermissionsForGroup(self, groupId: str) -> List[GrantedPermission]:
         granted_access_obj = self.groupResourceApi.get_granted_permissions1(groupId)
         granted_permissions = []
@@ -151,22 +175,6 @@ class OrkesAuthorizationClient(AuthorizationClient):
             access = ga["access"]
             granted_permissions.append(GrantedPermission(target, access))
         return granted_permissions
-    
-    def getPermissions(self, target: TargetRef) -> Dict[str, List[SubjectRef]]:
-        resp_obj = self.authorizationResourceApi.get_permissions(target.type.name, target.id)
-        permissions = {}
-        for access_type, subjects in resp_obj.items():
-            subject_list = []
-            for sub in subjects:
-                subject_list.append(
-                    SubjectRef(sub["type"], sub["id"])
-                )
-            permissions[access_type] = subject_list
-        return permissions
-    
-    def grantPermissions(self, subject: SubjectRef, target: TargetRef, access: List[AccessType]):
-        req = AuthorizationRequest(subject, target, access)
-        self.authorizationResourceApi.grant_permissions(req)
 
     def removePermissions(self, subject: SubjectRef, target: TargetRef, access: List[AccessType]):
         req = AuthorizationRequest(subject, target, access)
