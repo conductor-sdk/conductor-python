@@ -44,16 +44,8 @@ class OrkesTaskClient(TaskClient):
 
         return self.taskResourceApi.batch_poll(taskType, **kwargs)
 
-    def getTask(self, taskId: str) -> (Optional[Task], str):
-        task, error = None, ""
-
-        try:
-            task = self.taskResourceApi.get_task(taskId)
-        except ApiException as e:
-            message = e.reason if e.reason else e.body
-            error = message
-
-        return task, error
+    def getTask(self, taskId: str) -> Task:
+        return self.taskResourceApi.get_task(taskId)
 
     def updateTask(self, taskResult: TaskResult) -> str:
         return self.taskResourceApi.update_task(taskResult)

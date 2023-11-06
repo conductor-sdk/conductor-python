@@ -12,9 +12,9 @@ from conductor.client.workflow_client import WorkflowClient
 class OrkesWorkflowClient(WorkflowClient):
     def __init__(
         self,
-                 configuration: Configuration, 
-                 connectionTimeout: Optional[int] = None, 
-                 readTimeout: Optional[int] = None
+        configuration: Configuration,
+        connectionTimeout: Optional[int] = None,
+        readTimeout: Optional[int] = None
         ):
         api_client = ApiClient(configuration)
         self.workflowResourceApi = WorkflowResourceApi(api_client)
@@ -70,17 +70,8 @@ class OrkesWorkflowClient(WorkflowClient):
         kwargs = { "reason" : reason } if reason else {}
         self.workflowResourceApi.terminate1(workflowId, **kwargs)
 
-    def getWorkflow(self, workflowId: str, includeTasks: Optional[bool] = True) -> (Optional[Workflow], str):
-        workflow = None
-        error = None
-
-        try:
-            workflow = self.workflowResourceApi.get_execution_status(workflowId, include_tasks=includeTasks)
-        except ApiException as e:
-            message = e.reason if e.reason else e.body
-            error = message
-
-        return workflow, error
+    def getWorkflow(self, workflowId: str, includeTasks: Optional[bool] = True) -> Workflow:
+        return self.workflowResourceApi.get_execution_status(workflowId, include_tasks=includeTasks)
 
     def deleteWorkflow(self, workflowId: str, archiveWorkflow: Optional[bool] = True):
         self.workflowResourceApi.delete(workflowId, archive_workflow=archiveWorkflow)

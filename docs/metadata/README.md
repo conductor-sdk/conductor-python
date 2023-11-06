@@ -69,7 +69,7 @@ metadata_client.registerWorkflowDef(workflowDef, True)
 You should be able to get your workflow definiton that you added previously:
 
 ```python
-wfDef, errorStr = metadata_client.getWorkflowDef('python_workflow_example_from_code')
+wfDef = metadata_client.getWorkflowDef('python_workflow_example_from_code')
 ```
 
 In case there is an error in fetching the definition, errorStr will be populated.

@@ -27,19 +27,15 @@ class OrkesMetadataClient(MetadataClient):
     def unregisterWorkflowDef(self, name: str, version: int):
         self.metadataResourceApi.unregister_workflow_def(name, version)
 
-    def getWorkflowDef(self, name: str, version: Optional[int] = None) -> (Optional[WorkflowDef], str):
-        workflow, error = None, ""
+    def getWorkflowDef(self, name: str, version: Optional[int] = None) -> WorkflowDef:
+        workflow = None
 
-        try:
-            if version:
-                workflow = self.metadataResourceApi.get(name, version=version)
-            else:
-                workflow = self.metadataResourceApi.get(name)
-        except ApiException as e:
-            message = e.reason if e.reason else e.body
-            error = "Error in fetching workflow: " + message
+        if version:
+            workflow = self.metadataResourceApi.get(name, version=version)
+        else:
+            workflow = self.metadataResourceApi.get(name)
             
-        return workflow, error
+        return workflow
 
     def getAllWorkflowDefs(self) -> List[WorkflowDef]:
         return self.metadataResourceApi.get_all_workflows()

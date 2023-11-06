@@ -33,7 +33,7 @@ batchPolledTasks = task_client.batchPollTasks("TASK_TYPE")
 
 ### Get Task
 ```python
-task, error = task_client.getTask("task_id")
+task = task_client.getTask("task_id")
 ```
 
 ### Updating Task Status

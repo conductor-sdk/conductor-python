@@ -23,7 +23,7 @@ class TaskClient(ABC):
         pass
 
     @abstractmethod
-    def getTask(self, taskId: str) -> (Optional[Task], str):
+    def getTask(self, taskId: str) -> Task:
         pass
 
     @abstractmethod

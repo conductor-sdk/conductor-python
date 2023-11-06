@@ -17,7 +17,7 @@ class MetadataClient(ABC):
         pass
 
     @abstractmethod
-    def getWorkflowDef(self, name: str, version: Optional[int]) -> (Optional[WorkflowDef], str):
+    def getWorkflowDef(self, name: str, version: Optional[int]) -> WorkflowDef:
         pass
 
     @abstractmethod

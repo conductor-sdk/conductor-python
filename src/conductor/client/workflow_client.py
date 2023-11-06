@@ -15,7 +15,7 @@ class WorkflowClient(ABC):
         pass
 
     @abstractmethod
-    def getWorkflow(self, workflowId: str, includeTasks: Optional[bool] = True) -> (Optional[Workflow], str):
+    def getWorkflow(self, workflowId: str, includeTasks: Optional[bool] = True) -> Workflow:
         pass
 
     @abstractmethod

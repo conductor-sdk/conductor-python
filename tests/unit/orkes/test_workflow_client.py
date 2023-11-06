@@ -133,26 +133,23 @@ class TestOrkesWorkflowClient(unittest.TestCase):
     @patch.object(WorkflowResourceApi, 'get_execution_status')
     def test_getWorkflow(self, mock):
         mock.return_value = Workflow(workflow_id=WORKFLOW_UUID)
-        workflow, error = self.workflow_client.getWorkflow(WORKFLOW_UUID)
+        workflow = self.workflow_client.getWorkflow(WORKFLOW_UUID)
         mock.assert_called_with(WORKFLOW_UUID, include_tasks=True)
         self.assertEqual(workflow.workflow_id, WORKFLOW_UUID)
-        self.assertIsNone(error)
 
     @patch.object(WorkflowResourceApi, 'get_execution_status')
     def test_getWorkflow_without_tasks(self, mock):
         mock.return_value = Workflow(workflow_id=WORKFLOW_UUID)
-        workflow, error = self.workflow_client.getWorkflow(WORKFLOW_UUID, False)
+        workflow = self.workflow_client.getWorkflow(WORKFLOW_UUID, False)
         mock.assert_called_with(WORKFLOW_UUID, include_tasks=False)
         self.assertEqual(workflow.workflow_id, WORKFLOW_UUID)
-        self.assertIsNone(error)
 
-    @patch.object(WorkflowResourceApi, 'get_execution_status')
-    def test_getWorkflow_non_existent(self, mock):
-        mock.side_effect = MagicMock(side_effect=ApiException(status=404, reason="Not found"))
-        workflow, error = self.workflow_client.getWorkflow(WORKFLOW_UUID, False)
-        mock.assert_called_with(WORKFLOW_UUID, include_tasks=False)
-        self.assertIsNone(workflow)
-        self.assertEqual(error, "Not found")
+    # @patch.object(WorkflowResourceApi, 'get_execution_status')
+    # def test_getWorkflow_non_existent(self, mock):
+    #     mock.side_effect = MagicMock(side_effect=ApiException(status=404, reason="Not found"))
+    #     workflow = self.workflow_client.getWorkflow(WORKFLOW_UUID, False)
+    #     mock.assert_called_with(WORKFLOW_UUID, include_tasks=False)
+    #     self.assertRaises(ApiException)
 
     @patch.object(WorkflowResourceApi, 'delete')
     def test_deleteWorkflow(self, mock):

@@ -65,12 +65,12 @@ workflow_id = workflow_client.executeWorkflow(
 
 #### Exclude tasks
 ```python
-workflow, error = workflow_client.getWorkflow(workflow_id, False)
+workflow = workflow_client.getWorkflow(workflow_id, False)
 ```
 
 #### Include tasks
 ```python
-workflow, error = workflow_client.getWorkflow(workflow_id, True)
+workflow = workflow_client.getWorkflow(workflow_id, True)
 ```
 
 ### Workflow Execution Management
