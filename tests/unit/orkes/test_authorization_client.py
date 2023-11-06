@@ -27,7 +27,7 @@ from conductor.client.orkes.models.created_access_key import CreatedAccessKey
 from conductor.client.orkes.models.granted_permission import GrantedPermission
 from conductor.client.orkes.orkes_authorization_client import OrkesAuthorizationClient
 
-APP_ID = 'c6e75472'
+APP_ID = '5d860b70-a429-4b20-8d28-6b5198155882'
 APP_NAME = 'ut_application_name'
 ACCESS_KEY_ID = '9c32f5b2-128d-42bd-988f-083857f4c541'
 ACCESS_KEY_ID_2 = 'be41f18c-be18-4c68-9847-8fd91f3c21bc'
@@ -46,7 +46,7 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
     def setUpClass(cls):
         configuration = Configuration("http://localhost:8080/api")
         cls.authorization_client = OrkesAuthorizationClient(configuration)
-        cls.conductor_application = ConductorApplication(APP_ID, APP_NAME)
+        cls.conductor_application = ConductorApplication(APP_ID, APP_NAME, USER_ID)
         cls.access_key = CreatedAccessKey(ACCESS_KEY_ID, ACCESS_KEY_SECRET)
         cls.app_keys = [
             AccessKey(ACCESS_KEY_ID, AccessKeyStatus.ACTIVE, 1698926045112),
@@ -100,14 +100,25 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
     @patch.object(ApplicationResourceApi, 'create_application')
     def test_createApplication(self, mock):
         createReq = CreateOrUpdateApplicationRequest()
-        mock.return_value = self.conductor_application
+        mock.return_value = {
+            "id": APP_ID,
+            "name": APP_NAME,
+            "createdBy": USER_ID,
+            "updatedBy": USER_ID,
+            "createTime": 1699236095031,
+            "updateTime": 1699236095031
+        }
         app = self.authorization_client.createApplication(createReq)
-        self.assertEqual(app, self.conductor_application)
         mock.assert_called_with(createReq)
+        self.assertEqual(app, self.conductor_application)
 
     @patch.object(ApplicationResourceApi, 'get_application')
     def test_getApplication(self, mock):
-        mock.return_value = self.conductor_application
+        mock.return_value = {
+            "id": APP_ID,
+            "name": APP_NAME,
+            "createdBy": USER_ID,
+        }
         app = self.authorization_client.getApplication(APP_ID)
         mock.assert_called_with(APP_ID)
         self.assertEqual(app, self.conductor_application)
@@ -127,7 +138,14 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
     @patch.object(ApplicationResourceApi, 'update_application')
     def test_updateApplication(self, mock):
         updateReq = CreateOrUpdateApplicationRequest(APP_NAME)
-        mock.return_value = self.conductor_application
+        mock.return_value = {
+            "id": APP_ID,
+            "name": APP_NAME,
+            "createdBy": USER_ID,
+            "updatedBy": USER_ID,
+            "createTime": 1699236095031,
+            "updateTime": 1699236095031
+        }
         app = self.authorization_client.updateApplication(updateReq, APP_ID)
         self.assertEqual(app, self.conductor_application)
         mock.assert_called_with(updateReq, APP_ID)
