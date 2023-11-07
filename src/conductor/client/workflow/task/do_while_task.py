@@ -18,13 +18,16 @@ class DoWhileTask(TaskInterface):
             task_type=TaskType.DO_WHILE,
         )
         self._loop_condition = deepcopy(termination_condition)
-        self._loop_over = deepcopy(tasks)
+        if isinstance(tasks, List):
+            self._loop_over = deepcopy(tasks)
+        else:
+            self._loop_over = [deepcopy(tasks)]
 
     def to_workflow_task(self) -> WorkflowTask:
         workflow = super().to_workflow_task()
         workflow.loop_condition = self._loop_condition
         workflow.loop_over = get_task_interface_list_as_workflow_task_list(
-            self._loop_over,
+            *self._loop_over,
         )
         return workflow
 

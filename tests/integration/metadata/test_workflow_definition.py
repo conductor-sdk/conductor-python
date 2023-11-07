@@ -116,6 +116,12 @@ def generate_do_while_task() -> LoopTask:
         tasks=generate_switch_task(),
     )
 
+def generate_do_while_task_multiple() -> LoopTask:
+    return LoopTask(
+        task_ref_name="loop_until_success_multiple",
+        iterations=1,
+        tasks=[generate_simple_task(i) for i in range(13, 14)],
+    )
 
 def generate_fork_task(workflow_executor: WorkflowExecutor) -> ForkTask:
     return ForkTask(
@@ -123,6 +129,7 @@ def generate_fork_task(workflow_executor: WorkflowExecutor) -> ForkTask:
         forked_tasks=[
             [
                 generate_do_while_task(),
+                generate_do_while_task_multiple(),
                 generate_sub_workflow_inline_task(workflow_executor)
             ],
             [generate_simple_task(i) for i in range(3, 5)]
