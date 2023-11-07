@@ -1,22 +1,18 @@
 from typing import Optional, List
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.rest import ApiException
-from conductor.client.http.api_client import ApiClient
-
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.http.models.task_def import TaskDef
 from conductor.client.http.models.tag_string import TagString
-from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
-from conductor.client.orkes.api.tags_api import TagsApi
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.models.ratelimit_tag import RateLimitTag
 from conductor.client.metadata_client import MetadataClient
+from conductor.client.orkes.orkes_base_client import OrkesBaseClient
+from conductor.client.helpers.api_exception_handler import api_exception_handler, for_all_methods
 
-class OrkesMetadataClient(MetadataClient):
+@for_all_methods(api_exception_handler, ["__init__"])
+class OrkesMetadataClient(OrkesBaseClient, MetadataClient):
     def __init__(self, configuration: Configuration):
-        api_client = ApiClient(configuration)
-        self.metadataResourceApi = MetadataResourceApi(api_client)
-        self.tagsApi = TagsApi(api_client)
+        super(OrkesMetadataClient, self).__init__(configuration)
         
     def registerWorkflowDef(self, workflowDef: WorkflowDef, overwrite: Optional[bool] = True):
         self.metadataResourceApi.create(workflowDef, overwrite=overwrite)
@@ -29,12 +25,11 @@ class OrkesMetadataClient(MetadataClient):
 
     def getWorkflowDef(self, name: str, version: Optional[int] = None) -> WorkflowDef:
         workflow = None
-
         if version:
             workflow = self.metadataResourceApi.get(name, version=version)
         else:
             workflow = self.metadataResourceApi.get(name)
-            
+
         return workflow
 
     def getAllWorkflowDefs(self) -> List[WorkflowDef]:

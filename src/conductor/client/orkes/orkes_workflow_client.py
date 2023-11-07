@@ -1,23 +1,20 @@
 from typing import Optional, List
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.rest import ApiException
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.workflow_run import WorkflowRun
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
-from conductor.client.http.api_client import ApiClient
-from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
 from conductor.client.workflow_client import WorkflowClient
+from conductor.client.orkes.orkes_base_client import OrkesBaseClient
+from conductor.client.helpers.api_exception_handler import api_exception_handler, for_all_methods
 
-class OrkesWorkflowClient(WorkflowClient):
+@for_all_methods(api_exception_handler, ["__init__"])
+class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
     def __init__(
         self,
-        configuration: Configuration,
-        connectionTimeout: Optional[int] = None,
-        readTimeout: Optional[int] = None
+        configuration: Configuration
         ):
-        api_client = ApiClient(configuration)
-        self.workflowResourceApi = WorkflowResourceApi(api_client)
+        super(OrkesWorkflowClient, self).__init__(configuration)
 
     def startWorkflowByName(
         self,

@@ -1,5 +1,6 @@
 import logging
 import unittest
+import json
 
 from unittest.mock import Mock, patch, MagicMock
 from conductor.client.http.rest import ApiException
@@ -15,7 +16,6 @@ from conductor.client.http.models.task_def import TaskDef
 
 WORKFLOW_NAME = 'ut_wf'
 TASK_NAME = 'ut_task'
-ERROR_BODY= '{"message":"No such workflow found by name"}'
 
 class TestOrkesMetadataClient(unittest.TestCase):
     
@@ -82,12 +82,13 @@ class TestOrkesMetadataClient(unittest.TestCase):
         self.assertEqual(wf, self.workflowDef)
         mock.assert_called_with(WORKFLOW_NAME, version=1)
     
-    # @patch.object(MetadataResourceApi, 'get')
-    # def test_getWorkflowDef_non_existent(self, mock):
-    #     mock.side_effect = MagicMock(side_effect=ApiException(status=404, reason=ERROR_BODY))
-    #     wf, error = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
-    #     self.assertIsNone(wf, "workflow is not None")
-    #     self.assertEqual(error, "Error in fetching workflow: " + ERROR_BODY)
+    @patch.object(MetadataResourceApi, 'get')
+    def test_getWorkflowDef_non_existent(self, mock):
+        message = 'No such workflow found by name:' + WORKFLOW_NAME + ', version: null'
+        error_body = { 'status': 404, 'message': message }
+        mock.side_effect = MagicMock(side_effect=ApiException(body=json.dumps(error_body)))
+        resp = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
+        self.assertEqual(resp, { 'error': error_body })
         
     @patch.object(MetadataResourceApi, 'get_all_workflows')
     def test_getAllWorkflowDefs(self, mock):

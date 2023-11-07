@@ -1,32 +1,24 @@
 from typing import Optional, List
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.rest import ApiException
-from conductor.client.http.api_client import ApiClient
-from conductor.client.http.api.scheduler_resource_api import SchedulerResourceApi
 from conductor.client.orkes.api.tags_api import TagsApi
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.http.models.workflow_schedule import WorkflowSchedule
 from conductor.client.scheduler_client import SchedulerClient
 from conductor.client.http.models.save_schedule_request import SaveScheduleRequest
 from conductor.client.http.models.search_result_workflow_schedule_execution_model import SearchResultWorkflowScheduleExecutionModel
+from conductor.client.orkes.orkes_base_client import OrkesBaseClient
+from conductor.client.helpers.api_exception_handler import api_exception_handler, for_all_methods
 
-class OrkesSchedulerClient(SchedulerClient):
+@for_all_methods(api_exception_handler, ["__init__"])
+class OrkesSchedulerClient(OrkesBaseClient, SchedulerClient):
     def __init__(self, configuration: Configuration):
-        api_client = ApiClient(configuration)
-        self.schedulerResourceApi = SchedulerResourceApi(api_client)
-        self.tagsApi = TagsApi(api_client)
+        super(OrkesSchedulerClient, self).__init__(configuration)
         
     def saveSchedule(self, saveScheduleRequest: SaveScheduleRequest):
         self.schedulerResourceApi.save_schedule(saveScheduleRequest)
     
-    def getSchedule(self, name: str) -> (Optional[WorkflowSchedule], str):
-        schedule, error = None, ""
-        try:
-            schedule = self.schedulerResourceApi.get_schedule(name)
-        except ApiException as e:
-            message = e.reason if e.reason else e.body
-            error = "Error in fetching schedule: " + message
-        return schedule, error
+    def getSchedule(self, name: str) -> WorkflowSchedule:
+        return self.schedulerResourceApi.get_schedule(name)
 
     def getAllSchedules(self, workflowName: Optional[str] = None) -> List[WorkflowSchedule]:
         kwargs = {}

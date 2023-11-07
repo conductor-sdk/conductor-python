@@ -5,30 +5,23 @@ from conductor.client.orkes.models.granted_permission import GrantedPermission
 from conductor.client.orkes.models.access_key import AccessKey
 from conductor.client.orkes.models.created_access_key import CreatedAccessKey
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.rest import ApiException
-from conductor.client.http.api_client import ApiClient
-from conductor.client.http.api.user_resource_api import UserResourceApi
-from conductor.client.http.api.group_resource_api import GroupResourceApi
-from conductor.client.http.api.application_resource_api import ApplicationResourceApi
-from conductor.client.http.api.authorization_resource_api import AuthorizationResourceApi
 from conductor.client.http.models.group import Group
 from conductor.client.http.models.subject_ref import SubjectRef
 from conductor.client.http.models.conductor_user import ConductorUser
-from conductor.client.http.models.target_ref import TargetRef, TargetType
+from conductor.client.http.models.target_ref import TargetRef
 from conductor.client.http.models.conductor_application import ConductorApplication
 from conductor.client.http.models.upsert_user_request import UpsertUserRequest
 from conductor.client.http.models.upsert_group_request import UpsertGroupRequest
 from conductor.client.http.models.authorization_request import AuthorizationRequest
 from conductor.client.http.models.create_or_update_application_request import CreateOrUpdateApplicationRequest
 from conductor.client.authorization_client import AuthorizationClient
+from conductor.client.orkes.orkes_base_client import OrkesBaseClient
+from conductor.client.helpers.api_exception_handler import api_exception_handler, for_all_methods
 
-class OrkesAuthorizationClient(AuthorizationClient):
+@for_all_methods(api_exception_handler, ["__init__"])
+class OrkesAuthorizationClient(OrkesBaseClient, AuthorizationClient):
     def __init__(self, configuration: Configuration):
-        self.api_client = ApiClient(configuration)
-        self.applicationResourceApi = ApplicationResourceApi(self.api_client)
-        self.userResourceApi = UserResourceApi(self.api_client)
-        self.groupResourceApi = GroupResourceApi(self.api_client)
-        self.authorizationResourceApi = AuthorizationResourceApi(self.api_client)
+        super(OrkesAuthorizationClient, self).__init__(configuration)
 
     # Applications
     def createApplication(

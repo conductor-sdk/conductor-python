@@ -70,9 +70,8 @@ class TestOrkesClients:
         self.__test_update_workflow_definition(workflow)
         self.__test_workflow_execution_lifecycle()
         self.__test_workflow_tags()
-        # self.__test_workflow_rate_limit()
         self.__test_unregister_workflow_definition()
-        # self.__test_get_invalid_workflow_definition()
+        self.__test_get_invalid_workflow_definition()
 
     def test_task_lifecycle(self):
         taskDef = TaskDef(
@@ -132,7 +131,7 @@ class TestOrkesClients:
 
         self.scheduler_client.saveSchedule(saveScheduleRequest)
 
-        schedule, _ = self.scheduler_client.getSchedule(SCHEDULE_NAME)
+        schedule = self.scheduler_client.getSchedule(SCHEDULE_NAME)
         
         assert schedule['name'] == SCHEDULE_NAME
         
@@ -147,7 +146,7 @@ class TestOrkesClients:
         
         self.scheduler_client.resumeSchedule(SCHEDULE_NAME)
         
-        schedule, _ = self.scheduler_client.getSchedule(SCHEDULE_NAME)
+        schedule = self.scheduler_client.getSchedule(SCHEDULE_NAME)
         assert schedule['paused'] == False
         
         times = self.scheduler_client.getNextFewScheduleExecutionTimes("0 */5 * ? * *", limit=1)
@@ -308,9 +307,10 @@ class TestOrkesClients:
         self.metadata_client.unregisterWorkflowDef(WORKFLOW_NAME, 1)
 
     def __test_get_invalid_workflow_definition(self):
-        wfDef, error = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
-        assert wfDef == None
-        assert error != None
+        resp = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
+        message = 'No such workflow found by name: ' + WORKFLOW_NAME + ', version: null'
+        error = { 'status': 404, 'message': message }
+        assert resp['error'] == error
 
     def __test_task_tags(self):
         tags = [

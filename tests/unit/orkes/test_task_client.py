@@ -30,8 +30,8 @@ class TestOrkesTaskClient(unittest.TestCase):
     def setUp(self):
         self.tasks = [
             Task(task_type=TaskType.SIMPLE, task_def_name=TASK_NAME, reference_task_name="simple_task_ref_1", task_id=TASK_ID),
-            Task(task_type=TaskType.SIMPLE, task_def_name=TASK_NAME, reference_task_name="simple_task_ref_1", task_id="task_id_2"),
-            Task(task_type=TaskType.SIMPLE, task_def_name=TASK_NAME, reference_task_name="simple_task_ref_1", task_id="task_id_3"),
+            Task(task_type=TaskType.SIMPLE, task_def_name=TASK_NAME, reference_task_name="simple_task_ref_2", task_id="task_id_2"),
+            Task(task_type=TaskType.SIMPLE, task_def_name=TASK_NAME, reference_task_name="simple_task_ref_3", task_id="task_id_3"),
         ]
         logging.disable(logging.CRITICAL)
 
@@ -82,7 +82,7 @@ class TestOrkesTaskClient(unittest.TestCase):
         mock.return_value = self.tasks[0]
         task = self.task_client.getTask(TASK_ID)
         mock.assert_called_with(TASK_ID)
-        self.assertEqual(task, self.tasks[0])
+        self.assertEqual(task.task_id, TASK_ID)
 
     # @patch.object(TaskResourceApi, 'get_task')
     # def test_getTask_non_existent(self, mock):

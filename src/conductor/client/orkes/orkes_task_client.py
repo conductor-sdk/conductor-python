@@ -1,20 +1,18 @@
 from typing import Optional, List
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.rest import ApiException
-from conductor.client.http.api_client import ApiClient
-from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_exec_log import TaskExecLog
-from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.task_client import TaskClient
 from conductor.client.http.models.workflow import Workflow
+from conductor.client.orkes.orkes_base_client import OrkesBaseClient
+from conductor.client.helpers.api_exception_handler import api_exception_handler, for_all_methods
 
-class OrkesTaskClient(TaskClient):
+@for_all_methods(api_exception_handler, ["__init__"])
+class OrkesTaskClient(OrkesBaseClient, TaskClient):
     def __init__(self, configuration: Configuration):
-        api_client = ApiClient(configuration)
-        self.taskResourceApi = TaskResourceApi(api_client)
-        
+        super(OrkesTaskClient, self).__init__(configuration)
+
     def pollTask(self, taskType: str, workerId: Optional[str] = None, domain: Optional[str] = None) -> Optional[Task]:
         kwargs = {}
         if workerId:
@@ -23,7 +21,7 @@ class OrkesTaskClient(TaskClient):
             kwargs.update({"domain": domain})
 
         return self.taskResourceApi.poll(taskType, **kwargs)
-    
+
     def batchPollTasks(
         self,
         taskType: str,
