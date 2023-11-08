@@ -16,7 +16,7 @@ from conductor.client.http.models.authorization_request import AuthorizationRequ
 from conductor.client.http.models.create_or_update_application_request import CreateOrUpdateApplicationRequest
 from conductor.client.authorization_client import AuthorizationClient
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
-from conductor.client.helpers.api_exception_handler import api_exception_handler, for_all_methods
+from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
 
 @for_all_methods(api_exception_handler, ["__init__"])
 class OrkesAuthorizationClient(OrkesBaseClient, AuthorizationClient):

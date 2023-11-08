@@ -6,7 +6,7 @@ from conductor.client.http.models.start_workflow_request import StartWorkflowReq
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
 from conductor.client.workflow_client import WorkflowClient
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
-from conductor.client.helpers.api_exception_handler import api_exception_handler, for_all_methods
+from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
 
 @for_all_methods(api_exception_handler, ["__init__"])
 class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):

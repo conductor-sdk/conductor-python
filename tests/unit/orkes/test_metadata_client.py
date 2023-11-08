@@ -13,6 +13,7 @@ from conductor.client.http.models.tag_string import TagString
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.models.ratelimit_tag import RateLimitTag
 from conductor.client.http.models.task_def import TaskDef
+from conductor.client.exceptions.api_error import APIError
 
 WORKFLOW_NAME = 'ut_wf'
 TASK_NAME = 'ut_task'
@@ -87,8 +88,8 @@ class TestOrkesMetadataClient(unittest.TestCase):
         message = 'No such workflow found by name:' + WORKFLOW_NAME + ', version: null'
         error_body = { 'status': 404, 'message': message }
         mock.side_effect = MagicMock(side_effect=ApiException(body=json.dumps(error_body)))
-        resp = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
-        self.assertEqual(resp, { 'error': error_body })
+        with self.assertRaises(APIError):
+            self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
         
     @patch.object(MetadataResourceApi, 'get_all_workflows')
     def test_getAllWorkflowDefs(self, mock):

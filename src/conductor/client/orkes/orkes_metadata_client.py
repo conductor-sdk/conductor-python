@@ -7,7 +7,7 @@ from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.models.ratelimit_tag import RateLimitTag
 from conductor.client.metadata_client import MetadataClient
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
-from conductor.client.helpers.api_exception_handler import api_exception_handler, for_all_methods
+from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
 
 @for_all_methods(api_exception_handler, ["__init__"])
 class OrkesMetadataClient(OrkesBaseClient, MetadataClient):

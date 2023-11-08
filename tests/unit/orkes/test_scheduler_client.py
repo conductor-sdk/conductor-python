@@ -1,8 +1,9 @@
 import logging
 import unittest
+import json
 
-from unittest.mock import Mock, patch, MagicMock
-from conductor.client.http.rest import ApiException, RESTResponse
+from unittest.mock import patch, MagicMock
+from conductor.client.http.rest import ApiException
 from conductor.client.orkes.orkes_scheduler_client import OrkesSchedulerClient
 from conductor.client.http.api.scheduler_resource_api import SchedulerResourceApi
 from conductor.client.configuration.configuration import Configuration
@@ -11,7 +12,7 @@ from conductor.client.http.models.workflow_schedule import WorkflowSchedule
 from conductor.client.http.models.save_schedule_request import SaveScheduleRequest
 from conductor.client.http.models.search_result_workflow_schedule_execution_model import SearchResultWorkflowScheduleExecutionModel
 from conductor.client.orkes.models.metadata_tag import MetadataTag
-from conductor.client.http.models.task_def import TaskDef
+from conductor.client.exceptions.api_error import APIError
 
 SCHEDULE_NAME = 'ut_schedule'
 WORKFLOW_NAME = 'ut_wf'
@@ -50,12 +51,13 @@ class TestOrkesSchedulerClient(unittest.TestCase):
         self.assertTrue(mock.called)
         mock.assert_called_with(SCHEDULE_NAME)
 
-    # @patch.object(SchedulerResourceApi, 'get_schedule')
-    # def test_getSchedule_non_existing(self, mock):
-    #     mock.side_effect = MagicMock(side_effect=ApiException(status=404, reason=ERROR_BODY))
-    #     schedule, error = self.scheduler_client.getSchedule("WRONG_SCHEDULE")
-    #     self.assertIsNone(schedule, "schedule is not None")
-    #     self.assertEqual(error, "Error in fetching schedule: " + ERROR_BODY)
+    @patch.object(SchedulerResourceApi, 'get_schedule')
+    def test_getSchedule_non_existing(self, mock):
+        error_body = { 'status': 404, 'message': 'Schedule not found' }
+        mock.side_effect = MagicMock(side_effect=ApiException(body=json.dumps(error_body)))
+        with self.assertRaises(APIError):
+            self.scheduler_client.getSchedule("WRONG_SCHEDULE")
+            mock.assert_called_with("WRONG_SCHEDULE")
         
     @patch.object(SchedulerResourceApi, 'get_all_schedules')
     def test_getAllSchedules(self, mock):

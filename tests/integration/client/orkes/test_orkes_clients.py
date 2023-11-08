@@ -24,6 +24,7 @@ from conductor.client.http.models.start_workflow_request import StartWorkflowReq
 from conductor.client.http.models.upsert_user_request import UpsertUserRequest
 from conductor.client.http.models.upsert_group_request import UpsertGroupRequest
 from conductor.client.http.models.create_or_update_application_request import CreateOrUpdateApplicationRequest
+from conductor.client.exceptions.api_error import APIError, APIErrorCode
 
 
 SUFFIX = str(uuid())
@@ -71,7 +72,6 @@ class TestOrkesClients:
         self.__test_workflow_execution_lifecycle()
         self.__test_workflow_tags()
         self.__test_unregister_workflow_definition()
-        self.__test_get_invalid_workflow_definition()
 
     def test_task_lifecycle(self):
         taskDef = TaskDef(
@@ -80,12 +80,29 @@ class TestOrkesClients:
             input_keys=["a", "b"]
         )
 
-        self.__test_register_task_definition(taskDef)
-        self.__test_get_task_definition()
-        self.__test_update_task_definition(taskDef)
+        self.metadata_client.registerTaskDef(taskDef)
+
+        taskDef = self.metadata_client.getTaskDef(TASK_TYPE)
+        assert taskDef.name == TASK_TYPE
+        assert len(taskDef.input_keys) == 2
+
+        taskDef.description = "Integration Test Task New Description"
+        taskDef.input_keys = ["a", "b", "c"]
+        self.metadata_client.updateTaskDef(taskDef)
+        fetchedTaskDef = self.metadata_client.getTaskDef(taskDef.name)
+        assert fetchedTaskDef.description == taskDef.description
+        assert len(fetchedTaskDef.input_keys) == 3
+
         self.__test_task_tags()
         self.__test_task_execution_lifecycle()
-        self.__test_unregister_task_definition()
+
+        self.metadata_client.unregisterTaskDef(TASK_TYPE)
+        try:
+            self.metadata_client.getTaskDef(TASK_TYPE)
+        except APIError as e:
+            assert e.code == APIErrorCode.NOT_FOUND
+            assert e.message == "Task {0} not found".format(TASK_TYPE)
+
 
     def test_secret_lifecycle(self):
         self.secret_client.putSecret(SECRET_NAME, "secret_value")
@@ -117,7 +134,11 @@ class TestOrkesClients:
         
         self.secret_client.deleteSecret(SECRET_NAME + "_2")
         
-        # assert self.secret_client.listSecretsThatUserCanGrantAccessTo(), []
+        try:
+            self.secret_client.getSecret(SECRET_NAME + "_2")
+        except APIError as e:
+            assert e.code == APIErrorCode.NOT_FOUND
+
 
     def test_scheduler_lifecycle(self, workflowDef):
         startWorkflowRequest = StartWorkflowRequest(
@@ -138,16 +159,13 @@ class TestOrkesClients:
         self.scheduler_client.pauseSchedule(SCHEDULE_NAME)
         
         schedules = self.scheduler_client.getAllSchedules(WORKFLOW_NAME)
-        
         assert len(schedules) == 1
         assert schedules[0].name == SCHEDULE_NAME
-        
-        assert schedules[0].paused == True
+        assert schedules[0].paused
         
         self.scheduler_client.resumeSchedule(SCHEDULE_NAME)
-        
         schedule = self.scheduler_client.getSchedule(SCHEDULE_NAME)
-        assert schedule['paused'] == False
+        assert not schedule['paused']
         
         times = self.scheduler_client.getNextFewScheduleExecutionTimes("0 */5 * ? * *", limit=1)
         assert(len(times) == 1)
@@ -164,6 +182,12 @@ class TestOrkesClients:
         assert len(fetched_tags) == 0
         
         self.scheduler_client.deleteSchedule(SCHEDULE_NAME)
+        
+        try:
+            schedule = self.scheduler_client.getSchedule(SCHEDULE_NAME)
+        except APIError as e:
+            assert e.code == APIErrorCode.NOT_FOUND
+            assert e.message == "Schedule '{0}' not found".format(SCHEDULE_NAME)
 
     def test_application_lifecycle(self):
         req = CreateOrUpdateApplicationRequest(APPLICATION_NAME)
@@ -203,13 +227,17 @@ class TestOrkesClients:
         assert(access_keys[0].id == created_access_key.id)
         assert(access_keys[0].status == AccessKeyStatus.ACTIVE)
         
-        access_key = self.authorization_client.toggleAccessKeyStatus(created_app.id, created_access_key.id)
-        access_keys = self.authorization_client.getAccessKeys(created_app.id)
-        assert(access_keys[0].status == AccessKeyStatus.INACTIVE)
+        access_key = self.authorization_client.toggleAccessKeyStatus(created_app.id, created_access_key.id)        
+        assert access_key.status == AccessKeyStatus.INACTIVE
         
         self.authorization_client.deleteAccessKey(created_app.id, created_access_key.id)
         
         self.authorization_client.deleteApplication(created_app.id)
+        try:
+            application = self.authorization_client.getApplication(created_app.id)
+        except APIError as e:
+            assert e.code == APIErrorCode.NOT_FOUND
+            assert e.message == "Application '{0}' not found".format(created_app.id)
 
     def test_user_group_permissions_lifecycle(self, workflowDef):
         req = UpsertUserRequest("Integration User", ["USER"])
@@ -280,8 +308,21 @@ class TestOrkesClients:
         assert True not in [s == subject_user for s in target_perms[AccessType.READ]]
         
         self.authorization_client.removeUserFromGroup(GROUP_ID, USER_ID)
+        
         self.authorization_client.deleteUser(USER_ID)
+        try:
+            self.authorization_client.getUser(USER_ID)
+        except APIError as e:
+            assert e.code == APIErrorCode.NOT_FOUND
+            assert e.message ==  "User '{0}' not found".format(USER_ID)
+        
         self.authorization_client.deleteGroup(GROUP_ID)
+        try:
+            self.authorization_client.getGroup(GROUP_ID)
+        except APIError as e:
+            assert e.code == APIErrorCode.NOT_FOUND
+            assert e.message ==  "Group '{0}' not found".format(GROUP_ID)
+            
 
     def __test_register_workflow_definition(self, workflowDef: WorkflowDef):
         self.__create_workflow_definition(workflowDef)
@@ -305,12 +346,12 @@ class TestOrkesClients:
 
     def __test_unregister_workflow_definition(self):
         self.metadata_client.unregisterWorkflowDef(WORKFLOW_NAME, 1)
-
-    def __test_get_invalid_workflow_definition(self):
-        resp = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
-        message = 'No such workflow found by name: ' + WORKFLOW_NAME + ', version: null'
-        error = { 'status': 404, 'message': message }
-        assert resp['error'] == error
+        
+        try:
+            self.metadata_client.getWorkflowDef(WORKFLOW_NAME, 1)
+        except APIError as e:
+            assert e.code == APIErrorCode.NOT_FOUND
+            assert e.message ==  'No such workflow found by name: {0}, version: 1'.format(WORKFLOW_NAME)
 
     def __test_task_tags(self):
         tags = [
@@ -398,28 +439,11 @@ class TestOrkesClients:
         assert workflow.status == "RUNNING"
 
         self.workflow_client.deleteWorkflow(workflow_uuid)
-        # workflow, error = self.workflow_client.getWorkflow(workflow_uuid, False)
-        # assert workflow == None
-        # assert "Workflow with Id: {} not found.".format(workflow_uuid) in error
-
-    def __test_register_task_definition(self, taskDef: TaskDef):
-        self.metadata_client.registerTaskDef(taskDef)
-
-    def __test_get_task_definition(self):
-        taskDef = self.metadata_client.getTaskDef(TASK_TYPE)
-        assert taskDef.name == TASK_TYPE
-        assert len(taskDef.input_keys) == 2
-
-    def __test_update_task_definition(self, taskDef: TaskDef):
-        taskDef.description = "Integration Test Task New Description"
-        taskDef.input_keys = ["a", "b", "c"]
-        self.metadata_client.updateTaskDef(taskDef)
-        fetchedTaskDef = self.metadata_client.getTaskDef(taskDef.name)
-        assert fetchedTaskDef.description == taskDef.description
-        assert len(fetchedTaskDef.input_keys) == 3
-
-    def __test_unregister_task_definition(self):
-        self.metadata_client.unregisterTaskDef(TASK_TYPE)
+        try:
+            workflow = self.workflow_client.getWorkflow(workflow_uuid, False)
+        except APIError as e:
+            assert e.code == APIErrorCode.NOT_FOUND
+            assert e.message == "Workflow with Id: {} not found.".format(workflow_uuid)
 
     def __test_task_execution_lifecycle(self):
         
