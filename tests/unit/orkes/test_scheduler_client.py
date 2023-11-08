@@ -54,7 +54,7 @@ class TestOrkesSchedulerClient(unittest.TestCase):
     @patch.object(SchedulerResourceApi, 'get_schedule')
     def test_getSchedule_non_existing(self, mock):
         error_body = { 'status': 404, 'message': 'Schedule not found' }
-        mock.side_effect = MagicMock(side_effect=ApiException(body=json.dumps(error_body)))
+        mock.side_effect = MagicMock(side_effect=ApiException(status=404, body=json.dumps(error_body)))
         with self.assertRaises(APIError):
             self.scheduler_client.getSchedule("WRONG_SCHEDULE")
             mock.assert_called_with("WRONG_SCHEDULE")

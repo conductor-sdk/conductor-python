@@ -87,7 +87,7 @@ class TestOrkesMetadataClient(unittest.TestCase):
     def test_getWorkflowDef_non_existent(self, mock):
         message = 'No such workflow found by name:' + WORKFLOW_NAME + ', version: null'
         error_body = { 'status': 404, 'message': message }
-        mock.side_effect = MagicMock(side_effect=ApiException(body=json.dumps(error_body)))
+        mock.side_effect = MagicMock(side_effect=ApiException(status=404, body=json.dumps(error_body)))
         with self.assertRaises(APIError):
             self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
         

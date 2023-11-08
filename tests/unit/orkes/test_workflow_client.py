@@ -147,7 +147,7 @@ class TestOrkesWorkflowClient(unittest.TestCase):
     @patch.object(WorkflowResourceApi, 'get_execution_status')
     def test_getWorkflow_non_existent(self, mock):
         error_body = { 'status': 404, 'message': 'Workflow not found' }
-        mock.side_effect = MagicMock(side_effect=ApiException(body=json.dumps(error_body)))
+        mock.side_effect = MagicMock(side_effect=ApiException(status=404, body=json.dumps(error_body)))
         with self.assertRaises(APIError):
             self.workflow_client.getWorkflow(WORKFLOW_UUID, False)
             mock.assert_called_with(WORKFLOW_UUID, include_tasks=False)

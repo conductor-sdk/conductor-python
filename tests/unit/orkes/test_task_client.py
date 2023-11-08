@@ -89,7 +89,7 @@ class TestOrkesTaskClient(unittest.TestCase):
     @patch.object(TaskResourceApi, 'get_task')
     def test_getTask_non_existent(self, mock):
         error_body = { 'status': 404, 'message': 'Task not found' }
-        mock.side_effect = MagicMock(side_effect=ApiException(body=json.dumps(error_body)))
+        mock.side_effect = MagicMock(side_effect=ApiException(status=404, body=json.dumps(error_body)))
         with self.assertRaises(APIError):
             self.task_client.getTask(TASK_ID)
             mock.assert_called_with(TASK_ID)

@@ -26,7 +26,6 @@ from conductor.client.orkes.models.access_key_status import AccessKeyStatus
 from conductor.client.orkes.models.created_access_key import CreatedAccessKey
 from conductor.client.orkes.models.granted_permission import GrantedPermission
 from conductor.client.orkes.orkes_authorization_client import OrkesAuthorizationClient
-from conductor.client.exceptions.api_error import APIError
 
 APP_ID = '5d860b70-a429-4b20-8d28-6b5198155882'
 APP_NAME = 'ut_application_name'
