@@ -95,3 +95,7 @@ You can [manage schedules using code](https://github.com/conductor-sdk/conductor
 ## Secret Management
 
 You can [manage secrets using code](https://github.com/conductor-sdk/conductor-python/tree/main/docs/secret).
+
+## Access Control Management
+
+You can [manage applications, users, groups and permissions using code](https://github.com/conductor-sdk/conductor-python/tree/main/docs/authorization).
