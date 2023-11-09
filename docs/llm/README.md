@@ -12,7 +12,7 @@ from conductor.client.workflow.task.embedding_model import EmbeddingModel
 from conductor.client.workflow.task.simple_task import SimpleTask
 import json
 
-SERVER_API_URL = 'http://localhost:8080/api'
+SERVER_API_URL = 'https://play.orkes.io/api'
 KEY_ID = 'keyId'
 KEY_SECRET = 'keySecret'
 

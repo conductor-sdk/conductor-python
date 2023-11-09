@@ -8,7 +8,9 @@ from conductor.client.orkes.orkes_workflow_client import OrkesWorkflowClient
 from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
+from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
 from conductor.client.http.models.workflow import Workflow
+from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models.workflow_run import WorkflowRun
 from conductor.client.exceptions.api_error import APIError
@@ -167,3 +169,14 @@ class TestOrkesWorkflowClient(unittest.TestCase):
         taskRefName = TASK_NAME + "_ref"
         workflow = self.workflow_client.skipTaskFromWorkflow(WORKFLOW_UUID, taskRefName)
         mock.assert_called_with(WORKFLOW_UUID, taskRefName)
+        
+    @patch.object(WorkflowResourceApi, 'test_workflow')
+    def test_testWorkflow(self, mock):
+        mock.return_value = Workflow(workflow_id=WORKFLOW_UUID)
+        testRequest = WorkflowTestRequest(
+            workflow_def=WorkflowDef(name=WORKFLOW_NAME, version=1),
+            name=WORKFLOW_NAME
+        )
+        workflow = self.workflow_client.testWorkflow(testRequest)
+        mock.assert_called_with(testRequest)
+        self.assertEqual(workflow.workflow_id, WORKFLOW_UUID)

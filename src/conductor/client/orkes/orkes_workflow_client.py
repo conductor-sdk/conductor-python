@@ -4,6 +4,7 @@ from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.workflow_run import WorkflowRun
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
+from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
 from conductor.client.workflow_client import WorkflowClient
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
 from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
@@ -75,3 +76,6 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
 
     def skipTaskFromWorkflow(self, workflowId: str, taskReferenceName: str):
         self.workflowResourceApi.skip_task_from_workflow(workflowId, taskReferenceName)
+
+    def testWorkflow(self, testRequest: WorkflowTestRequest) -> Workflow:
+        return self.workflowResourceApi.test_workflow(testRequest)
