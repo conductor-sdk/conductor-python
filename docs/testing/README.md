@@ -19,8 +19,8 @@ from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
 from conductor.client.orkes.orkes_workflow_client import OrkesWorkflowClient
 
-TEST_WF_JSON = 'tests/integration/resources/test_data/calculate_loan_workflow.json'
-TEST_IP_JSON = 'tests/integration/resources/test_data/loan_workflow_input.json'
+TEST_WF_JSON_PATH = 'tests/integration/resources/test_data/calculate_loan_workflow.json'
+TEST_IP_JSON_PATH = 'tests/integration/resources/test_data/loan_workflow_input.json'
 
 auth = AuthenticationSettings(key_id=KEY_ID, key_secret=KEY_SECRET)
 config = Configuration(server_api_url=SERVER_API_URL, authentication_settings=auth)
