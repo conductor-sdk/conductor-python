@@ -116,28 +116,28 @@ class ConductorWorkflow:
     # InputTemplate template input to the workflow.  Can have combination of variables (e.g. ${workflow.input.abc}) and static values
     def input_template(self, input_template: Dict[str, Any]) -> Self:
         if input_template == None:
-            self._output_parameters = {}
+            self._input_template = {}
             return
         if not isinstance(input_template, dict):
             raise Exception('invalid type')
         for key in input_template.keys():
             if not isinstance(key, str):
                 raise Exception('invalid type')
-        self._output_parameters = deepcopy(input_template)
+        self._input_template = deepcopy(input_template)
         return self
 
     # Variables are set using SET_VARIABLE task. Excellent way to maintain business state
     # e.g. Variables can maintain business/user specific states which can be queried and inspected to find out the state of the workflow
     def variables(self, variables: Dict[str, Any]) -> Self:
         if variables == None:
-            self._output_parameters = {}
+            self._variables = {}
             return
         if not isinstance(variables, dict):
             raise Exception('invalid type')
         for key in variables.keys():
             if not isinstance(key, str):
                 raise Exception('invalid type')
-        self._output_parameters = deepcopy(variables)
+        self._variables = deepcopy(variables)
         return self
 
     # List of the input parameters to the workflow. Usage: documentation ONLY
