@@ -17,7 +17,7 @@ import json
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
-from conductor.client.orkes.orkes_workflow_client import OrkesWorkflowClient
+from conductor.client.orkes_clients import OrkesClients
 
 TEST_WF_JSON_PATH = 'tests/integration/resources/test_data/calculate_loan_workflow.json'
 TEST_IP_JSON_PATH = 'tests/integration/resources/test_data/loan_workflow_input.json'
@@ -25,7 +25,8 @@ TEST_IP_JSON_PATH = 'tests/integration/resources/test_data/loan_workflow_input.j
 auth = AuthenticationSettings(key_id=KEY_ID, key_secret=KEY_SECRET)
 config = Configuration(server_api_url=SERVER_API_URL, authentication_settings=auth)
 api_client = ApiClient(configuration)
-workflow_client = OrkesWorkflowClient(configuration)
+orkes_clients = OrkesClients(configuration)
+workflow_client = orkes_clients.getWorkflowClient()
 
 f = open(TEST_WF_JSON_PATH, "r")
 workflowJSON = json.loads(f.read())

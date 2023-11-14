@@ -2,19 +2,13 @@ import json
 from shortuuid import uuid
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api_client import ApiClient
-from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
+from conductor.client.orkes_clients import OrkesClients
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.simple_task import SimpleTask
 from conductor.client.orkes.models.access_type import AccessType
 from conductor.client.orkes.models.access_key_status import AccessKeyStatus
 from conductor.client.orkes.models.metadata_tag import MetadataTag
-from conductor.client.orkes.orkes_metadata_client import OrkesMetadataClient
-from conductor.client.orkes.orkes_workflow_client import OrkesWorkflowClient
-from conductor.client.orkes.orkes_task_client import OrkesTaskClient
-from conductor.client.orkes.orkes_scheduler_client import OrkesSchedulerClient
-from conductor.client.orkes.orkes_secret_client import OrkesSecretClient
-from conductor.client.orkes.orkes_authorization_client import OrkesAuthorizationClient
 from conductor.client.http.models.task_def import TaskDef
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.workflow_def import WorkflowDef
@@ -27,10 +21,7 @@ from conductor.client.http.models.upsert_user_request import UpsertUserRequest
 from conductor.client.http.models.upsert_group_request import UpsertGroupRequest
 from conductor.client.http.models.create_or_update_application_request import CreateOrUpdateApplicationRequest
 from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
-
 from conductor.client.exceptions.api_error import APIError, APIErrorCode
-
-
 
 SUFFIX = str(uuid())
 WORKFLOW_NAME = 'IntegrationTestOrkesClientsWf_' + SUFFIX
@@ -47,12 +38,14 @@ class TestOrkesClients:
     def __init__(self, configuration: Configuration):
         self.api_client = ApiClient(configuration)
         self.workflow_executor = WorkflowExecutor(configuration)
-        self.metadata_client = OrkesMetadataClient(configuration)
-        self.workflow_client = OrkesWorkflowClient(configuration)
-        self.task_client = OrkesTaskClient(configuration)
-        self.scheduler_client = OrkesSchedulerClient(configuration)
-        self.secret_client = OrkesSecretClient(configuration)
-        self.authorization_client = OrkesAuthorizationClient(configuration)
+
+        orkes_clients = OrkesClients(configuration)
+        self.metadata_client = orkes_clients.getMetadataClient()
+        self.workflow_client = orkes_clients.getWorkflowClient()
+        self.task_client = orkes_clients.getTaskClient()
+        self.scheduler_client = orkes_clients.getSchedulerClient()
+        self.secret_client = orkes_clients.getSecretClient()
+        self.authorization_client = orkes_clients.getAuthorizationClient()
         self.workflow_id = None
 
     def run(self) -> None:

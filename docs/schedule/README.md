@@ -6,18 +6,16 @@
 ```python
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from conductor.client.orkes.orkes_scheduler_client import OrkesSchedulerClient
+from conductor.client.orkes_clients import OrkesClients
 
 configuration = Configuration(
     server_api_url=SERVER_API_URL,
     debug=False,
-    authentication_settings=AuthenticationSettings(
-        key_id=KEY_ID,
-        key_secret=KEY_SECRET
-    ),
+    authentication_settings=AuthenticationSettings(key_id=KEY_ID, key_secret=KEY_SECRET)
 )
 
-scheduler_client = OrkesSchedulerClient(configuration)
+orkes_clients = OrkesClients(configuration)
+scheduler_client = orkes_clients.getSchedulerClient()
 ```
 
 ### Saving Schedule
