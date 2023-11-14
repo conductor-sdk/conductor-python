@@ -15,7 +15,7 @@ These are the error codes that are returned when any of the Orkes Clients throw 
 
 ## APIError
 
-This is the exception type that is thrown a SDK API method related to an Orkes Client fails or returns an error.
+This is the exception that is thrown when an Orkes Client related SDK API method fails or returns an error.
 
 ```python
 from conductor.client.exceptions.api_error import APIError, APIErrorCode

@@ -20,7 +20,6 @@ from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.http.models.target_ref import TargetRef, TargetType
 from conductor.client.http.models.subject_ref import SubjectRef, SubjectType
-from conductor.client.http.models.workflow_status import WorkflowStatus
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.http.models.save_schedule_request import SaveScheduleRequest
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
@@ -237,7 +236,7 @@ class TestOrkesClients:
         assert(access_keys[0].id == created_access_key.id)
         assert(access_keys[0].status == AccessKeyStatus.ACTIVE)
 
-        access_key = self.authorization_client.toggleAccessKeyStatus(created_app.id, created_access_key.id)        
+        access_key = self.authorization_client.toggleAccessKeyStatus(created_app.id, created_access_key.id)
         assert access_key.status == AccessKeyStatus.INACTIVE
         
         self.authorization_client.deleteAccessKey(created_app.id, created_access_key.id)
