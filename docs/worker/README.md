@@ -80,10 +80,16 @@ class SimplePythonWorker(WorkerInterface):
 A worker can also be invoked by adding a WorkerTask decorator as shown in the below example.
 As long as the annotated worker is in any file inside the root folder of your worker application, it will be picked up by the TaskHandler, see [Run Workers](#run-workers)
 
+The arguments that can be passed when defining the decorated worker are:
+1. task_definition_name: The task definition name of the condcutor task that needs to be polled for.
+2. domain: Optional routing domain of the worker to execute tasks with a specific domain
+3. worker_id: An optional worker id used to identify the polling worker
+4. poll_interval: Polling interval in seconds. Defaulted to 1 second if not passed.
+
 ```python
 from conductor.client.worker.worker_task import WorkerTask
 
-@WorkerTask(task_definition_name='python_annotated_task', domain='cool', worker_id='decorated', poll_interval_seconds=1.0)
+@WorkerTask(task_definition_name='python_annotated_task', domain='cool', worker_id='decorated', poll_interval=2.0)
 def python_annotated_task(input) -> object:
     return {'message': 'python is so cool :)'}
 ```
