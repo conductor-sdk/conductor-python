@@ -99,3 +99,7 @@ You can [manage secrets using code](https://github.com/conductor-sdk/conductor-p
 ## Access Control Management
 
 You can [manage applications, users, groups and permissions using code](https://github.com/conductor-sdk/conductor-python/tree/main/docs/authorization).
+
+## Error Handling
+
+You can [handle errors returned from any of the Orkes Client SDK methods](https://github.com/conductor-sdk/conductor-python/tree/main/docs/exceptions).
