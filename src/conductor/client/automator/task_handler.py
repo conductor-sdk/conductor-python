@@ -4,7 +4,6 @@ from conductor.client.configuration.settings.metrics_settings import MetricsSett
 from conductor.client.telemetry.metrics_collector import MetricsCollector
 from conductor.client.worker.worker import Worker
 from conductor.client.worker.worker_interface import WorkerInterface
-from conductor.client.worker.worker_task import WorkerTask
 from multiprocessing import Process, freeze_support
 from typing import List
 import ast
