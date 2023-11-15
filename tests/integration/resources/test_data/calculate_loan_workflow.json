@@ -1,0 +1,76 @@
+{
+  "name": "test_workflow",
+  "description": "Test Workflow for Loan Payment",
+  "version": 1,
+  "tasks": [
+    {
+      "name": "fetch_user_details",
+      "taskReferenceName": "fetch_user_details",
+      "type": "SIMPLE",
+      "inputParameters": {
+        "userEmail": "${workflow.input.userEmail}"
+      }
+    },
+    {
+      "name": "get_credit_score",
+      "taskReferenceName": "get_credit_score",
+      "type": "SIMPLE",
+      "inputParameters": {
+        "userAccountNumber": "${fetch_user_details.output.userAccount}"
+      }
+    },
+    {
+      "name": "calculate_loan_amount",
+      "taskReferenceName": "calculate_loan_amount",
+      "type": "SIMPLE",
+      "inputParameters": {
+        "creditRating": "${get_credit_score.output.creditRating}",
+        "loanAmount": "${workflow.input.loanAmount}"
+      }
+    },
+    {
+      "name": "loop_until_success",
+      "taskReferenceName": "loop_until_success",
+      "inputParameters": {
+        "loop_count": 3
+      },
+      "type": "DO_WHILE",
+      "decisionCases": {},
+      "defaultCase": [],
+      "forkTasks": [],
+      "startDelay": 0,
+      "joinOn": [],
+      "optional": true,
+      "defaultExclusiveJoinTask": [],
+      "asyncComplete": false,
+      "loopCondition": "if ( $.loop_until_success['iteration'] < $.loop_count ) { true; } else { false; }",
+      "loopOver": [
+        {
+          "name": "check_phone_number_valid",
+          "taskReferenceName": "check_phone_number_valid",
+          "inputParameters": {},
+          "type": "SIMPLE",
+          "decisionCases": {},
+          "defaultCase": [],
+          "forkTasks": [],
+          "startDelay": 0,
+          "joinOn": [],
+          "optional": false,
+          "defaultExclusiveJoinTask": [],
+          "asyncComplete": false,
+          "loopOver": []
+        }
+      ]
+    }
+  ],
+  "inputParameters": [
+    "userEmail"
+  ],
+  "outputParameters": {
+    "accountNumber": "${fetch_user_details.output.userAccount}",
+    "creditRating": "${get_credit_score.output.creditRating}",
+    "authorizedLoanAmount": "${calculate_loan_amount.output.authorizedLoanAmount}",
+    "phoneNumberValid" : "${check_phone_number_valid.output.valid}"
+  },
+  "schemaVersion": 2
+}

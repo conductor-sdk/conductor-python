@@ -2,12 +2,13 @@ from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from conductor.client.http.api_client import ApiClient
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-
 from metadata.test_workflow_definition import run_workflow_definition_tests
 from workflow.test_workflow_execution import run_workflow_execution_tests
+from client.orkes.test_orkes_clients import TestOrkesClients
 from client import test_async
 
 import logging
+import sys
 import os
 
 _logger = logging.getLogger(
@@ -15,7 +16,6 @@ _logger = logging.getLogger(
         __name__
     )
 )
-
 
 def generate_configuration():
     required_envs = {
@@ -45,13 +45,18 @@ def generate_configuration():
 
 
 def main():
+    args = sys.argv[1:]
     configuration = generate_configuration()
-    workflow_executor = WorkflowExecutor(configuration)
     api_client = ApiClient(configuration)
-    test_async.test_async_method(api_client)
-    run_workflow_definition_tests(workflow_executor)
-    run_workflow_execution_tests(configuration, workflow_executor)
 
+    if len(args) == 1 and args[0] == '--orkes-clients-only':
+        TestOrkesClients(configuration=configuration).run()
+    else:
+        workflow_executor = WorkflowExecutor(configuration)
+        test_async.test_async_method(api_client)
+        run_workflow_definition_tests(workflow_executor)
+        run_workflow_execution_tests(configuration, workflow_executor)
+        TestOrkesClients(configuration=configuration).run()
 
 if __name__ == "__main__":
     main()

@@ -174,7 +174,7 @@ class RESTClientObject(object):
 
 class ApiException(Exception):
 
-    def __init__(self, status=None, reason=None, http_resp=None):
+    def __init__(self, status=None, reason=None, http_resp=None, body=None):
         if http_resp:
             self.status = http_resp.status
             self.reason = http_resp.reason
@@ -183,7 +183,7 @@ class ApiException(Exception):
         else:
             self.status = status
             self.reason = reason
-            self.body = None
+            self.body = body
             self.headers = None
 
     def __str__(self):
