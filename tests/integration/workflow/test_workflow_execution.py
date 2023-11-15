@@ -7,12 +7,12 @@ from conductor.client.worker.worker import Worker
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.simple_task import SimpleTask
-from ..resources.worker.python.python_worker import ClassWorker
-from ..resources.worker.python.python_worker import ClassWorkerWithDomain
-from ..resources.worker.python.python_worker import worker_with_generic_input_and_generic_output
-from ..resources.worker.python.python_worker import worker_with_generic_input_and_task_result_output
-from ..resources.worker.python.python_worker import worker_with_task_input_and_generic_output
-from ..resources.worker.python.python_worker import worker_with_task_input_and_task_result_output
+from resources.worker.python.python_worker import ClassWorker
+from resources.worker.python.python_worker import ClassWorkerWithDomain
+from resources.worker.python.python_worker import worker_with_generic_input_and_generic_output
+from resources.worker.python.python_worker import worker_with_generic_input_and_task_result_output
+from resources.worker.python.python_worker import worker_with_task_input_and_generic_output
+from resources.worker.python.python_worker import worker_with_task_input_and_task_result_output
 from time import sleep
 import logging
 
