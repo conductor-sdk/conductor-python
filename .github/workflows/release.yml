@@ -18,3 +18,4 @@ jobs:
           --build-arg PYPI_USER=${{ secrets.pypi_user }}
           --build-arg PYPI_PASS=${{ secrets.pypi_pass }}
           --target=publish
+          .
