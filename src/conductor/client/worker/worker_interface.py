@@ -5,12 +5,15 @@ import abc
 import socket
 from typing import Union
 
+DEFAULT_POLLING_INTERVAL = 100 # ms
 
 class WorkerInterface(abc.ABC):
     def __init__(self, task_definition_name: Union[str, list]):
         self.task_definition_name = task_definition_name
         self.next_task_index = 0
         self._task_definition_name_cache = None
+        self._domain = None
+        self._poll_interval = None
 
     @abc.abstractmethod
     def execute(self, task: Task) -> TaskResult:
@@ -38,7 +41,7 @@ class WorkerInterface(abc.ABC):
         :return: float
                  Default: 100ms
         """
-        return 0.1
+        return (self.poll_interval  if self.poll_interval else DEFAULT_POLLING_INTERVAL) / 1000
 
     def get_task_definition_name(self) -> str:
         """
@@ -83,10 +86,26 @@ class WorkerInterface(abc.ABC):
 
         :return: str
         """
-        return None
+        return self.domain
 
     def paused(self) -> bool:
         """
         Override this method to pause the worker from polling.
         """
         return False
+
+    @property
+    def domain(self):
+        return self._domain
+
+    @domain.setter
+    def domain(self, value):
+        self._domain = value
+
+    @property
+    def poll_interval(self):
+        return self._poll_interval
+
+    @poll_interval.setter
+    def poll_interval(self, value):
+        self._poll_interval = value

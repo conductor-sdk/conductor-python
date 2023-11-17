@@ -89,7 +89,7 @@ The arguments that can be passed when defining the decorated worker are:
 ```python
 from conductor.client.worker.worker_task import WorkerTask
 
-@WorkerTask(task_definition_name='python_annotated_task', domain='cool', worker_id='decorated', poll_interval=2.0)
+@WorkerTask(task_definition_name='python_annotated_task', worker_id='decorated', poll_interval=2.0)
 def python_annotated_task(input) -> object:
     return {'message': 'python is so cool :)'}
 ```
@@ -127,9 +127,10 @@ workers = [
         task_definition_name='python_task_example'
     ),
     Worker(
-        task_definition_name='python_execute_example',
+        task_definition_name='python_execute_function_task',
         execute_function=execute,
-        poll_interval=0.25,
+        poll_interval=250,
+        domain='test'
     )
 ]
 
@@ -137,7 +138,6 @@ workers = [
 # default value of scan_for_annotated_workers is False
 with TaskHandler(workers, configuration, scan_for_annotated_workers=True) as task_handler:
     task_handler.start_processes()
-    task_handler.join_processes()
 ```
 
 If you paste the above code in a file called main.py, you can launch the workers by running:
@@ -145,8 +145,140 @@ If you paste the above code in a file called main.py, you can launch the workers
 python3 main.py
 ```
 
+## Task Domains
+Workers can be configured to start polling for work that is tagged by a task domain. See more on domains [here](https://orkes.io/content/developer-guides/task-to-domain).
+
+
+```python
+from conductor.client.worker.worker_task import WorkerTask
+
+@WorkerTask(task_definition_name='python_annotated_task', domain='cool')
+def python_annotated_task(input) -> object:
+    return {'message': 'python is so cool :)'}
+```
+
+The above code would run a worker polling for task of type, *python_annotated_task*, but only for workflows that have a task to domain mapping specified with domain for this task as _cool_.
+
+```json
+"taskToDomain": {
+   "python_annotated_task": "cool"
+}
+```
+
+## Worker Configuration
+
+### Using Config File
+
+You can choose to pass an _worker.ini_ file for specifying worker arguments like domain and polling_interval. This allows for configuring your workers dynamically and hence provides the flexbility along with cleaner worker code. This file has to be in the same directory as the main.py of your worker application.
+
+#### Format
+```
+[task_definition_name]
+domain = <domain>
+polling_interval = <polling-interval-in-ms>
+```
+
+#### Generic Properties
+There is an option for specifying common set of properties which apply to all workers by putting them in the _DEFAULT_ section. All workers who don't have a domain or/and polling_interval specified will default to these values.
+
+```
+[DEFAULT]
+domain = <domain>
+polling_interval = <polling-interval-in-ms>
+```
+
+#### Example File
+```
+[DEFAULT]
+domain = nice
+polling_interval = 2000
+
+[python_annotated_task_1]
+domain = cool
+polling_interval = 500
+
+[python_annotated_task_2]
+domain = hot
+polling_interval = 300
+```
+
+With the presence of the above config file, you don't need to specify domain and poll_interval for any of the worker task types.
+
+##### Without config
+```python
+from conductor.client.worker.worker_task import WorkerTask
+
+@WorkerTask(task_definition_name='python_annotated_task_1', domain='cool', poll_interval=500.0)
+def python_annotated_task(input) -> object:
+    return {'message': 'python is so cool :)'}
+
+@WorkerTask(task_definition_name='python_annotated_task_2', domain='hot', poll_interval=300.0)
+def python_annotated_task_2(input) -> object:
+    return {'message': 'python is so hot :)'}
+
+@WorkerTask(task_definition_name='python_annotated_task_3', domain='nice', poll_interval=2000.0)
+def python_annotated_task_3(input) -> object:
+    return {'message': 'python is so nice :)'}
+
+@WorkerTask(task_definition_name='python_annotated_task_4', domain='nice', poll_interval=2000.0)
+def python_annotated_task_4(input) -> object:
+    return {'message': 'python is very nice :)'}
+```
+
+##### With config
+```python
+from conductor.client.worker.worker_task import WorkerTask
+
+@WorkerTask(task_definition_name='python_annotated_task_1')
+def python_annotated_task(input) -> object:
+    return {'message': 'python is so cool :)'}
+
+@WorkerTask(task_definition_name='python_annotated_task_2')
+def python_annotated_task_2(input) -> object:
+    return {'message': 'python is so hot :)'}
+
+@WorkerTask(task_definition_name='python_annotated_task_3')
+def python_annotated_task_3(input) -> object:
+    return {'message': 'python is so nice :)'}
+
+@WorkerTask(task_definition_name='python_annotated_task_4')
+def python_annotated_task_4(input) -> object:
+    return {'message': 'python is very nice :)'}
+
+```
+
+### Using Environment Variables
+
+Workers can also be configured at run time by using environment variables which override configuration files as well.
+
+#### Format
+```
+conductor_worker_polling_interval=<polling-interval-in-ms>
+conductor_worker_domain=<domain>
+conductor_worker_<task_definition_name>_polling_interval=<polling-interval-in-ms>
+conductor_worker_<task_definition_name>_domain=<domain>
+```
+
+#### Example
+```
+conductor_worker_polling_interval=2000
+conductor_worker_domain=nice
+conductor_worker_python_annotated_task_1_polling_interval=500
+conductor_worker_python_annotated_task_1_domain=cool
+conductor_worker_python_annotated_task_2_polling_interval=300
+conductor_worker_python_annotated_task_2_domain=hot
+```
+
+### Order of Precedence
+If the worker configuration is initialized using multiple mechanisms mentioned above then the following order of priority
+will be considered from highest to lowest:
+1. Environment Variables
+2. Config File
+3. Worker Constructor Arguments
+
 See [Using Conductor Playground](https://orkes.io/content/docs/getting-started/playground/using-conductor-playground) for more details on how to use Playground environment for testing.
 
+## Performance
 If you're looking for better performance (i.e. more workers of the same type) - you can simply append more instances of the same worker, like this:
 
 ```python
@@ -195,7 +327,7 @@ Here is an example how you can do that with Conductor SDK.
         #include <iostream>
 
         extern "C" int32_t get_sum(const int32_t A, const int32_t B) {
-            return A + B; 
+            return A + B;
         }
         ```
 ### 2. Compile and share its library:
