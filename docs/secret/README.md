@@ -6,7 +6,7 @@
 ```python
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from conductor.client.orkes_clients import OrkesClients
+from conductor.client.orkes.orkes_secret_client import OrkesSecretClient
 
 configuration = Configuration(
     server_api_url=SERVER_API_URL,
@@ -14,8 +14,7 @@ configuration = Configuration(
     authentication_settings=AuthenticationSettings(key_id=KEY_ID, key_secret=KEY_SECRET)
 )
 
-orkes_clients = OrkesClients(configuration)
-secret_client = orkes_clients.getSecretClient()
+secret_client = OrkesSecretClient(configuration)
 ```
 
 ### Saving Secret
