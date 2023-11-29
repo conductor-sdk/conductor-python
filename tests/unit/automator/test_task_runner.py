@@ -10,7 +10,7 @@ from unittest.mock import patch, ANY
 import logging
 import time
 import unittest
-
+from requests.structures import CaseInsensitiveDict
 
 class TestTaskRunner(unittest.TestCase):
     TASK_ID = 'VALID_TASK_ID'
@@ -60,6 +60,21 @@ class TestTaskRunner(unittest.TestCase):
                 spent_time = finish_time - start_time
                 self.assertGreater(spent_time, expected_time)
 
+    def test_run_once_roundrobin(self):
+        with patch.object(
+            TaskResourceApi,
+            'poll',
+            return_value=self.__get_valid_task()
+        ):
+            with patch.object(
+                TaskResourceApi,
+                'update_task',
+            ) as mock_update_task:
+                mock_update_task.return_value = self.UPDATE_TASK_RESPONSE
+                task_runner = self.__get_valid_roundrobin_task_runner()
+                for i in range(0, 6):
+                    task_runner.run_once()
+                    self.assertEqual(task_runner.worker.get_task_definition_name(), self.__shared_task_list[i])
     def test_poll_task(self):
         expected_task = self.__get_valid_task()
         with patch.object(
@@ -176,6 +191,12 @@ class TestTaskRunner(unittest.TestCase):
             worker=self.__get_valid_worker()
         )
 
+    def __get_valid_roundrobin_task_runner(self):
+        return TaskRunner(
+            configuration=Configuration(),
+            worker=self.__get_valid_multi_task_worker()
+        )
+
     def __get_valid_task(self):
         return Task(
             task_id=self.TASK_ID,
@@ -192,8 +213,17 @@ class TestTaskRunner(unittest.TestCase):
                 'worker_style': 'class',
                 'secret_number': 1234,
                 'is_it_true': False,
+                'dictionary_ojb': {'name': 'sdk_worker', 'idx': 465},
+                'case_insensitive_dictionary_ojb': CaseInsensitiveDict(data={'NaMe': 'sdk_worker', 'iDX': 465}),
             }
         )
 
     def __get_valid_worker(self):
         return ClassWorker('task')
+
+    @property
+    def __shared_task_list(self):
+        return ['task1', 'task2', 'task3', 'task4', 'task5', 'task6']
+
+    def __get_valid_multi_task_worker(self):
+        return ClassWorker(self.__shared_task_list)

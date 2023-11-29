@@ -1,3 +1,4 @@
+from requests.structures import CaseInsensitiveDict
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.thread import AwaitableThread
 from conductor.client.http import rest
@@ -65,7 +66,7 @@ class ApiClient(object):
             configuration = Configuration()
         self.configuration = configuration
 
-        self.rest_client = rest.RESTClientObject()
+        self.rest_client = rest.RESTClientObject(connection=configuration.http_connection)
 
         self.default_headers = self.__get_default_headers(
             header_name, header_value
@@ -182,7 +183,7 @@ class ApiClient(object):
         elif isinstance(obj, (datetime.datetime, datetime.date)):
             return obj.isoformat()
 
-        if isinstance(obj, dict):
+        if isinstance(obj, dict) or isinstance(obj, CaseInsensitiveDict):
             obj_dict = obj
         else:
             # Convert model obj to dict except
@@ -223,6 +224,9 @@ class ApiClient(object):
             logger.debug(
                 f'failed to deserialize data {data} into class {response_type}, reason: {e}')
             return None
+
+    def deserialize_class(self, data, klass):
+        return self.__deserialize(data, klass)
 
     def __deserialize(self, data, klass):
         """Deserializes dict, list, str into an object.

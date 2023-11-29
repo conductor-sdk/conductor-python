@@ -1,7 +1,3 @@
-from __future__ import annotations
-
-from conductor.client.http.models.workflow_def import WorkflowDef
-from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.task.fork_task import ForkTask
 from conductor.client.workflow.task.join_task import JoinTask
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
@@ -9,17 +5,17 @@ from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
 from conductor.client.http.models import *
 from copy import deepcopy
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 from typing_extensions import Self
-from uuid import uuid4
+from shortuuid import uuid
 
 
 class ConductorWorkflow:
     SCHEMA_VERSION = 2
 
     def __init__(self,
-                 executor: WorkflowExecutor = None,
-                 name: str = '',
+                 executor: WorkflowExecutor,
+                 name: str,
                  version: int = None,
                  description: str = None) -> Self:
         self._executor = executor
@@ -50,19 +46,6 @@ class ConductorWorkflow:
     @property
     def version(self) -> int:
         return self._version
-
-    @property
-    def tasks(self) -> List[TaskInterface]:
-        return self._tasks
-
-    @property
-    def executor(self) -> WorkflowExecutor:
-        return self._executor
-
-    @executor.setter
-    def executor(self, executor: WorkflowExecutor) -> Self:
-        self._executor = executor
-        return self
 
     @version.setter
     def version(self, version: int) -> None:
@@ -131,28 +114,28 @@ class ConductorWorkflow:
     # InputTemplate template input to the workflow.  Can have combination of variables (e.g. ${workflow.input.abc}) and static values
     def input_template(self, input_template: Dict[str, Any]) -> Self:
         if input_template == None:
-            self._output_parameters = {}
+            self._input_template = {}
             return
         if not isinstance(input_template, dict):
             raise Exception('invalid type')
         for key in input_template.keys():
             if not isinstance(key, str):
                 raise Exception('invalid type')
-        self._output_parameters = deepcopy(input_template)
+        self._input_template = deepcopy(input_template)
         return self
 
     # Variables are set using SET_VARIABLE task. Excellent way to maintain business state
     # e.g. Variables can maintain business/user specific states which can be queried and inspected to find out the state of the workflow
     def variables(self, variables: Dict[str, Any]) -> Self:
         if variables == None:
-            self._output_parameters = {}
+            self._variables = {}
             return
         if not isinstance(variables, dict):
             raise Exception('invalid type')
         for key in variables.keys():
             if not isinstance(key, str):
                 raise Exception('invalid type')
-        self._output_parameters = deepcopy(variables)
+        self._variables = deepcopy(variables)
         return self
 
     # List of the input parameters to the workflow. Usage: documentation ONLY
@@ -180,18 +163,9 @@ class ConductorWorkflow:
         start_workflow_request.workflow_def = self.to_workflow_def()
         return self._executor.start_workflow(start_workflow_request)
 
-    def execute(self, workflow_input: dict) -> dict:
-        request = StartWorkflowRequest()
-        request.workflow_def = self.to_workflow_def()
-        request.input = workflow_input
-        request.name = request.workflow_def.name
-        request.version = 1
-        run = self._executor.execute_workflow(request, wait_until_task_ref='')
-        return run.output
-
     # Converts the workflow to the JSON serializable format
     def to_workflow_def(self) -> WorkflowDef:
-        workflow_def = WorkflowDef(
+        return WorkflowDef(
             name=self._name,
             description=self._description,
             version=self._version,
@@ -206,8 +180,6 @@ class ConductorWorkflow:
             variables=self._variables,
             input_template=self._input_template,
         )
-        workflow_def.output_parameters = self._output_parameters
-        return workflow_def
 
     def __get_workflow_task_list(self) -> List[WorkflowTask]:
         workflow_task_list = []
@@ -221,7 +193,7 @@ class ConductorWorkflow:
         return workflow_task_list
 
     # Append task with the right shift operator `>>`
-    def __rshift__(self, task: TaskInterface | List[TaskInterface] | List[List[TaskInterface]]) -> Self:
+    def __rshift__(self, task: Union[TaskInterface, List[TaskInterface], List[List[TaskInterface]]]) -> Self:
         if isinstance(task, list):
             forked_tasks = []
             for fork_task in task:
@@ -248,18 +220,18 @@ class ConductorWorkflow:
                 if not issubclass(type(task), TaskInterface):
                     raise Exception('invalid type')
 
-        suffix = str(uuid4())
+        suffix = str(uuid())
 
         fork_task = ForkTask(
             task_ref_name='forked_' + suffix,
             forked_tasks=forked_tasks
         )
-
+        
         join_task = JoinTask(
             task_ref_name='join_' + suffix,
             join_on=fork_task.to_workflow_task().join_on
         )
-
+        
         self._tasks.append(fork_task)
         self._tasks.append(join_task)
         return self

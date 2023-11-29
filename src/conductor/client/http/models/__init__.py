@@ -26,6 +26,8 @@ from conductor.client.http.models.start_workflow import StartWorkflow
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.http.models.sub_workflow_params import SubWorkflowParams
 from conductor.client.http.models.subject_ref import SubjectRef
+from conductor.client.http.models.tag_object import TagObject
+from conductor.client.http.models.tag_string import TagString
 from conductor.client.http.models.target_ref import TargetRef
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_def import TaskDef

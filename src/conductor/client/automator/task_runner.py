@@ -53,6 +53,7 @@ class TaskRunner:
                 pass
 
     def run_once(self) -> None:
+        self.worker.clear_task_definition_name_cache()
         task = self.__poll_task()
         if task != None and task.task_id != None:
             task_result = self.__execute_task(task)
@@ -62,7 +63,7 @@ class TaskRunner:
     def __poll_task(self) -> Task:
         task_definition_name = self.worker.get_task_definition_name()
         if self.worker.paused():
-            logger.warning(f'Stop polling task for: {task_definition_name}')
+            logger.debug(f'Stop polling task for: {task_definition_name}')
             return None
         if self.metrics_collector is not None:
             self.metrics_collector.increment_task_poll(

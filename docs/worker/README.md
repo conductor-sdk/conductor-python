@@ -2,16 +2,17 @@
 
 Considering real use cases, the goal is to run multiple workers in parallel. Due to some limitations with Python, a multiprocessing architecture was chosen in order to enable real parallelization.
 
-You should basically write your workers and append them to a list. The `TaskHandler` class will spawn a unique and independent process for each worker, making sure it will behave as expected, by running an infinite loop like this:
+You can write your workers independently and append them to a list. The `TaskHandler` class will spawn a unique and independent process for each worker, making sure it will behave as expected, by running an infinite loop like this:
 * Poll for a `Task` at Conductor Server
 * Generate `TaskResult` from given `Task`
 * Update given `Task` with `TaskResult` at Conductor Server
 
 ## Write workers
 
-Currently, there are two ways of writing a Python worker:
+Currently, there are three ways of writing a Python worker:
 1. [Worker as a function](#worker-as-a-function)
 2. [Worker as a class](#worker-as-a-class)
+3. [Worker as an annotation](#worker-as-an-annotation)
 
 
 ### Worker as a function
@@ -30,7 +31,7 @@ ExecuteTaskFunction = Callable[
 In other words:
 * Input must be either a `Task` or an `object`
     * If it isn't a `Task`, the assumption is - you're expecting to receive the `Task.input_data` as the object
-* Output must be either a `TaskResult` or an `object` 
+* Output must be either a `TaskResult` or an `object`
     * If it isn't a `TaskResult`, the assumption is - you're expecting to use the object as the `TaskResult.output_data`
 
 Quick example below:
@@ -75,30 +76,71 @@ class SimplePythonWorker(WorkerInterface):
         return 0.5
 ```
 
-## Run Workers
+### Worker as an annotation
+A worker can also be invoked by adding a WorkerTask decorator as shown in the below example.
+As long as the annotated worker is in any file inside the root folder of your worker application, it will be picked up by the TaskHandler, see [Run Workers](#run-workers)
 
-Now you can use your workers by calling a `TaskHandler`, example:
+The arguments that can be passed when defining the decorated worker are:
+1. task_definition_name: The task definition name of the condcutor task that needs to be polled for.
+2. domain: Optional routing domain of the worker to execute tasks with a specific domain
+3. worker_id: An optional worker id used to identify the polling worker
+4. poll_interval: Polling interval in seconds. Defaulted to 1 second if not passed.
 
 ```python
+from conductor.client.worker.worker_task import WorkerTask
+
+@WorkerTask(task_definition_name='python_annotated_task', domain='cool', worker_id='decorated', poll_interval=2.0)
+def python_annotated_task(input) -> object:
+    return {'message': 'python is so cool :)'}
+```
+
+## Run Workers
+
+Now you can run your workers by calling a `TaskHandler`, example:
+
+```python
+from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
+from conductor.client.configuration.configuration import Configuration
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.worker.worker import Worker
+
+#### Add these lines if running on a mac####
+from multiprocessing import set_start_method
+set_start_method('fork')
+############################################
+
+SERVER_API_URL = 'http://localhost:8080/api'
+KEY_ID = '<KEY_ID>'
+KEY_SECRET = '<KEY_SECRET>'
+
+configuration = Configuration(
+    server_api_url=SERVER_API_URL,
+    debug=True,
+    authentication_settings=AuthenticationSettings(
+        key_id=KEY_ID,
+        key_secret=KEY_SECRET
+    ),
+)
 
 workers = [
     SimplePythonWorker(
         task_definition_name='python_task_example'
     ),
     Worker(
-        task_definition_name='python_task_example',
+        task_definition_name='python_execute_example',
         execute_function=execute,
         poll_interval=0.25,
     )
 ]
 
-with TaskHandler(workers, configuration) as task_handler:
+# If there are decorated workers in your application, scan_for_annotated_workers should be set
+# default value of scan_for_annotated_workers is False
+with TaskHandler(workers, configuration, scan_for_annotated_workers=True) as task_handler:
     task_handler.start_processes()
     task_handler.join_processes()
 ```
 
+If you paste the above code in a file called main.py, you can launch the workers by running:
 ```shell
 python3 main.py
 ```
