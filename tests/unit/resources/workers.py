@@ -32,6 +32,7 @@ class SimplePythonWorker(WorkerInterface):
 class ClassWorker(WorkerInterface):
     def __init__(self, task_definition_name: str):
         super().__init__(task_definition_name)
+        self.poll_interval = 50.0
 
     def execute(self, task: Task) -> TaskResult:
         task_result = self.get_task_result_from_task(task)

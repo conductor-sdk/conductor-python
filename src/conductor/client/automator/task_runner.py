@@ -242,16 +242,14 @@ class TaskRunner:
                 # Override polling interval if present in config and not in ENV
                 if not polling_interval_initialized:
                     # Setting to fallback poll interval before reading config
-                    polling_interval = self.worker.poll_interval if self.worker.poll_interval else DEFAULT_POLLING_INTERVAL
+                    default_polling_interval = self.worker.poll_interval
 
                     try:
                         # Read polling interval from config
-                        polling_interval = float(section.get("polling_interval", polling_interval))
+                        self.worker.poll_interval = float(section.get("polling_interval", default_polling_interval))
+                        logger.debug("Override polling interval to {0} ms".format(self.worker.poll_interval))
                     except Exception as e:
-                        logger.error("Exception reading polling interval: {0}. Defaulting to {1} ms".format(str(e), polling_interval))
-                    finally:
-                        self.worker.poll_interval = polling_interval
-
+                        logger.error("Exception reading polling interval: {0}. Defaulting to {1} ms".format(str(e), default_polling_interval))
 
     def __get_property_value_from_env(self, prop, task_type):
         prefix = "conductor_worker"

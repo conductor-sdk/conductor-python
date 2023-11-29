@@ -89,7 +89,7 @@ The arguments that can be passed when defining the decorated worker are:
 ```python
 from conductor.client.worker.worker_task import WorkerTask
 
-@WorkerTask(task_definition_name='python_annotated_task', worker_id='decorated', poll_interval=2.0)
+@WorkerTask(task_definition_name='python_annotated_task', worker_id='decorated', poll_interval=200.0)
 def python_annotated_task(input) -> object:
     return {'message': 'python is so cool :)'}
 ```

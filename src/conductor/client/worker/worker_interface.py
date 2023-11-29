@@ -13,7 +13,7 @@ class WorkerInterface(abc.ABC):
         self.next_task_index = 0
         self._task_definition_name_cache = None
         self._domain = None
-        self._poll_interval = None
+        self._poll_interval = DEFAULT_POLLING_INTERVAL
 
     @abc.abstractmethod
     def execute(self, task: Task) -> TaskResult:
@@ -41,7 +41,7 @@ class WorkerInterface(abc.ABC):
         :return: float
                  Default: 100ms
         """
-        return (self.poll_interval  if self.poll_interval else DEFAULT_POLLING_INTERVAL) / 1000
+        return (self.poll_interval if self.poll_interval else DEFAULT_POLLING_INTERVAL) / 1000
 
     def get_task_definition_name(self) -> str:
         """

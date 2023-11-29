@@ -2,7 +2,7 @@ from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.configuration.configuration import Configuration
 from tests.unit.resources.workers import ClassWorker
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 from unittest.mock import patch
 from configparser import ConfigParser
 import multiprocessing
@@ -17,11 +17,9 @@ class PickableMock(Mock):
 
 class TestTaskHandler(unittest.TestCase):
     def setUp(self) -> None:
-        self.application_properties = tempfile.NamedTemporaryFile(delete=False)
         return super().setUp()
 
     def tearDown(self) -> None:
-        self.application_properties.close()
         return super().tearDown()
 
     def test_initialization_with_invalid_workers(self):
@@ -56,10 +54,10 @@ class TestTaskHandler(unittest.TestCase):
             configParser = ConfigParser()
             configParser.add_section('task')
             configParser.set('task', 'domain', 'test')
-            configParser.set('task', 'pollingInterval', '2.0')
+            configParser.set('task', 'polling_interval', '200.0')
             configParser.add_section('task2')
             configParser.set('task2', 'domain', 'test2')
-            configParser.set('task2', 'pollingInterval', '3.0')
+            configParser.set('task2', 'polling_interval', '300.0')
             configParser.write(tf)
             tf.seek(0)
             
@@ -72,9 +70,9 @@ class TestTaskHandler(unittest.TestCase):
                     self.assertIsInstance(config, ConfigParser)
                     self.assertEqual(len(config.sections()), 2)
                     self.assertEqual(config.get('task', 'domain'), "test")
-                    self.assertEqual(config.get('task', 'pollingInterval'), "2.0")
+                    self.assertEqual(config.get('task', 'polling_interval'), "200.0")
                     self.assertEqual(config.get('task2', 'domain'), "test2")
-                    self.assertEqual(config.get('task2', 'pollingInterval'), "3.0")
+                    self.assertEqual(config.get('task2', 'polling_interval'), "300.0")
 
 def _get_valid_task_handler():
     return TaskHandler(
