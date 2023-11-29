@@ -52,6 +52,10 @@ class ConductorWorkflow:
         return self._version
 
     @property
+    def tasks(self) -> List[TaskInterface]:
+        return self._tasks
+
+    @property
     def executor(self) -> WorkflowExecutor:
         return self._executor
 

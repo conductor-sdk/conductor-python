@@ -74,6 +74,9 @@ class AIOrchestrator:
     def execute_workflow(self, workflow: ConductorWorkflow, task_to_exec: dict[str, object] = None,
                          wait_for_seconds: int = 10) -> dict:
         task_to_exec = task_to_exec or {}
+        for task in workflow.tasks:
+            task_to_exec[task.task_reference_name] = task.executor
+
         workflow.executor = self.workflow_executor
         request = StartWorkflowRequest()
         request.workflow_def = workflow.to_workflow_def()
