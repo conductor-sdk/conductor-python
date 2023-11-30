@@ -11,6 +11,10 @@ class FaultyExecutionWorker(WorkerInterface):
 
 
 class ClassWorker(WorkerInterface):
+    def __init__(self, task_definition_name):
+        super().__init__(task_definition_name)
+        self.poll_interval = 375.0
+
     def execute(self, task: Task) -> TaskResult:
         task_result = self.get_task_result_from_task(task)
         task_result.add_output_data('worker_style', 'class')
@@ -18,13 +22,14 @@ class ClassWorker(WorkerInterface):
         task_result.add_output_data('is_it_true', False)
         task_result.status = TaskResultStatus.COMPLETED
         return task_result
-
-    def get_polling_interval_in_seconds(self) -> float:
-        # poll every 375ms
-        return 0.375
 
 
 class ClassWorkerWithDomain(WorkerInterface):
+    def __init__(self, task_definition_name):
+        super().__init__(task_definition_name)
+        self.poll_interval = 850.0
+        self.domain = 'simple_python_worker'
+
     def execute(self, task: Task) -> TaskResult:
         task_result = self.get_task_result_from_task(task)
         task_result.add_output_data('worker_style', 'class')
@@ -33,23 +38,27 @@ class ClassWorkerWithDomain(WorkerInterface):
         task_result.status = TaskResultStatus.COMPLETED
         return task_result
 
-    def get_polling_interval_in_seconds(self) -> float:
-        # poll every 850ms
-        return 0.850
-
-    def get_domain(self) -> str:
-        return 'simple_python_worker'
-
 
 @WorkerTask(task_definition_name='test_python_decorated_worker')
-def simple_decorated_worker(input) -> object:
-    return {'message': 'python is so cool :)'}
+def decorated_worker(obj: object) -> object:
+    return {
+        'worker_style': 'function',
+        'worker_input': 'Task',
+        'worker_output': 'object',
+        'task_input': obj,
+        'status': 'COMPLETED'
+    }
 
-
-@WorkerTask('test_python_decorated_worker', poll_interval=50.0)
-def decorated_worker_with_poll_interval() -> object:
-    return {'message': 'python is so cool :)'}
-
+@WorkerTask(task_definition_name='test_python_decorated_worker', domain='cool', poll_interval=500.0)
+def decorated_worker_with_domain_and_poll_interval(obj: object) -> object:
+    return {
+        'worker_style': 'function',
+        'worker_input': 'Task',
+        'worker_output': 'object',
+        'domain': 'cool',
+        'task_input': obj,
+        'status': 'COMPLETED'
+    }
 
 def worker_with_task_input_and_task_result_output(task: Task) -> TaskResult:
     task_result = TaskResult(

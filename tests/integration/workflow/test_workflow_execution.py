@@ -7,13 +7,9 @@ from conductor.client.worker.worker import Worker
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.simple_task import SimpleTask
-from resources.worker.python.python_worker import ClassWorker
-from resources.worker.python.python_worker import ClassWorkerWithDomain
-from resources.worker.python.python_worker import worker_with_generic_input_and_generic_output
-from resources.worker.python.python_worker import worker_with_generic_input_and_task_result_output
-from resources.worker.python.python_worker import worker_with_task_input_and_generic_output
-from resources.worker.python.python_worker import worker_with_task_input_and_task_result_output
+from resources.worker.python.python_worker import *
 from time import sleep
+from multiprocessing import set_start_method
 import logging
 
 WORKFLOW_NAME = "sdk_python_integration_test_workflow"
@@ -30,18 +26,20 @@ logger = logging.getLogger(
 
 
 def run_workflow_execution_tests(configuration: Configuration, workflow_executor: WorkflowExecutor):
+    workers=[
+        ClassWorker(TASK_NAME),
+        ClassWorkerWithDomain(TASK_NAME),
+        generate_worker(worker_with_generic_input_and_generic_output),
+        generate_worker(worker_with_generic_input_and_task_result_output),
+        generate_worker(worker_with_task_input_and_generic_output),
+        generate_worker(worker_with_task_input_and_task_result_output),
+    ]
     task_handler = TaskHandler(
-        workers=[
-            ClassWorker(TASK_NAME),
-            ClassWorkerWithDomain(TASK_NAME),
-            generate_worker(worker_with_generic_input_and_generic_output),
-            generate_worker(worker_with_generic_input_and_task_result_output),
-            generate_worker(worker_with_task_input_and_generic_output),
-            generate_worker(worker_with_task_input_and_task_result_output),
-        ],
+        workers=workers,
         configuration=configuration,
-        scan_for_annotated_workers=False,
+        scan_for_annotated_workers=True,
     )
+    set_start_method('fork')
     task_handler.start_processes()
     try:
         test_get_workflow_by_correlation_ids(workflow_executor)
@@ -49,12 +47,12 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
         test_workflow_registration(workflow_executor)
         logger.debug('finished workflow registration tests')
         test_workflow_execution(
-            workflow_quantity=2,
+            workflow_quantity=6,
             workflow_name=WORKFLOW_NAME,
             workflow_executor=workflow_executor,
             workflow_completion_timeout=5.0
         )
-        # test_decorated_worker(workflow_executor)
+        test_decorated_workers(workflow_executor)
     except Exception as e:
         task_handler.stop_processes()
         raise Exception(f'failed integration tests, reason: {e}')
@@ -103,7 +101,7 @@ def test_workflow_registration(workflow_executor: WorkflowExecutor):
     )
 
 
-def test_decorated_worker(
+def test_decorated_workers(
         workflow_executor: WorkflowExecutor,
         workflow_name: str = 'TestPythonDecoratedWorkerWf',
 ) -> None:
@@ -113,10 +111,18 @@ def test_decorated_worker(
         task_name='test_python_decorated_worker',
     )
     wf.register(True)
-    workflow_id = workflow_executor.start_workflow(
-        StartWorkflowRequest(name=workflow_name))
-    logger.debug(f'started workflow with id: {workflow_id}')
+    workflow_id = workflow_executor.start_workflow(StartWorkflowRequest(name=workflow_name))
+    logger.debug(f'started TestPythonDecoratedWorkerWf with id: {workflow_id}')
+    
+    td_map = {
+        'test_python_decorated_worker': 'cool'
+    }
+    start_wf_req = StartWorkflowRequest(name=workflow_name, task_to_domain=td_map)
+    workflow_id_2 = workflow_executor.start_workflow(start_wf_req)
+    
+    logger.debug(f'started TestPythonDecoratedWorkerWf with domain:cool and id: {workflow_id_2}')
     sleep(5)
+    
     _run_with_retry_attempt(
         validate_workflow_status,
         {
@@ -124,7 +130,17 @@ def test_decorated_worker(
             'workflow_executor': workflow_executor
         }
     )
-
+    
+    _run_with_retry_attempt(
+        validate_workflow_status,
+        {
+            'workflow_id': workflow_id_2,
+            'workflow_executor': workflow_executor
+        }
+    )
+    
+    workflow_executor.metadata_client.unregister_workflow_def(wf.name, wf.version)
+    
 
 def test_workflow_execution(
     workflow_quantity: int,
@@ -187,7 +203,7 @@ def generate_worker(execute_function: ExecuteTaskFunction) -> Worker:
     return Worker(
         task_definition_name=TASK_NAME,
         execute_function=execute_function,
-        poll_interval=0.75
+        poll_interval=750.0
     )
 
 def _run_with_retry_attempt(f, params, retries=4) -> None:
