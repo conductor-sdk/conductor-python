@@ -52,6 +52,13 @@ class WorkerInterface(abc.ABC):
         return self.task_definition_name_cache
 
     @property
+    def task_definition_names(self):
+        if isinstance(self.task_definition_name, list):
+            return self.task_definition_name
+        else:
+            return [self.task_definition_name]
+    
+    @property
     def task_definition_name_cache(self):
         if self._task_definition_name_cache is None:
             self._task_definition_name_cache = self.compute_task_definition_name()

@@ -8,18 +8,13 @@ from conductor.client.http.models.task_exec_log import TaskExecLog
 from conductor.client.telemetry.metrics_collector import MetricsCollector
 from conductor.client.worker.worker_interface import WorkerInterface, DEFAULT_POLLING_INTERVAL
 from configparser import ConfigParser
+from logging.handlers import QueueHandler
+from multiprocessing import Queue
 import logging
 import sys
 import time
 import traceback
 import os
-
-logger = logging.getLogger(
-    Configuration.get_logging_formatted_name(
-        __name__
-    )
-)
-
 
 class TaskRunner:
     def __init__(
@@ -48,9 +43,25 @@ class TaskRunner:
             )
         )
 
-    def run(self) -> None:
+    def run(self, queue) -> None:
+        # Setup shared logger using Queues
+        self.logger = logging.getLogger(
+            Configuration.get_logging_formatted_name(
+                __name__
+            )
+        )
+        # Add a handler that uses the shared queue
+        if queue:
+            self.logger.addHandler(QueueHandler(queue))
+        
         if self.configuration != None:
             self.configuration.apply_logging_config()
+        else:
+            self.logger.setLevel(logging.DEBUG)
+        
+        task_names = ','.join(self.worker.task_definition_names)
+        self.logger.info(f'Started worker process for task(s): {task_names}')
+
         while True:
             try:
                 self.run_once()
@@ -68,13 +79,13 @@ class TaskRunner:
     def __poll_task(self) -> Task:
         task_definition_name = self.worker.get_task_definition_name()
         if self.worker.paused():
-            logger.debug(f'Stop polling task for: {task_definition_name}')
+            self.logger.debug(f'Stop polling task for: {task_definition_name}')
             return None
         if self.metrics_collector is not None:
             self.metrics_collector.increment_task_poll(
                 task_definition_name
             )
-        logger.debug(f'Polling task for: {task_definition_name}')
+        self.logger.debug(f'Polling task for: {task_definition_name}')
         try:
             start_time = time.time()
             domain = self.worker.get_domain()
@@ -96,12 +107,12 @@ class TaskRunner:
                 self.metrics_collector.increment_task_poll_error(
                     task_definition_name, type(e)
                 )
-            logger.error(
+            self.logger.error(
                 f'Failed to poll task for: {task_definition_name}, reason: {traceback.format_exc()}'
             )
             return None
         if task != None:
-            logger.debug(
+            self.logger.debug(
                 f'Polled task: {task_definition_name}, worker_id: {self.worker.get_identity()}, domain: {self.worker.get_domain()}'
             )
         return task
@@ -110,7 +121,7 @@ class TaskRunner:
         if not isinstance(task, Task):
             return None
         task_definition_name = self.worker.get_task_definition_name()
-        logger.debug(
+        self.logger.debug(
             'Executing task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}'.format(
                 task_id=task.task_id,
                 workflow_instance_id=task.workflow_instance_id,
@@ -131,7 +142,7 @@ class TaskRunner:
                     task_definition_name,
                     sys.getsizeof(task_result)
                 )
-            logger.debug(
+            self.logger.debug(
                 'Executed task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}'.format(
                     task_id=task.task_id,
                     workflow_instance_id=task.workflow_instance_id,
@@ -152,7 +163,7 @@ class TaskRunner:
             task_result.reason_for_incompletion = str(e)
             task_result.logs = [TaskExecLog(
                 traceback.format_exc(), task_result.task_id, int(time.time()))]
-            logger.error(
+            self.logger.error(
                 'Failed to execute task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, reason: {reason}'.format(
                     task_id=task.task_id,
                     workflow_instance_id=task.workflow_instance_id,
@@ -166,7 +177,7 @@ class TaskRunner:
         if not isinstance(task_result, TaskResult):
             return None
         task_definition_name = self.worker.get_task_definition_name()
-        logger.debug(
+        self.logger.debug(
             'Updating task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}'.format(
                 task_id=task_result.task_id,
                 workflow_instance_id=task_result.workflow_instance_id,
@@ -179,7 +190,7 @@ class TaskRunner:
                 time.sleep(attempt * 10)
             try:
                 response = self.task_client.update_task(body=task_result)
-                logger.debug(
+                self.logger.debug(
                     'Updated task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, response: {response}'.format(
                         task_id=task_result.task_id,
                         workflow_instance_id=task_result.workflow_instance_id,
@@ -193,7 +204,7 @@ class TaskRunner:
                     self.metrics_collector.increment_task_update_error(
                         task_definition_name, type(e)
                     )
-                logger.error(
+                self.logger.error(
                     'Failed to update task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, reason: {reason}'.format(
                         task_id=task_result.task_id,
                         workflow_instance_id=task_result.workflow_instance_id,
@@ -205,10 +216,12 @@ class TaskRunner:
 
     def __wait_for_polling_interval(self) -> None:
         polling_interval = self.worker.get_polling_interval_in_seconds()
-        logger.debug(f'Sleep for {polling_interval} seconds')
+        self.logger.debug(f'Sleep for {polling_interval} seconds')
         time.sleep(polling_interval)
 
     def __set_worker_properties(self) -> None:
+        # If multiple tasks are supplied to the same worker, then only first
+        # task will be considered for setting worker properties
         task_type = self.worker.get_task_definition_name()
         
         # Fetch from ENV Variables if present
@@ -223,7 +236,7 @@ class TaskRunner:
                 self.worker.poll_interval = float(polling_interval)
                 polling_interval_initialized = True
             except Exception as e:
-                logger.error("Exception in reading polling interval from environment variable: {0}.".format(str(e)))
+                self.logger.error("Exception in reading polling interval from environment variable: {0}.".format(str(e)))
 
         # Fetch from Config if present
         if not domain or not polling_interval_initialized:
@@ -247,9 +260,9 @@ class TaskRunner:
                     try:
                         # Read polling interval from config
                         self.worker.poll_interval = float(section.get("polling_interval", default_polling_interval))
-                        logger.debug("Override polling interval to {0} ms".format(self.worker.poll_interval))
+                        self.logger.debug("Override polling interval to {0} ms".format(self.worker.poll_interval))
                     except Exception as e:
-                        logger.error("Exception reading polling interval: {0}. Defaulting to {1} ms".format(str(e), default_polling_interval))
+                        self.logger.error("Exception reading polling interval: {0}. Defaulting to {1} ms".format(str(e), default_polling_interval))
 
     def __get_property_value_from_env(self, prop, task_type):
         prefix = "conductor_worker"

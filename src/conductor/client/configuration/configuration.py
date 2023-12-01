@@ -93,6 +93,17 @@ class Configuration:
         """
         self.__logger_format = value
 
+    @property
+    def log_level(self):
+        """The log level.
+
+        The log_level will be updated when sets logger_format.
+
+        :param value: The format string.
+        :type: str
+        """
+        return self.__log_level
+
     def apply_logging_config(self):
         logging.basicConfig(
             format=self.logger_format,
