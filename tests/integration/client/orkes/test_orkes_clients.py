@@ -546,18 +546,18 @@ class TestOrkesClients:
         workflow_uuid_2 = self.workflow_client.start_workflow(startWorkflowRequest)
         
         # First task of each workflow is in the queue
-        assert self.task_client.getQueueSizeForTask(TASK_TYPE) == 2
+        assert self.task_client.get_queue_size_for_task(TASK_TYPE) == 2
         
-        polledTask = self.task_client.pollTask(TASK_TYPE)
+        polledTask = self.task_client.poll_task(TASK_TYPE)
         assert polledTask.status == TaskResultStatus.IN_PROGRESS
         
-        self.task_client.addTaskLog(polledTask.task_id, "Polled task...")
+        self.task_client.add_task_log(polledTask.task_id, "Polled task...")
         
-        taskExecLogs = self.task_client.getTaskLogs(polledTask.task_id)
+        taskExecLogs = self.task_client.get_task_logs(polledTask.task_id)
         taskExecLogs[0].log == "Polled task..."
         
         # First task of second workflow is in the queue
-        assert self.task_client.getQueueSizeForTask(TASK_TYPE) == 1
+        assert self.task_client.get_queue_size_for_task(TASK_TYPE) == 1
         
         taskResult = TaskResult(
             workflow_instance_id=workflow_uuid,
@@ -565,17 +565,17 @@ class TestOrkesClients:
             status=TaskResultStatus.COMPLETED
         )
         
-        self.task_client.updateTask(taskResult)
+        self.task_client.update_task(taskResult)
         
-        task = self.task_client.getTask(polledTask.task_id)
+        task = self.task_client.get_task(polledTask.task_id)
         assert task.status == TaskResultStatus.COMPLETED
         
-        batchPolledTasks = self.task_client.batchPollTasks(TASK_TYPE)
+        batchPolledTasks = self.task_client.batch_poll_tasks(TASK_TYPE)
         assert len(batchPolledTasks) == 1
 
         polledTask = batchPolledTasks[0]
         # Update first task of second workflow
-        self.task_client.updateTaskByRefName(
+        self.task_client.update_task_by_ref_name(
             workflow_uuid_2,
             polledTask.reference_task_name,
             "COMPLETED",
@@ -583,20 +583,20 @@ class TestOrkesClients:
         )
         
         # Update second task of first workflow
-        self.task_client.updateTaskByRefName(
+        self.task_client.update_task_by_ref_name(
             workflow_uuid_2, "simple_task_ref_2", "COMPLETED", "task 2 op 1st wf"
         )
         
         # # Second task of second workflow is in the queue
         # assert self.task_client.getQueueSizeForTask(TASK_TYPE) == 1
-        polledTask = self.task_client.pollTask(TASK_TYPE)
+        polledTask = self.task_client.poll_task(TASK_TYPE)
 
         # Update second task of second workflow
-        self.task_client.updateTaskSync(
+        self.task_client.update_task_sync(
             workflow_uuid, "simple_task_ref_2", "COMPLETED", "task 1 op 2nd wf"
         )
         
-        assert self.task_client.getQueueSizeForTask(TASK_TYPE) == 0
+        assert self.task_client.get_queue_size_for_task(TASK_TYPE) == 0
 
     def __get_workflow_definition(self, path):
         f = open(path, "r")

@@ -13,76 +13,76 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
     def __init__(self, configuration: Configuration):
         super(OrkesTaskClient, self).__init__(configuration)
 
-    def pollTask(self, taskType: str, workerId: Optional[str] = None, domain: Optional[str] = None) -> Optional[Task]:
+    def poll_task(self, task_type: str, worker_id: Optional[str] = None, domain: Optional[str] = None) -> Optional[Task]:
         kwargs = {}
-        if workerId:
-            kwargs.update({"workerid": workerId})
+        if worker_id:
+            kwargs.update({"workerid": worker_id})
         if domain:
             kwargs.update({"domain": domain})
 
-        return self.taskResourceApi.poll(taskType, **kwargs)
+        return self.taskResourceApi.poll(task_type, **kwargs)
 
-    def batchPollTasks(
+    def batch_poll_tasks(
         self,
-        taskType: str,
-        workerId: Optional[str] = None,
+        task_type: str,
+        worker_id: Optional[str] = None,
         count: Optional[int] = None,
-        timeoutInMillisecond: Optional[int] = None,
+        timeout_in_millisecond: Optional[int] = None,
         domain: Optional[str] = None
     ) -> List[Task]:
         kwargs = {}
-        if workerId:
-            kwargs.update({"workerid": workerId})
+        if worker_id:
+            kwargs.update({"workerid": worker_id})
         if count:
             kwargs.update({"count": count})
-        if timeoutInMillisecond:
-            kwargs.update({"timeout": timeoutInMillisecond})
+        if timeout_in_millisecond:
+            kwargs.update({"timeout": timeout_in_millisecond})
         if domain:
             kwargs.update({"domain": domain})
 
-        return self.taskResourceApi.batch_poll(taskType, **kwargs)
+        return self.taskResourceApi.batch_poll(task_type, **kwargs)
 
-    def getTask(self, taskId: str) -> Task:
-        return self.taskResourceApi.get_task(taskId)
+    def get_task(self, task_id: str) -> Task:
+        return self.taskResourceApi.get_task(task_id)
 
-    def updateTask(self, taskResult: TaskResult) -> str:
-        return self.taskResourceApi.update_task(taskResult)
+    def update_task(self, task_result: TaskResult) -> str:
+        return self.taskResourceApi.update_task(task_result)
 
-    def updateTaskByRefName(
+    def update_task_by_ref_name(
         self,
-        workflowId: str,
-        taskRefName: str,
+        workflow_id: str,
+        task_ref_name: str,
         status: str,
         output: object,
-        workerId: Optional[str] = None
+        worker_id: Optional[str] = None
     ) -> str:
         body = { "result": output }
         kwargs = {}
-        if workerId:
-            kwargs.update({"workerid": workerId})
-        return self.taskResourceApi.update_task1(body, workflowId, taskRefName, status, **kwargs)
+        if worker_id:
+            kwargs.update({"workerid": worker_id})
+        return self.taskResourceApi.update_task1(body, workflow_id, task_ref_name, status, **kwargs)
     
-    def updateTaskSync(
+    def update_task_sync(
         self,
-        workflowId: str,
-        taskRefName: str,
+        workflow_id: str,
+        task_ref_name: str,
         status: str,
         output: object,
-        workerId: Optional[str] = None
+        worker_id: Optional[str] = None
     ) -> Workflow:
         body = { "result": output }
         kwargs = {}
-        if workerId:
-            kwargs.update({"workerid": workerId})
-        return self.taskResourceApi.update_task_sync(body, workflowId, taskRefName, status, **kwargs)
+        if worker_id:
+            kwargs.update({"workerid": worker_id})
+        return self.taskResourceApi.update_task_sync(body, workflow_id, task_ref_name, status, **kwargs)
 
-    def getQueueSizeForTask(self, taskType: str) -> int:
-        queueSizesByTaskType = self.taskResourceApi.size(task_type=[taskType])
-        queueSize = queueSizesByTaskType.get(taskType, 0)
+    def get_queue_size_for_task(self, task_type: str) -> int:
+        queueSizesByTaskType = self.taskResourceApi.size(task_type=[task_type])
+        queueSize = queueSizesByTaskType.get(task_type, 0)
         return queueSize
 
-    def addTaskLog(self, taskId: str, logMessage: str):
-        self.taskResourceApi.log(logMessage, taskId)
+    def add_task_log(self, task_id: str, log_message: str):
+        self.taskResourceApi.log(log_message, task_id)
 
-    def getTaskLogs(self, taskId: str) -> List[TaskExecLog]:
-        return self.taskResourceApi.get_task_logs(taskId)
+    def get_task_logs(self, task_id: str) -> List[TaskExecLog]:
+        return self.taskResourceApi.get_task_logs(task_id)

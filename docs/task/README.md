@@ -19,23 +19,27 @@ task_client = OrkesTaskClient(configuration)
 
 ### Task Polling
 #### Poll a single task
+
 ```python
-polledTask = task_client.pollTask("TASK_TYPE")
+polledTask = task_client.poll_task("TASK_TYPE")
 ```
 
 #### Batch poll tasks
+
 ```python
-batchPolledTasks = task_client.batchPollTasks("TASK_TYPE")
+batchPolledTasks = task_client.batch_poll_tasks("TASK_TYPE")
 ```
 
 ### Get Task
+
 ```python
-task = task_client.getTask("task_id")
+task = task_client.get_task("task_id")
 ```
 
 ### Updating Task Status
 
 #### Update task using TaskResult object
+
 ```python
 task_result = TaskResult(
     workflow_instance_id="workflow_instance_id",
@@ -43,12 +47,13 @@ task_result = TaskResult(
     status=TaskResultStatus.COMPLETED
 )
 
-task_client.updateTask(task_result)
+task_client.update_task(task_result)
 ```
 
 #### Update task using task reference name
+
 ```python
-task_client.updateTaskByRefName(
+task_client.update_task_by_ref_name(
     "workflow_instance_id",
     "task_ref_name",
     "COMPLETED",
@@ -57,8 +62,9 @@ task_client.updateTaskByRefName(
 ```
 
 #### Update task synchronously
+
 ```python
-task_client.updateTaskSync(
+task_client.update_task_sync(
     "workflow_instance_id",
     "task_ref_name",
     "COMPLETED",
@@ -69,11 +75,13 @@ task_client.updateTaskSync(
 ### Task Log Management
 
 #### Add Task logs
+
 ```python
-task_client.addTaskLog("task_id", "Test task log!")
+task_client.add_task_log("task_id", "Test task log!")
 ```
 
 #### Get Task logs
+
 ```python
-taskLogs = task_client.getTaskLogs("task_id")
+taskLogs = task_client.get_task_logs("task_id")
 ```
