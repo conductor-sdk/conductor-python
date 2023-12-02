@@ -107,37 +107,37 @@ class TestOrkesClients:
 
 
     def test_secret_lifecycle(self):
-        self.secret_client.putSecret(SECRET_NAME, "secret_value")
+        self.secret_client.put_secret(SECRET_NAME, "secret_value")
         
-        assert self.secret_client.getSecret(SECRET_NAME), "secret_value"
+        assert self.secret_client.get_secret(SECRET_NAME), "secret_value"
         
-        self.secret_client.putSecret(SECRET_NAME + "_2", "secret_value_2")
+        self.secret_client.put_secret(SECRET_NAME + "_2", "secret_value_2")
     
-        secret_names = self.secret_client.listAllSecretNames()
+        secret_names = self.secret_client.list_all_secret_names()
         
         assert secret_names, [SECRET_NAME, SECRET_NAME + "_2"]
         
         tags = [
             MetadataTag("sec_tag", "val"), MetadataTag("sec_tag_2", "val2")
         ]
-        self.secret_client.setSecretTags(tags, SECRET_NAME)
-        fetched_tags = self.secret_client.getSecretTags(SECRET_NAME)
+        self.secret_client.set_secret_tags(tags, SECRET_NAME)
+        fetched_tags = self.secret_client.get_secret_tags(SECRET_NAME)
         assert len(fetched_tags) == 2
         
-        self.secret_client.deleteSecretTags(tags, SECRET_NAME)
-        fetched_tags = self.secret_client.getSecretTags(SECRET_NAME)
+        self.secret_client.delete_secret_tags(tags, SECRET_NAME)
+        fetched_tags = self.secret_client.get_secret_tags(SECRET_NAME)
         assert len(fetched_tags) == 0
         
-        assert self.secret_client.secretExists(SECRET_NAME)
+        assert self.secret_client.secret_exists(SECRET_NAME)
         
-        self.secret_client.deleteSecret(SECRET_NAME)
+        self.secret_client.delete_secret(SECRET_NAME)
         
-        assert self.secret_client.secretExists(SECRET_NAME) == False
+        assert self.secret_client.secret_exists(SECRET_NAME) == False
         
-        self.secret_client.deleteSecret(SECRET_NAME + "_2")
+        self.secret_client.delete_secret(SECRET_NAME + "_2")
         
         try:
-            self.secret_client.getSecret(SECRET_NAME + "_2")
+            self.secret_client.get_secret(SECRET_NAME + "_2")
         except APIError as e:
             assert e.code == APIErrorCode.NOT_FOUND
 
