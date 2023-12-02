@@ -105,7 +105,7 @@ workflow_client.restart_workflow(workflow_id, use_latest_def=True)
 When called, the task in the failed state is scheduled again, and the workflow moves to RUNNING status. If resumeSubworkflowTasks is set and the last failed task was a sub-workflow, the server restarts the sub-workflow from the failed task. If set to false, the sub-workflow is re-executed.
 
 ```python
-workflow_client.retry_workflow(workflow_id, resumeSubworkflowTasks=True)
+workflow_client.retry_workflow(workflow_id, resume_subworkflow_tasks=True)
 ```
 
 ### Skip task from workflow

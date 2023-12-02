@@ -9,21 +9,22 @@ from conductor.client.workflow_client import WorkflowClient
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
 from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
 
+
 @for_all_methods(api_exception_handler, ["__init__"])
 class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
     def __init__(
-        self,
-        configuration: Configuration
-        ):
+            self,
+            configuration: Configuration
+    ):
         super(OrkesWorkflowClient, self).__init__(configuration)
 
     def startWorkflowByName(
-        self,
-        name: str,
-        input: dict[str, object],
-        version: Optional[int] = None,
-        correlationId: Optional[str] = None,
-        priority: Optional[int] = None,
+            self,
+            name: str,
+            input: dict[str, object],
+            version: Optional[int] = None,
+            correlationId: Optional[str] = None,
+            priority: Optional[int] = None,
     ) -> str:
         kwargs = {}
         if version:
@@ -39,15 +40,15 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
         return self.workflowResourceApi.start_workflow(start_workflow_request)
 
     def execute_workflow(
-        self,
-        startWorkflowRequest: StartWorkflowRequest,
-        requestId: str,
-        name: str,
-        version: int,
-        waitUntilTaskRef: Optional[str] = None
+            self,
+            start_workflow_request: StartWorkflowRequest,
+            request_id: str,
+            name: str,
+            version: int,
+            wait_until_task_ref: Optional[str] = None
     ) -> WorkflowRun:
-        kwargs = { "wait_until_task_ref" : waitUntilTaskRef } if waitUntilTaskRef else {}
-        return self.workflowResourceApi.execute_workflow(startWorkflowRequest, requestId, name, version, **kwargs)
+        kwargs = {"wait_until_task_ref": wait_until_task_ref} if wait_until_task_ref else {}
+        return self.workflowResourceApi.execute_workflow(start_workflow_request, request_id, name, version, **kwargs)
 
     def pause_workflow(self, workflow_id: str):
         self.workflowResourceApi.pause_workflow1(workflow_id)
@@ -61,11 +62,11 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
     def rerun_workflow(self, workflow_id: str, rerun_workflow_request: RerunWorkflowRequest):
         self.workflowResourceApi.rerun(rerun_workflow_request, workflow_id)
 
-    def retry_workflow(self, workflowId: str, resumeSubworkflowTasks: Optional[bool] = False):
-        self.workflowResourceApi.retry1(workflowId, resume_subworkflow_tasks=resumeSubworkflowTasks)
+    def retry_workflow(self, workflow_id: str, resume_subworkflow_tasks: Optional[bool] = False):
+        self.workflowResourceApi.retry1(workflow_id, resume_subworkflow_tasks=resume_subworkflow_tasks)
 
     def terminate_workflow(self, workflow_id: str, reason: Optional[str] = None):
-        kwargs = { "reason" : reason } if reason else {}
+        kwargs = {"reason": reason} if reason else {}
         self.workflowResourceApi.terminate1(workflow_id, **kwargs)
 
     def get_workflow(self, workflow_id: str, include_tasks: Optional[bool] = True) -> Workflow:

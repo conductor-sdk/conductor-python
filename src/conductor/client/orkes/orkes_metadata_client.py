@@ -90,8 +90,7 @@ class OrkesMetadataClient(OrkesBaseClient, MetadataClient):
         return None
 
     def removeWorkflowRateLimit(self, workflowName: str):
-        currentRateLimit = self.getWorkflowRateLimit(workflowName)
-
-        if currentRateLimit:
-            rateLimitTag = RateLimitTag(workflowName, currentRateLimit)
+        current_rate_limit = self.getWorkflowRateLimit(workflowName)
+        if current_rate_limit:
+            rateLimitTag = RateLimitTag(workflowName, current_rate_limit)
             self.tagsApi.delete_workflow_tag(rateLimitTag, workflowName)

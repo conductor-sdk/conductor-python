@@ -13,6 +13,7 @@ from conductor.client.http.api.scheduler_resource_api import SchedulerResourceAp
 
 import logging
 
+
 class OrkesBaseClient(object):
     def __init__(self, configuration: Configuration):
         self.api_client = ApiClient(configuration)
@@ -29,4 +30,3 @@ class OrkesBaseClient(object):
         self.authorizationResourceApi = AuthorizationResourceApi(self.api_client)
         self.schedulerResourceApi = SchedulerResourceApi(self.api_client)
         self.tagsApi = TagsApi(self.api_client)
-    
