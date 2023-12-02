@@ -1,7 +1,7 @@
 import sys
 from typing import Dict
 
-from conductor.client.ai.ai_orchestrator import AIConfiguration, AIOrchestrator
+from conductor.client.ai.orchestrator import AIConfiguration, AIOrchestrator
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from conductor.client.http.models import Task, TaskResult

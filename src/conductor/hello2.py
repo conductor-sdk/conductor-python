@@ -4,8 +4,8 @@ from conductor.client.workflow.task.llm_tasks.utils.prompt import Prompt
 from conductor.client.workflow.task.llm_tasks.llm_text_complete import LlmTextComplete
 from conductor.client.workflow.task.simple_task import SimpleTask
 from conductor.client.http.models import Task, TaskResult
-from conductor.client.ai.ai_orchestrator import AIOrchestrator
-from conductor.client.ai.ai_orchestrator import AIConfiguration
+from conductor.client.ai.orchestrator import AIOrchestrator
+from conductor.client.ai.orchestrator import AIConfiguration
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 
