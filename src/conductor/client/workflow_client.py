@@ -5,54 +5,52 @@ from conductor.client.http.models.start_workflow_request import StartWorkflowReq
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
 from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
 
+
 class WorkflowClient(ABC):
     @abstractmethod
-    def startWorkflow(self, startWorkflowRequest: StartWorkflowRequest) -> str:
+    def start_workflow(self, start_workflow_request: StartWorkflowRequest) -> str:
         pass
 
     @abstractmethod
-    def getWorkflow(self, workflowId: str, includeTasks: Optional[bool] = True) -> Workflow:
+    def get_workflow(self, workflow_id: str, include_tasks: Optional[bool] = True) -> Workflow:
         pass
 
     @abstractmethod
-    def deleteWorkflow(self, workflowId: str, archiveWorkflow: Optional[bool] = True):
+    def delete_workflow(self, workflow_id: str, archive_workflow: Optional[bool] = True):
         pass
 
     @abstractmethod
-    def terminateWorkflow(self, workflowId: str, reason: Optional[str] = None):
+    def terminate_workflow(self, workflow_id: str, reason: Optional[str] = None):
         pass
 
     @abstractmethod
-    def executeWorkflow(self):
+    def execute_workflow(self):
         pass
 
     @abstractmethod
-    def pauseWorkflow(self, workflowId: str):
+    def pause_workflow(self, workflow_id: str):
         pass
 
     @abstractmethod
-    def resumeWorkflow(self, workflowId: str):
+    def resume_workflow(self, workflow_id: str):
         pass
 
     @abstractmethod
-    def restartWorkflow(self, workflowId: str, useLatestDef: Optional[bool] = False):
+    def restart_workflow(self, workflow_id: str, use_latest_def: Optional[bool] = False):
         pass
 
     @abstractmethod
-    def retryWorkflow(self):
+    def retry_workflow(self):
         pass
 
     @abstractmethod
-    def rerunWorkflow(self, workflowId: str, rerunWorkflowRequest: RerunWorkflowRequest):
+    def rerun_workflow(self, workflow_id: str, rerun_workflow_request: RerunWorkflowRequest):
         pass
 
     @abstractmethod
-    def skipTaskFromWorkflow(self, workflowId: str, taskReferenceName: str):
+    def skip_task_from_workflow(self, workflow_id: str, task_reference_name: str):
         pass
-    
+
     @abstractmethod
-    def testWorkflow(self, testRequest: WorkflowTestRequest) -> Workflow:
+    def test_workflow(self, test_request: WorkflowTestRequest) -> Workflow:
         pass
-
-
-

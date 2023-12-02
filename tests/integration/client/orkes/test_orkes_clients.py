@@ -40,12 +40,12 @@ class TestOrkesClients:
         self.workflow_executor = WorkflowExecutor(configuration)
 
         orkes_clients = OrkesClients(configuration)
-        self.metadata_client = orkes_clients.getMetadataClient()
-        self.workflow_client = orkes_clients.getWorkflowClient()
-        self.task_client = orkes_clients.getTaskClient()
-        self.scheduler_client = orkes_clients.getSchedulerClient()
-        self.secret_client = orkes_clients.getSecretClient()
-        self.authorization_client = orkes_clients.getAuthorizationClient()
+        self.metadata_client = orkes_clients.get_metadata_client()
+        self.workflow_client = orkes_clients.get_workflow_client()
+        self.task_client = orkes_clients.get_task_client()
+        self.scheduler_client = orkes_clients.get_scheduler_client()
+        self.secret_client = orkes_clients.get_secret_client()
+        self.authorization_client = orkes_clients.get_authorization_client()
         self.workflow_id = None
 
     def run(self) -> None:
@@ -364,7 +364,7 @@ class TestOrkesClients:
         testRequest.version = workflowDef.version
         testRequest.task_ref_to_mock_output = testTaskInputs
 
-        execution = self.workflow_client.testWorkflow(testRequest)
+        execution = self.workflow_client.test_workflow(testRequest)
         assert execution != None
         
         # Ensure workflow is completed successfully
@@ -488,35 +488,35 @@ class TestOrkesClients:
         workflow_uuid = self.workflow_client.startWorkflowByName(WORKFLOW_NAME, wfInput)
         assert workflow_uuid is not None
 
-        workflow = self.workflow_client.getWorkflow(workflow_uuid, False)
+        workflow = self.workflow_client.get_workflow(workflow_uuid, False)
         assert workflow.input["a"] == 5
         assert workflow.input["b"] == "+"
         assert workflow.input["c"] == [7, 8]
         assert workflow.status == "RUNNING"
 
-        self.workflow_client.pauseWorkflow(workflow_uuid)
-        workflow = self.workflow_client.getWorkflow(workflow_uuid, False)
+        self.workflow_client.pause_workflow(workflow_uuid)
+        workflow = self.workflow_client.get_workflow(workflow_uuid, False)
         assert workflow.status == "PAUSED"
 
-        self.workflow_client.resumeWorkflow(workflow_uuid)
-        workflow = self.workflow_client.getWorkflow(workflow_uuid, False)
+        self.workflow_client.resume_workflow(workflow_uuid)
+        workflow = self.workflow_client.get_workflow(workflow_uuid, False)
         assert workflow.status == "RUNNING"
 
-        self.workflow_client.terminateWorkflow(workflow_uuid, "Integration Test")
-        workflow = self.workflow_client.getWorkflow(workflow_uuid, False)
+        self.workflow_client.terminate_workflow(workflow_uuid, "Integration Test")
+        workflow = self.workflow_client.get_workflow(workflow_uuid, False)
         assert workflow.status == "TERMINATED"
 
-        self.workflow_client.restartWorkflow(workflow_uuid)
-        workflow = self.workflow_client.getWorkflow(workflow_uuid, False)
+        self.workflow_client.restart_workflow(workflow_uuid)
+        workflow = self.workflow_client.get_workflow(workflow_uuid, False)
         assert workflow.status == "RUNNING"
         
-        self.workflow_client.skipTaskFromWorkflow(workflow_uuid, "simple_task_ref_2")
-        workflow = self.workflow_client.getWorkflow(workflow_uuid, False)
+        self.workflow_client.skip_task_from_workflow(workflow_uuid, "simple_task_ref_2")
+        workflow = self.workflow_client.get_workflow(workflow_uuid, False)
         assert workflow.status == "RUNNING"
 
-        self.workflow_client.deleteWorkflow(workflow_uuid)
+        self.workflow_client.delete_workflow(workflow_uuid)
         try:
-            workflow = self.workflow_client.getWorkflow(workflow_uuid, False)
+            workflow = self.workflow_client.get_workflow(workflow_uuid, False)
         except APIError as e:
             assert e.code == APIErrorCode.NOT_FOUND
             assert e.message == "Workflow with Id: {} not found.".format(workflow_uuid)
@@ -540,10 +540,10 @@ class TestOrkesClients:
             input={ "a" : 15, "b": 3, "op" : "+" }
         )
         
-        workflow_uuid = self.workflow_client.startWorkflow(startWorkflowRequest)
-        workflow = self.workflow_client.getWorkflow(workflow_uuid, False)
+        workflow_uuid = self.workflow_client.start_workflow(startWorkflowRequest)
+        workflow = self.workflow_client.get_workflow(workflow_uuid, False)
         
-        workflow_uuid_2 = self.workflow_client.startWorkflow(startWorkflowRequest)
+        workflow_uuid_2 = self.workflow_client.start_workflow(startWorkflowRequest)
         
         # First task of each workflow is in the queue
         assert self.task_client.getQueueSizeForTask(TASK_TYPE) == 2

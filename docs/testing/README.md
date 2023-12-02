@@ -45,7 +45,7 @@ testRequest.name = workflowDef.name
 testRequest.version = workflowDef.version
 testRequest.task_ref_to_mock_output = testTaskInputs
 
-execution = workflow_client.testWorkflow(testRequest)
+execution = workflow_client.test_workflow(testRequest)
 assert execution != None
 
 # Ensure workflow is completed successfully
