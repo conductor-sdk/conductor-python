@@ -152,41 +152,41 @@ class TestOrkesClients:
             cron_expression= "0 */5 * ? * *"
         )
 
-        self.scheduler_client.saveSchedule(saveScheduleRequest)
+        self.scheduler_client.save_schedule(saveScheduleRequest)
 
-        schedule = self.scheduler_client.getSchedule(SCHEDULE_NAME)
+        schedule = self.scheduler_client.get_schedule(SCHEDULE_NAME)
         
         assert schedule['name'] == SCHEDULE_NAME
         
-        self.scheduler_client.pauseSchedule(SCHEDULE_NAME)
+        self.scheduler_client.pause_schedule(SCHEDULE_NAME)
         
-        schedules = self.scheduler_client.getAllSchedules(WORKFLOW_NAME)
+        schedules = self.scheduler_client.get_all_schedules(WORKFLOW_NAME)
         assert len(schedules) == 1
         assert schedules[0].name == SCHEDULE_NAME
         assert schedules[0].paused
         
-        self.scheduler_client.resumeSchedule(SCHEDULE_NAME)
-        schedule = self.scheduler_client.getSchedule(SCHEDULE_NAME)
+        self.scheduler_client.resume_schedule(SCHEDULE_NAME)
+        schedule = self.scheduler_client.get_schedule(SCHEDULE_NAME)
         assert not schedule['paused']
         
-        times = self.scheduler_client.getNextFewScheduleExecutionTimes("0 */5 * ? * *", limit=1)
+        times = self.scheduler_client.get_next_few_schedule_execution_times("0 */5 * ? * *", limit=1)
         assert(len(times) == 1)
         
         tags = [
             MetadataTag("sch_tag", "val"), MetadataTag("sch_tag_2", "val2")
         ]
-        self.scheduler_client.setSchedulerTags(tags, SCHEDULE_NAME)
-        fetched_tags = self.scheduler_client.getSchedulerTags(SCHEDULE_NAME)
+        self.scheduler_client.set_scheduler_tags(tags, SCHEDULE_NAME)
+        fetched_tags = self.scheduler_client.get_scheduler_tags(SCHEDULE_NAME)
         assert len(fetched_tags) == 2
         
-        self.scheduler_client.deleteSchedulerTags(tags, SCHEDULE_NAME)
-        fetched_tags = self.scheduler_client.getSchedulerTags(SCHEDULE_NAME)
+        self.scheduler_client.delete_scheduler_tags(tags, SCHEDULE_NAME)
+        fetched_tags = self.scheduler_client.get_scheduler_tags(SCHEDULE_NAME)
         assert len(fetched_tags) == 0
         
-        self.scheduler_client.deleteSchedule(SCHEDULE_NAME)
+        self.scheduler_client.delete_schedule(SCHEDULE_NAME)
         
         try:
-            schedule = self.scheduler_client.getSchedule(SCHEDULE_NAME)
+            schedule = self.scheduler_client.get_schedule(SCHEDULE_NAME)
         except APIError as e:
             assert e.code == APIErrorCode.NOT_FOUND
             assert e.message == "Schedule '{0}' not found".format(SCHEDULE_NAME)

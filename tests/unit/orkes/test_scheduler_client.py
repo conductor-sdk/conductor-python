@@ -39,14 +39,14 @@ class TestOrkesSchedulerClient(unittest.TestCase):
 
     @patch.object(SchedulerResourceApi, 'save_schedule')
     def test_saveSchedule(self, mock):
-        self.scheduler_client.saveSchedule(self.saveScheduleRequest)
+        self.scheduler_client.save_schedule(self.saveScheduleRequest)
         self.assertTrue(mock.called)
         mock.assert_called_with(self.saveScheduleRequest)
 
     @patch.object(SchedulerResourceApi, 'get_schedule')
     def test_getSchedule(self, mock):
         mock.return_value = self.workflowSchedule
-        schedule = self.scheduler_client.getSchedule(SCHEDULE_NAME)
+        schedule = self.scheduler_client.get_schedule(SCHEDULE_NAME)
         self.assertEqual(schedule, self.workflowSchedule)
         self.assertTrue(mock.called)
         mock.assert_called_with(SCHEDULE_NAME)
@@ -56,20 +56,20 @@ class TestOrkesSchedulerClient(unittest.TestCase):
         error_body = { 'status': 404, 'message': 'Schedule not found' }
         mock.side_effect = MagicMock(side_effect=ApiException(status=404, body=json.dumps(error_body)))
         with self.assertRaises(APIError):
-            self.scheduler_client.getSchedule("WRONG_SCHEDULE")
+            self.scheduler_client.get_schedule("WRONG_SCHEDULE")
             mock.assert_called_with("WRONG_SCHEDULE")
         
     @patch.object(SchedulerResourceApi, 'get_all_schedules')
     def test_getAllSchedules(self, mock):
         mock.return_value = [self.workflowSchedule]
-        schedules = self.scheduler_client.getAllSchedules()
+        schedules = self.scheduler_client.get_all_schedules()
         self.assertEqual(schedules, [self.workflowSchedule])
         self.assertTrue(mock.called)
     
     @patch.object(SchedulerResourceApi, 'get_all_schedules')
     def test_getAllSchedules_with_workflow_name(self, mock):
         mock.return_value = [self.workflowSchedule]
-        schedules = self.scheduler_client.getAllSchedules(WORKFLOW_NAME)
+        schedules = self.scheduler_client.get_all_schedules(WORKFLOW_NAME)
         self.assertEqual(schedules, [self.workflowSchedule])
         mock.assert_called_with(workflow_name=WORKFLOW_NAME)
     
@@ -77,7 +77,7 @@ class TestOrkesSchedulerClient(unittest.TestCase):
     def test_getNextFewScheduleExecutionTimes(self, mock):
         cronExpression = "0 */5 * ? * *"
         mock.return_value = [1698093000000, 1698093300000, 1698093600000]
-        times = self.scheduler_client.getNextFewScheduleExecutionTimes(cronExpression)
+        times = self.scheduler_client.get_next_few_schedule_execution_times(cronExpression)
         self.assertEqual(len(times), 3)
         mock.assert_called_with(cronExpression)
     
@@ -85,7 +85,7 @@ class TestOrkesSchedulerClient(unittest.TestCase):
     def test_getNextFewScheduleExecutionTimes_with_optional_params(self, mock):
         cronExpression = "0 */5 * ? * *"
         mock.return_value = [1698093300000, 1698093600000]
-        times = self.scheduler_client.getNextFewScheduleExecutionTimes(
+        times = self.scheduler_client.get_next_few_schedule_execution_times(
             cronExpression, 1698093300000, 1698093600000, 2
         )
         self.assertEqual(len(times), 2)
@@ -98,32 +98,32 @@ class TestOrkesSchedulerClient(unittest.TestCase):
     
     @patch.object(SchedulerResourceApi, 'delete_schedule')
     def test_deleteSchedule(self, mock):
-        self.scheduler_client.deleteSchedule(SCHEDULE_NAME)
+        self.scheduler_client.delete_schedule(SCHEDULE_NAME)
         mock.assert_called_with(SCHEDULE_NAME)
         
     @patch.object(SchedulerResourceApi, 'pause_schedule')
     def test_pauseSchedule(self, mock):
-        self.scheduler_client.pauseSchedule(SCHEDULE_NAME)
+        self.scheduler_client.pause_schedule(SCHEDULE_NAME)
         mock.assert_called_with(SCHEDULE_NAME)
         
     @patch.object(SchedulerResourceApi, 'pause_all_schedules')
     def test_pauseAllSchedules(self, mock):
-        self.scheduler_client.pauseAllSchedules()
+        self.scheduler_client.pause_all_schedules()
         self.assertTrue(mock.called)
         
     @patch.object(SchedulerResourceApi, 'resume_schedule')
     def test_resumeSchedule(self, mock):
-        self.scheduler_client.resumeSchedule(SCHEDULE_NAME)
+        self.scheduler_client.resume_schedule(SCHEDULE_NAME)
         mock.assert_called_with(SCHEDULE_NAME)
         
     @patch.object(SchedulerResourceApi, 'resume_all_schedules')
     def test_resumeAllSchedules(self, mock):
-        self.scheduler_client.resumeAllSchedules()
+        self.scheduler_client.resume_all_schedules()
         self.assertTrue(mock.called)
         
     @patch.object(SchedulerResourceApi, 'requeue_all_execution_records')
     def test_requeueAllExecutionRecords(self, mock):
-        self.scheduler_client.requeueAllExecutionRecords()
+        self.scheduler_client.requeue_all_execution_records()
         self.assertTrue(mock.called)
 
     @patch.object(SchedulerResourceApi, 'search_v21')
@@ -134,7 +134,7 @@ class TestOrkesSchedulerClient(unittest.TestCase):
         sort = "name&sort=workflowId:DESC"
         freeText = "abc"
         query="workflowId=abc"
-        searchResult = self.scheduler_client.searchScheduleExecutions(
+        searchResult = self.scheduler_client.search_schedule_executions(
             start, 2, sort, freeText, query
         )
         mock.assert_called_with(
@@ -151,7 +151,7 @@ class TestOrkesSchedulerClient(unittest.TestCase):
         tag1 = MetadataTag("tag1", "val1")
         tag2 = MetadataTag("tag2", "val2")
         tags = [tag1, tag2]
-        self.scheduler_client.setSchedulerTags(tags, SCHEDULE_NAME)
+        self.scheduler_client.set_scheduler_tags(tags, SCHEDULE_NAME)
         mock.assert_called_with(tags, SCHEDULE_NAME)
         
     @patch.object(SchedulerResourceApi, 'get_tags_for_schedule')
@@ -159,7 +159,7 @@ class TestOrkesSchedulerClient(unittest.TestCase):
         tag1 = MetadataTag("tag1", "val1")
         tag1 = MetadataTag("tag2", "val2")
         mock.return_value = [tag1, tag1]
-        tags = self.scheduler_client.getSchedulerTags(SCHEDULE_NAME)
+        tags = self.scheduler_client.get_scheduler_tags(SCHEDULE_NAME)
         mock.assert_called_with(SCHEDULE_NAME)
         self.assertEqual(len(tags), 2)
     
@@ -168,5 +168,5 @@ class TestOrkesSchedulerClient(unittest.TestCase):
         tag1 = MetadataTag("tag1", "val1")
         tag2 = MetadataTag("tag2", "val2")
         tags = [tag1, tag2]
-        self.scheduler_client.deleteSchedulerTags(tags, SCHEDULE_NAME)
+        self.scheduler_client.delete_scheduler_tags(tags, SCHEDULE_NAME)
         mock.assert_called_with(tags, SCHEDULE_NAME)

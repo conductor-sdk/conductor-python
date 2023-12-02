@@ -2,74 +2,75 @@ from abc import ABC, abstractmethod
 from typing import Optional, List
 from conductor.client.http.models.workflow_schedule import WorkflowSchedule
 from conductor.client.http.models.save_schedule_request import SaveScheduleRequest
-from conductor.client.http.models.search_result_workflow_schedule_execution_model import SearchResultWorkflowScheduleExecutionModel
+from conductor.client.http.models.search_result_workflow_schedule_execution_model import \
+    SearchResultWorkflowScheduleExecutionModel
 from conductor.client.orkes.models.metadata_tag import MetadataTag
+
 
 class SchedulerClient(ABC):
     @abstractmethod
-    def saveSchedule(self, saveScheduleRequest: SaveScheduleRequest):
-        pass
-    
-    @abstractmethod
-    def getSchedule(self, name: str) -> (Optional[WorkflowSchedule], str):
-        pass
-    
-    @abstractmethod
-    def getAllSchedules(self, workflowName: Optional[str] = None) -> List[WorkflowSchedule]:
-        pass
-    
-    @abstractmethod
-    def getNextFewScheduleExecutionTimes(self,
-        cronExpression: str,
-        scheduleStartTime: Optional[int] = None,
-        scheduleEndTime: Optional[int] = None,
-        limit: Optional[int] = None,
-    ) -> List[int]:
+    def save_schedule(self, save_schedule_request: SaveScheduleRequest):
         pass
 
     @abstractmethod
-    def deleteSchedule(self, name: str):
+    def get_schedule(self, name: str) -> (Optional[WorkflowSchedule], str):
         pass
 
     @abstractmethod
-    def pauseSchedule(self, name: str):
-        pass
-    
-    @abstractmethod
-    def pauseAllSchedules(self):
-        pass
-    
-    @abstractmethod
-    def resumeSchedule(self, name: str):
-        pass
-    
-    @abstractmethod
-    def resumeAllSchedules(self):
+    def get_all_schedules(self, workflow_name: Optional[str] = None) -> List[WorkflowSchedule]:
         pass
 
     @abstractmethod
-    def searchScheduleExecutions(self,
-        start: Optional[int] = None,
-        size: Optional[int] = None,
-        sort: Optional[str] = None,
-        freeText: Optional[str] = None,
-        query: Optional[str] = None,
-    ) -> SearchResultWorkflowScheduleExecutionModel:
-        pass
-    
-    @abstractmethod
-    def requeueAllExecutionRecords(self):
+    def get_next_few_schedule_execution_times(self,
+                                              cron_expression: str,
+                                              schedule_start_time: Optional[int] = None,
+                                              schedule_end_time: Optional[int] = None,
+                                              limit: Optional[int] = None,
+                                              ) -> List[int]:
         pass
 
     @abstractmethod
-    def setSchedulerTags(self, tags: List[MetadataTag], name: str):
+    def delete_schedule(self, name: str):
         pass
 
     @abstractmethod
-    def getSchedulerTags(self, name: str) -> List[MetadataTag]:
-        pass
-        
-    @abstractmethod
-    def deleteSchedulerTags(self, tags: List[MetadataTag], name: str) -> List[MetadataTag]:
+    def pause_schedule(self, name: str):
         pass
 
+    @abstractmethod
+    def pause_all_schedules(self):
+        pass
+
+    @abstractmethod
+    def resume_schedule(self, name: str):
+        pass
+
+    @abstractmethod
+    def resume_all_schedules(self):
+        pass
+
+    @abstractmethod
+    def search_schedule_executions(self,
+                                   start: Optional[int] = None,
+                                   size: Optional[int] = None,
+                                   sort: Optional[str] = None,
+                                   free_text: Optional[str] = None,
+                                   query: Optional[str] = None,
+                                   ) -> SearchResultWorkflowScheduleExecutionModel:
+        pass
+
+    @abstractmethod
+    def requeue_all_execution_records(self):
+        pass
+
+    @abstractmethod
+    def set_scheduler_tags(self, tags: List[MetadataTag], name: str):
+        pass
+
+    @abstractmethod
+    def get_scheduler_tags(self, name: str) -> List[MetadataTag]:
+        pass
+
+    @abstractmethod
+    def delete_scheduler_tags(self, tags: List[MetadataTag], name: str) -> List[MetadataTag]:
+        pass

@@ -18,6 +18,7 @@ scheduler_client = OrkesSchedulerClient(configuration)
 ```
 
 ### Saving Schedule
+
 ```python
 from conductor.client.http.models.save_schedule_request import SaveScheduleRequest
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
@@ -28,77 +29,88 @@ startWorkflowRequest = StartWorkflowRequest(
 saveScheduleRequest = SaveScheduleRequest(
     name="SCHEDULE_NAME",
     start_workflow_request=startWorkflowRequest,
-    cron_expression= "0 */5 * ? * *"
+    cron_expression="0 */5 * ? * *"
 )
 
-scheduler_client.saveSchedule(saveScheduleRequest)
+scheduler_client.save_schedule(saveScheduleRequest)
 ```
 
 ### Get Schedule
 
 #### Get a specific schedule
+
 ```python
-scheduler_client.getSchedule("SCHEDULE_NAME")
+scheduler_client.get_schedule("SCHEDULE_NAME")
 ```
 
 #### Get all schedules
+
 ```python
-scheduler_client.getAllSchedules()
+scheduler_client.get_all_schedules()
 ```
 
 #### Get all schedules for a workflow
+
 ```python
-scheduler_client.getAllSchedules("WORKFLOW_NAME")
+scheduler_client.get_all_schedules("WORKFLOW_NAME")
 ```
 
 ### Delete Schedule
+
 ```python
-scheduler_client.deleteSchedule("SCHEDULE_NAME")
+scheduler_client.delete_schedule("SCHEDULE_NAME")
 ```
 
 ### Pause and Resume Schedules
 
 #### Pause a schedule
+
 ```python
-scheduler_client.pauseSchedule("SCHEDULE_NAME")
+scheduler_client.pause_schedule("SCHEDULE_NAME")
 ```
 
 #### Pause all schedules
+
 ```python
-scheduler_client.pauseAllSchedules()
+scheduler_client.pause_all_schedules()
 ```
 
 #### Resume a scheduler
+
 ```python
-scheduler_client.resumeSchedule("SCHEDULE_NAME")
+scheduler_client.resume_schedule("SCHEDULE_NAME")
 ```
 
 #### Resume all schedules
+
 ```python
-scheduler_client.resumeAllSchedules()
+scheduler_client.resume_all_schedules()
 ```
 
 ### Scheduler Tag Management
 
 #### Set scheduler tags
+
 ```python
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 
 tags = [
     MetadataTag("sch_tag", "val"), MetadataTag("sch_tag_2", "val2")
 ]
-scheduler_client.setSchedulerTags(tags, "SCHEDULE_NAME")
+scheduler_client.set_scheduler_tags(tags, "SCHEDULE_NAME")
 ```
 
 #### Get scheduler tags
+
 ```python
-tags = scheduler_client.getSchedulerTags("SCHEDULE_NAME")
+tags = scheduler_client.get_scheduler_tags("SCHEDULE_NAME")
 ```
 
 #### Delete scheduler tags
+
 ```python
 tags = [
     MetadataTag("sch_tag", "val"), MetadataTag("sch_tag_2", "val2")
 ]
-scheduler_client.deleteSchedulerTags(tags, "SCHEDULE_NAME")
+scheduler_client.delete_scheduler_tags(tags, "SCHEDULE_NAME")
 ```
