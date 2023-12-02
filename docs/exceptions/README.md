@@ -30,7 +30,7 @@ config = Configuration(server_api_url=SERVER_API_URL, authentication_settings=au
 metadata_client = OrkesMetadataClient(config)
 
 try:
-    metadata_client.getWorkflowDef(WORKFLOW_NAME, 1)
+    metadata_client.get_workflow_def(WORKFLOW_NAME, 1)
 except APIError as e:
     if e.code == APIErrorCode.NOT_FOUND:
         print(f"Error finding {WORKFLOW_NAME}: {e.message}")
@@ -38,5 +38,5 @@ except APIError as e:
         print(f"Error accessing {WORKFLOW_NAME}: {e.message}")
     else:
         print(f"Error fetching {WORKFLOW_NAME}: {e.message}")
-    
+
 ```

@@ -40,38 +40,38 @@ class TestOrkesMetadataClient(unittest.TestCase):
 
     @patch.object(MetadataResourceApi, 'create')
     def test_registerWorkflowDef(self, mock):
-        self.metadata_client.registerWorkflowDef(self.workflowDef)
+        self.metadata_client.register_workflow_def(self.workflowDef)
         self.assertTrue(mock.called)
         mock.assert_called_with(self.workflowDef, overwrite=True)
 
     @patch.object(MetadataResourceApi, 'create')
     def test_registerWorkflowDef_without_overwrite(self, mock):
-        self.metadata_client.registerWorkflowDef(self.workflowDef, False)
+        self.metadata_client.register_workflow_def(self.workflowDef, False)
         self.assertTrue(mock.called)
         mock.assert_called_with(self.workflowDef, overwrite=False)
 
     @patch.object(MetadataResourceApi, 'update1')
     def test_updateWorkflowDef(self, mock):
-        self.metadata_client.updateWorkflowDef(self.workflowDef)
+        self.metadata_client.update_workflow_def(self.workflowDef)
         self.assertTrue(mock.called)
         mock.assert_called_with([self.workflowDef], overwrite=True)
 
     @patch.object(MetadataResourceApi, 'update1')
     def test_updateWorkflowDef_without_overwrite(self, mock):
-        self.metadata_client.updateWorkflowDef(self.workflowDef, False)
+        self.metadata_client.update_workflow_def(self.workflowDef, False)
         self.assertTrue(mock.called)
         mock.assert_called_with([self.workflowDef], overwrite=False)
 
     @patch.object(MetadataResourceApi, 'unregister_workflow_def')
     def test_unregisterWorkflowDef(self, mock):
-        self.metadata_client.unregisterWorkflowDef(WORKFLOW_NAME, 1)
+        self.metadata_client.unregister_workflow_def(WORKFLOW_NAME, 1)
         self.assertTrue(mock.called)
         mock.assert_called_with(WORKFLOW_NAME, 1)
         
     @patch.object(MetadataResourceApi, 'get')
     def test_getWorkflowDef_without_version(self, mock):
         mock.return_value = self.workflowDef
-        wf = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
+        wf = self.metadata_client.get_workflow_def(WORKFLOW_NAME)
         self.assertEqual(wf, self.workflowDef)
         self.assertTrue(mock.called)
         mock.assert_called_with(WORKFLOW_NAME)
@@ -79,7 +79,7 @@ class TestOrkesMetadataClient(unittest.TestCase):
     @patch.object(MetadataResourceApi, 'get')
     def test_getWorkflowDef_with_version(self, mock):
         mock.return_value = self.workflowDef
-        wf = self.metadata_client.getWorkflowDef(WORKFLOW_NAME, 1)
+        wf = self.metadata_client.get_workflow_def(WORKFLOW_NAME, 1)
         self.assertEqual(wf, self.workflowDef)
         mock.assert_called_with(WORKFLOW_NAME, version=1)
     
@@ -89,37 +89,37 @@ class TestOrkesMetadataClient(unittest.TestCase):
         error_body = { 'status': 404, 'message': message }
         mock.side_effect = MagicMock(side_effect=ApiException(status=404, body=json.dumps(error_body)))
         with self.assertRaises(APIError):
-            self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
+            self.metadata_client.get_workflow_def(WORKFLOW_NAME)
         
     @patch.object(MetadataResourceApi, 'get_all_workflows')
     def test_getAllWorkflowDefs(self, mock):
         workflowDef2 = WorkflowDef(name='ut_wf_2', version=1)
         mock.return_value = [self.workflowDef, workflowDef2]
-        wfs = self.metadata_client.getAllWorkflowDefs()
+        wfs = self.metadata_client.get_all_workflow_defs()
         self.assertEqual(len(wfs), 2)
     
     @patch.object(MetadataResourceApi, 'register_task_def')
     def test_registerTaskDef(self, mock):
-        self.metadata_client.registerTaskDef(self.taskDef)
+        self.metadata_client.register_task_def(self.taskDef)
         self.assertTrue(mock.called)
         mock.assert_called_with([self.taskDef])
     
     @patch.object(MetadataResourceApi, 'update_task_def')
     def test_updateTaskDef(self, mock):
-        self.metadata_client.updateTaskDef(self.taskDef)
+        self.metadata_client.update_task_def(self.taskDef)
         self.assertTrue(mock.called)
         mock.assert_called_with(self.taskDef)
     
     @patch.object(MetadataResourceApi, 'unregister_task_def')
     def test_unregisterTaskDef(self, mock):
-        self.metadata_client.unregisterTaskDef(TASK_NAME)
+        self.metadata_client.unregister_task_def(TASK_NAME)
         self.assertTrue(mock.called)
         mock.assert_called_with(TASK_NAME)
 
     @patch.object(MetadataResourceApi, 'get_task_def')
     def test_getTaskDef(self, mock):
         mock.return_value = self.taskDef
-        taskDefinition = self.metadata_client.getTaskDef(TASK_NAME)
+        taskDefinition = self.metadata_client.get_task_def(TASK_NAME)
         self.assertEqual(taskDefinition, self.taskDef)
         mock.assert_called_with(TASK_NAME)
 
@@ -127,7 +127,7 @@ class TestOrkesMetadataClient(unittest.TestCase):
     def test_getAllTaskDefs(self, mock):
         taskDef2 = TaskDef("ut_task2")
         mock.return_value = [self.taskDef, taskDef2]
-        tasks = self.metadata_client.getAllTaskDefs()
+        tasks = self.metadata_client.get_all_task_defs()
         self.assertEqual(len(tasks), 2)
 
     @patch.object(TagsApi, 'add_workflow_tag')

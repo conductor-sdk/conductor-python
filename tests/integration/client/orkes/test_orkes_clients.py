@@ -82,25 +82,25 @@ class TestOrkesClients:
             input_keys=["a", "b"]
         )
 
-        self.metadata_client.registerTaskDef(taskDef)
+        self.metadata_client.register_task_def(taskDef)
 
-        taskDef = self.metadata_client.getTaskDef(TASK_TYPE)
+        taskDef = self.metadata_client.get_task_def(TASK_TYPE)
         assert taskDef.name == TASK_TYPE
         assert len(taskDef.input_keys) == 2
 
         taskDef.description = "Integration Test Task New Description"
         taskDef.input_keys = ["a", "b", "c"]
-        self.metadata_client.updateTaskDef(taskDef)
-        fetchedTaskDef = self.metadata_client.getTaskDef(taskDef.name)
+        self.metadata_client.update_task_def(taskDef)
+        fetchedTaskDef = self.metadata_client.get_task_def(taskDef.name)
         assert fetchedTaskDef.description == taskDef.description
         assert len(fetchedTaskDef.input_keys) == 3
 
         self.__test_task_tags()
         self.__test_task_execution_lifecycle()
 
-        self.metadata_client.unregisterTaskDef(TASK_TYPE)
+        self.metadata_client.unregister_task_def(TASK_TYPE)
         try:
-            self.metadata_client.getTaskDef(TASK_TYPE)
+            self.metadata_client.get_task_def(TASK_TYPE)
         except APIError as e:
             assert e.code == APIErrorCode.NOT_FOUND
             assert e.message == "Task {0} not found".format(TASK_TYPE)
@@ -330,10 +330,10 @@ class TestOrkesClients:
         self.__create_workflow_definition(workflowDef)
     
     def __create_workflow_definition(self, workflowDef) -> str:
-        return self.metadata_client.registerWorkflowDef(workflowDef, True)
+        return self.metadata_client.register_workflow_def(workflowDef, True)
 
     def __test_get_workflow_definition(self):
-        wfDef = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
+        wfDef = self.metadata_client.get_workflow_def(WORKFLOW_NAME)
         assert wfDef.name == WORKFLOW_NAME
         assert len(wfDef.tasks) == 1
 
@@ -342,8 +342,8 @@ class TestOrkesClients:
         workflow >> SimpleTask("simple_task", "simple_task_ref_3")
         workflow.workflow_id = self.workflow_id
         updatedWorkflowDef = workflow.to_workflow_def()
-        self.metadata_client.updateWorkflowDef(updatedWorkflowDef, True)
-        wfDef = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
+        self.metadata_client.update_workflow_def(updatedWorkflowDef, True)
+        wfDef = self.metadata_client.get_workflow_def(WORKFLOW_NAME)
         assert len(wfDef.tasks) == 3
 
     def __test_unit_test_workflow(self):
@@ -421,10 +421,10 @@ class TestOrkesClients:
         assert execution.output["phoneNumberValid"]
 
     def __test_unregister_workflow_definition(self):
-        self.metadata_client.unregisterWorkflowDef(WORKFLOW_NAME, 1)
+        self.metadata_client.unregister_workflow_def(WORKFLOW_NAME, 1)
         
         try:
-            self.metadata_client.getWorkflowDef(WORKFLOW_NAME, 1)
+            self.metadata_client.get_workflow_def(WORKFLOW_NAME, 1)
         except APIError as e:
             assert e.code == APIErrorCode.NOT_FOUND
             assert e.message ==  'No such workflow found by name: {0}, version: 1'.format(WORKFLOW_NAME)
