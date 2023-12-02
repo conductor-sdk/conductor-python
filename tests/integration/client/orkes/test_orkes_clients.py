@@ -193,83 +193,83 @@ class TestOrkesClients:
 
     def test_application_lifecycle(self):
         req = CreateOrUpdateApplicationRequest(APPLICATION_NAME)
-        created_app = self.authorization_client.createApplication(req)
+        created_app = self.authorization_client.create_application(req)
         assert created_app.name == APPLICATION_NAME
         
-        application = self.authorization_client.getApplication(created_app.id)
+        application = self.authorization_client.get_application(created_app.id)
         assert application.id == created_app.id
 
-        apps = self.authorization_client.listApplications()
+        apps = self.authorization_client.list_applications()
         assert True in [app.id == created_app.id for app in apps]
 
         req.name = APPLICATION_NAME + "_updated"
-        app_updated = self.authorization_client.updateApplication(req, created_app.id)
+        app_updated = self.authorization_client.update_application(req, created_app.id)
         assert app_updated.name == req.name
         
-        self.authorization_client.addRoleToApplicationUser(created_app.id, "USER")
+        self.authorization_client.add_role_to_application_user(created_app.id, "USER")
         app_user_id = "app:" + created_app.id
-        app_user = self.authorization_client.getUser(app_user_id)
+        app_user = self.authorization_client.get_user(app_user_id)
         assert True in [r.name == "USER" for r in app_user.roles]
 
-        self.authorization_client.removeRoleFromApplicationUser(created_app.id, "USER")
-        app_user = self.authorization_client.getUser(app_user_id)
+        self.authorization_client.remove_role_from_application_user(created_app.id, "USER")
+        app_user = self.authorization_client.get_user(app_user_id)
         assert True not in [r.name == "USER" for r in app_user.roles]
         
         tags = [MetadataTag("auth_tag", "val"), MetadataTag("auth_tag_2", "val2")]
-        self.authorization_client.setApplicationTags(tags, created_app.id)
-        fetched_tags = self.authorization_client.getApplicationTags(created_app.id)
+        self.authorization_client.set_application_tags(tags, created_app.id)
+        fetched_tags = self.authorization_client.get_application_tags(created_app.id)
         assert len(fetched_tags) == 2
 
-        self.authorization_client.deleteApplicationTags(tags, created_app.id)
-        fetched_tags = self.authorization_client.getApplicationTags(created_app.id)
+        self.authorization_client.delete_application_tags(tags, created_app.id)
+        fetched_tags = self.authorization_client.get_application_tags(created_app.id)
         assert len(fetched_tags) == 0
 
-        created_access_key = self.authorization_client.createAccessKey(created_app.id)
-        access_keys = self.authorization_client.getAccessKeys(created_app.id)
+        created_access_key = self.authorization_client.create_access_key(created_app.id)
+        access_keys = self.authorization_client.get_access_keys(created_app.id)
         assert(access_keys[0].id == created_access_key.id)
         assert(access_keys[0].status == AccessKeyStatus.ACTIVE)
 
-        access_key = self.authorization_client.toggleAccessKeyStatus(created_app.id, created_access_key.id)
+        access_key = self.authorization_client.toggle_access_key_status(created_app.id, created_access_key.id)
         assert access_key.status == AccessKeyStatus.INACTIVE
         
-        self.authorization_client.deleteAccessKey(created_app.id, created_access_key.id)
+        self.authorization_client.delete_access_key(created_app.id, created_access_key.id)
         
-        self.authorization_client.deleteApplication(created_app.id)
+        self.authorization_client.delete_application(created_app.id)
         try:
-            application = self.authorization_client.getApplication(created_app.id)
+            application = self.authorization_client.get_application(created_app.id)
         except APIError as e:
             assert e.code == APIErrorCode.NOT_FOUND
             assert e.message == "Application '{0}' not found".format(created_app.id)
 
     def test_user_group_permissions_lifecycle(self, workflowDef):
         req = UpsertUserRequest("Integration User", ["USER"])
-        created_user = self.authorization_client.upsertUser(req, USER_ID)
+        created_user = self.authorization_client.upsert_user(req, USER_ID)
         assert created_user.id == USER_ID
 
-        user = self.authorization_client.getUser(USER_ID)
+        user = self.authorization_client.get_user(USER_ID)
         assert user.id == USER_ID
         assert user.name == req.name
         
-        users = self.authorization_client.listUsers()
+        users = self.authorization_client.list_users()
         assert [user.id == USER_ID for u in users]
         
         req.name = "Integration " + "Updated"
-        updated_user = self.authorization_client.upsertUser(req, USER_ID)
+        updated_user = self.authorization_client.upsert_user(req, USER_ID)
         assert updated_user.name == req.name
         
         # Test Groups
         req = UpsertGroupRequest("Integration Test Group", ["USER"])
-        created_group = self.authorization_client.upsertGroup(req, GROUP_ID)
+        created_group = self.authorization_client.upsert_group(req, GROUP_ID)
         assert created_group.id == GROUP_ID
         
-        group = self.authorization_client.getGroup(GROUP_ID)
+        group = self.authorization_client.get_group(GROUP_ID)
         assert group.id == GROUP_ID
         
-        groups = self.authorization_client.listGroups()
+        groups = self.authorization_client.list_groups()
         assert True in [group.id == GROUP_ID for group in groups]
         
-        self.authorization_client.addUserToGroup(GROUP_ID, USER_ID)
-        users = self.authorization_client.getUsersInGroup(GROUP_ID)
+        self.authorization_client.add_user_to_group(GROUP_ID, USER_ID)
+        users = self.authorization_client.get_users_in_group(GROUP_ID)
         assert users[0].id == USER_ID
         
         # Test Granting Permissions
@@ -283,44 +283,44 @@ class TestOrkesClients:
         subject_user = SubjectRef(SubjectType.USER, USER_ID)
         access_user = [AccessType.EXECUTE, AccessType.READ]
         
-        self.authorization_client.grantPermissions(subject_group, target, access_group)
-        self.authorization_client.grantPermissions(subject_user, target, access_user)
+        self.authorization_client.grant_permissions(subject_group, target, access_group)
+        self.authorization_client.grant_permissions(subject_user, target, access_user)
         
-        target_perms = self.authorization_client.getPermissions(target)
+        target_perms = self.authorization_client.get_permissions(target)
         assert True in [s == subject_group for s in target_perms[AccessType.EXECUTE]]
         assert True in [s == subject_user for s in target_perms[AccessType.EXECUTE]]
         assert True in [s == subject_user for s in target_perms[AccessType.READ]]
         
-        group_perms = self.authorization_client.getGrantedPermissionsForGroup(GROUP_ID)
+        group_perms = self.authorization_client.get_granted_permissions_for_group(GROUP_ID)
         assert len(group_perms) == 1
         assert group_perms[0].target == target
         assert group_perms[0].access == access_group
         
-        user_perms = self.authorization_client.getGrantedPermissionsForUser(USER_ID)
+        user_perms = self.authorization_client.get_granted_permissions_for_user(USER_ID)
         assert len(user_perms) == 1
         assert user_perms[0].target == target
         assert sorted(user_perms[0].access) == sorted(access_user)
         
-        self.authorization_client.removePermissions(subject_group, target, access_group)
-        self.authorization_client.removePermissions(subject_user, target, access_user)
-        target_perms = self.authorization_client.getPermissions(target)
+        self.authorization_client.remove_permissions(subject_group, target, access_group)
+        self.authorization_client.remove_permissions(subject_user, target, access_user)
+        target_perms = self.authorization_client.get_permissions(target)
         
         assert True not in [s == subject_group for s in target_perms[AccessType.EXECUTE]]
         assert True not in [s == subject_user for s in target_perms[AccessType.EXECUTE]]
         assert True not in [s == subject_user for s in target_perms[AccessType.READ]]
         
-        self.authorization_client.removeUserFromGroup(GROUP_ID, USER_ID)
+        self.authorization_client.remove_user_from_group(GROUP_ID, USER_ID)
         
-        self.authorization_client.deleteUser(USER_ID)
+        self.authorization_client.delete_user(USER_ID)
         try:
-            self.authorization_client.getUser(USER_ID)
+            self.authorization_client.get_user(USER_ID)
         except APIError as e:
             assert e.code == APIErrorCode.NOT_FOUND
             assert e.message ==  "User '{0}' not found".format(USER_ID)
         
-        self.authorization_client.deleteGroup(GROUP_ID)
+        self.authorization_client.delete_group(GROUP_ID)
         try:
-            self.authorization_client.getGroup(GROUP_ID)
+            self.authorization_client.get_group(GROUP_ID)
         except APIError as e:
             assert e.code == APIErrorCode.NOT_FOUND
             assert e.message ==  "Group '{0}' not found".format(GROUP_ID)
