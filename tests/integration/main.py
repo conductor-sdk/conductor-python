@@ -48,11 +48,13 @@ def main():
     args = sys.argv[1:]
     configuration = generate_configuration()
     api_client = ApiClient(configuration)
+    workflow_executor = WorkflowExecutor(configuration)
 
     if len(args) == 1 and args[0] == '--orkes-clients-only':
         TestOrkesClients(configuration=configuration).run()
+    elif len(args) == 1 and args[0] == '--workflow-execution-only':
+        run_workflow_execution_tests(configuration, workflow_executor)
     else:
-        workflow_executor = WorkflowExecutor(configuration)
         test_async.test_async_method(api_client)
         run_workflow_definition_tests(workflow_executor)
         run_workflow_execution_tests(configuration, workflow_executor)

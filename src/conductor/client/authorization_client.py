@@ -12,137 +12,137 @@ from conductor.client.http.models.conductor_user import ConductorUser
 from conductor.client.http.models.conductor_application import ConductorApplication
 from conductor.client.http.models.upsert_user_request import UpsertUserRequest
 from conductor.client.http.models.upsert_group_request import UpsertGroupRequest
-from conductor.client.http.models.authorization_request import AuthorizationRequest
 from conductor.client.http.models.create_or_update_application_request import CreateOrUpdateApplicationRequest
+
 
 class AuthorizationClient(ABC):
     # Applications
     @abstractmethod
-    def createApplication(
-        self,
-        createOrUpdateApplicationRequest: CreateOrUpdateApplicationRequest
-    ) -> ConductorApplication:
-        pass
-    
-    @abstractmethod
-    def getApplication(self, applicationId: str) -> ConductorApplication:
-        pass
-    
-    @abstractmethod
-    def listApplications(self) -> List[ConductorApplication]:
-        pass
-    
-    @abstractmethod
-    def updateApplication(
-        self,
-        createOrUpdateApplicationRequest: CreateOrUpdateApplicationRequest,
-        applicationId: str
+    def create_application(
+            self,
+            create_or_update_application_request: CreateOrUpdateApplicationRequest
     ) -> ConductorApplication:
         pass
 
     @abstractmethod
-    def deleteApplication(self, applicationId: str):
-        pass
-    
-    @abstractmethod
-    def addRoleToApplicationUser(self, applicationId: str, role: str):
-        pass
-    
-    @abstractmethod
-    def removeRoleFromApplicationUser(self, applicationId: str, role: str):
-        pass
-    
-    @abstractmethod
-    def setApplicationTags(self, tags: List[MetadataTag], applicationId: str):
+    def get_application(self, application_id: str) -> ConductorApplication:
         pass
 
     @abstractmethod
-    def getApplicationTags(self, applicationId: str) -> List[MetadataTag]:
+    def list_applications(self) -> List[ConductorApplication]:
         pass
 
     @abstractmethod
-    def deleteApplicationTags(self, tags: List[MetadataTag], applicationId: str):
+    def update_application(
+            self,
+            create_or_update_application_request: CreateOrUpdateApplicationRequest,
+            application_id: str
+    ) -> ConductorApplication:
         pass
 
     @abstractmethod
-    def createAccessKey(self, applicationId: str) -> CreatedAccessKey:
-        pass
-    
-    @abstractmethod
-    def getAccessKeys(self, applicationId: str) -> List[AccessKey]:
-        pass
-    
-    @abstractmethod
-    def toggleAccessKeyStatus(self, applicationId: str, keyId: str) -> AccessKey:
+    def delete_application(self, application_id: str):
         pass
 
     @abstractmethod
-    def deleteAccessKey(self, applicationId: str, keyId: str):
+    def add_role_to_application_user(self, application_id: str, role: str):
         pass
-    
+
+    @abstractmethod
+    def remove_role_from_application_user(self, application_id: str, role: str):
+        pass
+
+    @abstractmethod
+    def set_application_tags(self, tags: List[MetadataTag], application_id: str):
+        pass
+
+    @abstractmethod
+    def get_application_tags(self, application_id: str) -> List[MetadataTag]:
+        pass
+
+    @abstractmethod
+    def delete_application_tags(self, tags: List[MetadataTag], application_id: str):
+        pass
+
+    @abstractmethod
+    def create_access_key(self, application_id: str) -> CreatedAccessKey:
+        pass
+
+    @abstractmethod
+    def get_access_keys(self, application_id: str) -> List[AccessKey]:
+        pass
+
+    @abstractmethod
+    def toggle_access_key_status(self, application_id: str, key_id: str) -> AccessKey:
+        pass
+
+    @abstractmethod
+    def delete_access_key(self, application_id: str, key_id: str):
+        pass
+
     # Users
     @abstractmethod
-    def upsertUser(self, upsertUserRequest: UpsertUserRequest, userId: str) -> ConductorUser:
-        pass
-    
-    @abstractmethod
-    def getUser(self, userId: str) -> ConductorUser:
-        pass
-    
-    @abstractmethod
-    def listUsers(self, apps: Optional[bool] = False) -> List[ConductorUser]:
+    def upsert_user(self, upsert_user_request: UpsertUserRequest, user_id: str) -> ConductorUser:
         pass
 
     @abstractmethod
-    def deleteUser(self, userId: str):
+    def get_user(self, user_id: str) -> ConductorUser:
         pass
-    
+
+    @abstractmethod
+    def list_users(self, apps: Optional[bool] = False) -> List[ConductorUser]:
+        pass
+
+    @abstractmethod
+    def delete_user(self, user_id: str):
+        pass
+
     # Groups
     @abstractmethod
-    def upsertGroup(self, upsertGroupRequest: UpsertGroupRequest, groupId: str) -> Group:
-        pass
-        
-    @abstractmethod
-    def getGroup(self, groupId: str) -> Group:
-        pass
-    
-    @abstractmethod
-    def listGroups(self) -> List[Group]:
+    def upsert_group(self, upsert_group_request: UpsertGroupRequest, group_id: str) -> Group:
         pass
 
     @abstractmethod
-    def deleteGroup(self, groupId: str):
+    def get_group(self, group_id: str) -> Group:
         pass
-    
+
     @abstractmethod
-    def addUserToGroup(self, groupId: str, userId: str):
+    def list_groups(self) -> List[Group]:
         pass
-    
+
     @abstractmethod
-    def getUsersInGroup(self, groupId: str) -> List[ConductorUser]:
+    def delete_group(self, group_id: str):
         pass
-    
+
     @abstractmethod
-    def removeUserFromGroup(self, groupId: str, userId: str):
+    def add_user_to_group(self, group_id: str, user_id: str):
+        pass
+
+    @abstractmethod
+    def get_users_in_group(self, group_id: str) -> List[ConductorUser]:
+        pass
+
+    @abstractmethod
+    def remove_user_from_group(self, group_id: str, user_id: str):
         pass
 
     # Permissions
     @abstractmethod
-    def grantPermissions(self, subject: SubjectRef, target: TargetRef, access: List[AccessType]):
-        pass
-    
-    @abstractmethod
-    def getPermissions(self, target: TargetRef) -> Dict[str, List[SubjectRef]]:
+    def grant_permissions(self, subject: SubjectRef, target: TargetRef, access: List[AccessType]):
         pass
 
     @abstractmethod
-    def getGrantedPermissionsForGroup(self, groupId: str) -> List[GrantedPermission]:
+    def get_permissions(self, target: TargetRef) -> Dict[str, List[SubjectRef]]:
         pass
 
     @abstractmethod
-    def getGrantedPermissionsForUser(self, userId: str) -> List[GrantedPermission]:
+    def get_granted_permissions_for_group(self, group_id: str) -> List[GrantedPermission]:
         pass
 
     @abstractmethod
-    def removePermissions(self, subject: SubjectRef, target: TargetRef, access: List[AccessType]):
+    def get_granted_permissions_for_user(self, user_id: str) -> List[GrantedPermission]:
+        pass
+
+    @abstractmethod
+    def remove_permissions(self, subject: SubjectRef, target: TargetRef, access: List[AccessType]):
         pass

@@ -6,11 +6,13 @@ from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_exec_log import TaskExecLog
 from conductor.client.telemetry.metrics_collector import MetricsCollector
-from conductor.client.worker.worker_interface import WorkerInterface
+from conductor.client.worker.worker_interface import WorkerInterface, DEFAULT_POLLING_INTERVAL
+from configparser import ConfigParser
 import logging
 import sys
 import time
 import traceback
+import os
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -24,11 +26,14 @@ class TaskRunner:
         self,
         worker: WorkerInterface,
         configuration: Configuration = None,
-        metrics_settings: MetricsSettings = None
+        metrics_settings: MetricsSettings = None,
+        worker_config: ConfigParser =  None
     ):
         if not isinstance(worker, WorkerInterface):
             raise Exception('Invalid worker')
         self.worker = worker
+        self.worker_config = worker_config
+        self.__set_worker_properties()
         if not isinstance(configuration, Configuration):
             configuration = Configuration()
         self.configuration = configuration
@@ -53,12 +58,12 @@ class TaskRunner:
                 pass
 
     def run_once(self) -> None:
-        self.worker.clear_task_definition_name_cache()
         task = self.__poll_task()
         if task != None and task.task_id != None:
             task_result = self.__execute_task(task)
             self.__update_task(task_result)
         self.__wait_for_polling_interval()
+        self.worker.clear_task_definition_name_cache()
 
     def __poll_task(self) -> Task:
         task_definition_name = self.worker.get_task_definition_name()
@@ -97,7 +102,7 @@ class TaskRunner:
             return None
         if task != None:
             logger.debug(
-                f'Polled task: {task_definition_name}, worker_id: {self.worker.get_identity()}'
+                f'Polled task: {task_definition_name}, worker_id: {self.worker.get_identity()}, domain: {self.worker.get_domain()}'
             )
         return task
 
@@ -202,3 +207,58 @@ class TaskRunner:
         polling_interval = self.worker.get_polling_interval_in_seconds()
         logger.debug(f'Sleep for {polling_interval} seconds')
         time.sleep(polling_interval)
+
+    def __set_worker_properties(self) -> None:
+        task_type = self.worker.get_task_definition_name()
+        
+        # Fetch from ENV Variables if present
+        domain = self.__get_property_value_from_env("domain", task_type)
+        if domain:
+            self.worker.domain = domain
+
+        polling_interval = self.__get_property_value_from_env("polling_interval", task_type)
+        polling_interval_initialized = False
+        if polling_interval:
+            try:
+                self.worker.poll_interval = float(polling_interval)
+                polling_interval_initialized = True
+            except Exception as e:
+                logger.error("Exception in reading polling interval from environment variable: {0}.".format(str(e)))
+
+        # Fetch from Config if present
+        if not domain or not polling_interval_initialized:
+            config = self.worker_config
+
+            if config:
+                if config.has_section(task_type):
+                    section = config[task_type]
+                else:
+                    section = config[config.default_section]
+                
+                # Override domain if present in config and not in ENV
+                if not domain:
+                    self.worker.domain = section.get("domain", self.worker.domain)
+
+                # Override polling interval if present in config and not in ENV
+                if not polling_interval_initialized:
+                    # Setting to fallback poll interval before reading config
+                    default_polling_interval = self.worker.poll_interval
+
+                    try:
+                        # Read polling interval from config
+                        self.worker.poll_interval = float(section.get("polling_interval", default_polling_interval))
+                        logger.debug("Override polling interval to {0} ms".format(self.worker.poll_interval))
+                    except Exception as e:
+                        logger.error("Exception reading polling interval: {0}. Defaulting to {1} ms".format(str(e), default_polling_interval))
+
+    def __get_property_value_from_env(self, prop, task_type):
+        prefix = "conductor_worker"
+        # Look for generic property in both case environment variables
+        key = prefix + "_" + prop
+        value_all = os.getenv(key, os.getenv(key.upper()))
+
+        # Look for task specific property in both case environment variables
+        key_small = prefix + "_" + task_type + "_" + prop
+        key_upper = prefix.upper() + "_" + task_type + "_" + prop.upper()
+        value = os.getenv(key_small, os.getenv(key_upper, value_all))
+        return value

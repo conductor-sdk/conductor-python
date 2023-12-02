@@ -47,42 +47,42 @@ class TestOrkesTaskClient(unittest.TestCase):
     @patch.object(TaskResourceApi, 'poll')
     def test_pollTask(self, mock):
         mock.return_value = self.tasks[0]
-        polledTask = self.task_client.pollTask(TASK_NAME)
+        polledTask = self.task_client.poll_task(TASK_NAME)
         mock.assert_called_with(TASK_NAME)
         self.assertEqual(polledTask, self.tasks[0])
 
     @patch.object(TaskResourceApi, 'poll')
     def test_pollTask_with_worker_and_domain(self, mock):
         mock.return_value = self.tasks[0]
-        polledTask = self.task_client.pollTask(TASK_NAME, WORKER_ID, DOMAIN)
+        polledTask = self.task_client.poll_task(TASK_NAME, WORKER_ID, DOMAIN)
         mock.assert_called_with(TASK_NAME, workerid=WORKER_ID, domain=DOMAIN)
         self.assertEqual(polledTask, self.tasks[0])
     
     @patch.object(TaskResourceApi, 'poll')
     def test_pollTask_no_tasks(self, mock):
         mock.return_value = None
-        polledTask = self.task_client.pollTask(TASK_NAME)
+        polledTask = self.task_client.poll_task(TASK_NAME)
         mock.assert_called_with(TASK_NAME)
         self.assertIsNone(polledTask)
     
     @patch.object(TaskResourceApi, 'batch_poll')
     def test_batchPollTasks(self, mock):
         mock.return_value = self.tasks
-        polledTasks = self.task_client.batchPollTasks(TASK_NAME, WORKER_ID, 3, 200)
+        polledTasks = self.task_client.batch_poll_tasks(TASK_NAME, WORKER_ID, 3, 200)
         mock.assert_called_with(TASK_NAME, workerid=WORKER_ID, count=3, timeout=200)
         self.assertEqual(len(polledTasks), len(self.tasks))
     
     @patch.object(TaskResourceApi, 'batch_poll')
     def test_batchPollTasks_in_domain(self, mock):
         mock.return_value = self.tasks
-        polledTasks = self.task_client.batchPollTasks(TASK_NAME, WORKER_ID, 3, 200, DOMAIN)
+        polledTasks = self.task_client.batch_poll_tasks(TASK_NAME, WORKER_ID, 3, 200, DOMAIN)
         mock.assert_called_with(TASK_NAME, workerid=WORKER_ID, domain=DOMAIN, count=3, timeout=200)
         self.assertEqual(len(polledTasks), len(self.tasks))
     
     @patch.object(TaskResourceApi, 'get_task')
     def test_getTask(self, mock):
         mock.return_value = self.tasks[0]
-        task = self.task_client.getTask(TASK_ID)
+        task = self.task_client.get_task(TASK_ID)
         mock.assert_called_with(TASK_ID)
         self.assertEqual(task.task_id, TASK_ID)
 
@@ -91,20 +91,20 @@ class TestOrkesTaskClient(unittest.TestCase):
         error_body = { 'status': 404, 'message': 'Task not found' }
         mock.side_effect = MagicMock(side_effect=ApiException(status=404, body=json.dumps(error_body)))
         with self.assertRaises(APIError):
-            self.task_client.getTask(TASK_ID)
+            self.task_client.get_task(TASK_ID)
             mock.assert_called_with(TASK_ID)
         
     @patch.object(TaskResourceApi, 'update_task')
     def test_updateTask(self, mock):
         taskResultStatus = TaskResult(task_id=TASK_ID, status=TaskResultStatus.COMPLETED)
-        self.task_client.updateTask(taskResultStatus)
+        self.task_client.update_task(taskResultStatus)
         mock.assert_called_with(taskResultStatus)
     
     @patch.object(TaskResourceApi, 'update_task1')
     def test_updateTaskByRefName(self, mock):
         status = TaskResultStatus.COMPLETED
         output = { "a":  56 }
-        self.task_client.updateTaskByRefName(
+        self.task_client.update_task_by_ref_name(
             "wf_id", "test_task_ref_name", status, output
         )
         mock.assert_called_with({"result": output}, "wf_id", "test_task_ref_name", status)
@@ -113,7 +113,7 @@ class TestOrkesTaskClient(unittest.TestCase):
     def test_updateTaskByRefName_with_workerId(self, mock):
         status = TaskResultStatus.COMPLETED
         output = { "a":  56 }
-        self.task_client.updateTaskByRefName(
+        self.task_client.update_task_by_ref_name(
             "wf_id", "test_task_ref_name", status, output, "worker_id"
         )
         mock.assert_called_with({"result": output}, "wf_id", "test_task_ref_name", status, workerid="worker_id")
@@ -125,7 +125,7 @@ class TestOrkesTaskClient(unittest.TestCase):
         mock.return_value = workflow
         status = TaskResultStatus.COMPLETED
         output = { "a":  56 }
-        returnedWorkflow = self.task_client.updateTaskSync(
+        returnedWorkflow = self.task_client.update_task_sync(
             workflowId, "test_task_ref_name", status, output
         )
         mock.assert_called_with({"result": output}, workflowId, "test_task_ref_name", status)
@@ -138,7 +138,7 @@ class TestOrkesTaskClient(unittest.TestCase):
         mock.return_value = workflow
         status = TaskResultStatus.COMPLETED
         output = { "a":  56 }
-        returnedWorkflow = self.task_client.updateTaskSync(
+        returnedWorkflow = self.task_client.update_task_sync(
             workflowId, "test_task_ref_name", status, output, "worker_id"
         )
         mock.assert_called_with({"result": output}, workflowId, "test_task_ref_name", status, workerid="worker_id")
@@ -147,21 +147,21 @@ class TestOrkesTaskClient(unittest.TestCase):
     @patch.object(TaskResourceApi, 'size')
     def test_getQueueSizeForTask(self, mock):
         mock.return_value = { TASK_NAME: 4 }
-        size = self.task_client.getQueueSizeForTask(TASK_NAME)
+        size = self.task_client.get_queue_size_for_task(TASK_NAME)
         mock.assert_called_with(task_type=[TASK_NAME])
         self.assertEqual(size, 4)
     
     @patch.object(TaskResourceApi, 'size')
     def test_getQueueSizeForTask_empty(self, mock):
         mock.return_value = {}
-        size = self.task_client.getQueueSizeForTask(TASK_NAME)
+        size = self.task_client.get_queue_size_for_task(TASK_NAME)
         mock.assert_called_with(task_type=[TASK_NAME])
         self.assertEqual(size, 0)
 
     @patch.object(TaskResourceApi, 'log')
     def test_addTaskLog(self, mock):
         logMessage = "Test log"
-        self.task_client.addTaskLog(TASK_ID, logMessage)
+        self.task_client.add_task_log(TASK_ID, logMessage)
         mock.assert_called_with(logMessage, TASK_ID)
 
     @patch.object(TaskResourceApi, 'get_task_logs')
@@ -169,6 +169,6 @@ class TestOrkesTaskClient(unittest.TestCase):
         taskExecLog1 = TaskExecLog("Test log 1", TASK_ID)
         taskExecLog2 = TaskExecLog("Test log 2", TASK_ID)
         mock.return_value = [taskExecLog1, taskExecLog2]
-        logs = self.task_client.getTaskLogs(TASK_ID)
+        logs = self.task_client.get_task_logs(TASK_ID)
         mock.assert_called_with(TASK_ID)
         self.assertEqual(len(logs), 2)

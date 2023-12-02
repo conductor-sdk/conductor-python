@@ -10,22 +10,22 @@ class OrkesClients:
     def __init__(self, configuration: Configuration):
         self.configuration = configuration
         
-    def getWorkflowClient(self) -> OrkesWorkflowClient:
+    def get_workflow_client(self) -> OrkesWorkflowClient:
         return OrkesWorkflowClient(self.configuration)
 
-    def getAuthorizationClient(self) -> OrkesAuthorizationClient:
+    def get_authorization_client(self) -> OrkesAuthorizationClient:
         return OrkesAuthorizationClient(self.configuration)
 
-    def getMetadataClient(self) -> OrkesMetadataClient:
+    def get_metadata_client(self) -> OrkesMetadataClient:
         return OrkesMetadataClient(self.configuration)
     
-    def getSchedulerClient(self) -> OrkesSchedulerClient:
+    def get_scheduler_client(self) -> OrkesSchedulerClient:
         return OrkesSchedulerClient(self.configuration)
     
-    def getSecretClient(self) -> OrkesSecretClient:
+    def get_secret_client(self) -> OrkesSecretClient:
         return OrkesSecretClient(self.configuration)
     
-    def getTaskClient(self) -> OrkesTaskClient:
+    def get_task_client(self) -> OrkesTaskClient:
         return OrkesTaskClient(self.configuration)
     
     

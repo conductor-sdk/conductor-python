@@ -5,6 +5,7 @@ from conductor.client.telemetry.metrics_collector import MetricsCollector
 from conductor.client.worker.worker import Worker
 from conductor.client.worker.worker_interface import WorkerInterface
 from multiprocessing import Process, freeze_support
+from configparser import ConfigParser
 from typing import List
 import ast
 import astor
@@ -35,6 +36,7 @@ class TaskHandler:
             metrics_settings: MetricsSettings = None,
             scan_for_annotated_workers: bool = None,
     ):
+        self.worker_config = load_worker_config()
         if workers is None:
             workers = []
         elif not isinstance(workers, list):
@@ -102,7 +104,9 @@ class TaskHandler:
         configuration: Configuration,
         metrics_settings: MetricsSettings
     ) -> None:
-        task_runner = TaskRunner(worker, configuration, metrics_settings)
+        task_runner = TaskRunner(
+            worker, configuration, metrics_settings, self.worker_config
+        )
         process = Process(
             target=task_runner.run
         )
@@ -225,3 +229,17 @@ def __create_worker_from_ast_node(node, params):
     params['execute_function'] = execute_function
     worker = Worker(**params)
     return worker
+
+def load_worker_config():
+    worker_config = ConfigParser()
+
+    try:
+        file = __get_config_file_path()
+        worker_config.read(file)
+    except Exception as e:
+        logger.error(str(e))
+
+    return worker_config
+
+def __get_config_file_path() -> str:
+    return os.getcwd() + "/worker.ini"

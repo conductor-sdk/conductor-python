@@ -2,7 +2,7 @@ from copy import deepcopy
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
-from conductor.client.worker.worker_interface import WorkerInterface
+from conductor.client.worker.worker_interface import WorkerInterface, DEFAULT_POLLING_INTERVAL
 from typing import Any, Callable, Union
 from typing_extensions import Self
 import inspect
@@ -38,8 +38,7 @@ class Worker(WorkerInterface):
                  ) -> Self:
         super().__init__(task_definition_name)
         if poll_interval == None:
-            self.poll_interval = deepcopy(
-                super().get_polling_interval_in_seconds())
+            self.poll_interval = DEFAULT_POLLING_INTERVAL
         else:
             self.poll_interval = deepcopy(poll_interval)
         self.domain = deepcopy(domain)
@@ -72,12 +71,6 @@ class Worker(WorkerInterface):
 
     def get_identity(self) -> str:
         return self.worker_id
-
-    def get_polling_interval_in_seconds(self) -> float:
-        return self.poll_interval
-
-    def get_domain(self) -> str:
-        return self.domain
 
     @property
     def execute_function(self) -> ExecuteTaskFunction:

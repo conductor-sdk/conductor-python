@@ -40,12 +40,12 @@ class TestOrkesClients:
         self.workflow_executor = WorkflowExecutor(configuration)
 
         orkes_clients = OrkesClients(configuration)
-        self.metadata_client = orkes_clients.getMetadataClient()
-        self.workflow_client = orkes_clients.getWorkflowClient()
-        self.task_client = orkes_clients.getTaskClient()
-        self.scheduler_client = orkes_clients.getSchedulerClient()
-        self.secret_client = orkes_clients.getSecretClient()
-        self.authorization_client = orkes_clients.getAuthorizationClient()
+        self.metadata_client = orkes_clients.get_metadata_client()
+        self.workflow_client = orkes_clients.get_workflow_client()
+        self.task_client = orkes_clients.get_task_client()
+        self.scheduler_client = orkes_clients.get_scheduler_client()
+        self.secret_client = orkes_clients.get_secret_client()
+        self.authorization_client = orkes_clients.get_authorization_client()
         self.workflow_id = None
 
     def run(self) -> None:
@@ -82,62 +82,62 @@ class TestOrkesClients:
             input_keys=["a", "b"]
         )
 
-        self.metadata_client.registerTaskDef(taskDef)
+        self.metadata_client.register_task_def(taskDef)
 
-        taskDef = self.metadata_client.getTaskDef(TASK_TYPE)
+        taskDef = self.metadata_client.get_task_def(TASK_TYPE)
         assert taskDef.name == TASK_TYPE
         assert len(taskDef.input_keys) == 2
 
         taskDef.description = "Integration Test Task New Description"
         taskDef.input_keys = ["a", "b", "c"]
-        self.metadata_client.updateTaskDef(taskDef)
-        fetchedTaskDef = self.metadata_client.getTaskDef(taskDef.name)
+        self.metadata_client.update_task_def(taskDef)
+        fetchedTaskDef = self.metadata_client.get_task_def(taskDef.name)
         assert fetchedTaskDef.description == taskDef.description
         assert len(fetchedTaskDef.input_keys) == 3
 
         self.__test_task_tags()
         self.__test_task_execution_lifecycle()
 
-        self.metadata_client.unregisterTaskDef(TASK_TYPE)
+        self.metadata_client.unregister_task_def(TASK_TYPE)
         try:
-            self.metadata_client.getTaskDef(TASK_TYPE)
+            self.metadata_client.get_task_def(TASK_TYPE)
         except APIError as e:
             assert e.code == APIErrorCode.NOT_FOUND
             assert e.message == "Task {0} not found".format(TASK_TYPE)
 
 
     def test_secret_lifecycle(self):
-        self.secret_client.putSecret(SECRET_NAME, "secret_value")
+        self.secret_client.put_secret(SECRET_NAME, "secret_value")
         
-        assert self.secret_client.getSecret(SECRET_NAME), "secret_value"
+        assert self.secret_client.get_secret(SECRET_NAME), "secret_value"
         
-        self.secret_client.putSecret(SECRET_NAME + "_2", "secret_value_2")
+        self.secret_client.put_secret(SECRET_NAME + "_2", "secret_value_2")
     
-        secret_names = self.secret_client.listAllSecretNames()
+        secret_names = self.secret_client.list_all_secret_names()
         
         assert secret_names, [SECRET_NAME, SECRET_NAME + "_2"]
         
         tags = [
             MetadataTag("sec_tag", "val"), MetadataTag("sec_tag_2", "val2")
         ]
-        self.secret_client.setSecretTags(tags, SECRET_NAME)
-        fetched_tags = self.secret_client.getSecretTags(SECRET_NAME)
+        self.secret_client.set_secret_tags(tags, SECRET_NAME)
+        fetched_tags = self.secret_client.get_secret_tags(SECRET_NAME)
         assert len(fetched_tags) == 2
         
-        self.secret_client.deleteSecretTags(tags, SECRET_NAME)
-        fetched_tags = self.secret_client.getSecretTags(SECRET_NAME)
+        self.secret_client.delete_secret_tags(tags, SECRET_NAME)
+        fetched_tags = self.secret_client.get_secret_tags(SECRET_NAME)
         assert len(fetched_tags) == 0
         
-        assert self.secret_client.secretExists(SECRET_NAME)
+        assert self.secret_client.secret_exists(SECRET_NAME)
         
-        self.secret_client.deleteSecret(SECRET_NAME)
+        self.secret_client.delete_secret(SECRET_NAME)
         
-        assert self.secret_client.secretExists(SECRET_NAME) == False
+        assert self.secret_client.secret_exists(SECRET_NAME) == False
         
-        self.secret_client.deleteSecret(SECRET_NAME + "_2")
+        self.secret_client.delete_secret(SECRET_NAME + "_2")
         
         try:
-            self.secret_client.getSecret(SECRET_NAME + "_2")
+            self.secret_client.get_secret(SECRET_NAME + "_2")
         except APIError as e:
             assert e.code == APIErrorCode.NOT_FOUND
 
@@ -152,124 +152,124 @@ class TestOrkesClients:
             cron_expression= "0 */5 * ? * *"
         )
 
-        self.scheduler_client.saveSchedule(saveScheduleRequest)
+        self.scheduler_client.save_schedule(saveScheduleRequest)
 
-        schedule = self.scheduler_client.getSchedule(SCHEDULE_NAME)
+        schedule = self.scheduler_client.get_schedule(SCHEDULE_NAME)
         
         assert schedule['name'] == SCHEDULE_NAME
         
-        self.scheduler_client.pauseSchedule(SCHEDULE_NAME)
+        self.scheduler_client.pause_schedule(SCHEDULE_NAME)
         
-        schedules = self.scheduler_client.getAllSchedules(WORKFLOW_NAME)
+        schedules = self.scheduler_client.get_all_schedules(WORKFLOW_NAME)
         assert len(schedules) == 1
         assert schedules[0].name == SCHEDULE_NAME
         assert schedules[0].paused
         
-        self.scheduler_client.resumeSchedule(SCHEDULE_NAME)
-        schedule = self.scheduler_client.getSchedule(SCHEDULE_NAME)
+        self.scheduler_client.resume_schedule(SCHEDULE_NAME)
+        schedule = self.scheduler_client.get_schedule(SCHEDULE_NAME)
         assert not schedule['paused']
         
-        times = self.scheduler_client.getNextFewScheduleExecutionTimes("0 */5 * ? * *", limit=1)
+        times = self.scheduler_client.get_next_few_schedule_execution_times("0 */5 * ? * *", limit=1)
         assert(len(times) == 1)
         
         tags = [
             MetadataTag("sch_tag", "val"), MetadataTag("sch_tag_2", "val2")
         ]
-        self.scheduler_client.setSchedulerTags(tags, SCHEDULE_NAME)
-        fetched_tags = self.scheduler_client.getSchedulerTags(SCHEDULE_NAME)
+        self.scheduler_client.set_scheduler_tags(tags, SCHEDULE_NAME)
+        fetched_tags = self.scheduler_client.get_scheduler_tags(SCHEDULE_NAME)
         assert len(fetched_tags) == 2
         
-        self.scheduler_client.deleteSchedulerTags(tags, SCHEDULE_NAME)
-        fetched_tags = self.scheduler_client.getSchedulerTags(SCHEDULE_NAME)
+        self.scheduler_client.delete_scheduler_tags(tags, SCHEDULE_NAME)
+        fetched_tags = self.scheduler_client.get_scheduler_tags(SCHEDULE_NAME)
         assert len(fetched_tags) == 0
         
-        self.scheduler_client.deleteSchedule(SCHEDULE_NAME)
+        self.scheduler_client.delete_schedule(SCHEDULE_NAME)
         
         try:
-            schedule = self.scheduler_client.getSchedule(SCHEDULE_NAME)
+            schedule = self.scheduler_client.get_schedule(SCHEDULE_NAME)
         except APIError as e:
             assert e.code == APIErrorCode.NOT_FOUND
             assert e.message == "Schedule '{0}' not found".format(SCHEDULE_NAME)
 
     def test_application_lifecycle(self):
         req = CreateOrUpdateApplicationRequest(APPLICATION_NAME)
-        created_app = self.authorization_client.createApplication(req)
+        created_app = self.authorization_client.create_application(req)
         assert created_app.name == APPLICATION_NAME
         
-        application = self.authorization_client.getApplication(created_app.id)
+        application = self.authorization_client.get_application(created_app.id)
         assert application.id == created_app.id
 
-        apps = self.authorization_client.listApplications()
+        apps = self.authorization_client.list_applications()
         assert True in [app.id == created_app.id for app in apps]
 
         req.name = APPLICATION_NAME + "_updated"
-        app_updated = self.authorization_client.updateApplication(req, created_app.id)
+        app_updated = self.authorization_client.update_application(req, created_app.id)
         assert app_updated.name == req.name
         
-        self.authorization_client.addRoleToApplicationUser(created_app.id, "USER")
+        self.authorization_client.add_role_to_application_user(created_app.id, "USER")
         app_user_id = "app:" + created_app.id
-        app_user = self.authorization_client.getUser(app_user_id)
+        app_user = self.authorization_client.get_user(app_user_id)
         assert True in [r.name == "USER" for r in app_user.roles]
 
-        self.authorization_client.removeRoleFromApplicationUser(created_app.id, "USER")
-        app_user = self.authorization_client.getUser(app_user_id)
+        self.authorization_client.remove_role_from_application_user(created_app.id, "USER")
+        app_user = self.authorization_client.get_user(app_user_id)
         assert True not in [r.name == "USER" for r in app_user.roles]
         
         tags = [MetadataTag("auth_tag", "val"), MetadataTag("auth_tag_2", "val2")]
-        self.authorization_client.setApplicationTags(tags, created_app.id)
-        fetched_tags = self.authorization_client.getApplicationTags(created_app.id)
+        self.authorization_client.set_application_tags(tags, created_app.id)
+        fetched_tags = self.authorization_client.get_application_tags(created_app.id)
         assert len(fetched_tags) == 2
 
-        self.authorization_client.deleteApplicationTags(tags, created_app.id)
-        fetched_tags = self.authorization_client.getApplicationTags(created_app.id)
+        self.authorization_client.delete_application_tags(tags, created_app.id)
+        fetched_tags = self.authorization_client.get_application_tags(created_app.id)
         assert len(fetched_tags) == 0
 
-        created_access_key = self.authorization_client.createAccessKey(created_app.id)
-        access_keys = self.authorization_client.getAccessKeys(created_app.id)
+        created_access_key = self.authorization_client.create_access_key(created_app.id)
+        access_keys = self.authorization_client.get_access_keys(created_app.id)
         assert(access_keys[0].id == created_access_key.id)
         assert(access_keys[0].status == AccessKeyStatus.ACTIVE)
 
-        access_key = self.authorization_client.toggleAccessKeyStatus(created_app.id, created_access_key.id)
+        access_key = self.authorization_client.toggle_access_key_status(created_app.id, created_access_key.id)
         assert access_key.status == AccessKeyStatus.INACTIVE
         
-        self.authorization_client.deleteAccessKey(created_app.id, created_access_key.id)
+        self.authorization_client.delete_access_key(created_app.id, created_access_key.id)
         
-        self.authorization_client.deleteApplication(created_app.id)
+        self.authorization_client.delete_application(created_app.id)
         try:
-            application = self.authorization_client.getApplication(created_app.id)
+            application = self.authorization_client.get_application(created_app.id)
         except APIError as e:
             assert e.code == APIErrorCode.NOT_FOUND
             assert e.message == "Application '{0}' not found".format(created_app.id)
 
     def test_user_group_permissions_lifecycle(self, workflowDef):
         req = UpsertUserRequest("Integration User", ["USER"])
-        created_user = self.authorization_client.upsertUser(req, USER_ID)
+        created_user = self.authorization_client.upsert_user(req, USER_ID)
         assert created_user.id == USER_ID
 
-        user = self.authorization_client.getUser(USER_ID)
+        user = self.authorization_client.get_user(USER_ID)
         assert user.id == USER_ID
         assert user.name == req.name
         
-        users = self.authorization_client.listUsers()
+        users = self.authorization_client.list_users()
         assert [user.id == USER_ID for u in users]
         
         req.name = "Integration " + "Updated"
-        updated_user = self.authorization_client.upsertUser(req, USER_ID)
+        updated_user = self.authorization_client.upsert_user(req, USER_ID)
         assert updated_user.name == req.name
         
         # Test Groups
         req = UpsertGroupRequest("Integration Test Group", ["USER"])
-        created_group = self.authorization_client.upsertGroup(req, GROUP_ID)
+        created_group = self.authorization_client.upsert_group(req, GROUP_ID)
         assert created_group.id == GROUP_ID
         
-        group = self.authorization_client.getGroup(GROUP_ID)
+        group = self.authorization_client.get_group(GROUP_ID)
         assert group.id == GROUP_ID
         
-        groups = self.authorization_client.listGroups()
+        groups = self.authorization_client.list_groups()
         assert True in [group.id == GROUP_ID for group in groups]
         
-        self.authorization_client.addUserToGroup(GROUP_ID, USER_ID)
-        users = self.authorization_client.getUsersInGroup(GROUP_ID)
+        self.authorization_client.add_user_to_group(GROUP_ID, USER_ID)
+        users = self.authorization_client.get_users_in_group(GROUP_ID)
         assert users[0].id == USER_ID
         
         # Test Granting Permissions
@@ -283,44 +283,44 @@ class TestOrkesClients:
         subject_user = SubjectRef(SubjectType.USER, USER_ID)
         access_user = [AccessType.EXECUTE, AccessType.READ]
         
-        self.authorization_client.grantPermissions(subject_group, target, access_group)
-        self.authorization_client.grantPermissions(subject_user, target, access_user)
+        self.authorization_client.grant_permissions(subject_group, target, access_group)
+        self.authorization_client.grant_permissions(subject_user, target, access_user)
         
-        target_perms = self.authorization_client.getPermissions(target)
+        target_perms = self.authorization_client.get_permissions(target)
         assert True in [s == subject_group for s in target_perms[AccessType.EXECUTE]]
         assert True in [s == subject_user for s in target_perms[AccessType.EXECUTE]]
         assert True in [s == subject_user for s in target_perms[AccessType.READ]]
         
-        group_perms = self.authorization_client.getGrantedPermissionsForGroup(GROUP_ID)
+        group_perms = self.authorization_client.get_granted_permissions_for_group(GROUP_ID)
         assert len(group_perms) == 1
         assert group_perms[0].target == target
         assert group_perms[0].access == access_group
         
-        user_perms = self.authorization_client.getGrantedPermissionsForUser(USER_ID)
+        user_perms = self.authorization_client.get_granted_permissions_for_user(USER_ID)
         assert len(user_perms) == 1
         assert user_perms[0].target == target
         assert sorted(user_perms[0].access) == sorted(access_user)
         
-        self.authorization_client.removePermissions(subject_group, target, access_group)
-        self.authorization_client.removePermissions(subject_user, target, access_user)
-        target_perms = self.authorization_client.getPermissions(target)
+        self.authorization_client.remove_permissions(subject_group, target, access_group)
+        self.authorization_client.remove_permissions(subject_user, target, access_user)
+        target_perms = self.authorization_client.get_permissions(target)
         
         assert True not in [s == subject_group for s in target_perms[AccessType.EXECUTE]]
         assert True not in [s == subject_user for s in target_perms[AccessType.EXECUTE]]
         assert True not in [s == subject_user for s in target_perms[AccessType.READ]]
         
-        self.authorization_client.removeUserFromGroup(GROUP_ID, USER_ID)
+        self.authorization_client.remove_user_from_group(GROUP_ID, USER_ID)
         
-        self.authorization_client.deleteUser(USER_ID)
+        self.authorization_client.delete_user(USER_ID)
         try:
-            self.authorization_client.getUser(USER_ID)
+            self.authorization_client.get_user(USER_ID)
         except APIError as e:
             assert e.code == APIErrorCode.NOT_FOUND
             assert e.message ==  "User '{0}' not found".format(USER_ID)
         
-        self.authorization_client.deleteGroup(GROUP_ID)
+        self.authorization_client.delete_group(GROUP_ID)
         try:
-            self.authorization_client.getGroup(GROUP_ID)
+            self.authorization_client.get_group(GROUP_ID)
         except APIError as e:
             assert e.code == APIErrorCode.NOT_FOUND
             assert e.message ==  "Group '{0}' not found".format(GROUP_ID)
@@ -330,10 +330,10 @@ class TestOrkesClients:
         self.__create_workflow_definition(workflowDef)
     
     def __create_workflow_definition(self, workflowDef) -> str:
-        return self.metadata_client.registerWorkflowDef(workflowDef, True)
+        return self.metadata_client.register_workflow_def(workflowDef, True)
 
     def __test_get_workflow_definition(self):
-        wfDef = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
+        wfDef = self.metadata_client.get_workflow_def(WORKFLOW_NAME)
         assert wfDef.name == WORKFLOW_NAME
         assert len(wfDef.tasks) == 1
 
@@ -342,8 +342,8 @@ class TestOrkesClients:
         workflow >> SimpleTask("simple_task", "simple_task_ref_3")
         workflow.workflow_id = self.workflow_id
         updatedWorkflowDef = workflow.to_workflow_def()
-        self.metadata_client.updateWorkflowDef(updatedWorkflowDef, True)
-        wfDef = self.metadata_client.getWorkflowDef(WORKFLOW_NAME)
+        self.metadata_client.update_workflow_def(updatedWorkflowDef, True)
+        wfDef = self.metadata_client.get_workflow_def(WORKFLOW_NAME)
         assert len(wfDef.tasks) == 3
 
     def __test_unit_test_workflow(self):
@@ -364,7 +364,7 @@ class TestOrkesClients:
         testRequest.version = workflowDef.version
         testRequest.task_ref_to_mock_output = testTaskInputs
 
-        execution = self.workflow_client.testWorkflow(testRequest)
+        execution = self.workflow_client.test_workflow(testRequest)
         assert execution != None
         
         # Ensure workflow is completed successfully
@@ -421,10 +421,10 @@ class TestOrkesClients:
         assert execution.output["phoneNumberValid"]
 
     def __test_unregister_workflow_definition(self):
-        self.metadata_client.unregisterWorkflowDef(WORKFLOW_NAME, 1)
+        self.metadata_client.unregister_workflow_def(WORKFLOW_NAME, 1)
         
         try:
-            self.metadata_client.getWorkflowDef(WORKFLOW_NAME, 1)
+            self.metadata_client.get_workflow_def(WORKFLOW_NAME, 1)
         except APIError as e:
             assert e.code == APIErrorCode.NOT_FOUND
             assert e.message ==  'No such workflow found by name: {0}, version: 1'.format(WORKFLOW_NAME)
@@ -488,35 +488,35 @@ class TestOrkesClients:
         workflow_uuid = self.workflow_client.startWorkflowByName(WORKFLOW_NAME, wfInput)
         assert workflow_uuid is not None
 
-        workflow = self.workflow_client.getWorkflow(workflow_uuid, False)
+        workflow = self.workflow_client.get_workflow(workflow_uuid, False)
         assert workflow.input["a"] == 5
         assert workflow.input["b"] == "+"
         assert workflow.input["c"] == [7, 8]
         assert workflow.status == "RUNNING"
 
-        self.workflow_client.pauseWorkflow(workflow_uuid)
-        workflow = self.workflow_client.getWorkflow(workflow_uuid, False)
+        self.workflow_client.pause_workflow(workflow_uuid)
+        workflow = self.workflow_client.get_workflow(workflow_uuid, False)
         assert workflow.status == "PAUSED"
 
-        self.workflow_client.resumeWorkflow(workflow_uuid)
-        workflow = self.workflow_client.getWorkflow(workflow_uuid, False)
+        self.workflow_client.resume_workflow(workflow_uuid)
+        workflow = self.workflow_client.get_workflow(workflow_uuid, False)
         assert workflow.status == "RUNNING"
 
-        self.workflow_client.terminateWorkflow(workflow_uuid, "Integration Test")
-        workflow = self.workflow_client.getWorkflow(workflow_uuid, False)
+        self.workflow_client.terminate_workflow(workflow_uuid, "Integration Test")
+        workflow = self.workflow_client.get_workflow(workflow_uuid, False)
         assert workflow.status == "TERMINATED"
 
-        self.workflow_client.restartWorkflow(workflow_uuid)
-        workflow = self.workflow_client.getWorkflow(workflow_uuid, False)
+        self.workflow_client.restart_workflow(workflow_uuid)
+        workflow = self.workflow_client.get_workflow(workflow_uuid, False)
         assert workflow.status == "RUNNING"
         
-        self.workflow_client.skipTaskFromWorkflow(workflow_uuid, "simple_task_ref_2")
-        workflow = self.workflow_client.getWorkflow(workflow_uuid, False)
+        self.workflow_client.skip_task_from_workflow(workflow_uuid, "simple_task_ref_2")
+        workflow = self.workflow_client.get_workflow(workflow_uuid, False)
         assert workflow.status == "RUNNING"
 
-        self.workflow_client.deleteWorkflow(workflow_uuid)
+        self.workflow_client.delete_workflow(workflow_uuid)
         try:
-            workflow = self.workflow_client.getWorkflow(workflow_uuid, False)
+            workflow = self.workflow_client.get_workflow(workflow_uuid, False)
         except APIError as e:
             assert e.code == APIErrorCode.NOT_FOUND
             assert e.message == "Workflow with Id: {} not found.".format(workflow_uuid)
@@ -540,24 +540,24 @@ class TestOrkesClients:
             input={ "a" : 15, "b": 3, "op" : "+" }
         )
         
-        workflow_uuid = self.workflow_client.startWorkflow(startWorkflowRequest)
-        workflow = self.workflow_client.getWorkflow(workflow_uuid, False)
+        workflow_uuid = self.workflow_client.start_workflow(startWorkflowRequest)
+        workflow = self.workflow_client.get_workflow(workflow_uuid, False)
         
-        workflow_uuid_2 = self.workflow_client.startWorkflow(startWorkflowRequest)
+        workflow_uuid_2 = self.workflow_client.start_workflow(startWorkflowRequest)
         
         # First task of each workflow is in the queue
-        assert self.task_client.getQueueSizeForTask(TASK_TYPE) == 2
+        assert self.task_client.get_queue_size_for_task(TASK_TYPE) == 2
         
-        polledTask = self.task_client.pollTask(TASK_TYPE)
+        polledTask = self.task_client.poll_task(TASK_TYPE)
         assert polledTask.status == TaskResultStatus.IN_PROGRESS
         
-        self.task_client.addTaskLog(polledTask.task_id, "Polled task...")
+        self.task_client.add_task_log(polledTask.task_id, "Polled task...")
         
-        taskExecLogs = self.task_client.getTaskLogs(polledTask.task_id)
+        taskExecLogs = self.task_client.get_task_logs(polledTask.task_id)
         taskExecLogs[0].log == "Polled task..."
         
         # First task of second workflow is in the queue
-        assert self.task_client.getQueueSizeForTask(TASK_TYPE) == 1
+        assert self.task_client.get_queue_size_for_task(TASK_TYPE) == 1
         
         taskResult = TaskResult(
             workflow_instance_id=workflow_uuid,
@@ -565,17 +565,17 @@ class TestOrkesClients:
             status=TaskResultStatus.COMPLETED
         )
         
-        self.task_client.updateTask(taskResult)
+        self.task_client.update_task(taskResult)
         
-        task = self.task_client.getTask(polledTask.task_id)
+        task = self.task_client.get_task(polledTask.task_id)
         assert task.status == TaskResultStatus.COMPLETED
         
-        batchPolledTasks = self.task_client.batchPollTasks(TASK_TYPE)
+        batchPolledTasks = self.task_client.batch_poll_tasks(TASK_TYPE)
         assert len(batchPolledTasks) == 1
 
         polledTask = batchPolledTasks[0]
         # Update first task of second workflow
-        self.task_client.updateTaskByRefName(
+        self.task_client.update_task_by_ref_name(
             workflow_uuid_2,
             polledTask.reference_task_name,
             "COMPLETED",
@@ -583,20 +583,20 @@ class TestOrkesClients:
         )
         
         # Update second task of first workflow
-        self.task_client.updateTaskByRefName(
+        self.task_client.update_task_by_ref_name(
             workflow_uuid_2, "simple_task_ref_2", "COMPLETED", "task 2 op 1st wf"
         )
         
         # # Second task of second workflow is in the queue
         # assert self.task_client.getQueueSizeForTask(TASK_TYPE) == 1
-        polledTask = self.task_client.pollTask(TASK_TYPE)
+        polledTask = self.task_client.poll_task(TASK_TYPE)
 
         # Update second task of second workflow
-        self.task_client.updateTaskSync(
+        self.task_client.update_task_sync(
             workflow_uuid, "simple_task_ref_2", "COMPLETED", "task 1 op 2nd wf"
         )
         
-        assert self.task_client.getQueueSizeForTask(TASK_TYPE) == 0
+        assert self.task_client.get_queue_size_for_task(TASK_TYPE) == 0
 
     def __get_workflow_definition(self, path):
         f = open(path, "r")
