@@ -4,8 +4,9 @@ from conductor.client.configuration.settings.metrics_settings import MetricsSett
 from conductor.client.telemetry.metrics_collector import MetricsCollector
 from conductor.client.worker.worker import Worker
 from conductor.client.worker.worker_interface import WorkerInterface
-from multiprocessing import Process, freeze_support
+from multiprocessing import Process, freeze_support, Queue
 from configparser import ConfigParser
+from logging.handlers import QueueHandler
 from typing import List
 import ast
 import astor
@@ -19,7 +20,6 @@ logger = logging.getLogger(
         __name__
     )
 )
-
 
 def get_annotated_workers():
     pkg = __get_client_topmost_package_filepath()
@@ -36,6 +36,7 @@ class TaskHandler:
             metrics_settings: MetricsSettings = None,
             scan_for_annotated_workers: bool = None,
     ):
+        self.logger_process, self.queue = setup_logging_queue(configuration)
         self.worker_config = load_worker_config()
         if workers is None:
             workers = []
@@ -61,7 +62,10 @@ class TaskHandler:
     def stop_processes(self) -> None:
         self.__stop_task_runner_processes()
         self.__stop_metrics_provider_process()
-        logger.debug('stopped processes')
+        logger.info('Stopped worker processes...')
+        logger.info('Stopping logger process...')
+        self.queue.put(None)
+        self.logger_process.terminate()
 
     def start_processes(self) -> None:
         logger.info('Starting worker processes...')
@@ -71,9 +75,13 @@ class TaskHandler:
         logger.info('Started all processes')
 
     def join_processes(self) -> None:
-        self.__join_task_runner_processes()
-        self.__join_metrics_provider_process()
-        logger.info('Joined all processes')
+        try:
+            self.__join_task_runner_processes()
+            self.__join_metrics_provider_process()
+            logger.info('Joined all processes')
+        except KeyboardInterrupt:
+            logger.info('KeyboardInterrupt: Stopping all processes')
+            self.stop_processes()
 
     def __create_metrics_provider_process(self, metrics_settings: MetricsSettings) -> None:
         if metrics_settings == None:
@@ -108,7 +116,7 @@ class TaskHandler:
             worker, configuration, metrics_settings, self.worker_config
         )
         process = Process(
-            target=task_runner.run
+            target=task_runner.run, args=(self.queue,)
         )
         self.task_runner_processes.append(process)
 
@@ -145,13 +153,12 @@ class TaskHandler:
         if process == None:
             return
         try:
-            process.kill()
-            logger.debug(f'Killed process: {process}')
-        except Exception as e:
-            logger.debug(f'Failed to kill process: {process}, reason: {e}')
+            logger.debug(f'Terminating process: {process.pid}')
             process.terminate()
-            logger.debug('Terminated process: {process}')
-
+        except Exception as e:
+            logger.debug(f'Failed to terminate process: {process.pid}, reason: {e}')
+            process.kill()
+            logger.debug(f'Killed process: {process.pid}')
 
 def __get_client_topmost_package_filepath():
     module = inspect.getmodule(inspect.stack()[-1][0])
@@ -243,3 +250,49 @@ def load_worker_config():
 
 def __get_config_file_path() -> str:
     return os.getcwd() + "/worker.ini"
+
+# Setup centralized logging queue
+def setup_logging_queue(configuration):
+    queue = Queue()
+    logger.addHandler(QueueHandler(queue))
+    if configuration:
+        configuration.apply_logging_config()
+        log_level = configuration.log_level
+        logger_format = configuration.logger_format
+    else:
+        log_level = logging.DEBUG
+        logger_format = None
+    
+    logger.setLevel(log_level)
+    
+    # start the logger process
+    logger_p = Process(target=__logger_process, args=(queue, log_level, logger_format))
+    logger_p.start()
+    return logger_p, queue
+
+# This process performs the centralized logging
+def __logger_process(queue, log_level, logger_format=None):
+    c_logger = logging.getLogger(
+        Configuration.get_logging_formatted_name(
+            __name__
+        )
+    )
+    
+    c_logger.setLevel(log_level)
+        
+    # configure a stream handler
+    sh = logging.StreamHandler()
+    if logger_format:
+        formatter = logging.Formatter(logger_format)
+        sh.setFormatter(formatter)
+    c_logger.addHandler(sh)
+    
+    # run forever
+    while True:
+        # consume a log message, block until one arrives
+        message = queue.get()
+        # check for shutdown
+        if message is None:
+            break
+        # log the message
+        c_logger.handle(message)

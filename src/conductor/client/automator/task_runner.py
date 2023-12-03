@@ -8,6 +8,8 @@ from conductor.client.http.models.task_exec_log import TaskExecLog
 from conductor.client.telemetry.metrics_collector import MetricsCollector
 from conductor.client.worker.worker_interface import WorkerInterface, DEFAULT_POLLING_INTERVAL
 from configparser import ConfigParser
+from logging.handlers import QueueHandler
+from multiprocessing import Queue
 import logging
 import sys
 import time
@@ -19,7 +21,6 @@ logger = logging.getLogger(
         __name__
     )
 )
-
 
 class TaskRunner:
     def __init__(
@@ -48,9 +49,19 @@ class TaskRunner:
             )
         )
 
-    def run(self) -> None:
+    def run(self, queue) -> None:
+        # Add a handler that uses the shared queue
+        if queue:
+            logger.addHandler(QueueHandler(queue))
+        
         if self.configuration != None:
             self.configuration.apply_logging_config()
+        else:
+            logger.setLevel(logging.DEBUG)
+        
+        task_names = ','.join(self.worker.task_definition_names)
+        logger.info(f'Started worker process for task(s): {task_names}')
+
         while True:
             try:
                 self.run_once()
@@ -209,6 +220,8 @@ class TaskRunner:
         time.sleep(polling_interval)
 
     def __set_worker_properties(self) -> None:
+        # If multiple tasks are supplied to the same worker, then only first
+        # task will be considered for setting worker properties
         task_type = self.worker.get_task_definition_name()
         
         # Fetch from ENV Variables if present
