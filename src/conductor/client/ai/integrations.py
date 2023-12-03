@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 
-class IntegrationConfig:
+
+class IntegrationConfig(ABC):
     def __init__(self):
         pass
 
+    @abstractmethod
     def to_dict(self) -> dict:
         pass
 

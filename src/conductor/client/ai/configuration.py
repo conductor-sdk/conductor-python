@@ -4,6 +4,8 @@ from typing_extensions import Self
 
 
 class AIConfiguration:
+    """Default configurations for the AI workflows.
+    """
     def __init__(self, llm_provider: str, text_complete_model: str, chat_complete_model: str, embedding_model: str,
                  vector_db: str) -> Self:
         self.llm_provider = llm_provider

@@ -1,7 +1,12 @@
 from __future__ import absolute_import
-from abc import ABC, abstractmethod
+from typing import List
 
 from conductor.client.configuration.configuration import Configuration
+from conductor.client.http.models.integration import Integration
+from conductor.client.http.models.integration_api import IntegrationApi
+from conductor.client.http.models.integration_api_update import IntegrationApiUpdate
+from conductor.client.http.models.integration_update import IntegrationUpdate
+from conductor.client.http.models.prompt import Prompt
 from conductor.client.integration_client import IntegrationClient
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
 from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
@@ -13,43 +18,35 @@ class OrkesIntegrationClient(OrkesBaseClient, IntegrationClient):
     def __init__(self, configuration: Configuration):
         super(OrkesIntegrationClient, self).__init__(configuration)
 
-    @abstractmethod
-    def associate_prompt_with_integration(self, ai_integration, model_name, prompt_name):
-        """Associate a prompt with an AI integration and model"""
-        pass
+    def associate_prompt_with_integration(self, ai_integration: str, model_name: str, prompt_name: str):
+        self.integrationApi.associate_prompt_with_integration(ai_integration, model_name, prompt_name)
 
-    @abstractmethod
-    def delete_integration_api(self, api_name, integration_name):
-        """Delete a specific integration api for a given integration"""
-        pass
+    def delete_integration_api(self, api_name: str, integration_name: str):
+        self.integrationApi.delete_integration_api(api_name, integration_name)
 
-    def delete_integration(self, integration_name):
-        """Delete an integration"""
-        pass
+    def delete_integration(self, integration_name: str):
+        self.integrationApi.delete_integration_provider(integration_name)
 
-    def get_integration_api(self, name, integration_name):
-        pass
+    def get_integration_api(self, api_name: str, integration_name: str) -> IntegrationApi:
+        return self.integrationApi.get_integration_api(api_name, integration_name)
 
-    def get_integration_apis(self, name):
-        pass
+    def get_integration_apis(self, integration_name: str) -> List[IntegrationApi]:
+        return self.integrationApi.get_integration_apis(integration_name)
 
-    def get_integration_available_apis(self, name):
-        pass
+    def get_integration(self, integration_name: str) -> Integration:
+        return self.integrationApi.get_integration_provider(integration_name)
 
-    def get_integration_provider(self, name):
-        pass
+    def get_integrations(self) -> List[Integration]:
+        return self.integrationApi.get_integration_providers()
 
-    def get_integration_provider_defs(self):
-        pass
+    def get_prompts_with_integration(self, ai_integration: str, model_name: str) -> List[Prompt]:
+        return self.integrationApi.get_prompts_with_integration(ai_integration, model_name)
 
-    def get_integration_providers(self):
-        pass
+    def save_integration_api(self, integration_name, api_name, api_details: IntegrationApiUpdate):
+        self.integrationApi.save_integration_api(api_details, api_name, integration_name)
 
-    def get_prompts_with_integration(self, integration_provider, integration_name):
-        pass
-
-    def get_providers_and_integrations(self):
-        pass
+    def save_integration(self, integration_name, integration_details: IntegrationUpdate):
+        self.integrationApi.save_integration_provider(integration_name, integration_details)
 
     def get_token_usage_for_integration(self, name, integration_name):
         pass
@@ -58,12 +55,6 @@ class OrkesIntegrationClient(OrkesBaseClient, IntegrationClient):
         pass
 
     def register_token_usage(self, body, name, integration_name):
-        pass
-
-    def save_integration_api(self, body, name, integration_name):
-        pass
-
-    def save_integration_provider(self, body, name):
         pass
 
     # Tags

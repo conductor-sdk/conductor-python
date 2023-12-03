@@ -1,4 +1,3 @@
-import functools
 from typing import List
 
 from conductor.client.configuration.configuration import Configuration
@@ -8,7 +7,7 @@ from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.switch_task import SwitchTask
 from conductor.client.workflow.task.task import TaskInterface
-from conductor.hello import workflow
+from tests.ai_scratchpad.hello import workflow
 
 
 @WorkerTask(task_definition_name="get_user_info")

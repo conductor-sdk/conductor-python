@@ -11,6 +11,7 @@ from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api.prompt_resource_api import PromptResourceApi
 from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
 from conductor.client.http.api_client import ApiClient
+from conductor.client.orkes_clients import OrkesClients
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.llm_tasks.llm_text_complete import LlmTextComplete
@@ -22,10 +23,13 @@ class AIOrchestrator:
     def __init__(self, api_configuration: Configuration, ai_configuration: AIConfiguration,
                  prompt_test_workflow_name: str = '') -> Self:
         self.ai_configuration = ai_configuration
-        api_client = ApiClient(api_configuration)
-        self.workflow_executor = WorkflowExecutor(api_configuration)
-        self.prompt_resource = PromptResourceApi(api_client)
-        self.workflow_resource = WorkflowResourceApi(api_client)
+        orkes_clients = OrkesClients(api_configuration)
+
+        self.integration_client = orkes_clients.get_integration_client()
+        self.workflow_client = orkes_clients.get_integration_client()
+        self.workflow_executor = orkes_clients.get_workflow_executor()
+
+        # self.prompt_resource = PromptResourceApi(api_client)
         self.prompt_test_workflow_name = prompt_test_workflow_name
         if self.prompt_test_workflow_name == '':
             self.prompt_test_workflow_name = 'prompt_test_' + str(uuid4())
