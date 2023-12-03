@@ -6,7 +6,7 @@ from conductor.client.http.models.integration import Integration
 from conductor.client.http.models.integration_api import IntegrationApi
 from conductor.client.http.models.integration_api_update import IntegrationApiUpdate
 from conductor.client.http.models.integration_update import IntegrationUpdate
-from conductor.client.http.models.prompt import MessageTemplate
+from conductor.client.http.models.prompt_template import PromptTemplate
 
 
 class IntegrationClient(ABC):
@@ -59,7 +59,7 @@ class IntegrationClient(ABC):
         """Returns the list of all the available integrations"""
         pass
 
-    def get_prompts_with_integration(self, ai_integration:str, model_name:str) -> List[MessageTemplate]:
+    def get_prompts_with_integration(self, ai_integration:str, model_name:str) -> List[PromptTemplate]:
         pass
 
     def get_token_usage_for_integration(self, name, integration_name):

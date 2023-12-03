@@ -8,18 +8,18 @@ from typing import List
 import six
 
 from conductor.client.http.api_client import ApiClient
-from conductor.client.http.models.prompt import Prompt
+from conductor.client.http.models.prompt_template import PromptTemplate
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 
 
 class PromptClient(ABC):
 
     @abstractmethod
-    def save_prompt(self, prompt_name: str, description: str, prompt: Prompt):
+    def save_prompt(self, prompt_name: str, description: str, prompt_template: str):
         pass
 
     @abstractmethod
-    def get_prompt(self, prompt_name: str) -> Prompt:
+    def get_prompt(self, prompt_name: str) -> PromptTemplate:
         pass
 
     @abstractmethod

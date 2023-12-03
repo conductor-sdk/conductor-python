@@ -6,7 +6,7 @@ from conductor.client.http.models.integration import Integration
 from conductor.client.http.models.integration_api import IntegrationApi
 from conductor.client.http.models.integration_api_update import IntegrationApiUpdate
 from conductor.client.http.models.integration_update import IntegrationUpdate
-from conductor.client.http.models.prompt import Prompt
+from conductor.client.http.models.prompt_template import PromptTemplate
 from conductor.client.integration_client import IntegrationClient
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
 from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
@@ -39,14 +39,14 @@ class OrkesIntegrationClient(OrkesBaseClient, IntegrationClient):
     def get_integrations(self) -> List[Integration]:
         return self.integrationApi.get_integration_providers()
 
-    def get_prompts_with_integration(self, ai_integration: str, model_name: str) -> List[Prompt]:
+    def get_prompts_with_integration(self, ai_integration: str, model_name: str) -> List[PromptTemplate]:
         return self.integrationApi.get_prompts_with_integration(ai_integration, model_name)
 
     def save_integration_api(self, integration_name, api_name, api_details: IntegrationApiUpdate):
-        self.integrationApi.save_integration_api(api_details, api_name, integration_name)
+        self.integrationApi.save_integration_api(api_details, integration_name, api_name)
 
     def save_integration(self, integration_name, integration_details: IntegrationUpdate):
-        self.integrationApi.save_integration_provider(integration_name, integration_details)
+        self.integrationApi.save_integration_provider(integration_details, integration_name)
 
     def get_token_usage_for_integration(self, name, integration_name):
         pass
