@@ -138,21 +138,21 @@ class TestOrkesMetadataClient(unittest.TestCase):
     @patch.object(TagsApi, 'delete_workflow_tag')
     def test_deleteWorkflowTag(self, mock):
         wfTagOStr = TagString("test", "METADATA", "val")
-        self.metadata_client.deleteWorkflowTag(self.wfTagObj, WORKFLOW_NAME)
+        self.metadata_client.delete_workflow_tag(self.wfTagObj, WORKFLOW_NAME)
         mock.assert_called_with(wfTagOStr, WORKFLOW_NAME)
 
     @patch.object(TagsApi, 'set_workflow_tags')
     def test_setWorkflowTags(self, mock):
         wfTagObj2 = MetadataTag("test2", "val2")
         wfTagObjs = [self.wfTagObj, wfTagObj2]
-        self.metadata_client.setWorkflowTags(wfTagObjs, WORKFLOW_NAME)
+        self.metadata_client.set_workflow_tags(wfTagObjs, WORKFLOW_NAME)
         mock.assert_called_with(wfTagObjs, WORKFLOW_NAME)
 
     @patch.object(TagsApi, 'get_workflow_tags')
     def test_getWorkflowTags(self, mock):
         wfTagObj2 = MetadataTag("test2", "val2")
         mock.return_value = [self.wfTagObj, wfTagObj2]
-        tags = self.metadata_client.getWorkflowTags(WORKFLOW_NAME)
+        tags = self.metadata_client.get_workflow_tags(WORKFLOW_NAME)
         mock.assert_called_with(WORKFLOW_NAME)
         self.assertEqual(len(tags), 2)
 

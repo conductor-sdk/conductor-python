@@ -53,15 +53,15 @@ class OrkesMetadataClient(OrkesBaseClient, MetadataClient):
     def add_workflow_tag(self, tag: MetadataTag, workflow_name: str):
         self.tagsApi.add_workflow_tag(tag, workflow_name)
 
-    def deleteWorkflowTag(self, tag: MetadataTag, workflowName: str):
+    def delete_workflow_tag(self, tag: MetadataTag, workflow_name: str):
         tagStr = TagString(tag.key, tag.type, tag.value)
-        self.tagsApi.delete_workflow_tag(tagStr, workflowName)
+        self.tagsApi.delete_workflow_tag(tagStr, workflow_name)
 
-    def getWorkflowTags(self, workflowName: str) -> List[MetadataTag]:
-        return self.tagsApi.get_workflow_tags(workflowName)
+    def get_workflow_tags(self, workflow_name: str) -> List[MetadataTag]:
+        return self.tagsApi.get_workflow_tags(workflow_name)
 
-    def setWorkflowTags(self, tags: List[MetadataTag], workflowName: str):
-        self.tagsApi.set_workflow_tags(tags, workflowName)
+    def set_workflow_tags(self, tags: List[MetadataTag], workflow_name: str):
+        self.tagsApi.set_workflow_tags(tags, workflow_name)
 
     def addTaskTag(self, tag: MetadataTag, taskName: str):
         self.tagsApi.add_task_tag(tag, taskName)

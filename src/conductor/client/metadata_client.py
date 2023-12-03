@@ -55,3 +55,12 @@ class MetadataClient(ABC):
     @abstractmethod
     def add_workflow_tag(self, tag: MetadataTag, workflow_name: str):
         pass
+
+    def get_workflow_tags(self, workflow_name: str) -> List[MetadataTag]:
+        pass
+
+    def set_workflow_tags(self, tags: List[MetadataTag], workflow_name: str):
+        pass
+
+    def delete_workflow_tag(self, tag: MetadataTag, workflow_name: str):
+        pass
