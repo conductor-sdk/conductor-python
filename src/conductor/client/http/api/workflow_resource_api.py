@@ -103,12 +103,12 @@ class WorkflowResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def delete1(self, workflow_id, **kwargs):  # noqa: E501
+    def delete(self, workflow_id, **kwargs):  # noqa: E501
         """Removes the workflow from the system  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.delete1(workflow_id, async_req=True)
+        >>> thread = api.delete(workflow_id, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool

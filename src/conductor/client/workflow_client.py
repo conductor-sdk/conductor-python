@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
 
-from conductor.client.http.models import WorkflowRun
+from conductor.client.http.models import WorkflowRun, SkipTaskRequest
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
@@ -57,7 +57,7 @@ class WorkflowClient(ABC):
         pass
 
     @abstractmethod
-    def skip_task_from_workflow(self, workflow_id: str, task_reference_name: str):
+    def skip_task_from_workflow(self, workflow_id: str, task_reference_name: str, request: SkipTaskRequest):
         pass
 
     @abstractmethod

@@ -1,5 +1,6 @@
 from typing import Optional, List
 from conductor.client.configuration.configuration import Configuration
+from conductor.client.http.models import SkipTaskRequest
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.workflow_run import WorkflowRun
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
@@ -51,13 +52,13 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
         return self.workflowResourceApi.execute_workflow(start_workflow_request, request_id, name, version, **kwargs)
 
     def pause_workflow(self, workflow_id: str):
-        self.workflowResourceApi.pause_workflow1(workflow_id)
+        self.workflowResourceApi.pause_workflow(workflow_id)
 
     def resume_workflow(self, workflow_id: str):
-        self.workflowResourceApi.resume_workflow1(workflow_id)
+        self.workflowResourceApi.resume_workflow(workflow_id)
 
     def restart_workflow(self, workflow_id: str, use_latest_def: Optional[bool] = False):
-        self.workflowResourceApi.restart1(workflow_id, use_latest_definitions=use_latest_def)
+        self.workflowResourceApi.restart(workflow_id, use_latest_definitions=use_latest_def)
 
     def rerun_workflow(self, workflow_id: str, rerun_workflow_request: RerunWorkflowRequest):
         self.workflowResourceApi.rerun(rerun_workflow_request, workflow_id)
@@ -75,8 +76,8 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
     def delete_workflow(self, workflow_id: str, archive_workflow: Optional[bool] = True):
         self.workflowResourceApi.delete(workflow_id, archive_workflow=archive_workflow)
 
-    def skip_task_from_workflow(self, workflow_id: str, task_reference_name: str):
-        self.workflowResourceApi.skip_task_from_workflow(workflow_id, task_reference_name)
+    def skip_task_from_workflow(self, workflow_id: str, task_reference_name: str, request: SkipTaskRequest):
+        self.workflowResourceApi.skip_task_from_workflow(workflow_id, task_reference_name, request)
 
     def test_workflow(self, test_request: WorkflowTestRequest) -> Workflow:
         return self.workflowResourceApi.test_workflow(test_request)

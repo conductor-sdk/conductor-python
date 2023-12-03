@@ -132,7 +132,7 @@ class TestOrkesMetadataClient(unittest.TestCase):
 
     @patch.object(TagsApi, 'add_workflow_tag')
     def test_addWorkflowTag(self, mock):
-        self.metadata_client.addWorkflowTag(self.wfTagObj, WORKFLOW_NAME)
+        self.metadata_client.add_workflow_tag(self.wfTagObj, WORKFLOW_NAME)
         mock.assert_called_with(self.wfTagObj, WORKFLOW_NAME)
 
     @patch.object(TagsApi, 'delete_workflow_tag')
