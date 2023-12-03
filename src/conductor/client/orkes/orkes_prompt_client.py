@@ -11,6 +11,7 @@ from conductor.client.configuration.configuration import Configuration
 from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
 from conductor.client.http.api_client import ApiClient
 from conductor.client.http.models.prompt_template import PromptTemplate
+from conductor.client.http.models.prompt_test_request import PromptTemplateTestRequest
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
 from conductor.client.prompt_client import PromptClient
@@ -42,3 +43,16 @@ class OrkesPromptClient(OrkesBaseClient, PromptClient):
 
     def delete_tag_for_prompt_template(self, prompt_name: str, tags: List[MetadataTag]):
         self.promptApi.delete_tag_for_prompt_template(tags, prompt_name)
+
+    def test_prompt(self, prompt_text: str, variables: dict, ai_integration: str, text_complete_model: str,
+                    temperature: float = 0.1, top_p: float = 0.9, stop_words: List[str] = None) -> str:
+        request = PromptTemplateTestRequest()
+        request.prompt = prompt_text
+        request.llm_provider = ai_integration
+        request.model = text_complete_model
+        request.prompt_variables  = variables
+        request.temperature = temperature
+        request.top_p = top_p
+        if stop_words is not None:
+            request.stop_words = stop_words
+        return self.promptApi.test_message_template(request)

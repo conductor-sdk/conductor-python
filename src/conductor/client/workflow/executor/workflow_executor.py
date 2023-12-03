@@ -42,7 +42,7 @@ class WorkflowExecutor:
             )
         return workflow_id_list
 
-    def execute_workflow(self, request: StartWorkflowRequest, wait_until_task_ref: str) -> WorkflowRun:
+    def execute_workflow(self, request: StartWorkflowRequest, wait_until_task_ref: str, wait_for_seconds : int = 10) -> WorkflowRun:
         """Executes a workflow with StartWorkflowRequest and waits for the completion of the workflow or until a
         specific task in the workflow """
         return self.workflow_client.execute_workflow(
@@ -51,6 +51,7 @@ class WorkflowExecutor:
             version=request.version,
             name=request.name,
             wait_until_task_ref=wait_until_task_ref,
+            wait_for_seconds = wait_for_seconds,
         )
 
     def remove_workflow(self, workflow_id: str, archive_workflow: bool = None) -> None:

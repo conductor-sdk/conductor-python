@@ -41,29 +41,18 @@ class AIOrchestrator:
         self.prompt_client.save_prompt(name, description, prompt_template)
         return self
 
-    def test_prompt_template(self, name: str, variables: dict,
+    def associate_prompt_template(self, name: str, ai_integration: str, ai_models: List[str]):
+        for ai_model in ai_models:
+            self.integration_client.associate_prompt_with_integration(ai_integration, ai_model, name)
+
+    def test_prompt_template(self, text: str, variables: dict,
+                             ai_integration: str,
+                             text_complete_model: str,
                              stop_words: Optional[List[str]] = [], max_tokens: Optional[int] = 100,
                              temperature: int = 0,
                              top_p: int = 1):
-        prompt = Prompt(name, variables)
-        llm_text_complete = LlmTextComplete(
-            'prompt_test', 'prompt_test',
-            self.ai_configuration.llm_provider, self.ai_configuration.text_complete_model,
-            prompt,
-            stop_words, max_tokens, temperature, top_p
-        )
-        name = self.prompt_test_workflow_name
-        prompt_test_workflow = ConductorWorkflow(
-            executor=self.workflow_executor,
-            name=name,
-            description='Prompt testing workflow from SDK'
-        )
-        prompt_test_workflow.add(llm_text_complete)
-        output = prompt_test_workflow.execute({})
-        if 'result' in output.keys():
-            return output['result']
-        else:
-            return ''
+
+        return self.prompt_client.test_prompt(text, variables, ai_integration, text_complete_model, temperature, top_p, stop_words)
 
     def add_ai_integration(self, name: str, provider: str, models: List[str], description: str, config: IntegrationConfig):
         details = IntegrationUpdate()

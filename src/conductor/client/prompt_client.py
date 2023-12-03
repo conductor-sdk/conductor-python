@@ -41,3 +41,8 @@ class PromptClient(ABC):
     @abstractmethod
     def delete_tag_for_prompt_template(self, prompt_name: str, tags: List[MetadataTag]):
         pass
+
+    @abstractmethod
+    def test_prompt(self, prompt_text: str, variables: dict, ai_integration: str, text_complete_model: str,
+                    temperature : float = 0.1, top_p : float = 0.9, stop_words: List[str] = None) -> str:
+        pass
