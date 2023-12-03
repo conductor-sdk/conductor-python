@@ -64,6 +64,9 @@ class Worker(WorkerInterface):
         task_result = self.get_task_result_from_task(task)
         task_result.status = TaskResultStatus.COMPLETED
         task_result.output_data = self.execute_function(task)
+        if not isinstance(task_result.output_data, dict):
+            output = task_result.output_data
+            task_result.output_data = {'result': output}
         return task_result
 
     def get_identity(self) -> str:

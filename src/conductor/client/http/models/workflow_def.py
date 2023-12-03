@@ -61,7 +61,7 @@ class WorkflowDef(object):
         'input_template': 'inputTemplate'
     }
 
-    def __init__(self, owner_app=None, create_time=None, update_time=None, created_by=None, updated_by=None, name=None, description=None, version=None, tasks=None, input_parameters=None, output_parameters=None, failure_workflow=None, schema_version=None, restartable=None, workflow_status_listener_enabled=None, owner_email=None, timeout_policy=None, timeout_seconds=None, variables=None, input_template=None):  # noqa: E501
+    def __init__(self, owner_app=None, create_time=None, update_time=None, created_by=None, updated_by=None, name=None, description=None, version=None, tasks=None, input_parameters=None, output_parameters: dict = {}, failure_workflow=None, schema_version=None, restartable=None, workflow_status_listener_enabled=None, owner_email=None, timeout_policy=None, timeout_seconds=None, variables=None, input_template=None):  # noqa: E501
         """WorkflowDef - a model defined in Swagger"""  # noqa: E501
         self._owner_app = None
         self._create_time = None
@@ -73,7 +73,7 @@ class WorkflowDef(object):
         self._version = None
         self._tasks = None
         self._input_parameters = None
-        self._output_parameters = None
+        # self._output_parameters = None
         self._failure_workflow = None
         self._schema_version = None
         self._restartable = None

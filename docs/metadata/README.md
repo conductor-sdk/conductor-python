@@ -157,7 +157,7 @@ You should be able to add a single tag to your workflow:
 
 ```python
 tag = MetadataTag("wftag", "val")
-metadata_client.addWorkflowTag(tag, 'python_workflow_example_from_code')
+metadata_client.add_workflow_tag(tag, 'python_workflow_example_from_code')
 ```
 
 ### Fetch tags added to your workflow

@@ -1,4 +1,6 @@
 from conductor.client.configuration.configuration import Configuration
+from conductor.client.http.api.integration_resource_api import IntegrationResourceApi
+from conductor.client.http.api.prompt_resource_api import PromptResourceApi
 from conductor.client.http.api_client import ApiClient
 from conductor.client.orkes.api.tags_api import TagsApi
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
@@ -12,6 +14,7 @@ from conductor.client.http.api.authorization_resource_api import AuthorizationRe
 from conductor.client.http.api.scheduler_resource_api import SchedulerResourceApi
 
 import logging
+
 
 class OrkesBaseClient(object):
     def __init__(self, configuration: Configuration):
@@ -29,4 +32,5 @@ class OrkesBaseClient(object):
         self.authorizationResourceApi = AuthorizationResourceApi(self.api_client)
         self.schedulerResourceApi = SchedulerResourceApi(self.api_client)
         self.tagsApi = TagsApi(self.api_client)
-    
+        self.integrationApi = IntegrationResourceApi(self.api_client)
+        self.promptApi = PromptResourceApi(self.api_client)

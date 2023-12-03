@@ -50,8 +50,8 @@ class OrkesMetadataClient(OrkesBaseClient, MetadataClient):
     def get_all_task_defs(self) -> List[TaskDef]:
         return self.metadataResourceApi.get_task_defs()
         
-    def addWorkflowTag(self, tag: MetadataTag, workflowName: str):
-        self.tagsApi.add_workflow_tag(tag, workflowName)
+    def add_workflow_tag(self, tag: MetadataTag, workflow_name: str):
+        self.tagsApi.add_workflow_tag(tag, workflow_name)
 
     def deleteWorkflowTag(self, tag: MetadataTag, workflowName: str):
         tagStr = TagString(tag.key, tag.type, tag.value)
@@ -90,8 +90,7 @@ class OrkesMetadataClient(OrkesBaseClient, MetadataClient):
         return None
 
     def removeWorkflowRateLimit(self, workflowName: str):
-        currentRateLimit = self.getWorkflowRateLimit(workflowName)
-
-        if currentRateLimit:
-            rateLimitTag = RateLimitTag(workflowName, currentRateLimit)
+        current_rate_limit = self.getWorkflowRateLimit(workflowName)
+        if current_rate_limit:
+            rateLimitTag = RateLimitTag(workflowName, current_rate_limit)
             self.tagsApi.delete_workflow_tag(rateLimitTag, workflowName)

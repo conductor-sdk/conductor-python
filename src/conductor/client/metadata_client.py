@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, List
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.http.models.task_def import TaskDef
+from conductor.client.orkes.models.metadata_tag import MetadataTag
 
 
 class MetadataClient(ABC):
@@ -49,4 +50,8 @@ class MetadataClient(ABC):
 
     @abstractmethod
     def get_all_task_defs(self) -> List[TaskDef]:
+        pass
+
+    @abstractmethod
+    def add_workflow_tag(self, tag: MetadataTag, workflow_name: str):
         pass
