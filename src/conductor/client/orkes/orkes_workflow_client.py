@@ -64,7 +64,7 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
         self.workflowResourceApi.rerun(rerun_workflow_request, workflow_id)
 
     def retry_workflow(self, workflow_id: str, resume_subworkflow_tasks: Optional[bool] = False):
-        self.workflowResourceApi.retry1(workflow_id, resume_subworkflow_tasks=resume_subworkflow_tasks)
+        self.workflowResourceApi.retry(workflow_id, resume_subworkflow_tasks=resume_subworkflow_tasks)
 
     def terminate_workflow(self, workflow_id: str, reason: Optional[str] = None):
         kwargs = {"reason": reason} if reason else {}

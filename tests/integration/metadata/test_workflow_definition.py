@@ -64,7 +64,7 @@ def test_kitchensink_workflow_registration(workflow_executor: WorkflowExecutor) 
     )
     if type(workflow_id) != str or workflow_id == '':
         raise Exception(f'failed to start workflow, name: {WORKFLOW_NAME}')
-    
+
     workflow_executor.terminate(workflow_id=workflow_id, reason="End test")
 
 
@@ -116,12 +116,14 @@ def generate_do_while_task() -> LoopTask:
         tasks=generate_switch_task(),
     )
 
+
 def generate_do_while_task_multiple() -> LoopTask:
     return LoopTask(
         task_ref_name="loop_until_success_multiple",
         iterations=1,
         tasks=[generate_simple_task(i) for i in range(13, 14)],
     )
+
 
 def generate_fork_task(workflow_executor: WorkflowExecutor) -> ForkTask:
     return ForkTask(
@@ -135,6 +137,7 @@ def generate_fork_task(workflow_executor: WorkflowExecutor) -> ForkTask:
             [generate_simple_task(i) for i in range(3, 5)]
         ]
     )
+
 
 def generate_join_task(workflow_executor: WorkflowExecutor, fork_task: ForkTask) -> JoinTask:
     return JoinTask(
@@ -205,7 +208,7 @@ def generate_sub_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkf
 
 def generate_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
     fork_task = generate_fork_task(workflow_executor)
-    
+
     workflow = ConductorWorkflow(
         executor=workflow_executor,
         name='test-python-sdk-workflow-as-code',
