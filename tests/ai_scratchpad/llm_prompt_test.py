@@ -64,7 +64,8 @@ def main():
     workflow >> [t1, t2]
     workflow.output_parameters = {'greetings': '${say_hi_ref.output.result}'}
     workflow.execute({}, wait_for_seconds=1)
-
+    print('tokens used: ')
+    print(ai_orchestrator.get_token_used_by_model(ai_config.llm_provider, ai_config.text_complete_model))
 
 if __name__ == '__main__':
     sys.exit(main())  # next section explains the use of sys.exit

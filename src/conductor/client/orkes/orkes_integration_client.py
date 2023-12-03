@@ -48,11 +48,11 @@ class OrkesIntegrationClient(OrkesBaseClient, IntegrationClient):
     def save_integration(self, integration_name, integration_details: IntegrationUpdate):
         self.integrationApi.save_integration_provider(integration_details, integration_name)
 
-    def get_token_usage_for_integration(self, name, integration_name):
-        pass
+    def get_token_usage_for_integration(self, name, integration_name) -> int:
+        return self.integrationApi.get_token_usage_for_integration(name, integration_name)
 
-    def get_token_usage_for_integration_provider(self, name):
-        pass
+    def get_token_usage_for_integration_provider(self, name) -> dict:
+        return self.integrationApi.get_token_usage_for_integration_provider(name)
 
     def register_token_usage(self, body, name, integration_name):
         pass

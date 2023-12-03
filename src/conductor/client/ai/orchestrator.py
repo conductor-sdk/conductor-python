@@ -8,17 +8,9 @@ from typing_extensions import Self
 
 from conductor.client.ai.integrations import IntegrationConfig
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.api.prompt_resource_api import PromptResourceApi
-from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
-from conductor.client.http.api_client import ApiClient
 from conductor.client.http.models.integration_api_update import IntegrationApiUpdate
 from conductor.client.http.models.integration_update import IntegrationUpdate
-from conductor.client.http.models.prompt_template import PromptTemplate
 from conductor.client.orkes_clients import OrkesClients
-from conductor.client.workflow.conductor_workflow import ConductorWorkflow
-from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from conductor.client.workflow.task.llm_tasks.llm_text_complete import LlmTextComplete
-from conductor.client.workflow.task.llm_tasks.utils.prompt import Prompt
 from conductor.client.ai.configuration import AIConfiguration
 
 
@@ -52,9 +44,11 @@ class AIOrchestrator:
                              temperature: int = 0,
                              top_p: int = 1):
 
-        return self.prompt_client.test_prompt(text, variables, ai_integration, text_complete_model, temperature, top_p, stop_words)
+        return self.prompt_client.test_prompt(text, variables, ai_integration, text_complete_model, temperature, top_p,
+                                              stop_words)
 
-    def add_ai_integration(self, name: str, provider: str, models: List[str], description: str, config: IntegrationConfig):
+    def add_ai_integration(self, name: str, provider: str, models: List[str], description: str,
+                           config: IntegrationConfig):
         details = IntegrationUpdate()
         details.configuration = config.to_dict()
         details.type = provider
@@ -68,8 +62,24 @@ class AIOrchestrator:
             api_details.description = description
             self.integration_client.save_integration_api(name, model, api_details)
 
-
-    def add_vector_store(self, name: str, provider: str, indices: List[str], description: str, api_key: str,
+    def add_vector_store(self, name: str, provider: str, indices: List[str], description: str,
                          config: IntegrationConfig):
+        vector_db = IntegrationUpdate()
+        vector_db.configuration = config.to_dict()
+        vector_db.type = provider
+        vector_db.category = 'VECTOR_DB'
+        vector_db.enabled = True
+        vector_db.description = description
+        self.integration_client.save_integration(name, vector_db)
+        for index in indices:
+            api_details = IntegrationApiUpdate()
+            api_details.enabled = True
+            api_details.description = description
+            self.integration_client.save_integration_api(name, index, api_details)
         pass
 
+    def get_token_used(self, ai_integration: str) -> dict:
+        return self.integration_client.get_token_usage_for_integration_provider(ai_integration)
+
+    def get_token_used_by_model(self, ai_integration: str, model: str) -> int:
+        return self.integration_client.get_token_usage_for_integration(ai_integration, model)

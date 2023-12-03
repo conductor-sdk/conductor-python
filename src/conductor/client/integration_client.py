@@ -62,10 +62,10 @@ class IntegrationClient(ABC):
     def get_prompts_with_integration(self, ai_integration:str, model_name:str) -> List[PromptTemplate]:
         pass
 
-    def get_token_usage_for_integration(self, name, integration_name):
+    def get_token_usage_for_integration(self, name, integration_name) -> int:
         pass
 
-    def get_token_usage_for_integration_provider(self, name):
+    def get_token_usage_for_integration_provider(self, name) -> dict:
         pass
 
     def register_token_usage(self, body, name, integration_name):
