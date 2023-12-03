@@ -66,8 +66,8 @@ class TestOrkesClients:
         self.test_secret_lifecycle()
         self.test_scheduler_lifecycle(workflowDef)
         self.test_application_lifecycle()
-        self.test_user_group_permissions_lifecycle(workflowDef)
         self.__test_unit_test_workflow()
+        self.test_user_group_permissions_lifecycle(workflowDef)
 
     def test_workflow_lifecycle(self, workflowDef, workflow):
         self.__test_register_workflow_definition(workflowDef)
@@ -451,8 +451,8 @@ class TestOrkesClients:
     def __test_workflow_tags(self):
         singleTag = MetadataTag("wftag", "val")
 
-        self.metadata_client.addWorkflowTag(singleTag, WORKFLOW_NAME)
-        fetchedTags = self.metadata_client.getWorkflowTags(WORKFLOW_NAME)
+        self.metadata_client.add_workflow_tag(singleTag, WORKFLOW_NAME)
+        fetchedTags = self.metadata_client.get_workflow_tags(WORKFLOW_NAME)
         assert len(fetchedTags) == 1
         assert fetchedTags[0].key == singleTag.key
 
@@ -462,13 +462,13 @@ class TestOrkesClients:
             MetadataTag("wftag3", "val3")
         ]
 
-        self.metadata_client.setWorkflowTags(tags, WORKFLOW_NAME)
-        fetchedTags = self.metadata_client.getWorkflowTags(WORKFLOW_NAME)
+        self.metadata_client.set_workflow_tags(tags, WORKFLOW_NAME)
+        fetchedTags = self.metadata_client.get_workflow_tags(WORKFLOW_NAME)
         assert len(fetchedTags) == 3
 
         tag = MetadataTag("wftag2", "val2")
-        self.metadata_client.deleteWorkflowTag(tag, WORKFLOW_NAME)
-        assert (len(self.metadata_client.getWorkflowTags(WORKFLOW_NAME))) == 2
+        self.metadata_client.delete_workflow_tag(tag, WORKFLOW_NAME)
+        assert (len(self.metadata_client.get_workflow_tags(WORKFLOW_NAME))) == 2
 
     def __test_workflow_rate_limit(self):
         assert self.metadata_client.getWorkflowRateLimit(WORKFLOW_NAME) == None

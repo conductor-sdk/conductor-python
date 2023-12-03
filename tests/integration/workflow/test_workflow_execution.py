@@ -39,7 +39,7 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
         configuration=configuration,
         scan_for_annotated_workers=True,
     )
-    set_start_method('fork')
+    set_start_method('fork', force=True)
     task_handler.start_processes()
     try:
         test_get_workflow_by_correlation_ids(workflow_executor)
