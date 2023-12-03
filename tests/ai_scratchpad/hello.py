@@ -35,19 +35,7 @@ def worker(name: str, polling_interval: int = 0.1):
     return do_twice
 
 
-@worker(name='viren', polling_interval=100)
-def hello():
-    print('Hello world')
-
-
-def workflow() -> ConductorWorkflow:
-    wf = ConductorWorkflow()
-    wf >> hello() >> switch() >> hello()
-    pass
-
-
 def main():
-    workflow()
     print('Done')
 
 
