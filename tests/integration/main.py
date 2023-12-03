@@ -46,25 +46,19 @@ def generate_configuration():
 
 def main():
     args = sys.argv[1:]
-    # configuration = generate_configuration()
-    configuration = Configuration(
-        authentication_settings=AuthenticationSettings(key_id='0092089d-19ff-4931-b3da-fc093029d0ad',
-                                                       key_secret='lzCCrpk5NLi0TYmIDiOfnJWLz5vkxMKn5BoCKIHSddOdYyg3'))
-
+    configuration = generate_configuration()
     api_client = ApiClient(configuration)
     workflow_executor = WorkflowExecutor(configuration)
 
-    run_workflow_definition_tests(workflow_executor)
-
-    TestOrkesClients(configuration=configuration).run()
-    run_workflow_execution_tests(configuration, workflow_executor)
-    test_async.test_async_method(api_client)
-
-
-
-
-
-
+    if len(args) == 1 and args[0] == '--orkes-clients-only':
+        TestOrkesClients(configuration=configuration).run()
+    elif len(args) == 1 and args[0] == '--workflow-execution-only':
+        run_workflow_execution_tests(configuration, workflow_executor)
+    else:
+        test_async.test_async_method(api_client)
+        run_workflow_definition_tests(workflow_executor)
+        run_workflow_execution_tests(configuration, workflow_executor)
+        TestOrkesClients(configuration=configuration).run()
 
 if __name__ == "__main__":
     main()
