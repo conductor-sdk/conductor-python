@@ -1,17 +1,16 @@
+from enum import Enum
 from typing import List
 
 from typing_extensions import Self
 
 
-class AIConfiguration:
-    """Default configurations for the AI workflows.
-    """
-    def __init__(self, llm_provider: str, text_complete_model: str, chat_complete_model: str, embedding_model: str,
-                 vector_db: str) -> Self:
-        self.llm_provider = llm_provider
-        self.text_complete_model = text_complete_model
-        self.chat_complete_model = chat_complete_model
-        self.embedding_model = embedding_model
-        self.vector_db = vector_db
+class LLMProvider(str, Enum):
+    AZURE_OPEN_AI = "azure_openai",
+    OPEN_AI = "openai"
+    GCP_VERTEX_AI = "vertex_ai",
+    HUGGING_FACE = "huggingface"
 
 
+class VectorDB(str, Enum):
+    PINECONE_DB = "pineconedb",
+    WEAVIATE_DB = "weaviatedb"

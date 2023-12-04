@@ -11,13 +11,11 @@ from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models.integration_api_update import IntegrationApiUpdate
 from conductor.client.http.models.integration_update import IntegrationUpdate
 from conductor.client.orkes_clients import OrkesClients
-from conductor.client.ai.configuration import AIConfiguration
+from conductor.client.ai.configuration import LLMProvider, VectorDB
 
 
 class AIOrchestrator:
-    def __init__(self, api_configuration: Configuration, ai_configuration: AIConfiguration,
-                 prompt_test_workflow_name: str = '') -> Self:
-        self.ai_configuration = ai_configuration
+    def __init__(self, api_configuration: Configuration, prompt_test_workflow_name: str = '') -> Self:
         orkes_clients = OrkesClients(api_configuration)
 
         self.integration_client = orkes_clients.get_integration_client()
@@ -47,26 +45,26 @@ class AIOrchestrator:
         return self.prompt_client.test_prompt(text, variables, ai_integration, text_complete_model, temperature, top_p,
                                               stop_words)
 
-    def add_ai_integration(self, name: str, provider: str, models: List[str], description: str,
+    def add_ai_integration(self, ai_integration_name: str, provider: LLMProvider, models: List[str], description: str,
                            config: IntegrationConfig):
         details = IntegrationUpdate()
         details.configuration = config.to_dict()
-        details.type = provider
+        details.type = provider.value
         details.category = 'AI_MODEL'
         details.enabled = True
         details.description = description
-        self.integration_client.save_integration(name, details)
+        self.integration_client.save_integration(ai_integration_name, details)
         for model in models:
             api_details = IntegrationApiUpdate()
             api_details.enabled = True
             api_details.description = description
-            self.integration_client.save_integration_api(name, model, api_details)
+            self.integration_client.save_integration_api(ai_integration_name, model, api_details)
 
-    def add_vector_store(self, name: str, provider: str, indices: List[str], description: str,
+    def add_vector_store(self, name: str, provider: VectorDB, indices: List[str], description: str,
                          config: IntegrationConfig):
         vector_db = IntegrationUpdate()
         vector_db.configuration = config.to_dict()
-        vector_db.type = provider
+        vector_db.type = provider.value
         vector_db.category = 'VECTOR_DB'
         vector_db.enabled = True
         vector_db.description = description
