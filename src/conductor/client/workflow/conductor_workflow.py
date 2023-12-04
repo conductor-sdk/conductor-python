@@ -1,23 +1,28 @@
-from conductor.client.workflow.task.fork_task import ForkTask
-from conductor.client.workflow.task.join_task import JoinTask
-from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from conductor.client.workflow.task.task import TaskInterface
-from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
-from conductor.client.http.models import *
 from copy import deepcopy
 from typing import Any, Dict, List, Union
-from typing_extensions import Self
+
 from shortuuid import uuid
+from typing_extensions import Self
+
+from conductor.client.http.models import *
+from conductor.client.workflow.executor.workflow_executor import \
+    WorkflowExecutor
+from conductor.client.workflow.task.fork_task import ForkTask
+from conductor.client.workflow.task.join_task import JoinTask
+from conductor.client.workflow.task.task import TaskInterface
+from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
 
 
 class ConductorWorkflow:
     SCHEMA_VERSION = 2
 
-    def __init__(self,
-                 executor: WorkflowExecutor,
-                 name: str,
-                 version: int = None,
-                 description: str = None) -> Self:
+    def __init__(
+        self,
+        executor: WorkflowExecutor,
+        name: str,
+        version: int = None,
+        description: str = None,
+    ) -> Self:
         self._executor = executor
         self.name = name
         self.version = version
@@ -26,7 +31,7 @@ class ConductorWorkflow:
         self._owner_email = None
         self._timeout_policy = None
         self._timeout_seconds = 60
-        self._failure_workflow = ''
+        self._failure_workflow = ""
         self._input_parameters = []
         self._output_parameters = {}
         self._input_template = {}
@@ -40,7 +45,7 @@ class ConductorWorkflow:
     @name.setter
     def name(self, name: str) -> None:
         if not isinstance(name, str):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         self._name = deepcopy(name)
 
     @property
@@ -50,7 +55,7 @@ class ConductorWorkflow:
     @version.setter
     def version(self, version: int) -> None:
         if version != None and not isinstance(version, int):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         self._version = deepcopy(version)
 
     @property
@@ -60,24 +65,24 @@ class ConductorWorkflow:
     @description.setter
     def description(self, description: str) -> None:
         if description != None and not isinstance(description, str):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         self._description = deepcopy(description)
 
     def timeout_policy(self, timeout_policy: TimeoutPolicy) -> Self:
         if not isinstance(timeout_policy, TimeoutPolicy):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         self._timeout_policy = deepcopy(timeout_policy)
         return self
 
     def timeout_seconds(self, timeout_seconds: int) -> Self:
         if not isinstance(timeout_seconds, int):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         self._timeout_seconds = deepcopy(timeout_seconds)
         return self
 
     def owner_email(self, owner_email: str) -> Self:
         if not isinstance(owner_email, str):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         self._owner_email = deepcopy(owner_email)
         return self
 
@@ -85,7 +90,7 @@ class ConductorWorkflow:
     # Failure workflows can be used for handling compensation logic
     def failure_workflow(self, failure_workflow: str) -> Self:
         if not isinstance(failure_workflow, str):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         self._failure_workflow = deepcopy(failure_workflow)
         return self
 
@@ -93,7 +98,7 @@ class ConductorWorkflow:
     # Set this to false if restarting workflow can have side effects
     def restartable(self, restartable: bool) -> Self:
         if not isinstance(restartable, bool):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         self._restartable = deepcopy(restartable)
         return self
 
@@ -104,10 +109,10 @@ class ConductorWorkflow:
             self._output_parameters = {}
             return
         if not isinstance(output_parameters, dict):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         for key in output_parameters.keys():
             if not isinstance(key, str):
-                raise Exception('invalid type')
+                raise Exception("invalid type")
         self._output_parameters = deepcopy(output_parameters)
         return self
 
@@ -117,10 +122,10 @@ class ConductorWorkflow:
             self._input_template = {}
             return
         if not isinstance(input_template, dict):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         for key in input_template.keys():
             if not isinstance(key, str):
-                raise Exception('invalid type')
+                raise Exception("invalid type")
         self._input_template = deepcopy(input_template)
         return self
 
@@ -131,20 +136,20 @@ class ConductorWorkflow:
             self._variables = {}
             return
         if not isinstance(variables, dict):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         for key in variables.keys():
             if not isinstance(key, str):
-                raise Exception('invalid type')
+                raise Exception("invalid type")
         self._variables = deepcopy(variables)
         return self
 
     # List of the input parameters to the workflow. Usage: documentation ONLY
     def input_parameters(self, input_parameters: List[str]) -> Self:
         if not isinstance(input_parameters, list):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         for input_parameter in input_parameters:
             if not isinstance(input_parameter, str):
-                raise Exception('invalid type')
+                raise Exception("invalid type")
         self._input_parameters = deepcopy(input_parameters)
         return self
 
@@ -163,13 +168,22 @@ class ConductorWorkflow:
         start_workflow_request.workflow_def = self.to_workflow_def()
         return self._executor.start_workflow(start_workflow_request)
 
-    def execute(self, workflow_input: dict, wait_until_task_ref: str = '', wait_for_seconds : int = 10) -> dict:
+    def execute(
+        self,
+        workflow_input: dict,
+        wait_until_task_ref: str = "",
+        wait_for_seconds: int = 10,
+    ) -> dict:
         request = StartWorkflowRequest()
         request.workflow_def = self.to_workflow_def()
         request.input = workflow_input
         request.name = request.workflow_def.name
         request.version = 1
-        run = self._executor.execute_workflow(request, wait_until_task_ref=wait_until_task_ref, wait_for_seconds=wait_for_seconds)
+        run = self._executor.execute_workflow(
+            request,
+            wait_until_task_ref=wait_until_task_ref,
+            wait_for_seconds=wait_for_seconds,
+        )
         return run.output
 
     # Converts the workflow to the JSON serializable format
@@ -202,7 +216,9 @@ class ConductorWorkflow:
         return workflow_task_list
 
     # Append task with the right shift operator `>>`
-    def __rshift__(self, task: Union[TaskInterface, List[TaskInterface], List[List[TaskInterface]]]) -> Self:
+    def __rshift__(
+        self, task: Union[TaskInterface, List[TaskInterface], List[List[TaskInterface]]]
+    ) -> Self:
         if isinstance(task, list):
             forked_tasks = []
             for fork_task in task:
@@ -223,7 +239,7 @@ class ConductorWorkflow:
 
     def __add_task(self, task: TaskInterface) -> Self:
         if not issubclass(type(task), TaskInterface):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         self._tasks.append(deepcopy(task))
         return self
 
@@ -231,20 +247,18 @@ class ConductorWorkflow:
         for single_fork in forked_tasks:
             for task in single_fork:
                 if not issubclass(type(task), TaskInterface):
-                    raise Exception('invalid type')
+                    raise Exception("invalid type")
 
         suffix = str(uuid())
 
         fork_task = ForkTask(
-            task_ref_name='forked_' + suffix,
-            forked_tasks=forked_tasks
+            task_ref_name="forked_" + suffix, forked_tasks=forked_tasks
         )
-        
+
         join_task = JoinTask(
-            task_ref_name='join_' + suffix,
-            join_on=fork_task.to_workflow_task().join_on
+            task_ref_name="join_" + suffix, join_on=fork_task.to_workflow_task().join_on
         )
-        
+
         self._tasks.append(fork_task)
         self._tasks.append(join_task)
         return self

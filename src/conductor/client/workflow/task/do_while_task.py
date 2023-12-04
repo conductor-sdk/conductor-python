@@ -1,9 +1,12 @@
-from conductor.client.http.models.workflow_task import WorkflowTask
-from conductor.client.workflow.task.task import TaskInterface, get_task_interface_list_as_workflow_task_list
-from conductor.client.workflow.task.task_type import TaskType
 from copy import deepcopy
 from typing import List
+
 from typing_extensions import Self
+
+from conductor.client.http.models.workflow_task import WorkflowTask
+from conductor.client.workflow.task.task import (
+    TaskInterface, get_task_interface_list_as_workflow_task_list)
+from conductor.client.workflow.task.task_type import TaskType
 
 
 def get_for_loop_condition(task_ref_name: str, iterations: int) -> str:
@@ -12,7 +15,9 @@ def get_for_loop_condition(task_ref_name: str, iterations: int) -> str:
 
 class DoWhileTask(TaskInterface):
     # termination_condition is a Javascript expression that evaluates to True or False
-    def __init__(self, task_ref_name: str, termination_condition: str, tasks: List[TaskInterface]) -> Self:
+    def __init__(
+        self, task_ref_name: str, termination_condition: str, tasks: List[TaskInterface]
+    ) -> Self:
         super().__init__(
             task_reference_name=task_ref_name,
             task_type=TaskType.DO_WHILE,
@@ -33,11 +38,14 @@ class DoWhileTask(TaskInterface):
 
 
 class LoopTask(DoWhileTask):
-    def __init__(self, task_ref_name: str, iterations: int, tasks: List[TaskInterface]) -> Self:
+    def __init__(
+        self, task_ref_name: str, iterations: int, tasks: List[TaskInterface]
+    ) -> Self:
         super().__init__(
             task_ref_name=task_ref_name,
             termination_condition=get_for_loop_condition(
-                task_ref_name, iterations,
+                task_ref_name,
+                iterations,
             ),
             tasks=tasks,
         )

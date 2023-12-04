@@ -1,15 +1,16 @@
 import json
 
-from conductor.client.http.rest import ApiException
 from conductor.client.exceptions.api_error import APIError, APIErrorCode
+from conductor.client.http.rest import ApiException
 
 STATUS_TO_MESSAGE_DEFAULT_MAPPING = {
     400: "Invalid request",
     403: "Access forbidden",
-    404 : "Resource not found",
+    404: "Resource not found",
     408: "Request timed out",
     409: "Resource exists already",
 }
+
 
 def api_exception_handler(function):
     def inner_function(*args, **kwargs):
@@ -17,7 +18,7 @@ def api_exception_handler(function):
             return function(*args, **kwargs)
         except ApiException as e:
             message = "Unknown failure"
-            
+
             if e.status == 404:
                 code = APIErrorCode.NOT_FOUND
             elif e.status == 403:
@@ -30,20 +31,21 @@ def api_exception_handler(function):
                 code = APIErrorCode.REQUEST_TIMEOUT
             else:
                 code = APIErrorCode.UNKNOWN
-                
+
             message = STATUS_TO_MESSAGE_DEFAULT_MAPPING[e.status]
-                        
+
             try:
                 if e.body:
                     error = json.loads(e.body)
-                    message = error['message']
+                    message = error["message"]
             except ValueError:
                 message = e.body
-        
+
             finally:
                 raise APIError(code, message)
-                
+
     return inner_function
+
 
 def for_all_methods(decorator, exclude=[]):
     def decorate(cls):
@@ -51,4 +53,5 @@ def for_all_methods(decorator, exclude=[]):
             if callable(getattr(cls, attr)) and attr not in exclude:
                 setattr(cls, attr, decorator(getattr(cls, attr)))
         return cls
+
     return decorate

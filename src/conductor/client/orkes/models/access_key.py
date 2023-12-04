@@ -1,12 +1,14 @@
 from typing_extensions import Self
+
 from conductor.client.orkes.models.access_key_status import AccessKeyStatus
+
 
 class AccessKey:
     def __init__(self, id: str, status: AccessKeyStatus, created_at: int) -> Self:
         self._id = id
         self._status = status
         self._created_at = created_at
-        
+
         if self._status is None:
             self._status = AccessKeyStatus.ACTIVE
 
@@ -27,7 +29,7 @@ class AccessKey:
         :type: str
         """
         self._id = id
-        
+
     @property
     def status(self):
         """Gets the status of this CreatedAccessKey.  # noqa: E501

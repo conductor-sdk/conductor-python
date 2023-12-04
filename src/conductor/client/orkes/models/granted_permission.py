@@ -1,6 +1,9 @@
-from typing_extensions import Self
 from typing import List
+
+from typing_extensions import Self
+
 from conductor.client.http.models.target_ref import TargetRef
+
 
 class GrantedPermission:
     def __init__(self, target: TargetRef, access: List[str]) -> Self:
@@ -26,7 +29,7 @@ class GrantedPermission:
         :type: TargetRef
         """
         self._target = target
-        
+
     @property
     def access(self):
         """Gets the access of this GrantedPermission.  # noqa: E501
@@ -46,7 +49,7 @@ class GrantedPermission:
         :type: List[str]
         """
         self._access = access
-        
+
     def __eq__(self, other):
         """Returns true if both objects are equal"""
         if not isinstance(other, GrantedPermission):

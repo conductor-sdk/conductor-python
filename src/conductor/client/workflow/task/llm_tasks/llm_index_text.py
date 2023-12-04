@@ -1,11 +1,23 @@
+from typing_extensions import Self
+
+from conductor.client.workflow.task.llm_tasks.utils.embedding_model import \
+    EmbeddingModel
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.task_type import TaskType
-from conductor.client.workflow.task.llm_tasks.utils.embedding_model import EmbeddingModel
-from typing_extensions import Self
 
 
 class LlmIndexText(TaskInterface):
-    def __init__(self, task_name: str, task_ref_name: str, vector_db: str, namespace: str, index: str, embedding_model: EmbeddingModel, text: str, doc_id: str) -> Self:
+    def __init__(
+        self,
+        task_name: str,
+        task_ref_name: str,
+        vector_db: str,
+        namespace: str,
+        index: str,
+        embedding_model: EmbeddingModel,
+        text: str,
+        doc_id: str,
+    ) -> Self:
         super().__init__(
             task_name=task_name,
             task_reference_name=task_ref_name,
@@ -17,6 +29,6 @@ class LlmIndexText(TaskInterface):
                 "embeddingModelProvider": embedding_model.provider,
                 "embeddingModel": embedding_model.model,
                 "text": text,
-                "docId": doc_id
-            }
+                "docId": doc_id,
+            },
         )

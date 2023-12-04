@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
+from copy import deepcopy
+from typing import Any, Dict, List
+
+from typing_extensions import Self
+
 from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.worker.worker_interface import WorkerInterface
 from conductor.client.workflow.task.task_type import TaskType
-from copy import deepcopy
-from typing import Any, Dict, List
-from typing_extensions import Self
 
 
 def get_task_interface_list_as_workflow_task_list(*tasks: Self) -> List[WorkflowTask]:
@@ -16,14 +18,16 @@ def get_task_interface_list_as_workflow_task_list(*tasks: Self) -> List[Workflow
 
 class TaskInterface(ABC):
     @abstractmethod
-    def __init__(self,
-                 task_reference_name: str,
-                 task_type: TaskType,
-                 task_name: str = None,
-                 description: str = None,
-                 optional: bool = None,
-                 input_parameters: Dict[str, Any] = None,
-                 executor: WorkerInterface = None) -> Self:
+    def __init__(
+        self,
+        task_reference_name: str,
+        task_type: TaskType,
+        task_name: str = None,
+        description: str = None,
+        optional: bool = None,
+        input_parameters: Dict[str, Any] = None,
+        executor: WorkerInterface = None,
+    ) -> Self:
         self.task_reference_name = task_reference_name
         self.task_type = task_type
         self.name = task_name or task_reference_name
@@ -39,7 +43,7 @@ class TaskInterface(ABC):
     @task_reference_name.setter
     def task_reference_name(self, task_reference_name: str) -> None:
         if not isinstance(task_reference_name, str):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         self._task_reference_name = deepcopy(task_reference_name)
 
     @property
@@ -49,7 +53,7 @@ class TaskInterface(ABC):
     @task_type.setter
     def task_type(self, task_type: TaskType) -> None:
         if not isinstance(task_type, TaskType):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         self._task_type = deepcopy(task_type)
 
     @property
@@ -59,7 +63,7 @@ class TaskInterface(ABC):
     @name.setter
     def name(self, name: str) -> None:
         if not isinstance(name, str):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         self._name = name
 
     @property
@@ -69,7 +73,7 @@ class TaskInterface(ABC):
     @description.setter
     def description(self, description: str) -> None:
         if description != None and not isinstance(description, str):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         self._description = deepcopy(description)
 
     @property
@@ -79,7 +83,7 @@ class TaskInterface(ABC):
     @optional.setter
     def optional(self, optional: bool) -> None:
         if optional != None and not isinstance(optional, bool):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         self._optional = deepcopy(optional)
 
     @property
@@ -92,15 +96,15 @@ class TaskInterface(ABC):
             self._input_parameters = {}
             return
         if not isinstance(input_parameters, dict):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         for key in input_parameters.keys():
             if not isinstance(key, str):
-                raise Exception('invalid type')
+                raise Exception("invalid type")
         self._input_parameters = deepcopy(input_parameters)
 
     def input(self, key: str, value: Any) -> Self:
         if not isinstance(key, str):
-            raise Exception('invalid type')
+            raise Exception("invalid type")
         self._input_parameters[key] = deepcopy(value)
         return self
 
@@ -115,6 +119,6 @@ class TaskInterface(ABC):
         )
 
     def output_ref(self, path: str) -> str:
-        if path == '':
-            return f'${{{self._task_reference_name}.output}}'
-        return f'${{{self._task_reference_name}.output.{path}}}'
+        if path == "":
+            return f"${{{self._task_reference_name}.output}}"
+        return f"${{{self._task_reference_name}.output.{path}}}"

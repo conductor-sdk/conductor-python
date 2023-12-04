@@ -8,10 +8,12 @@ from typing import List
 import six
 
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
+from conductor.client.exceptions.api_exception_handler import (
+    api_exception_handler, for_all_methods)
 from conductor.client.http.api_client import ApiClient
 from conductor.client.http.models.prompt_template import PromptTemplate
-from conductor.client.http.models.prompt_test_request import PromptTemplateTestRequest
+from conductor.client.http.models.prompt_test_request import \
+    PromptTemplateTestRequest
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
 from conductor.client.prompt_client import PromptClient
@@ -19,7 +21,6 @@ from conductor.client.prompt_client import PromptClient
 
 @for_all_methods(api_exception_handler, ["__init__"])
 class OrkesPromptClient(OrkesBaseClient, PromptClient):
-
     def __init__(self, configuration: Configuration):
         super(OrkesPromptClient, self).__init__(configuration)
 
@@ -44,13 +45,21 @@ class OrkesPromptClient(OrkesBaseClient, PromptClient):
     def delete_tag_for_prompt_template(self, prompt_name: str, tags: List[MetadataTag]):
         self.promptApi.delete_tag_for_prompt_template(tags, prompt_name)
 
-    def test_prompt(self, prompt_text: str, variables: dict, ai_integration: str, text_complete_model: str,
-                    temperature: float = 0.1, top_p: float = 0.9, stop_words: List[str] = None) -> str:
+    def test_prompt(
+        self,
+        prompt_text: str,
+        variables: dict,
+        ai_integration: str,
+        text_complete_model: str,
+        temperature: float = 0.1,
+        top_p: float = 0.9,
+        stop_words: List[str] = None,
+    ) -> str:
         request = PromptTemplateTestRequest()
         request.prompt = prompt_text
         request.llm_provider = ai_integration
         request.model = text_complete_model
-        request.prompt_variables  = variables
+        request.prompt_variables = variables
         request.temperature = temperature
         request.top_p = top_p
         if stop_words is not None:

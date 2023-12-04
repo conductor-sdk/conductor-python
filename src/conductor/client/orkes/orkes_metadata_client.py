@@ -1,23 +1,30 @@
-from typing import Optional, List
+from typing import List, Optional
+
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.models.workflow_def import WorkflowDef
-from conductor.client.http.models.task_def import TaskDef
+from conductor.client.exceptions.api_exception_handler import (
+    api_exception_handler, for_all_methods)
 from conductor.client.http.models.tag_string import TagString
+from conductor.client.http.models.task_def import TaskDef
+from conductor.client.http.models.workflow_def import WorkflowDef
+from conductor.client.metadata_client import MetadataClient
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.models.ratelimit_tag import RateLimitTag
-from conductor.client.metadata_client import MetadataClient
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
-from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
+
 
 @for_all_methods(api_exception_handler, ["__init__"])
 class OrkesMetadataClient(OrkesBaseClient, MetadataClient):
     def __init__(self, configuration: Configuration):
         super(OrkesMetadataClient, self).__init__(configuration)
-        
-    def register_workflow_def(self, workflow_def: WorkflowDef, overwrite: Optional[bool] = True):
+
+    def register_workflow_def(
+        self, workflow_def: WorkflowDef, overwrite: Optional[bool] = True
+    ):
         self.metadataResourceApi.create(workflow_def, overwrite=overwrite)
 
-    def update_workflow_def(self, workflow_def: WorkflowDef, overwrite: Optional[bool] = True):
+    def update_workflow_def(
+        self, workflow_def: WorkflowDef, overwrite: Optional[bool] = True
+    ):
         self.metadataResourceApi.update1([workflow_def], overwrite=overwrite)
 
     def unregister_workflow_def(self, name: str, version: int):
@@ -49,7 +56,7 @@ class OrkesMetadataClient(OrkesBaseClient, MetadataClient):
 
     def get_all_task_defs(self) -> List[TaskDef]:
         return self.metadataResourceApi.get_task_defs()
-        
+
     def add_workflow_tag(self, tag: MetadataTag, workflow_name: str):
         self.tagsApi.add_workflow_tag(tag, workflow_name)
 
@@ -65,14 +72,14 @@ class OrkesMetadataClient(OrkesBaseClient, MetadataClient):
 
     def addTaskTag(self, tag: MetadataTag, taskName: str):
         self.tagsApi.add_task_tag(tag, taskName)
-    
+
     def deleteTaskTag(self, tag: MetadataTag, taskName: str):
         tagStr = TagString(tag.key, tag.type, tag.value)
         self.tagsApi.delete_task_tag(tagStr, taskName)
 
     def getTaskTags(self, taskName: str) -> List[MetadataTag]:
         return self.tagsApi.get_task_tags(taskName)
-        
+
     def setTaskTags(self, tags: List[MetadataTag], taskName: str):
         self.tagsApi.set_task_tags(tags, taskName)
 

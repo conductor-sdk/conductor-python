@@ -1,6 +1,7 @@
+from typing_extensions import Self
+
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.task_type import TaskType
-from typing_extensions import Self
 
 
 class InlineTask(TaskInterface):
@@ -10,6 +11,6 @@ class InlineTask(TaskInterface):
             task_type=TaskType.INLINE,
             input_parameters={
                 "evaluatorType": "javascript",
-                "expression":    script,
-            }
+                "expression": script,
+            },
         )

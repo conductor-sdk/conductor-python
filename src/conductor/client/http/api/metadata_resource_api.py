@@ -35,8 +35,8 @@ class MetadataResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
             return self.create_with_http_info(body, **kwargs)  # noqa: E501
         else:
             (data) = self.create_with_http_info(body, **kwargs)  # noqa: E501
@@ -58,33 +58,33 @@ class MetadataResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['body', 'overwrite']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["body", "overwrite"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
-                    "Got an unexpected keyword argument '%s'"
-                    " to method create" % key
+                    "Got an unexpected keyword argument '%s'" " to method create" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'body' is set
-        if ('body' not in params or
-                params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `create`")  # noqa: E501
+        if "body" not in params or params["body"] is None:
+            raise ValueError(
+                "Missing the required parameter `body` when calling `create`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
 
         query_params = []
-        if 'overwrite' in params:
-            query_params.append(('overwrite', params['overwrite']))  # noqa: E501
+        if "overwrite" in params:
+            query_params.append(("overwrite", params["overwrite"]))  # noqa: E501
 
         header_params = {}
 
@@ -92,34 +92,40 @@ class MetadataResourceApi(object):
         local_var_files = {}
 
         body_params = None
-        if 'body' in params:
-            body_params = params['body']
+        if "body" in params:
+            body_params = params["body"]
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['*/*'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["*/*"]
+        )  # noqa: E501
 
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
-            ['application/json'])  # noqa: E501
+        header_params[
+            "Content-Type"
+        ] = self.api_client.select_header_content_type(  # noqa: E501
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/metadata/workflow', 'POST',
+            "/metadata/workflow",
+            "POST",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='object',  # noqa: E501
+            response_type="object",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def create_workflow_metadata(self, body, name, **kwargs):  # noqa: E501
         """Store the metadata associated with workflow.  # noqa: E501
@@ -137,14 +143,20 @@ class MetadataResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.create_workflow_metadata_with_http_info(body, name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.create_workflow_metadata_with_http_info(
+                body, name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.create_workflow_metadata_with_http_info(body, name, **kwargs)  # noqa: E501
+            (data) = self.create_workflow_metadata_with_http_info(
+                body, name, **kwargs
+            )  # noqa: E501
             return data
 
-    def create_workflow_metadata_with_http_info(self, body, name, **kwargs):  # noqa: E501
+    def create_workflow_metadata_with_http_info(
+        self, body, name, **kwargs
+    ):  # noqa: E501
         """Store the metadata associated with workflow.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -161,39 +173,41 @@ class MetadataResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['body', 'name', 'version']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["body", "name", "version"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method create_workflow_metadata" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'body' is set
-        if ('body' not in params or
-                params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `create_workflow_metadata`")  # noqa: E501
+        if "body" not in params or params["body"] is None:
+            raise ValueError(
+                "Missing the required parameter `body` when calling `create_workflow_metadata`"
+            )  # noqa: E501
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `create_workflow_metadata`")  # noqa: E501
+        if "name" not in params or params["name"] is None:
+            raise ValueError(
+                "Missing the required parameter `name` when calling `create_workflow_metadata`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
 
         query_params = []
-        if 'version' in params:
-            query_params.append(('version', params['version']))  # noqa: E501
+        if "version" in params:
+            query_params.append(("version", params["version"]))  # noqa: E501
 
         header_params = {}
 
@@ -201,17 +215,21 @@ class MetadataResourceApi(object):
         local_var_files = {}
 
         body_params = None
-        if 'body' in params:
-            body_params = params['body']
+        if "body" in params:
+            body_params = params["body"]
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
-            ['application/json'])  # noqa: E501
+        header_params[
+            "Content-Type"
+        ] = self.api_client.select_header_content_type(  # noqa: E501
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/metadata/tags/workflow/{name}', 'POST',
+            "/metadata/tags/workflow/{name}",
+            "POST",
             path_params,
             query_params,
             header_params,
@@ -220,11 +238,12 @@ class MetadataResourceApi(object):
             files=local_var_files,
             response_type=None,  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def delete_workflow_metadata(self, name, version, **kwargs):  # noqa: E501
         """Store the metadata associated with workflow.  # noqa: E501
@@ -241,14 +260,20 @@ class MetadataResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.delete_workflow_metadata_with_http_info(name, version, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.delete_workflow_metadata_with_http_info(
+                name, version, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.delete_workflow_metadata_with_http_info(name, version, **kwargs)  # noqa: E501
+            (data) = self.delete_workflow_metadata_with_http_info(
+                name, version, **kwargs
+            )  # noqa: E501
             return data
 
-    def delete_workflow_metadata_with_http_info(self, name, version, **kwargs):  # noqa: E501
+    def delete_workflow_metadata_with_http_info(
+        self, name, version, **kwargs
+    ):  # noqa: E501
         """Store the metadata associated with workflow.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -264,39 +289,41 @@ class MetadataResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['name', 'version']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["name", "version"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method delete_workflow_metadata" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `delete_workflow_metadata`")  # noqa: E501
+        if "name" not in params or params["name"] is None:
+            raise ValueError(
+                "Missing the required parameter `name` when calling `delete_workflow_metadata`"
+            )  # noqa: E501
         # verify the required parameter 'version' is set
-        if ('version' not in params or
-                params['version'] is None):
-            raise ValueError("Missing the required parameter `version` when calling `delete_workflow_metadata`")  # noqa: E501
+        if "version" not in params or params["version"] is None:
+            raise ValueError(
+                "Missing the required parameter `version` when calling `delete_workflow_metadata`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
 
         query_params = []
-        if 'version' in params:
-            query_params.append(('version', params['version']))  # noqa: E501
+        if "version" in params:
+            query_params.append(("version", params["version"]))  # noqa: E501
 
         header_params = {}
 
@@ -308,7 +335,8 @@ class MetadataResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/metadata/tags/workflow/{name}', 'DELETE',
+            "/metadata/tags/workflow/{name}",
+            "DELETE",
             path_params,
             query_params,
             header_params,
@@ -317,11 +345,12 @@ class MetadataResourceApi(object):
             files=local_var_files,
             response_type=None,  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def get(self, name, **kwargs):  # noqa: E501
         """Retrieves workflow definition along with blueprint  # noqa: E501
@@ -338,8 +367,8 @@ class MetadataResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
             return self.get_with_http_info(name, **kwargs)  # noqa: E501
         else:
             (data) = self.get_with_http_info(name, **kwargs)  # noqa: E501
@@ -361,35 +390,35 @@ class MetadataResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['name', 'version']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["name", "version"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
-                    "Got an unexpected keyword argument '%s'"
-                    " to method get" % key
+                    "Got an unexpected keyword argument '%s'" " to method get" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `get`")  # noqa: E501
+        if "name" not in params or params["name"] is None:
+            raise ValueError(
+                "Missing the required parameter `name` when calling `get`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
 
         query_params = []
-        if 'version' in params:
-            query_params.append(('version', params['version']))  # noqa: E501
+        if "version" in params:
+            query_params.append(("version", params["version"]))  # noqa: E501
 
         header_params = {}
 
@@ -398,27 +427,30 @@ class MetadataResourceApi(object):
 
         body_params = None
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['*/*'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["*/*"]
+        )  # noqa: E501
 
         # Authentication setting
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/metadata/workflow/{name}', 'GET',
+            "/metadata/workflow/{name}",
+            "GET",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='WorkflowDef',  # noqa: E501
+            response_type="WorkflowDef",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def get_all_workflows(self, **kwargs):  # noqa: E501
         """Retrieves all workflow definition along with blueprint  # noqa: E501
@@ -434,8 +466,8 @@ class MetadataResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
             return self.get_all_workflows_with_http_info(**kwargs)  # noqa: E501
         else:
             (data) = self.get_all_workflows_with_http_info(**kwargs)  # noqa: E501
@@ -456,29 +488,29 @@ class MetadataResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['access']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["access"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method get_all_workflows" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
 
         collection_formats = {}
 
         path_params = {}
 
         query_params = []
-        if 'access' in params:
-            query_params.append(('access', params['access']))  # noqa: E501
+        if "access" in params:
+            query_params.append(("access", params["access"]))  # noqa: E501
 
         header_params = {}
 
@@ -487,27 +519,30 @@ class MetadataResourceApi(object):
 
         body_params = None
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['*/*'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["*/*"]
+        )  # noqa: E501
 
         # Authentication setting
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/metadata/workflow', 'GET',
+            "/metadata/workflow",
+            "GET",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='list[WorkflowDef]',  # noqa: E501
+            response_type="list[WorkflowDef]",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def get_task_def(self, tasktype, **kwargs):  # noqa: E501
         """Gets the task definition  # noqa: E501
@@ -523,8 +558,8 @@ class MetadataResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
             return self.get_task_def_with_http_info(tasktype, **kwargs)  # noqa: E501
         else:
             (data) = self.get_task_def_with_http_info(tasktype, **kwargs)  # noqa: E501
@@ -545,31 +580,32 @@ class MetadataResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['tasktype']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["tasktype"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method get_task_def" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'tasktype' is set
-        if ('tasktype' not in params or
-                params['tasktype'] is None):
-            raise ValueError("Missing the required parameter `tasktype` when calling `get_task_def`")  # noqa: E501
+        if "tasktype" not in params or params["tasktype"] is None:
+            raise ValueError(
+                "Missing the required parameter `tasktype` when calling `get_task_def`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'tasktype' in params:
-            path_params['tasktype'] = params['tasktype']  # noqa: E501
+        if "tasktype" in params:
+            path_params["tasktype"] = params["tasktype"]  # noqa: E501
 
         query_params = []
 
@@ -580,27 +616,30 @@ class MetadataResourceApi(object):
 
         body_params = None
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['*/*'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["*/*"]
+        )  # noqa: E501
 
         # Authentication setting
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/metadata/taskdefs/{tasktype}', 'GET',
+            "/metadata/taskdefs/{tasktype}",
+            "GET",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='TaskDef',  # noqa: E501
+            response_type="TaskDef",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def get_task_defs(self, **kwargs):  # noqa: E501
         """Gets all task definition  # noqa: E501
@@ -616,8 +655,8 @@ class MetadataResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
             return self.get_task_defs_with_http_info(**kwargs)  # noqa: E501
         else:
             (data) = self.get_task_defs_with_http_info(**kwargs)  # noqa: E501
@@ -638,29 +677,29 @@ class MetadataResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['access']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["access"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method get_task_defs" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
 
         collection_formats = {}
 
         path_params = {}
 
         query_params = []
-        if 'access' in params:
-            query_params.append(('access', params['access']))  # noqa: E501
+        if "access" in params:
+            query_params.append(("access", params["access"]))  # noqa: E501
 
         header_params = {}
 
@@ -669,27 +708,30 @@ class MetadataResourceApi(object):
 
         body_params = None
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['*/*'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["*/*"]
+        )  # noqa: E501
 
         # Authentication setting
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/metadata/taskdefs', 'GET',
+            "/metadata/taskdefs",
+            "GET",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='list[TaskDef]',  # noqa: E501
+            response_type="list[TaskDef]",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def get_workflow_metadata(self, name, **kwargs):  # noqa: E501
         """Store the metadata associated with workflow.  # noqa: E501
@@ -706,11 +748,15 @@ class MetadataResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.get_workflow_metadata_with_http_info(name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.get_workflow_metadata_with_http_info(
+                name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.get_workflow_metadata_with_http_info(name, **kwargs)  # noqa: E501
+            (data) = self.get_workflow_metadata_with_http_info(
+                name, **kwargs
+            )  # noqa: E501
             return data
 
     def get_workflow_metadata_with_http_info(self, name, **kwargs):  # noqa: E501
@@ -729,35 +775,36 @@ class MetadataResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['name', 'version']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["name", "version"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method get_workflow_metadata" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `get_workflow_metadata`")  # noqa: E501
+        if "name" not in params or params["name"] is None:
+            raise ValueError(
+                "Missing the required parameter `name` when calling `get_workflow_metadata`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
 
         query_params = []
-        if 'version' in params:
-            query_params.append(('version', params['version']))  # noqa: E501
+        if "version" in params:
+            query_params.append(("version", params["version"]))  # noqa: E501
 
         header_params = {}
 
@@ -766,27 +813,30 @@ class MetadataResourceApi(object):
 
         body_params = None
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['application/json'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/metadata/tags/workflow/{name}', 'GET',
+            "/metadata/tags/workflow/{name}",
+            "GET",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='WorkflowTag',  # noqa: E501
+            response_type="WorkflowTag",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def register_task_def(self, body, **kwargs):  # noqa: E501
         """Create or update task definition(s)  # noqa: E501
@@ -802,8 +852,8 @@ class MetadataResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
             return self.register_task_def_with_http_info(body, **kwargs)  # noqa: E501
         else:
             (data) = self.register_task_def_with_http_info(body, **kwargs)  # noqa: E501
@@ -824,25 +874,26 @@ class MetadataResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['body']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["body"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method register_task_def" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'body' is set
-        if ('body' not in params or
-                params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `register_task_def`")  # noqa: E501
+        if "body" not in params or params["body"] is None:
+            raise ValueError(
+                "Missing the required parameter `body` when calling `register_task_def`"
+            )  # noqa: E501
 
         collection_formats = {}
 
@@ -856,34 +907,40 @@ class MetadataResourceApi(object):
         local_var_files = {}
 
         body_params = None
-        if 'body' in params:
-            body_params = params['body']
+        if "body" in params:
+            body_params = params["body"]
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['*/*'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["*/*"]
+        )  # noqa: E501
 
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
-            ['application/json'])  # noqa: E501
+        header_params[
+            "Content-Type"
+        ] = self.api_client.select_header_content_type(  # noqa: E501
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/metadata/taskdefs', 'POST',
+            "/metadata/taskdefs",
+            "POST",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='object',  # noqa: E501
+            response_type="object",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def unregister_task_def(self, tasktype, **kwargs):  # noqa: E501
         """Remove a task definition  # noqa: E501
@@ -899,11 +956,15 @@ class MetadataResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.unregister_task_def_with_http_info(tasktype, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.unregister_task_def_with_http_info(
+                tasktype, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.unregister_task_def_with_http_info(tasktype, **kwargs)  # noqa: E501
+            (data) = self.unregister_task_def_with_http_info(
+                tasktype, **kwargs
+            )  # noqa: E501
             return data
 
     def unregister_task_def_with_http_info(self, tasktype, **kwargs):  # noqa: E501
@@ -921,31 +982,32 @@ class MetadataResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['tasktype']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["tasktype"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method unregister_task_def" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'tasktype' is set
-        if ('tasktype' not in params or
-                params['tasktype'] is None):
-            raise ValueError("Missing the required parameter `tasktype` when calling `unregister_task_def`")  # noqa: E501
+        if "tasktype" not in params or params["tasktype"] is None:
+            raise ValueError(
+                "Missing the required parameter `tasktype` when calling `unregister_task_def`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'tasktype' in params:
-            path_params['tasktype'] = params['tasktype']  # noqa: E501
+        if "tasktype" in params:
+            path_params["tasktype"] = params["tasktype"]  # noqa: E501
 
         query_params = []
 
@@ -959,7 +1021,8 @@ class MetadataResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/metadata/taskdefs/{tasktype}', 'DELETE',
+            "/metadata/taskdefs/{tasktype}",
+            "DELETE",
             path_params,
             query_params,
             header_params,
@@ -968,11 +1031,12 @@ class MetadataResourceApi(object):
             files=local_var_files,
             response_type=None,  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def unregister_workflow_def(self, name, version, **kwargs):  # noqa: E501
         """Removes workflow definition. It does not remove workflows associated with the definition.  # noqa: E501
@@ -989,14 +1053,20 @@ class MetadataResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.unregister_workflow_def_with_http_info(name, version, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.unregister_workflow_def_with_http_info(
+                name, version, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.unregister_workflow_def_with_http_info(name, version, **kwargs)  # noqa: E501
+            (data) = self.unregister_workflow_def_with_http_info(
+                name, version, **kwargs
+            )  # noqa: E501
             return data
 
-    def unregister_workflow_def_with_http_info(self, name, version, **kwargs):  # noqa: E501
+    def unregister_workflow_def_with_http_info(
+        self, name, version, **kwargs
+    ):  # noqa: E501
         """Removes workflow definition. It does not remove workflows associated with the definition.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1012,37 +1082,39 @@ class MetadataResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['name', 'version']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["name", "version"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method unregister_workflow_def" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `unregister_workflow_def`")  # noqa: E501
+        if "name" not in params or params["name"] is None:
+            raise ValueError(
+                "Missing the required parameter `name` when calling `unregister_workflow_def`"
+            )  # noqa: E501
         # verify the required parameter 'version' is set
-        if ('version' not in params or
-                params['version'] is None):
-            raise ValueError("Missing the required parameter `version` when calling `unregister_workflow_def`")  # noqa: E501
+        if "version" not in params or params["version"] is None:
+            raise ValueError(
+                "Missing the required parameter `version` when calling `unregister_workflow_def`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
-        if 'version' in params:
-            path_params['version'] = params['version']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
+        if "version" in params:
+            path_params["version"] = params["version"]  # noqa: E501
 
         query_params = []
 
@@ -1056,7 +1128,8 @@ class MetadataResourceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/metadata/workflow/{name}/{version}', 'DELETE',
+            "/metadata/workflow/{name}/{version}",
+            "DELETE",
             path_params,
             query_params,
             header_params,
@@ -1065,11 +1138,12 @@ class MetadataResourceApi(object):
             files=local_var_files,
             response_type=None,  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def update1(self, body, **kwargs):  # noqa: E501
         """Create or update workflow definition(s)  # noqa: E501
@@ -1086,8 +1160,8 @@ class MetadataResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
             return self.update1_with_http_info(body, **kwargs)  # noqa: E501
         else:
             (data) = self.update1_with_http_info(body, **kwargs)  # noqa: E501
@@ -1109,33 +1183,33 @@ class MetadataResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['body', 'overwrite']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["body", "overwrite"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
-                    "Got an unexpected keyword argument '%s'"
-                    " to method update1" % key
+                    "Got an unexpected keyword argument '%s'" " to method update1" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'body' is set
-        if ('body' not in params or
-                params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `update1`")  # noqa: E501
+        if "body" not in params or params["body"] is None:
+            raise ValueError(
+                "Missing the required parameter `body` when calling `update1`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
 
         query_params = []
-        if 'overwrite' in params:
-            query_params.append(('overwrite', params['overwrite']))  # noqa: E501
+        if "overwrite" in params:
+            query_params.append(("overwrite", params["overwrite"]))  # noqa: E501
 
         header_params = {}
 
@@ -1143,34 +1217,40 @@ class MetadataResourceApi(object):
         local_var_files = {}
 
         body_params = None
-        if 'body' in params:
-            body_params = params['body']
+        if "body" in params:
+            body_params = params["body"]
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['*/*'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["*/*"]
+        )  # noqa: E501
 
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
-            ['application/json'])  # noqa: E501
+        header_params[
+            "Content-Type"
+        ] = self.api_client.select_header_content_type(  # noqa: E501
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/metadata/workflow', 'PUT',
+            "/metadata/workflow",
+            "PUT",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='object',  # noqa: E501
+            response_type="object",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def update_task_def(self, body, **kwargs):  # noqa: E501
         """Update an existing task  # noqa: E501
@@ -1186,8 +1266,8 @@ class MetadataResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
             return self.update_task_def_with_http_info(body, **kwargs)  # noqa: E501
         else:
             (data) = self.update_task_def_with_http_info(body, **kwargs)  # noqa: E501
@@ -1208,25 +1288,26 @@ class MetadataResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['body']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["body"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method update_task_def" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'body' is set
-        if ('body' not in params or
-                params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `update_task_def`")  # noqa: E501
+        if "body" not in params or params["body"] is None:
+            raise ValueError(
+                "Missing the required parameter `body` when calling `update_task_def`"
+            )  # noqa: E501
 
         collection_formats = {}
 
@@ -1240,31 +1321,37 @@ class MetadataResourceApi(object):
         local_var_files = {}
 
         body_params = None
-        if 'body' in params:
-            body_params = params['body']
+        if "body" in params:
+            body_params = params["body"]
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['*/*'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["*/*"]
+        )  # noqa: E501
 
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
-            ['application/json'])  # noqa: E501
+        header_params[
+            "Content-Type"
+        ] = self.api_client.select_header_content_type(  # noqa: E501
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/metadata/taskdefs', 'PUT',
+            "/metadata/taskdefs",
+            "PUT",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='object',  # noqa: E501
+            response_type="object",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )

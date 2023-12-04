@@ -1,19 +1,24 @@
-from conductor.client.http.models.workflow_task import WorkflowTask
-from conductor.client.workflow.task.task import TaskInterface, get_task_interface_list_as_workflow_task_list
-from conductor.client.workflow.task.task_type import TaskType
 from copy import deepcopy
 from enum import Enum
 from typing import List
+
 from typing_extensions import Self
+
+from conductor.client.http.models.workflow_task import WorkflowTask
+from conductor.client.workflow.task.task import (
+    TaskInterface, get_task_interface_list_as_workflow_task_list)
+from conductor.client.workflow.task.task_type import TaskType
 
 
 class EvaluatorType(str, Enum):
-    JAVASCRIPT = "javascript",
+    JAVASCRIPT = ("javascript",)
     VALUE_PARAM = "value-param"
 
 
 class SwitchTask(TaskInterface):
-    def __init__(self, task_ref_name: str, case_expression: str, use_javascript: bool = False) -> Self:
+    def __init__(
+        self, task_ref_name: str, case_expression: str, use_javascript: bool = False
+    ) -> Self:
         super().__init__(
             task_reference_name=task_ref_name,
             task_type=TaskType.SWITCH,
@@ -44,11 +49,13 @@ class SwitchTask(TaskInterface):
             workflow.expression = self._expression
         else:
             workflow.evaluator_type = EvaluatorType.VALUE_PARAM
-            workflow.input_parameters['switchCaseValue'] = self._expression
-            workflow.expression = 'switchCaseValue'
+            workflow.input_parameters["switchCaseValue"] = self._expression
+            workflow.expression = "switchCaseValue"
         workflow.decision_cases = {}
         for case_value, tasks in self._decision_cases.items():
-            workflow.decision_cases[case_value] = get_task_interface_list_as_workflow_task_list(
+            workflow.decision_cases[
+                case_value
+            ] = get_task_interface_list_as_workflow_task_list(
                 *tasks,
             )
         if self._default_case is None:

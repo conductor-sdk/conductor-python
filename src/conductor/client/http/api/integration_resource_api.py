@@ -20,8 +20,9 @@ class IntegrationResourceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def associate_prompt_with_integration(self, integration_provider, integration_name, prompt_name,
-                                          **kwargs):  # noqa: E501
+    def associate_prompt_with_integration(
+        self, integration_provider, integration_name, prompt_name, **kwargs
+    ):  # noqa: E501
         """Associate a Prompt Template with an Integration  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -37,17 +38,20 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.associate_prompt_with_integration_with_http_info(integration_provider, integration_name,
-                                                                         prompt_name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.associate_prompt_with_integration_with_http_info(
+                integration_provider, integration_name, prompt_name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.associate_prompt_with_integration_with_http_info(integration_provider, integration_name,
-                                                                           prompt_name, **kwargs)  # noqa: E501
+            (data) = self.associate_prompt_with_integration_with_http_info(
+                integration_provider, integration_name, prompt_name, **kwargs
+            )  # noqa: E501
             return data
 
-    def associate_prompt_with_integration_with_http_info(self, integration_provider, integration_name, prompt_name,
-                                                         **kwargs):  # noqa: E501
+    def associate_prompt_with_integration_with_http_info(
+        self, integration_provider, integration_name, prompt_name, **kwargs
+    ):  # noqa: E501
         """Associate a Prompt Template with an Integration  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -64,46 +68,55 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['integration_provider', 'integration_name', 'prompt_name']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = [
+            "integration_provider",
+            "integration_name",
+            "prompt_name",
+        ]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method associate_prompt_with_integration" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'integration_provider' is set
-        if ('integration_provider' not in params or
-                params['integration_provider'] is None):
+        if (
+            "integration_provider" not in params
+            or params["integration_provider"] is None
+        ):
             raise ValueError(
-                "Missing the required parameter `integration_provider` when calling `associate_prompt_with_integration`")  # noqa: E501
+                "Missing the required parameter `integration_provider` when calling `associate_prompt_with_integration`"
+            )  # noqa: E501
         # verify the required parameter 'integration_name' is set
-        if ('integration_name' not in params or
-                params['integration_name'] is None):
+        if "integration_name" not in params or params["integration_name"] is None:
             raise ValueError(
-                "Missing the required parameter `integration_name` when calling `associate_prompt_with_integration`")  # noqa: E501
+                "Missing the required parameter `integration_name` when calling `associate_prompt_with_integration`"
+            )  # noqa: E501
         # verify the required parameter 'prompt_name' is set
-        if ('prompt_name' not in params or
-                params['prompt_name'] is None):
+        if "prompt_name" not in params or params["prompt_name"] is None:
             raise ValueError(
-                "Missing the required parameter `prompt_name` when calling `associate_prompt_with_integration`")  # noqa: E501
+                "Missing the required parameter `prompt_name` when calling `associate_prompt_with_integration`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'integration_provider' in params:
-            path_params['integration_provider'] = params['integration_provider']  # noqa: E501
-        if 'integration_name' in params:
-            path_params['integration_name'] = params['integration_name']  # noqa: E501
-        if 'prompt_name' in params:
-            path_params['prompt_name'] = params['prompt_name']  # noqa: E501
+        if "integration_provider" in params:
+            path_params["integration_provider"] = params[
+                "integration_provider"
+            ]  # noqa: E501
+        if "integration_name" in params:
+            path_params["integration_name"] = params["integration_name"]  # noqa: E501
+        if "prompt_name" in params:
+            path_params["prompt_name"] = params["prompt_name"]  # noqa: E501
 
         query_params = []
 
@@ -114,11 +127,11 @@ class IntegrationResourceApi(object):
 
         body_params = None
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{integration_provider}/integration/{integration_name}/prompt/{prompt_name}',
-            'POST',
+            "/integrations/provider/{integration_provider}/integration/{integration_name}/prompt/{prompt_name}",
+            "POST",
             path_params,
             query_params,
             header_params,
@@ -127,11 +140,12 @@ class IntegrationResourceApi(object):
             files=local_var_files,
             response_type=None,  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def delete_integration_api(self, name, integration_name, **kwargs):  # noqa: E501
         """Delete an Integration  # noqa: E501
@@ -148,14 +162,20 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.delete_integration_api_with_http_info(name, integration_name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.delete_integration_api_with_http_info(
+                name, integration_name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.delete_integration_api_with_http_info(name, integration_name, **kwargs)  # noqa: E501
+            (data) = self.delete_integration_api_with_http_info(
+                name, integration_name, **kwargs
+            )  # noqa: E501
             return data
 
-    def delete_integration_api_with_http_info(self, name, integration_name, **kwargs):  # noqa: E501
+    def delete_integration_api_with_http_info(
+        self, name, integration_name, **kwargs
+    ):  # noqa: E501
         """Delete an Integration  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -171,39 +191,39 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['name', 'integration_name']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["name", "integration_name"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method delete_integration_api" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
+        if "name" not in params or params["name"] is None:
             raise ValueError(
-                "Missing the required parameter `name` when calling `delete_integration_api`")  # noqa: E501
+                "Missing the required parameter `name` when calling `delete_integration_api`"
+            )  # noqa: E501
         # verify the required parameter 'integration_name' is set
-        if ('integration_name' not in params or
-                params['integration_name'] is None):
+        if "integration_name" not in params or params["integration_name"] is None:
             raise ValueError(
-                "Missing the required parameter `integration_name` when calling `delete_integration_api`")  # noqa: E501
+                "Missing the required parameter `integration_name` when calling `delete_integration_api`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
-        if 'integration_name' in params:
-            path_params['integration_name'] = params['integration_name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
+        if "integration_name" in params:
+            path_params["integration_name"] = params["integration_name"]  # noqa: E501
 
         query_params = []
 
@@ -214,10 +234,11 @@ class IntegrationResourceApi(object):
 
         body_params = None
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{name}/integration/{integration_name}', 'DELETE',
+            "/integrations/provider/{name}/integration/{integration_name}",
+            "DELETE",
             path_params,
             query_params,
             header_params,
@@ -226,11 +247,12 @@ class IntegrationResourceApi(object):
             files=local_var_files,
             response_type=None,  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def delete_integration_provider(self, name, **kwargs):  # noqa: E501
         """Delete an Integration Provider  # noqa: E501
@@ -246,11 +268,15 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.delete_integration_provider_with_http_info(name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.delete_integration_provider_with_http_info(
+                name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.delete_integration_provider_with_http_info(name, **kwargs)  # noqa: E501
+            (data) = self.delete_integration_provider_with_http_info(
+                name, **kwargs
+            )  # noqa: E501
             return data
 
     def delete_integration_provider_with_http_info(self, name, **kwargs):  # noqa: E501
@@ -268,32 +294,32 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['name']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["name"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method delete_integration_provider" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
+        if "name" not in params or params["name"] is None:
             raise ValueError(
-                "Missing the required parameter `name` when calling `delete_integration_provider`")  # noqa: E501
+                "Missing the required parameter `name` when calling `delete_integration_provider`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
 
         query_params = []
 
@@ -304,10 +330,11 @@ class IntegrationResourceApi(object):
 
         body_params = None
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{name}', 'DELETE',
+            "/integrations/provider/{name}",
+            "DELETE",
             path_params,
             query_params,
             header_params,
@@ -316,13 +343,16 @@ class IntegrationResourceApi(object):
             files=local_var_files,
             response_type=None,  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
-    def delete_tag_for_integration(self, body, name, integration_name, **kwargs):  # noqa: E501
+    def delete_tag_for_integration(
+        self, body, name, integration_name, **kwargs
+    ):  # noqa: E501
         """Delete a tag for Integration  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -338,15 +368,20 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.delete_tag_for_integration_with_http_info(body, name, integration_name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.delete_tag_for_integration_with_http_info(
+                body, name, integration_name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.delete_tag_for_integration_with_http_info(body, name, integration_name,
-                                                                    **kwargs)  # noqa: E501
+            (data) = self.delete_tag_for_integration_with_http_info(
+                body, name, integration_name, **kwargs
+            )  # noqa: E501
             return data
 
-    def delete_tag_for_integration_with_http_info(self, body, name, integration_name, **kwargs):  # noqa: E501
+    def delete_tag_for_integration_with_http_info(
+        self, body, name, integration_name, **kwargs
+    ):  # noqa: E501
         """Delete a tag for Integration  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -363,44 +398,44 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['body', 'name', 'integration_name']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["body", "name", "integration_name"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method delete_tag_for_integration" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'body' is set
-        if ('body' not in params or
-                params['body'] is None):
+        if "body" not in params or params["body"] is None:
             raise ValueError(
-                "Missing the required parameter `body` when calling `delete_tag_for_integration`")  # noqa: E501
+                "Missing the required parameter `body` when calling `delete_tag_for_integration`"
+            )  # noqa: E501
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
+        if "name" not in params or params["name"] is None:
             raise ValueError(
-                "Missing the required parameter `name` when calling `delete_tag_for_integration`")  # noqa: E501
+                "Missing the required parameter `name` when calling `delete_tag_for_integration`"
+            )  # noqa: E501
         # verify the required parameter 'integration_name' is set
-        if ('integration_name' not in params or
-                params['integration_name'] is None):
+        if "integration_name" not in params or params["integration_name"] is None:
             raise ValueError(
-                "Missing the required parameter `integration_name` when calling `delete_tag_for_integration`")  # noqa: E501
+                "Missing the required parameter `integration_name` when calling `delete_tag_for_integration`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
-        if 'integration_name' in params:
-            path_params['integration_name'] = params['integration_name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
+        if "integration_name" in params:
+            path_params["integration_name"] = params["integration_name"]  # noqa: E501
 
         query_params = []
 
@@ -410,17 +445,21 @@ class IntegrationResourceApi(object):
         local_var_files = {}
 
         body_params = None
-        if 'body' in params:
-            body_params = params['body']
+        if "body" in params:
+            body_params = params["body"]
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
-            ['application/json'])  # noqa: E501
+        header_params[
+            "Content-Type"
+        ] = self.api_client.select_header_content_type(  # noqa: E501
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{name}/integration/{integration_name}/tags', 'DELETE',
+            "/integrations/provider/{name}/integration/{integration_name}/tags",
+            "DELETE",
             path_params,
             query_params,
             header_params,
@@ -429,11 +468,12 @@ class IntegrationResourceApi(object):
             files=local_var_files,
             response_type=None,  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def delete_tag_for_integration_provider(self, body, name, **kwargs):  # noqa: E501
         """Delete a tag for Integration Provider  # noqa: E501
@@ -450,14 +490,20 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.delete_tag_for_integration_provider_with_http_info(body, name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.delete_tag_for_integration_provider_with_http_info(
+                body, name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.delete_tag_for_integration_provider_with_http_info(body, name, **kwargs)  # noqa: E501
+            (data) = self.delete_tag_for_integration_provider_with_http_info(
+                body, name, **kwargs
+            )  # noqa: E501
             return data
 
-    def delete_tag_for_integration_provider_with_http_info(self, body, name, **kwargs):  # noqa: E501
+    def delete_tag_for_integration_provider_with_http_info(
+        self, body, name, **kwargs
+    ):  # noqa: E501
         """Delete a tag for Integration Provider  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -473,37 +519,37 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['body', 'name']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["body", "name"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method delete_tag_for_integration_provider" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'body' is set
-        if ('body' not in params or
-                params['body'] is None):
+        if "body" not in params or params["body"] is None:
             raise ValueError(
-                "Missing the required parameter `body` when calling `delete_tag_for_integration_provider`")  # noqa: E501
+                "Missing the required parameter `body` when calling `delete_tag_for_integration_provider`"
+            )  # noqa: E501
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
+        if "name" not in params or params["name"] is None:
             raise ValueError(
-                "Missing the required parameter `name` when calling `delete_tag_for_integration_provider`")  # noqa: E501
+                "Missing the required parameter `name` when calling `delete_tag_for_integration_provider`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
 
         query_params = []
 
@@ -513,17 +559,21 @@ class IntegrationResourceApi(object):
         local_var_files = {}
 
         body_params = None
-        if 'body' in params:
-            body_params = params['body']
+        if "body" in params:
+            body_params = params["body"]
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
-            ['application/json'])  # noqa: E501
+        header_params[
+            "Content-Type"
+        ] = self.api_client.select_header_content_type(  # noqa: E501
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{name}/tags', 'DELETE',
+            "/integrations/provider/{name}/tags",
+            "DELETE",
             path_params,
             query_params,
             header_params,
@@ -532,11 +582,12 @@ class IntegrationResourceApi(object):
             files=local_var_files,
             response_type=None,  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def get_integration_api(self, name, integration_name, **kwargs):  # noqa: E501
         """Get Integration details  # noqa: E501
@@ -553,14 +604,20 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.get_integration_api_with_http_info(name, integration_name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.get_integration_api_with_http_info(
+                name, integration_name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.get_integration_api_with_http_info(name, integration_name, **kwargs)  # noqa: E501
+            (data) = self.get_integration_api_with_http_info(
+                name, integration_name, **kwargs
+            )  # noqa: E501
             return data
 
-    def get_integration_api_with_http_info(self, name, integration_name, **kwargs):  # noqa: E501
+    def get_integration_api_with_http_info(
+        self, name, integration_name, **kwargs
+    ):  # noqa: E501
         """Get Integration details  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -576,38 +633,39 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['name', 'integration_name']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["name", "integration_name"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method get_integration_api" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `get_integration_api`")  # noqa: E501
-        # verify the required parameter 'integration_name' is set
-        if ('integration_name' not in params or
-                params['integration_name'] is None):
+        if "name" not in params or params["name"] is None:
             raise ValueError(
-                "Missing the required parameter `integration_name` when calling `get_integration_api`")  # noqa: E501
+                "Missing the required parameter `name` when calling `get_integration_api`"
+            )  # noqa: E501
+        # verify the required parameter 'integration_name' is set
+        if "integration_name" not in params or params["integration_name"] is None:
+            raise ValueError(
+                "Missing the required parameter `integration_name` when calling `get_integration_api`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
-        if 'integration_name' in params:
-            path_params['integration_name'] = params['integration_name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
+        if "integration_name" in params:
+            path_params["integration_name"] = params["integration_name"]  # noqa: E501
 
         query_params = []
 
@@ -618,27 +676,30 @@ class IntegrationResourceApi(object):
 
         body_params = None
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['application/json'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{name}/integration/{integration_name}', 'GET',
+            "/integrations/provider/{name}/integration/{integration_name}",
+            "GET",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='IntegrationApi',  # noqa: E501
+            response_type="IntegrationApi",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def get_integration_apis(self, name, **kwargs):  # noqa: E501
         """Get Integrations of an Integration Provider  # noqa: E501
@@ -655,11 +716,15 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.get_integration_apis_with_http_info(name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.get_integration_apis_with_http_info(
+                name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.get_integration_apis_with_http_info(name, **kwargs)  # noqa: E501
+            (data) = self.get_integration_apis_with_http_info(
+                name, **kwargs
+            )  # noqa: E501
             return data
 
     def get_integration_apis_with_http_info(self, name, **kwargs):  # noqa: E501
@@ -678,35 +743,36 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['name', 'active_only']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["name", "active_only"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method get_integration_apis" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `get_integration_apis`")  # noqa: E501
+        if "name" not in params or params["name"] is None:
+            raise ValueError(
+                "Missing the required parameter `name` when calling `get_integration_apis`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
 
         query_params = []
-        if 'active_only' in params:
-            query_params.append(('activeOnly', params['active_only']))  # noqa: E501
+        if "active_only" in params:
+            query_params.append(("activeOnly", params["active_only"]))  # noqa: E501
 
         header_params = {}
 
@@ -715,27 +781,30 @@ class IntegrationResourceApi(object):
 
         body_params = None
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['application/json'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{name}/integration', 'GET',
+            "/integrations/provider/{name}/integration",
+            "GET",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='list[IntegrationApi]',  # noqa: E501
+            response_type="list[IntegrationApi]",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def get_integration_available_apis(self, name, **kwargs):  # noqa: E501
         """Get Integrations Available for an Integration Provider  # noqa: E501
@@ -751,14 +820,20 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.get_integration_available_apis_with_http_info(name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.get_integration_available_apis_with_http_info(
+                name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.get_integration_available_apis_with_http_info(name, **kwargs)  # noqa: E501
+            (data) = self.get_integration_available_apis_with_http_info(
+                name, **kwargs
+            )  # noqa: E501
             return data
 
-    def get_integration_available_apis_with_http_info(self, name, **kwargs):  # noqa: E501
+    def get_integration_available_apis_with_http_info(
+        self, name, **kwargs
+    ):  # noqa: E501
         """Get Integrations Available for an Integration Provider  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -773,32 +848,32 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['name']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["name"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method get_integration_available_apis" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
+        if "name" not in params or params["name"] is None:
             raise ValueError(
-                "Missing the required parameter `name` when calling `get_integration_available_apis`")  # noqa: E501
+                "Missing the required parameter `name` when calling `get_integration_available_apis`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
 
         query_params = []
 
@@ -809,27 +884,30 @@ class IntegrationResourceApi(object):
 
         body_params = None
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['application/json'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{name}/integration/all', 'GET',
+            "/integrations/provider/{name}/integration/all",
+            "GET",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='list[str]',  # noqa: E501
+            response_type="list[str]",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def get_integration_provider(self, name, **kwargs):  # noqa: E501
         """Get Integration provider  # noqa: E501
@@ -845,11 +923,15 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.get_integration_provider_with_http_info(name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.get_integration_provider_with_http_info(
+                name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.get_integration_provider_with_http_info(name, **kwargs)  # noqa: E501
+            (data) = self.get_integration_provider_with_http_info(
+                name, **kwargs
+            )  # noqa: E501
             return data
 
     def get_integration_provider_with_http_info(self, name, **kwargs):  # noqa: E501
@@ -867,32 +949,32 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['name']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["name"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method get_integration_provider" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
+        if "name" not in params or params["name"] is None:
             raise ValueError(
-                "Missing the required parameter `name` when calling `get_integration_provider`")  # noqa: E501
+                "Missing the required parameter `name` when calling `get_integration_provider`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
 
         query_params = []
 
@@ -903,27 +985,30 @@ class IntegrationResourceApi(object):
 
         body_params = None
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['application/json'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{name}', 'GET',
+            "/integrations/provider/{name}",
+            "GET",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='Integration',  # noqa: E501
+            response_type="Integration",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def get_integration_provider_defs(self, **kwargs):  # noqa: E501
         """Get Integration provider definitions  # noqa: E501
@@ -938,11 +1023,15 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.get_integration_provider_defs_with_http_info(**kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.get_integration_provider_defs_with_http_info(
+                **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.get_integration_provider_defs_with_http_info(**kwargs)  # noqa: E501
+            (data) = self.get_integration_provider_defs_with_http_info(
+                **kwargs
+            )  # noqa: E501
             return data
 
     def get_integration_provider_defs_with_http_info(self, **kwargs):  # noqa: E501
@@ -960,20 +1049,20 @@ class IntegrationResourceApi(object):
         """
 
         all_params = []  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method get_integration_provider_defs" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
 
         collection_formats = {}
 
@@ -988,27 +1077,30 @@ class IntegrationResourceApi(object):
 
         body_params = None
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['application/json'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/def', 'GET',
+            "/integrations/def",
+            "GET",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='list[IntegrationDef]',  # noqa: E501
+            response_type="list[IntegrationDef]",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def get_integration_providers(self, **kwargs):  # noqa: E501
         """Get all Integrations Providers  # noqa: E501
@@ -1025,11 +1117,13 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
             return self.get_integration_providers_with_http_info(**kwargs)  # noqa: E501
         else:
-            (data) = self.get_integration_providers_with_http_info(**kwargs)  # noqa: E501
+            (data) = self.get_integration_providers_with_http_info(
+                **kwargs
+            )  # noqa: E501
             return data
 
     def get_integration_providers_with_http_info(self, **kwargs):  # noqa: E501
@@ -1048,31 +1142,31 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['type', 'active_only']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["type", "active_only"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method get_integration_providers" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
 
         collection_formats = {}
 
         path_params = {}
 
         query_params = []
-        if 'type' in params:
-            query_params.append(('type', params['type']))  # noqa: E501
-        if 'active_only' in params:
-            query_params.append(('activeOnly', params['active_only']))  # noqa: E501
+        if "type" in params:
+            query_params.append(("type", params["type"]))  # noqa: E501
+        if "active_only" in params:
+            query_params.append(("activeOnly", params["active_only"]))  # noqa: E501
 
         header_params = {}
 
@@ -1081,29 +1175,34 @@ class IntegrationResourceApi(object):
 
         body_params = None
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['application/json'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider', 'GET',
+            "/integrations/provider",
+            "GET",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='list[Integration]',  # noqa: E501
+            response_type="list[Integration]",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
-    def get_prompts_with_integration(self, integration_provider, integration_name, **kwargs):  # noqa: E501
+    def get_prompts_with_integration(
+        self, integration_provider, integration_name, **kwargs
+    ):  # noqa: E501
         """Get the list of prompt templates associated with an integration  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1118,17 +1217,20 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.get_prompts_with_integration_with_http_info(integration_provider, integration_name,
-                                                                    **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.get_prompts_with_integration_with_http_info(
+                integration_provider, integration_name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.get_prompts_with_integration_with_http_info(integration_provider, integration_name,
-                                                                      **kwargs)  # noqa: E501
+            (data) = self.get_prompts_with_integration_with_http_info(
+                integration_provider, integration_name, **kwargs
+            )  # noqa: E501
             return data
 
-    def get_prompts_with_integration_with_http_info(self, integration_provider, integration_name,
-                                                    **kwargs):  # noqa: E501
+    def get_prompts_with_integration_with_http_info(
+        self, integration_provider, integration_name, **kwargs
+    ):  # noqa: E501
         """Get the list of prompt templates associated with an integration  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1144,39 +1246,44 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['integration_provider', 'integration_name']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["integration_provider", "integration_name"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method get_prompts_with_integration" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'integration_provider' is set
-        if ('integration_provider' not in params or
-                params['integration_provider'] is None):
+        if (
+            "integration_provider" not in params
+            or params["integration_provider"] is None
+        ):
             raise ValueError(
-                "Missing the required parameter `integration_provider` when calling `get_prompts_with_integration`")  # noqa: E501
+                "Missing the required parameter `integration_provider` when calling `get_prompts_with_integration`"
+            )  # noqa: E501
         # verify the required parameter 'integration_name' is set
-        if ('integration_name' not in params or
-                params['integration_name'] is None):
+        if "integration_name" not in params or params["integration_name"] is None:
             raise ValueError(
-                "Missing the required parameter `integration_name` when calling `get_prompts_with_integration`")  # noqa: E501
+                "Missing the required parameter `integration_name` when calling `get_prompts_with_integration`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'integration_provider' in params:
-            path_params['integration_provider'] = params['integration_provider']  # noqa: E501
-        if 'integration_name' in params:
-            path_params['integration_name'] = params['integration_name']  # noqa: E501
+        if "integration_provider" in params:
+            path_params["integration_provider"] = params[
+                "integration_provider"
+            ]  # noqa: E501
+        if "integration_name" in params:
+            path_params["integration_name"] = params["integration_name"]  # noqa: E501
 
         query_params = []
 
@@ -1187,27 +1294,30 @@ class IntegrationResourceApi(object):
 
         body_params = None
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['application/json'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{integration_provider}/integration/{integration_name}/prompt', 'GET',
+            "/integrations/provider/{integration_provider}/integration/{integration_name}/prompt",
+            "GET",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='list[MessageTemplate]',  # noqa: E501
+            response_type="list[MessageTemplate]",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def get_providers_and_integrations(self, **kwargs):  # noqa: E501
         """Get Integrations Providers and Integrations combo  # noqa: E501
@@ -1224,11 +1334,15 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.get_providers_and_integrations_with_http_info(**kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.get_providers_and_integrations_with_http_info(
+                **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.get_providers_and_integrations_with_http_info(**kwargs)  # noqa: E501
+            (data) = self.get_providers_and_integrations_with_http_info(
+                **kwargs
+            )  # noqa: E501
             return data
 
     def get_providers_and_integrations_with_http_info(self, **kwargs):  # noqa: E501
@@ -1247,31 +1361,31 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['type', 'active_only']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["type", "active_only"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method get_providers_and_integrations" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
 
         collection_formats = {}
 
         path_params = {}
 
         query_params = []
-        if 'type' in params:
-            query_params.append(('type', params['type']))  # noqa: E501
-        if 'active_only' in params:
-            query_params.append(('activeOnly', params['active_only']))  # noqa: E501
+        if "type" in params:
+            query_params.append(("type", params["type"]))  # noqa: E501
+        if "active_only" in params:
+            query_params.append(("activeOnly", params["active_only"]))  # noqa: E501
 
         header_params = {}
 
@@ -1280,27 +1394,30 @@ class IntegrationResourceApi(object):
 
         body_params = None
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['application/json'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/all', 'GET',
+            "/integrations/all",
+            "GET",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='list[str]',  # noqa: E501
+            response_type="list[str]",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def get_tags_for_integration(self, name, integration_name, **kwargs):  # noqa: E501
         """Get tags by Integration  # noqa: E501
@@ -1317,14 +1434,20 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.get_tags_for_integration_with_http_info(name, integration_name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.get_tags_for_integration_with_http_info(
+                name, integration_name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.get_tags_for_integration_with_http_info(name, integration_name, **kwargs)  # noqa: E501
+            (data) = self.get_tags_for_integration_with_http_info(
+                name, integration_name, **kwargs
+            )  # noqa: E501
             return data
 
-    def get_tags_for_integration_with_http_info(self, name, integration_name, **kwargs):  # noqa: E501
+    def get_tags_for_integration_with_http_info(
+        self, name, integration_name, **kwargs
+    ):  # noqa: E501
         """Get tags by Integration  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1340,39 +1463,39 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['name', 'integration_name']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["name", "integration_name"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method get_tags_for_integration" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
+        if "name" not in params or params["name"] is None:
             raise ValueError(
-                "Missing the required parameter `name` when calling `get_tags_for_integration`")  # noqa: E501
+                "Missing the required parameter `name` when calling `get_tags_for_integration`"
+            )  # noqa: E501
         # verify the required parameter 'integration_name' is set
-        if ('integration_name' not in params or
-                params['integration_name'] is None):
+        if "integration_name" not in params or params["integration_name"] is None:
             raise ValueError(
-                "Missing the required parameter `integration_name` when calling `get_tags_for_integration`")  # noqa: E501
+                "Missing the required parameter `integration_name` when calling `get_tags_for_integration`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
-        if 'integration_name' in params:
-            path_params['integration_name'] = params['integration_name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
+        if "integration_name" in params:
+            path_params["integration_name"] = params["integration_name"]  # noqa: E501
 
         query_params = []
 
@@ -1383,27 +1506,30 @@ class IntegrationResourceApi(object):
 
         body_params = None
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['application/json'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{name}/integration/{integration_name}/tags', 'GET',
+            "/integrations/provider/{name}/integration/{integration_name}/tags",
+            "GET",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='list[TagObject]',  # noqa: E501
+            response_type="list[TagObject]",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def get_tags_for_integration_provider(self, name, **kwargs):  # noqa: E501
         """Get tags by Integration Provider  # noqa: E501
@@ -1419,14 +1545,20 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.get_tags_for_integration_provider_with_http_info(name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.get_tags_for_integration_provider_with_http_info(
+                name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.get_tags_for_integration_provider_with_http_info(name, **kwargs)  # noqa: E501
+            (data) = self.get_tags_for_integration_provider_with_http_info(
+                name, **kwargs
+            )  # noqa: E501
             return data
 
-    def get_tags_for_integration_provider_with_http_info(self, name, **kwargs):  # noqa: E501
+    def get_tags_for_integration_provider_with_http_info(
+        self, name, **kwargs
+    ):  # noqa: E501
         """Get tags by Integration Provider  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1441,32 +1573,32 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['name']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["name"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method get_tags_for_integration_provider" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
+        if "name" not in params or params["name"] is None:
             raise ValueError(
-                "Missing the required parameter `name` when calling `get_tags_for_integration_provider`")  # noqa: E501
+                "Missing the required parameter `name` when calling `get_tags_for_integration_provider`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
 
         query_params = []
 
@@ -1477,29 +1609,34 @@ class IntegrationResourceApi(object):
 
         body_params = None
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['application/json'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{name}/tags', 'GET',
+            "/integrations/provider/{name}/tags",
+            "GET",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='list[TagObject]',  # noqa: E501
+            response_type="list[TagObject]",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
-    def get_token_usage_for_integration(self, name, integration_name, **kwargs):  # noqa: E501
+    def get_token_usage_for_integration(
+        self, name, integration_name, **kwargs
+    ):  # noqa: E501
         """Get Token Usage by Integration  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1514,14 +1651,20 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.get_token_usage_for_integration_with_http_info(name, integration_name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.get_token_usage_for_integration_with_http_info(
+                name, integration_name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.get_token_usage_for_integration_with_http_info(name, integration_name, **kwargs)  # noqa: E501
+            (data) = self.get_token_usage_for_integration_with_http_info(
+                name, integration_name, **kwargs
+            )  # noqa: E501
             return data
 
-    def get_token_usage_for_integration_with_http_info(self, name, integration_name, **kwargs):  # noqa: E501
+    def get_token_usage_for_integration_with_http_info(
+        self, name, integration_name, **kwargs
+    ):  # noqa: E501
         """Get Token Usage by Integration  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1537,39 +1680,39 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['name', 'integration_name']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["name", "integration_name"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method get_token_usage_for_integration" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
+        if "name" not in params or params["name"] is None:
             raise ValueError(
-                "Missing the required parameter `name` when calling `get_token_usage_for_integration`")  # noqa: E501
+                "Missing the required parameter `name` when calling `get_token_usage_for_integration`"
+            )  # noqa: E501
         # verify the required parameter 'integration_name' is set
-        if ('integration_name' not in params or
-                params['integration_name'] is None):
+        if "integration_name" not in params or params["integration_name"] is None:
             raise ValueError(
-                "Missing the required parameter `integration_name` when calling `get_token_usage_for_integration`")  # noqa: E501
+                "Missing the required parameter `integration_name` when calling `get_token_usage_for_integration`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
-        if 'integration_name' in params:
-            path_params['integration_name'] = params['integration_name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
+        if "integration_name" in params:
+            path_params["integration_name"] = params["integration_name"]  # noqa: E501
 
         query_params = []
 
@@ -1580,27 +1723,30 @@ class IntegrationResourceApi(object):
 
         body_params = None
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['application/json'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{name}/integration/{integration_name}/metrics', 'GET',
+            "/integrations/provider/{name}/integration/{integration_name}/metrics",
+            "GET",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='int',  # noqa: E501
+            response_type="int",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def get_token_usage_for_integration_provider(self, name, **kwargs):  # noqa: E501
         """Get Token Usage by Integration Provider  # noqa: E501
@@ -1616,14 +1762,20 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.get_token_usage_for_integration_provider_with_http_info(name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.get_token_usage_for_integration_provider_with_http_info(
+                name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.get_token_usage_for_integration_provider_with_http_info(name, **kwargs)  # noqa: E501
+            (data) = self.get_token_usage_for_integration_provider_with_http_info(
+                name, **kwargs
+            )  # noqa: E501
             return data
 
-    def get_token_usage_for_integration_provider_with_http_info(self, name, **kwargs):  # noqa: E501
+    def get_token_usage_for_integration_provider_with_http_info(
+        self, name, **kwargs
+    ):  # noqa: E501
         """Get Token Usage by Integration Provider  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1638,32 +1790,32 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['name']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["name"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method get_token_usage_for_integration_provider" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
+        if "name" not in params or params["name"] is None:
             raise ValueError(
-                "Missing the required parameter `name` when calling `get_token_usage_for_integration_provider`")  # noqa: E501
+                "Missing the required parameter `name` when calling `get_token_usage_for_integration_provider`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
 
         query_params = []
 
@@ -1674,29 +1826,34 @@ class IntegrationResourceApi(object):
 
         body_params = None
         # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['application/json'])  # noqa: E501
+        header_params["Accept"] = self.api_client.select_header_accept(
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{name}/metrics', 'GET',
+            "/integrations/provider/{name}/metrics",
+            "GET",
             path_params,
             query_params,
             header_params,
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='dict(str, str)',  # noqa: E501
+            response_type="dict(str, str)",  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
-    def put_tag_for_integration(self, body, name, integration_name, **kwargs):  # noqa: E501
+    def put_tag_for_integration(
+        self, body, name, integration_name, **kwargs
+    ):  # noqa: E501
         """Put a tag to Integration  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1712,14 +1869,20 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.put_tag_for_integration_with_http_info(body, name, integration_name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.put_tag_for_integration_with_http_info(
+                body, name, integration_name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.put_tag_for_integration_with_http_info(body, name, integration_name, **kwargs)  # noqa: E501
+            (data) = self.put_tag_for_integration_with_http_info(
+                body, name, integration_name, **kwargs
+            )  # noqa: E501
             return data
 
-    def put_tag_for_integration_with_http_info(self, body, name, integration_name, **kwargs):  # noqa: E501
+    def put_tag_for_integration_with_http_info(
+        self, body, name, integration_name, **kwargs
+    ):  # noqa: E501
         """Put a tag to Integration  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1736,44 +1899,44 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['body', 'name', 'integration_name']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["body", "name", "integration_name"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method put_tag_for_integration" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'body' is set
-        if ('body' not in params or
-                params['body'] is None):
+        if "body" not in params or params["body"] is None:
             raise ValueError(
-                "Missing the required parameter `body` when calling `put_tag_for_integration`")  # noqa: E501
+                "Missing the required parameter `body` when calling `put_tag_for_integration`"
+            )  # noqa: E501
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
+        if "name" not in params or params["name"] is None:
             raise ValueError(
-                "Missing the required parameter `name` when calling `put_tag_for_integration`")  # noqa: E501
+                "Missing the required parameter `name` when calling `put_tag_for_integration`"
+            )  # noqa: E501
         # verify the required parameter 'integration_name' is set
-        if ('integration_name' not in params or
-                params['integration_name'] is None):
+        if "integration_name" not in params or params["integration_name"] is None:
             raise ValueError(
-                "Missing the required parameter `integration_name` when calling `put_tag_for_integration`")  # noqa: E501
+                "Missing the required parameter `integration_name` when calling `put_tag_for_integration`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
-        if 'integration_name' in params:
-            path_params['integration_name'] = params['integration_name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
+        if "integration_name" in params:
+            path_params["integration_name"] = params["integration_name"]  # noqa: E501
 
         query_params = []
 
@@ -1783,17 +1946,21 @@ class IntegrationResourceApi(object):
         local_var_files = {}
 
         body_params = None
-        if 'body' in params:
-            body_params = params['body']
+        if "body" in params:
+            body_params = params["body"]
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
-            ['application/json'])  # noqa: E501
+        header_params[
+            "Content-Type"
+        ] = self.api_client.select_header_content_type(  # noqa: E501
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{name}/integration/{integration_name}/tags', 'PUT',
+            "/integrations/provider/{name}/integration/{integration_name}/tags",
+            "PUT",
             path_params,
             query_params,
             header_params,
@@ -1802,11 +1969,12 @@ class IntegrationResourceApi(object):
             files=local_var_files,
             response_type=None,  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def put_tag_for_integration_provider(self, body, name, **kwargs):  # noqa: E501
         """Put a tag to Integration Provider  # noqa: E501
@@ -1823,14 +1991,20 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.put_tag_for_integration_provider_with_http_info(body, name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.put_tag_for_integration_provider_with_http_info(
+                body, name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.put_tag_for_integration_provider_with_http_info(body, name, **kwargs)  # noqa: E501
+            (data) = self.put_tag_for_integration_provider_with_http_info(
+                body, name, **kwargs
+            )  # noqa: E501
             return data
 
-    def put_tag_for_integration_provider_with_http_info(self, body, name, **kwargs):  # noqa: E501
+    def put_tag_for_integration_provider_with_http_info(
+        self, body, name, **kwargs
+    ):  # noqa: E501
         """Put a tag to Integration Provider  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1846,37 +2020,37 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['body', 'name']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["body", "name"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method put_tag_for_integration_provider" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'body' is set
-        if ('body' not in params or
-                params['body'] is None):
+        if "body" not in params or params["body"] is None:
             raise ValueError(
-                "Missing the required parameter `body` when calling `put_tag_for_integration_provider`")  # noqa: E501
+                "Missing the required parameter `body` when calling `put_tag_for_integration_provider`"
+            )  # noqa: E501
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
+        if "name" not in params or params["name"] is None:
             raise ValueError(
-                "Missing the required parameter `name` when calling `put_tag_for_integration_provider`")  # noqa: E501
+                "Missing the required parameter `name` when calling `put_tag_for_integration_provider`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
 
         query_params = []
 
@@ -1886,17 +2060,21 @@ class IntegrationResourceApi(object):
         local_var_files = {}
 
         body_params = None
-        if 'body' in params:
-            body_params = params['body']
+        if "body" in params:
+            body_params = params["body"]
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
-            ['application/json'])  # noqa: E501
+        header_params[
+            "Content-Type"
+        ] = self.api_client.select_header_content_type(  # noqa: E501
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{name}/tags', 'PUT',
+            "/integrations/provider/{name}/tags",
+            "PUT",
             path_params,
             query_params,
             header_params,
@@ -1905,13 +2083,16 @@ class IntegrationResourceApi(object):
             files=local_var_files,
             response_type=None,  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
-    def register_token_usage(self, body, name, integration_name, **kwargs):  # noqa: E501
+    def register_token_usage(
+        self, body, name, integration_name, **kwargs
+    ):  # noqa: E501
         """Register Token usage  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1927,14 +2108,20 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.register_token_usage_with_http_info(body, name, integration_name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.register_token_usage_with_http_info(
+                body, name, integration_name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.register_token_usage_with_http_info(body, name, integration_name, **kwargs)  # noqa: E501
+            (data) = self.register_token_usage_with_http_info(
+                body, name, integration_name, **kwargs
+            )  # noqa: E501
             return data
 
-    def register_token_usage_with_http_info(self, body, name, integration_name, **kwargs):  # noqa: E501
+    def register_token_usage_with_http_info(
+        self, body, name, integration_name, **kwargs
+    ):  # noqa: E501
         """Register Token usage  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -1951,42 +2138,44 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['body', 'name', 'integration_name']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["body", "name", "integration_name"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method register_token_usage" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'body' is set
-        if ('body' not in params or
-                params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `register_token_usage`")  # noqa: E501
-        # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `register_token_usage`")  # noqa: E501
-        # verify the required parameter 'integration_name' is set
-        if ('integration_name' not in params or
-                params['integration_name'] is None):
+        if "body" not in params or params["body"] is None:
             raise ValueError(
-                "Missing the required parameter `integration_name` when calling `register_token_usage`")  # noqa: E501
+                "Missing the required parameter `body` when calling `register_token_usage`"
+            )  # noqa: E501
+        # verify the required parameter 'name' is set
+        if "name" not in params or params["name"] is None:
+            raise ValueError(
+                "Missing the required parameter `name` when calling `register_token_usage`"
+            )  # noqa: E501
+        # verify the required parameter 'integration_name' is set
+        if "integration_name" not in params or params["integration_name"] is None:
+            raise ValueError(
+                "Missing the required parameter `integration_name` when calling `register_token_usage`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
-        if 'integration_name' in params:
-            path_params['integration_name'] = params['integration_name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
+        if "integration_name" in params:
+            path_params["integration_name"] = params["integration_name"]  # noqa: E501
 
         query_params = []
 
@@ -1996,17 +2185,21 @@ class IntegrationResourceApi(object):
         local_var_files = {}
 
         body_params = None
-        if 'body' in params:
-            body_params = params['body']
+        if "body" in params:
+            body_params = params["body"]
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
-            ['application/json'])  # noqa: E501
+        header_params[
+            "Content-Type"
+        ] = self.api_client.select_header_content_type(  # noqa: E501
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{name}/integration/{integration_name}/metrics', 'POST',
+            "/integrations/provider/{name}/integration/{integration_name}/metrics",
+            "POST",
             path_params,
             query_params,
             header_params,
@@ -2015,13 +2208,16 @@ class IntegrationResourceApi(object):
             files=local_var_files,
             response_type=None,  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
-    def save_integration_api(self, body, name, integration_name, **kwargs):  # noqa: E501
+    def save_integration_api(
+        self, body, name, integration_name, **kwargs
+    ):  # noqa: E501
         """Create or Update Integration  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2037,14 +2233,20 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.save_integration_api_with_http_info(body, name, integration_name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.save_integration_api_with_http_info(
+                body, name, integration_name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.save_integration_api_with_http_info(body, name, integration_name, **kwargs)  # noqa: E501
+            (data) = self.save_integration_api_with_http_info(
+                body, name, integration_name, **kwargs
+            )  # noqa: E501
             return data
 
-    def save_integration_api_with_http_info(self, body, name, integration_name, **kwargs):  # noqa: E501
+    def save_integration_api_with_http_info(
+        self, body, name, integration_name, **kwargs
+    ):  # noqa: E501
         """Create or Update Integration  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2061,42 +2263,44 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['body', 'name', 'integration_name']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["body", "name", "integration_name"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method save_integration_api" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'body' is set
-        if ('body' not in params or
-                params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `save_integration_api`")  # noqa: E501
-        # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `save_integration_api`")  # noqa: E501
-        # verify the required parameter 'integration_name' is set
-        if ('integration_name' not in params or
-                params['integration_name'] is None):
+        if "body" not in params or params["body"] is None:
             raise ValueError(
-                "Missing the required parameter `integration_name` when calling `save_integration_api`")  # noqa: E501
+                "Missing the required parameter `body` when calling `save_integration_api`"
+            )  # noqa: E501
+        # verify the required parameter 'name' is set
+        if "name" not in params or params["name"] is None:
+            raise ValueError(
+                "Missing the required parameter `name` when calling `save_integration_api`"
+            )  # noqa: E501
+        # verify the required parameter 'integration_name' is set
+        if "integration_name" not in params or params["integration_name"] is None:
+            raise ValueError(
+                "Missing the required parameter `integration_name` when calling `save_integration_api`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
-        if 'integration_name' in params:
-            path_params['integration_name'] = params['integration_name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
+        if "integration_name" in params:
+            path_params["integration_name"] = params["integration_name"]  # noqa: E501
 
         query_params = []
 
@@ -2106,17 +2310,21 @@ class IntegrationResourceApi(object):
         local_var_files = {}
 
         body_params = None
-        if 'body' in params:
-            body_params = params['body']
+        if "body" in params:
+            body_params = params["body"]
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
-            ['application/json'])  # noqa: E501
+        header_params[
+            "Content-Type"
+        ] = self.api_client.select_header_content_type(  # noqa: E501
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{name}/integration/{integration_name}', 'POST',
+            "/integrations/provider/{name}/integration/{integration_name}",
+            "POST",
             path_params,
             query_params,
             header_params,
@@ -2125,11 +2333,12 @@ class IntegrationResourceApi(object):
             files=local_var_files,
             response_type=None,  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )
 
     def save_integration_provider(self, body, name, **kwargs):  # noqa: E501
         """Create or Update Integration provider  # noqa: E501
@@ -2146,14 +2355,20 @@ class IntegrationResourceApi(object):
                  If the method is called asynchronously,
                  returns the request thread.
         """
-        kwargs['_return_http_data_only'] = True
-        if kwargs.get('async_req'):
-            return self.save_integration_provider_with_http_info(body, name, **kwargs)  # noqa: E501
+        kwargs["_return_http_data_only"] = True
+        if kwargs.get("async_req"):
+            return self.save_integration_provider_with_http_info(
+                body, name, **kwargs
+            )  # noqa: E501
         else:
-            (data) = self.save_integration_provider_with_http_info(body, name, **kwargs)  # noqa: E501
+            (data) = self.save_integration_provider_with_http_info(
+                body, name, **kwargs
+            )  # noqa: E501
             return data
 
-    def save_integration_provider_with_http_info(self, body, name, **kwargs):  # noqa: E501
+    def save_integration_provider_with_http_info(
+        self, body, name, **kwargs
+    ):  # noqa: E501
         """Create or Update Integration provider  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2169,37 +2384,37 @@ class IntegrationResourceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['body', 'name']  # noqa: E501
-        all_params.append('async_req')
-        all_params.append('_return_http_data_only')
-        all_params.append('_preload_content')
-        all_params.append('_request_timeout')
+        all_params = ["body", "name"]  # noqa: E501
+        all_params.append("async_req")
+        all_params.append("_return_http_data_only")
+        all_params.append("_preload_content")
+        all_params.append("_request_timeout")
 
         params = locals()
-        for key, val in six.iteritems(params['kwargs']):
+        for key, val in six.iteritems(params["kwargs"]):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
                     " to method save_integration_provider" % key
                 )
             params[key] = val
-        del params['kwargs']
+        del params["kwargs"]
         # verify the required parameter 'body' is set
-        if ('body' not in params or
-                params['body'] is None):
+        if "body" not in params or params["body"] is None:
             raise ValueError(
-                "Missing the required parameter `body` when calling `save_integration_provider`")  # noqa: E501
+                "Missing the required parameter `body` when calling `save_integration_provider`"
+            )  # noqa: E501
         # verify the required parameter 'name' is set
-        if ('name' not in params or
-                params['name'] is None):
+        if "name" not in params or params["name"] is None:
             raise ValueError(
-                "Missing the required parameter `name` when calling `save_integration_provider`")  # noqa: E501
+                "Missing the required parameter `name` when calling `save_integration_provider`"
+            )  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
-        if 'name' in params:
-            path_params['name'] = params['name']  # noqa: E501
+        if "name" in params:
+            path_params["name"] = params["name"]  # noqa: E501
 
         query_params = []
 
@@ -2209,17 +2424,21 @@ class IntegrationResourceApi(object):
         local_var_files = {}
 
         body_params = None
-        if 'body' in params:
-            body_params = params['body']
+        if "body" in params:
+            body_params = params["body"]
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
-            ['application/json'])  # noqa: E501
+        header_params[
+            "Content-Type"
+        ] = self.api_client.select_header_content_type(  # noqa: E501
+            ["application/json"]
+        )  # noqa: E501
 
         # Authentication setting
-        auth_settings = ['api_key']  # noqa: E501
+        auth_settings = ["api_key"]  # noqa: E501
 
         return self.api_client.call_api(
-            '/integrations/provider/{name}', 'POST',
+            "/integrations/provider/{name}",
+            "POST",
             path_params,
             query_params,
             header_params,
@@ -2228,8 +2447,9 @@ class IntegrationResourceApi(object):
             files=local_var_files,
             response_type=None,  # noqa: E501
             auth_settings=auth_settings,
-            async_req=params.get('async_req'),
-            _return_http_data_only=params.get('_return_http_data_only'),
-            _preload_content=params.get('_preload_content', True),
-            _request_timeout=params.get('_request_timeout'),
-            collection_formats=collection_formats)
+            async_req=params.get("async_req"),
+            _return_http_data_only=params.get("_return_http_data_only"),
+            _preload_content=params.get("_preload_content", True),
+            _request_timeout=params.get("_request_timeout"),
+            collection_formats=collection_formats,
+        )

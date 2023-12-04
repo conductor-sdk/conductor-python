@@ -1,8 +1,10 @@
 from typing import Callable, TypeVar
+
 from conductor.client.worker.worker import ExecuteTaskFunction
 
 
 class WorkerTask(ExecuteTaskFunction):
+<<<<<<< HEAD
     def __init__(self, task_definition_name: str = None,domain: str = None, poll_interval: float = None, worker_id: str = None):
         """
         Task Worker
@@ -13,6 +15,15 @@ class WorkerTask(ExecuteTaskFunction):
         poll_interval polling interval in millisecond
         worker_id (optional) id of the worker.  defaults to hostname if not specified
         """
+=======
+    def __init__(
+        self,
+        task_definition_name: str,
+        domain: str = None,
+        poll_interval: float = None,
+        worker_id: str = None,
+    ):
+>>>>>>> e306662 (Pylint improvements)
         self.task_definition_name = task_definition_name
         self.domain = domain
         self.poll_interval = poll_interval
