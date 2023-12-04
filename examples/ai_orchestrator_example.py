@@ -21,7 +21,7 @@ url = os.getenv("CONDUCTOR_SERVER_URL")
 azure_open_ai_key = os.getenv('AZURE_OPENAI_KEY')
 azure_open_ai_endpoint = os.getenv('AZURE_OPENAI_ENDPOINT')
 open_ai_key = os.getenv('OPENAI_KEY')
-open_ai_key = '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'
+open_ai_key = 'xxxx'
 
 
 def start_workers(api_config):
@@ -32,6 +32,7 @@ def start_workers(api_config):
     )
     set_start_method('fork', force=True)
     task_handler.start_processes()
+    task_handler.join_processes()
     return task_handler
 
 
@@ -72,10 +73,10 @@ def main():
     kernel.associate_prompt_template(prompt.name, llm_provider, [text_complete_model])
 
     # Test the prompt
-    result = kernel.test_prompt_template('give an evening greeting to ${friend_name}. go: ',
-                                         {'friend_name': 'viren'}, llm_provider, text_complete_model)
-
-    print(result)
+    # result = kernel.test_prompt_template('give an evening greeting to ${friend_name}. go: ',
+    #                                      {'friend_name': 'viren'}, llm_provider, text_complete_model)
+    #
+    # print(result)
 
     # Create a 2-step LLM Chain and execute it
     t1 = SimpleTask('get_friend_name', 'get_friend_name_ref')
@@ -84,7 +85,7 @@ def main():
     workflow = ConductorWorkflow(executor=kernel.workflow_executor, name='say_hi_to_the_friend')
     workflow >> [t1, t2]
     workflow.output_parameters = {'greetings': '${say_hi_ref.output.result}'}
-    workflow.execute({}, wait_for_seconds=1)
+    # workflow.execute({}, wait_for_seconds=1)
 
     print('tokens used:')
     print(kernel.get_token_used(llm_provider))
