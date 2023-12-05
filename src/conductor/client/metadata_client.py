@@ -1,23 +1,20 @@
 from abc import ABC, abstractmethod
-from typing import Optional, List
-from conductor.client.http.models.workflow_def import WorkflowDef
+from typing import List, Optional
+
 from conductor.client.http.models.task_def import TaskDef
+from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 
 
 class MetadataClient(ABC):
     @abstractmethod
     def register_workflow_def(
-            self,
-            workflow_def: WorkflowDef,
-            overwrite: Optional[bool]):
+        self, workflow_def: WorkflowDef, overwrite: Optional[bool]
+    ):
         pass
 
     @abstractmethod
-    def update_workflow_def(
-            self,
-            workflow_def: WorkflowDef,
-            overwrite: Optional[bool]):
+    def update_workflow_def(self, workflow_def: WorkflowDef, overwrite: Optional[bool]):
         pass
 
     @abstractmethod

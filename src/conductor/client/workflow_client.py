@@ -1,11 +1,14 @@
 from abc import ABC, abstractmethod
-from typing import Optional, List
+from typing import List, Optional
 
-from conductor.client.http.models import WorkflowRun, SkipTaskRequest
+from conductor.client.http.models import SkipTaskRequest, WorkflowRun
+from conductor.client.http.models.rerun_workflow_request import \
+    RerunWorkflowRequest
+from conductor.client.http.models.start_workflow_request import \
+    StartWorkflowRequest
 from conductor.client.http.models.workflow import Workflow
-from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
-from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
-from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
+from conductor.client.http.models.workflow_test_request import \
+    WorkflowTestRequest
 
 
 class WorkflowClient(ABC):
@@ -14,11 +17,15 @@ class WorkflowClient(ABC):
         pass
 
     @abstractmethod
-    def get_workflow(self, workflow_id: str, include_tasks: Optional[bool] = True) -> Workflow:
+    def get_workflow(
+        self, workflow_id: str, include_tasks: Optional[bool] = True
+    ) -> Workflow:
         pass
 
     @abstractmethod
-    def delete_workflow(self, workflow_id: str, archive_workflow: Optional[bool] = True):
+    def delete_workflow(
+        self, workflow_id: str, archive_workflow: Optional[bool] = True
+    ):
         pass
 
     @abstractmethod
@@ -27,12 +34,12 @@ class WorkflowClient(ABC):
 
     @abstractmethod
     def execute_workflow(
-            self,
-            start_workflow_request: StartWorkflowRequest,
-            request_id: str,
-            name: str,
-            version: int,
-            wait_until_task_ref: Optional[str] = None
+        self,
+        start_workflow_request: StartWorkflowRequest,
+        request_id: str,
+        name: str,
+        version: int,
+        wait_until_task_ref: Optional[str] = None,
     ) -> WorkflowRun:
         pass
 
@@ -45,19 +52,27 @@ class WorkflowClient(ABC):
         pass
 
     @abstractmethod
-    def restart_workflow(self, workflow_id: str, use_latest_def: Optional[bool] = False):
+    def restart_workflow(
+        self, workflow_id: str, use_latest_def: Optional[bool] = False
+    ):
         pass
 
     @abstractmethod
-    def retry_workflow(self, workflow_id: str, resume_subworkflow_tasks: Optional[bool] = False):
+    def retry_workflow(
+        self, workflow_id: str, resume_subworkflow_tasks: Optional[bool] = False
+    ):
         pass
 
     @abstractmethod
-    def rerun_workflow(self, workflow_id: str, rerun_workflow_request: RerunWorkflowRequest):
+    def rerun_workflow(
+        self, workflow_id: str, rerun_workflow_request: RerunWorkflowRequest
+    ):
         pass
 
     @abstractmethod
-    def skip_task_from_workflow(self, workflow_id: str, task_reference_name: str, request: SkipTaskRequest):
+    def skip_task_from_workflow(
+        self, workflow_id: str, task_reference_name: str, request: SkipTaskRequest
+    ):
         pass
 
     @abstractmethod

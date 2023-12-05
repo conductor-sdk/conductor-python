@@ -4,7 +4,7 @@ from conductor.client.worker.worker import ExecuteTaskFunction
 
 
 class WorkerTask(ExecuteTaskFunction):
-    def __init__(self, task_definition_name: str = None,domain: str = None, poll_interval: float = None, worker_id: str = None):
+    def __init__(self, task_definition_name: str = None, domain: str = None, poll_interval: float = None, worker_id: str = None):
         """
         Task Worker
         Parameters
