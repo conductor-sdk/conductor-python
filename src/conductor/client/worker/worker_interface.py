@@ -5,7 +5,8 @@ import abc
 import socket
 from typing import Union
 
-DEFAULT_POLLING_INTERVAL = 100 # ms
+DEFAULT_POLLING_INTERVAL = 100  # ms
+
 
 class WorkerInterface(abc.ABC):
     def __init__(self, task_definition_name: Union[str, list]):
@@ -57,7 +58,7 @@ class WorkerInterface(abc.ABC):
             return self.task_definition_name
         else:
             return [self.task_definition_name]
-    
+
     @property
     def task_definition_name_cache(self):
         if self._task_definition_name_cache is None:

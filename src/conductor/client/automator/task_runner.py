@@ -50,7 +50,7 @@ class TaskRunner:
         )
 
     def run(self) -> None:
-        if self.configuration != None:
+        if self.configuration is not None:
             self.configuration.apply_logging_config()
         else:
             logger.setLevel(logging.DEBUG)
@@ -61,12 +61,12 @@ class TaskRunner:
         while True:
             try:
                 self.run_once()
-            except Exception:
+            except Exception as e:
                 pass
 
     def run_once(self) -> None:
         task = self.__poll_task()
-        if task != None and task.task_id != None:
+        if task is not None and task.task_id is not None:
             task_result = self.__execute_task(task)
             self.__update_task(task_result)
         self.__wait_for_polling_interval()
@@ -88,29 +88,20 @@ class TaskRunner:
             params = {'workerid': self.worker.get_identity()}
             if domain != None:
                 params['domain'] = domain
-            task = self.task_client.poll(
-                tasktype=task_definition_name,
-                **params
-            )
+            task = self.task_client.poll(tasktype=task_definition_name,**params)
             finish_time = time.time()
             time_spent = finish_time - start_time
             if self.metrics_collector is not None:
-                self.metrics_collector.record_task_poll_time(
-                    task_definition_name, time_spent
-                )
+                self.metrics_collector.record_task_poll_time(task_definition_name, time_spent)
         except Exception as e:
             if self.metrics_collector is not None:
-                self.metrics_collector.increment_task_poll_error(
-                    task_definition_name, type(e)
-                )
+                self.metrics_collector.increment_task_poll_error(task_definition_name, type(e))
             logger.error(
                 f'Failed to poll task for: {task_definition_name}, reason: {traceback.format_exc()}'
             )
             return None
-        if task != None:
-            logger.debug(
-                f'Polled task: {task_definition_name}, worker_id: {self.worker.get_identity()}, domain: {self.worker.get_domain()}'
-            )
+        if task is not None:
+            logger.debug(f'Polled task: {task_definition_name}, worker_id: {self.worker.get_identity()}, domain: {self.worker.get_domain()}')
         return task
 
     def __execute_task(self, task: Task) -> TaskResult:

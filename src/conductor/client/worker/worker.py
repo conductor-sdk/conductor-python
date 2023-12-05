@@ -55,8 +55,7 @@ class Worker(WorkerInterface):
         else:
             execute_function_input = task.input_data
         if self._is_execute_function_return_value_a_task_result:
-            execute_function_output = self.execute_function(
-                execute_function_input)
+            execute_function_output = self.execute_function(execute_function_input)
             if type(execute_function_output) == TaskResult:
                 execute_function_output.task_id = task.task_id
                 execute_function_output.workflow_instance_id = task.workflow_instance_id
