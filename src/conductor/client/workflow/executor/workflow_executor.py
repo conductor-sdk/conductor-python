@@ -1,3 +1,9 @@
+"""Workflow Executor
+
+The class in this module allows management of workflows including workflow
+definition registration, workflow executions and sending signals to workflows.
+"""
+
 import uuid
 from typing import Any, Dict, List
 
@@ -8,12 +14,28 @@ from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
 from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
 from conductor.client.http.api_client import ApiClient
-from conductor.client.http.models import *
-from conductor.client.http.models.correlation_ids_search_request import \
-    CorrelationIdsSearchRequest
+from conductor.client.http.models.correlation_ids_search_request import (
+    CorrelationIdsSearchRequest,
+)
+from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
+from conductor.client.http.models.scrollable_search_result_workflow_summary import (
+    ScrollableSearchResultWorkflowSummary,
+)
+from conductor.client.http.models.skip_task_request import SkipTaskRequest
+from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
+from conductor.client.http.models.task_result import TaskResult
+from conductor.client.http.models.workflow import Workflow
+from conductor.client.http.models.workflow_def import WorkflowDef
+from conductor.client.http.models.workflow_run import WorkflowRun
+from conductor.client.http.models.workflow_status import WorkflowStatus
 
 
 class WorkflowExecutor:
+    """
+    A class to manage Workflow lifecycle.
+    """
+
+
     def __init__(self, configuration: Configuration) -> Self:
         api_client = ApiClient(configuration)
         self.metadata_client = MetadataResourceApi(api_client)
@@ -30,7 +52,8 @@ class WorkflowExecutor:
         return self.metadata_client.create(body=workflow, **kwargs)
 
     def start_workflow(self, start_workflow_request: StartWorkflowRequest) -> str:
-        """Start a new workflow with StartWorkflowRequest, which allows task to be executed in a domain"""
+        """Start a new workflow with StartWorkflowRequest, which allows task to
+        be executed in a domain"""
         return self.workflow_client.start_workflow(
             body=start_workflow_request,
         )
@@ -38,13 +61,14 @@ class WorkflowExecutor:
     def start_workflows(
         self, *start_workflow_request: StartWorkflowRequest
     ) -> List[str]:
-        """Start multiple instances of workflows.  Note, there is no parallelism implemented in starting so giving a
-        very large number can impact the latencies and performance
+        """Start multiple instances of workflows.  Note, there is no parallelism
+        implemented in starting so giving a very large number can impact the
+        latencies and performance
         """
         workflow_id_list = [""] * len(start_workflow_request)
-        for i in range(len(start_workflow_request)):
+        for i, req in enumerate(start_workflow_request):
             workflow_id_list[i] = self.start_workflow(
-                start_workflow_request=start_workflow_request[i]
+                start_workflow_request=req
             )
         return workflow_id_list
 
@@ -54,8 +78,8 @@ class WorkflowExecutor:
         wait_until_task_ref: str,
         wait_for_seconds: int = 10,
     ) -> WorkflowRun:
-        """Executes a workflow with StartWorkflowRequest and waits for the completion of the workflow or until a
-        specific task in the workflow"""
+        """Executes a workflow with StartWorkflowRequest and waits for the
+        completion of the workflow or until a specific task in the workflow"""
         return self.workflow_client.execute_workflow(
             body=request,
             request_id=str(uuid.uuid4()),
@@ -148,24 +172,30 @@ class WorkflowExecutor:
         include_closed: bool = None,
         include_tasks: bool = None,
     ) -> Dict[str, List[Workflow]]:
-        """Given the list of correlation ids and list of workflow names, find and return workflows
-        Returns a map with key as correlationId and value as a list of Workflows
-        When IncludeClosed is set to true, the return value also includes workflows that are completed otherwise only running workflows are returned
+        """
+        Given the list of correlation ids and list of workflow names,
+        find and return workflows.
+
+            Returns:
+                    A map with key as correlationId and value as a list of
+                    Workflows. When IncludeClosed is set to true, the return
+                    value also includes workflows that are completed,
+                    otherwise only running workflows are returned.
         """
         args = {"body": body}
-        if include_closed != None:
+        if include_closed is not None:
             args["include_closed"] = True
-        if include_tasks != None:
+        if include_tasks is not None:
             args["include_tasks"] = True
-        return self.workflow_client.get_workflows_batch(**args)
+        return self.workflow_client.get_workflows1(**args)
 
     def pause(self, workflow_id: str) -> None:
         """Pauses the workflow"""
-        return self.workflow_client.pause_workflow1(workflow_id=workflow_id)
+        return self.workflow_client.pause_workflow(workflow_id=workflow_id)
 
     def resume(self, workflow_id: str) -> None:
         """Resumes the workflow"""
-        return self.workflow_client.resume_workflow1(workflow_id=workflow_id)
+        return self.workflow_client.resume_workflow(workflow_id=workflow_id)
 
     def terminate(
         self,
@@ -186,14 +216,14 @@ class WorkflowExecutor:
         kwargs = {}
         if use_latest_definitions is not None:
             kwargs["use_latest_definitions"] = use_latest_definitions
-        return self.workflow_client.restart1(workflow_id=workflow_id, **kwargs)
+        return self.workflow_client.restart(workflow_id=workflow_id, **kwargs)
 
     def retry(self, workflow_id: str, resume_subworkflow_tasks: bool = None) -> None:
         """Retries the last failed task"""
         kwargs = {}
         if resume_subworkflow_tasks is not None:
             kwargs["resume_subworkflow_tasks"] = resume_subworkflow_tasks
-        return self.workflow_client.retry1(workflow_id=workflow_id, **kwargs)
+        return self.workflow_client.retry(workflow_id=workflow_id, **kwargs)
 
     def rerun(
         self, rerun_workflow_request: RerunWorkflowRequest, workflow_id: str
