@@ -21,6 +21,7 @@ logger = logging.getLogger(
     )
 )
 
+
 def get_annotated_workers():
     pkg = __get_client_topmost_package_filepath()
     workers = __get_annotated_workers_from_subtree(pkg)
@@ -36,7 +37,7 @@ class TaskHandler:
             metrics_settings: MetricsSettings = None,
             scan_for_annotated_workers: bool = None,
     ):
-        self.logger_process, self.queue = setup_logging_queue(configuration)
+        self.logger_process, self.queue = _setup_logging_queue(configuration)
         self.worker_config = load_worker_config()
         if workers is None:
             workers = []
@@ -45,13 +46,10 @@ class TaskHandler:
         if scan_for_annotated_workers is True:
             for worker in get_annotated_workers():
                 workers.append(worker)
-        self.__create_task_runner_processes(
-            workers, configuration, metrics_settings
-        )
-        self.__create_metrics_provider_process(
-            metrics_settings
-        )
-        logger.info('Created all processes')
+
+        self.__create_task_runner_processes(workers, configuration, metrics_settings)
+        self.__create_metrics_provider_process(metrics_settings)
+        logger.info('TaskHandler initialized')
 
     def __enter__(self):
         return self
@@ -84,7 +82,7 @@ class TaskHandler:
             self.stop_processes()
 
     def __create_metrics_provider_process(self, metrics_settings: MetricsSettings) -> None:
-        if metrics_settings == None:
+        if metrics_settings is None:
             self.metrics_provider_process = None
             return
         self.metrics_provider_process = Process(
@@ -94,45 +92,42 @@ class TaskHandler:
         logger.info('Created MetricsProvider process')
 
     def __create_task_runner_processes(
-        self,
-        workers: List[WorkerInterface],
-        configuration: Configuration,
-        metrics_settings: MetricsSettings
+            self,
+            workers: List[WorkerInterface],
+            configuration: Configuration,
+            metrics_settings: MetricsSettings
     ) -> None:
         self.task_runner_processes = []
         for worker in workers:
             self.__create_task_runner_process(
                 worker, configuration, metrics_settings
             )
-        logger.info('Created TaskRunner processes')
 
     def __create_task_runner_process(
-        self,
-        worker: WorkerInterface,
-        configuration: Configuration,
-        metrics_settings: MetricsSettings
+            self,
+            worker: WorkerInterface,
+            configuration: Configuration,
+            metrics_settings: MetricsSettings
     ) -> None:
-        task_runner = TaskRunner(
-            worker, configuration, metrics_settings, self.worker_config
-        )
-        process = Process(
-            target=task_runner.run, args=(self.queue,)
-        )
+        task_runner = TaskRunner(worker, configuration, metrics_settings, self.worker_config)
+        process = Process(target=task_runner.run)
         self.task_runner_processes.append(process)
 
     def __start_metrics_provider_process(self):
-        if self.metrics_provider_process == None:
+        if self.metrics_provider_process is None:
             return
         self.metrics_provider_process.start()
         logger.info('Started MetricsProvider process')
 
     def __start_task_runner_processes(self):
+        n = 0
         for task_runner_process in self.task_runner_processes:
             task_runner_process.start()
-        logger.info('Started TaskRunner processes')
+            n = n + 1
+        logger.info(f'Started {n} TaskRunner process')
 
     def __join_metrics_provider_process(self):
-        if self.metrics_provider_process == None:
+        if self.metrics_provider_process is None:
             return
         self.metrics_provider_process.join()
         logger.info('Joined MetricsProvider processes')
@@ -150,7 +145,7 @@ class TaskHandler:
             self.__stop_process(task_runner_process)
 
     def __stop_process(self, process: Process):
-        if process == None:
+        if process is None:
             return
         try:
             logger.debug(f'Terminating process: {process.pid}')
@@ -159,6 +154,7 @@ class TaskHandler:
             logger.debug(f'Failed to terminate process: {process.pid}, reason: {e}')
             process.kill()
             logger.debug(f'Killed process: {process.pid}')
+
 
 def __get_client_topmost_package_filepath():
     module = inspect.getmodule(inspect.stack()[-1][0])
@@ -237,6 +233,7 @@ def __create_worker_from_ast_node(node, params):
     worker = Worker(**params)
     return worker
 
+
 def load_worker_config():
     worker_config = ConfigParser()
 
@@ -248,13 +245,15 @@ def load_worker_config():
 
     return worker_config
 
+
 def __get_config_file_path() -> str:
     return os.getcwd() + "/worker.ini"
 
+
 # Setup centralized logging queue
-def setup_logging_queue(configuration):
+def _setup_logging_queue(configuration: Configuration):
     queue = Queue()
-    logger.addHandler(QueueHandler(queue))
+    # logger.addHandler(QueueHandler(queue))
     if configuration:
         configuration.apply_logging_config()
         log_level = configuration.log_level
@@ -262,13 +261,14 @@ def setup_logging_queue(configuration):
     else:
         log_level = logging.DEBUG
         logger_format = None
-    
+
     logger.setLevel(log_level)
-    
+
     # start the logger process
     logger_p = Process(target=__logger_process, args=(queue, log_level, logger_format))
     logger_p.start()
     return logger_p, queue
+
 
 # This process performs the centralized logging
 def __logger_process(queue, log_level, logger_format=None):
@@ -277,16 +277,16 @@ def __logger_process(queue, log_level, logger_format=None):
             __name__
         )
     )
-    
+
     c_logger.setLevel(log_level)
-        
+
     # configure a stream handler
     sh = logging.StreamHandler()
     if logger_format:
         formatter = logging.Formatter(logger_format)
         sh.setFormatter(formatter)
     c_logger.addHandler(sh)
-    
+
     # run forever
     while True:
         # consume a log message, block until one arrives

@@ -49,11 +49,7 @@ class TaskRunner:
             )
         )
 
-    def run(self, queue) -> None:
-        # Add a handler that uses the shared queue
-        if queue:
-            logger.addHandler(QueueHandler(queue))
-        
+    def run(self) -> None:
         if self.configuration != None:
             self.configuration.apply_logging_config()
         else:
