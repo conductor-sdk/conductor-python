@@ -1,3 +1,8 @@
+"""Orkes Clients
+
+The class in this module allows access to all Orkes clients.
+"""
+
 from conductor.client.authorization_client import AuthorizationClient
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.integration_client import IntegrationClient
@@ -19,6 +24,10 @@ from conductor.client.workflow_client import WorkflowClient
 
 
 class OrkesClients:
+    """
+    A wrapper class to allow single access point to all the Orkes Clients.
+    """
+
     def __init__(self, configuration: Configuration):
         self.configuration = configuration
 

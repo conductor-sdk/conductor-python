@@ -34,8 +34,8 @@ class TestOrkesSchedulerClient(unittest.TestCase):
         logging.disable(logging.NOTSET)
 
     def test_init(self):
-        message = "schedulerResourceApi is not of type SchedulerResourceApi"
-        self.assertIsInstance(self.scheduler_client.schedulerResourceApi, SchedulerResourceApi, message)
+        message = "scheduler_resource_api  is not of type SchedulerResourceApi"
+        self.assertIsInstance(self.scheduler_client.scheduler_resource_api, SchedulerResourceApi, message)
 
     @patch.object(SchedulerResourceApi, 'save_schedule')
     def test_saveSchedule(self, mock):

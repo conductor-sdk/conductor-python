@@ -18,7 +18,7 @@ class MetadataClient(ABC):
         pass
 
     @abstractmethod
-    def unregister_workflow_def(self, workflow_name: str, version: int):
+    def unregister_workflow_def(self, name: str, version: int):
         pass
 
     @abstractmethod

@@ -41,8 +41,8 @@ class TestOrkesTaskClient(unittest.TestCase):
         logging.disable(logging.NOTSET)
 
     def test_init(self):
-        message = "taskResourceApi is not of type TaskResourceApi"
-        self.assertIsInstance(self.task_client.taskResourceApi, TaskResourceApi, message)
+        message = "task_resource_api is not of type TaskResourceApi"
+        self.assertIsInstance(self.task_client.task_resource_api, TaskResourceApi, message)
 
     @patch.object(TaskResourceApi, 'poll')
     def test_pollTask(self, mock):

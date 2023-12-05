@@ -38,8 +38,8 @@ class TestOrkesWorkflowClient(unittest.TestCase):
         logging.disable(logging.NOTSET)
 
     def test_init(self):
-        message = "workflowResourceApi is not of type WorkflowResourceApi"
-        self.assertIsInstance(self.workflow_client.workflowResourceApi, WorkflowResourceApi, message)
+        message = "workflow_resource_api  is not of type WorkflowResourceApi"
+        self.assertIsInstance(self.workflow_client.workflow_resource_api, WorkflowResourceApi, message)
 
     @patch.object(WorkflowResourceApi, 'start_workflow1')
     def test_start_workflow_by_name(self, mock):
@@ -58,7 +58,7 @@ class TestOrkesWorkflowClient(unittest.TestCase):
     @patch.object(WorkflowResourceApi, 'start_workflow1')
     def test_start_workflow_by_name_with_correlation_id(self, mock):
         mock.return_value = WORKFLOW_UUID
-        wfId = self.workflow_client.start_workflow_by_name(WORKFLOW_NAME, self.input, correlationId=CORRELATION_ID)
+        wfId = self.workflow_client.start_workflow_by_name(WORKFLOW_NAME, self.input, correlation_id=CORRELATION_ID)
         mock.assert_called_with(self.input, WORKFLOW_NAME, correlation_id=CORRELATION_ID)
         self.assertEqual(wfId, WORKFLOW_UUID)
 

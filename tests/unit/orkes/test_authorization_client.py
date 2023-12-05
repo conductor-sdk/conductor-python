@@ -88,14 +88,14 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
         logging.disable(logging.NOTSET)
 
     def test_init(self):
-        message = "applicationResourceApi is not of type ApplicationResourceApi"
-        self.assertIsInstance(self.authorization_client.applicationResourceApi, ApplicationResourceApi, message)
-        message = "userResourceApi is not of type UserResourceApi"
-        self.assertIsInstance(self.authorization_client.userResourceApi, UserResourceApi, message)
-        message = "groupResourceApi is not of type GroupResourceApi"
-        self.assertIsInstance(self.authorization_client.groupResourceApi, GroupResourceApi, message)
-        message = "authorizationResourceApi is not of type AuthorizationResourceApi"
-        self.assertIsInstance(self.authorization_client.authorizationResourceApi, AuthorizationResourceApi, message)
+        message = "application_resource_api is not of type ApplicationResourceApi"
+        self.assertIsInstance(self.authorization_client.application_resource_api, ApplicationResourceApi, message)
+        message = "user_resource_api  is not of type UserResourceApi"
+        self.assertIsInstance(self.authorization_client.user_resource_api, UserResourceApi, message)
+        message = "group_resource_api  is not of type GroupResourceApi"
+        self.assertIsInstance(self.authorization_client.group_resource_api, GroupResourceApi, message)
+        message = "authorization_resource_api  is not of type AuthorizationResourceApi"
+        self.assertIsInstance(self.authorization_client.authorization_resource_api, AuthorizationResourceApi, message)
 
     @patch.object(ApplicationResourceApi, 'create_application')
     def test_createApplication(self, mock):

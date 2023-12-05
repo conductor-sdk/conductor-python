@@ -43,15 +43,14 @@ workflow_id = workflow_client.start_workflow(startWorkflowRequest)
 
 #### Start using Workflow Name
 ```python
-wfInput = { "a" : 5, "b": "+", "c" : [7, 8] }
-workflow_id = workflow_client.start_workflow_by_name("WORKFLOW_NAME", wfInput)
+wf_input = { "a" : 5, "b": "+", "c" : [7, 8] }
+workflow_id = workflow_client.start_workflow_by_name("WORKFLOW_NAME", wf_input)
 ```
 
 #### Execute workflow synchronously
 Starts a workflow and waits until the workflow completes or the waitUntilTask completes.
 
 ```python
-wfInput = {"a": 5, "b": "+", "c": [7, 8]}
 requestId = "request_id"
 version = 1
 waitUntilTaskRef = "simple_task_ref"  # Optional

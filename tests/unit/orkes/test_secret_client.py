@@ -25,8 +25,8 @@ class TestOrkesSecretClient(unittest.TestCase):
         logging.disable(logging.NOTSET)
 
     def test_init(self):
-        message = "secretResourceApi is not of type SecretResourceApi"
-        self.assertIsInstance(self.secret_client.secretResourceApi, SecretResourceApi, message)
+        message = "secret_resource_api is not of type SecretResourceApi"
+        self.assertIsInstance(self.secret_client.secret_resource_api, SecretResourceApi, message)
 
     @patch.object(SecretResourceApi, 'put_secret')
     def test_putSecret(self, mock):

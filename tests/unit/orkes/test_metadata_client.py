@@ -35,8 +35,8 @@ class TestOrkesMetadataClient(unittest.TestCase):
         logging.disable(logging.NOTSET)
 
     def test_init(self):
-        message = "metadataResourceApi is not of type MetadataResourceApi"
-        self.assertIsInstance(self.metadata_client.metadataResourceApi, MetadataResourceApi, message)
+        message = "metadata_resource_api is not of type MetadataResourceApi"
+        self.assertIsInstance(self.metadata_client.metadata_resource_api, MetadataResourceApi, message)
 
     @patch.object(MetadataResourceApi, 'create')
     def test_registerWorkflowDef(self, mock):
