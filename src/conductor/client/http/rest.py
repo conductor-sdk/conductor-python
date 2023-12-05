@@ -1,18 +1,17 @@
+from conductor.client.configuration.configuration import Configuration
+from six.moves.urllib.parse import urlencode
+import certifi
 import io
 import json
 import logging
 import re
-import ssl
-
-import certifi
-import requests
 import six
-from six.moves.urllib.parse import urlencode
-
-from conductor.client.configuration.configuration import Configuration
+import ssl
+import requests
 
 
 class RESTResponse(io.IOBase):
+
     def __init__(self, resp):
         self.status = resp.status_code
         self.reason = resp.reason
@@ -24,20 +23,13 @@ class RESTResponse(io.IOBase):
 
 
 class RESTClientObject(object):
-    def __init__(self, connection=None):
+    def __init__(self, connection = None):
         self.connection = connection or requests.Session()
 
-    def request(
-        self,
-        method,
-        url,
-        query_params=None,
-        headers=None,
-        body=None,
-        post_params=None,
-        _preload_content=True,
-        _request_timeout=None,
-    ):
+
+    def request(self, method, url, query_params=None, headers=None,
+                body=None, post_params=None, _preload_content=True,
+                _request_timeout=None):
         """Perform requests.
 
         :param method: http request method
@@ -57,7 +49,8 @@ class RESTClientObject(object):
                                  (connection, read) timeouts.
         """
         method = method.upper()
-        assert method in ["GET", "HEAD", "DELETE", "POST", "PUT", "PATCH", "OPTIONS"]
+        assert method in ['GET', 'HEAD', 'DELETE', 'POST', 'PUT',
+                          'PATCH', 'OPTIONS']
 
         if post_params and body:
             raise ValueError(
@@ -69,22 +62,23 @@ class RESTClientObject(object):
 
         timeout = _request_timeout if _request_timeout is not None else 45
 
-        if "Content-Type" not in headers:
-            headers["Content-Type"] = "application/json"
+        if 'Content-Type' not in headers:
+            headers['Content-Type'] = 'application/json'
 
         try:
             # For `POST`, `PUT`, `PATCH`, `OPTIONS`, `DELETE`
-            if method in ["POST", "PUT", "PATCH", "OPTIONS", "DELETE"]:
+            if method in ['POST', 'PUT', 'PATCH', 'OPTIONS', 'DELETE']:
                 if query_params:
-                    url += "?" + urlencode(query_params)
-                if re.search(
-                    "json", headers["Content-Type"], re.IGNORECASE
-                ) or isinstance(body, str):
-                    request_body = "{}"
+                    url += '?' + urlencode(query_params)
+                if re.search('json', headers['Content-Type'], re.IGNORECASE) or isinstance(body, str):
+                    request_body = '{}'
                     if body is not None:
                         request_body = json.dumps(body)
                     r = self.connection.request(
-                        method, url, data=request_body, timeout=timeout, headers=headers
+                        method, url,
+                        data=request_body,
+                        timeout=timeout,
+                        headers=headers
                     )
                 else:
                     # Cannot generate the request from given parameters
@@ -95,7 +89,10 @@ class RESTClientObject(object):
             # For `GET`, `HEAD`
             else:
                 r = self.connection.request(
-                    method, url, params=query_params, timeout=timeout, headers=headers
+                    method, url,
+                    params=query_params,
+                    timeout=timeout,
+                    headers=headers
                 )
         except Exception as e:
             msg = "{0}\n{1}".format(type(e).__name__, str(e))
@@ -109,145 +106,74 @@ class RESTClientObject(object):
 
         return r
 
-    def GET(
-        self,
-        url,
-        headers=None,
-        query_params=None,
-        _preload_content=True,
-        _request_timeout=None,
-    ):
-        return self.request(
-            "GET",
-            url,
-            headers=headers,
-            _preload_content=_preload_content,
-            _request_timeout=_request_timeout,
-            query_params=query_params,
-        )
+    def GET(self, url, headers=None, query_params=None, _preload_content=True,
+            _request_timeout=None):
+        return self.request("GET", url,
+                            headers=headers,
+                            _preload_content=_preload_content,
+                            _request_timeout=_request_timeout,
+                            query_params=query_params)
 
-    def HEAD(
-        self,
-        url,
-        headers=None,
-        query_params=None,
-        _preload_content=True,
-        _request_timeout=None,
-    ):
-        return self.request(
-            "HEAD",
-            url,
-            headers=headers,
-            _preload_content=_preload_content,
-            _request_timeout=_request_timeout,
-            query_params=query_params,
-        )
+    def HEAD(self, url, headers=None, query_params=None, _preload_content=True,
+             _request_timeout=None):
+        return self.request("HEAD", url,
+                            headers=headers,
+                            _preload_content=_preload_content,
+                            _request_timeout=_request_timeout,
+                            query_params=query_params)
 
-    def OPTIONS(
-        self,
-        url,
-        headers=None,
-        query_params=None,
-        post_params=None,
-        body=None,
-        _preload_content=True,
-        _request_timeout=None,
-    ):
-        return self.request(
-            "OPTIONS",
-            url,
-            headers=headers,
-            query_params=query_params,
-            post_params=post_params,
-            _preload_content=_preload_content,
-            _request_timeout=_request_timeout,
-            body=body,
-        )
+    def OPTIONS(self, url, headers=None, query_params=None, post_params=None,
+                body=None, _preload_content=True, _request_timeout=None):
+        return self.request("OPTIONS", url,
+                            headers=headers,
+                            query_params=query_params,
+                            post_params=post_params,
+                            _preload_content=_preload_content,
+                            _request_timeout=_request_timeout,
+                            body=body)
 
-    def DELETE(
-        self,
-        url,
-        headers=None,
-        query_params=None,
-        body=None,
-        _preload_content=True,
-        _request_timeout=None,
-    ):
-        return self.request(
-            "DELETE",
-            url,
-            headers=headers,
-            query_params=query_params,
-            _preload_content=_preload_content,
-            _request_timeout=_request_timeout,
-            body=body,
-        )
+    def DELETE(self, url, headers=None, query_params=None, body=None,
+               _preload_content=True, _request_timeout=None):
+        return self.request("DELETE", url,
+                            headers=headers,
+                            query_params=query_params,
+                            _preload_content=_preload_content,
+                            _request_timeout=_request_timeout,
+                            body=body)
 
-    def POST(
-        self,
-        url,
-        headers=None,
-        query_params=None,
-        post_params=None,
-        body=None,
-        _preload_content=True,
-        _request_timeout=None,
-    ):
-        return self.request(
-            "POST",
-            url,
-            headers=headers,
-            query_params=query_params,
-            post_params=post_params,
-            _preload_content=_preload_content,
-            _request_timeout=_request_timeout,
-            body=body,
-        )
+    def POST(self, url, headers=None, query_params=None, post_params=None,
+             body=None, _preload_content=True, _request_timeout=None):
+        return self.request("POST", url,
+                            headers=headers,
+                            query_params=query_params,
+                            post_params=post_params,
+                            _preload_content=_preload_content,
+                            _request_timeout=_request_timeout,
+                            body=body)
 
-    def PUT(
-        self,
-        url,
-        headers=None,
-        query_params=None,
-        post_params=None,
-        body=None,
-        _preload_content=True,
-        _request_timeout=None,
-    ):
-        return self.request(
-            "PUT",
-            url,
-            headers=headers,
-            query_params=query_params,
-            post_params=post_params,
-            _preload_content=_preload_content,
-            _request_timeout=_request_timeout,
-            body=body,
-        )
+    def PUT(self, url, headers=None, query_params=None, post_params=None,
+            body=None, _preload_content=True, _request_timeout=None):
+        return self.request("PUT", url,
+                            headers=headers,
+                            query_params=query_params,
+                            post_params=post_params,
+                            _preload_content=_preload_content,
+                            _request_timeout=_request_timeout,
+                            body=body)
 
-    def PATCH(
-        self,
-        url,
-        headers=None,
-        query_params=None,
-        post_params=None,
-        body=None,
-        _preload_content=True,
-        _request_timeout=None,
-    ):
-        return self.request(
-            "PATCH",
-            url,
-            headers=headers,
-            query_params=query_params,
-            post_params=post_params,
-            _preload_content=_preload_content,
-            _request_timeout=_request_timeout,
-            body=body,
-        )
+    def PATCH(self, url, headers=None, query_params=None, post_params=None,
+              body=None, _preload_content=True, _request_timeout=None):
+        return self.request("PATCH", url,
+                            headers=headers,
+                            query_params=query_params,
+                            post_params=post_params,
+                            _preload_content=_preload_content,
+                            _request_timeout=_request_timeout,
+                            body=body)
 
 
 class ApiException(Exception):
+
     def __init__(self, status=None, reason=None, http_resp=None, body=None):
         if http_resp:
             self.status = http_resp.status
@@ -262,9 +188,11 @@ class ApiException(Exception):
 
     def __str__(self):
         """Custom error messages for exception"""
-        error_message = "({0})\n" "Reason: {1}\n".format(self.status, self.reason)
+        error_message = "({0})\n"\
+                        "Reason: {1}\n".format(self.status, self.reason)
         if self.headers:
-            error_message += "HTTP response headers: {0}\n".format(self.headers)
+            error_message += "HTTP response headers: {0}\n".format(
+                self.headers)
 
         if self.body:
             error_message += "HTTP response body: {0}\n".format(self.body)

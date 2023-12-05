@@ -1,7 +1,11 @@
 class Token(object):
-    swagger_types = {"token": "str"}
+    swagger_types = {
+        'token': 'str'
+    }
 
-    attribute_map = {"token": "token"}
+    attribute_map = {
+        'token': 'token'
+    }
 
     def __init__(self, token: str = None):
         self.token = None

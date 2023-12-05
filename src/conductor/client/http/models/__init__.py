@@ -3,13 +3,9 @@ from conductor.client.http.models.authorization_request import AuthorizationRequ
 from conductor.client.http.models.bulk_response import BulkResponse
 from conductor.client.http.models.conductor_application import ConductorApplication
 from conductor.client.http.models.conductor_user import ConductorUser
-from conductor.client.http.models.create_or_update_application_request import (
-    CreateOrUpdateApplicationRequest,
-)
+from conductor.client.http.models.create_or_update_application_request import CreateOrUpdateApplicationRequest
 from conductor.client.http.models.event_handler import EventHandler
-from conductor.client.http.models.external_storage_location import (
-    ExternalStorageLocation,
-)
+from conductor.client.http.models.external_storage_location import ExternalStorageLocation
 from conductor.client.http.models.generate_token_request import GenerateTokenRequest
 from conductor.client.http.models.group import Group
 from conductor.client.http.models.permission import Permission
@@ -19,20 +15,12 @@ from conductor.client.http.models.rerun_workflow_request import RerunWorkflowReq
 from conductor.client.http.models.response import Response
 from conductor.client.http.models.role import Role
 from conductor.client.http.models.save_schedule_request import SaveScheduleRequest
-from conductor.client.http.models.scrollable_search_result_workflow_summary import (
-    ScrollableSearchResultWorkflowSummary,
-)
+from conductor.client.http.models.scrollable_search_result_workflow_summary import ScrollableSearchResultWorkflowSummary
 from conductor.client.http.models.search_result_task import SearchResultTask
-from conductor.client.http.models.search_result_task_summary import (
-    SearchResultTaskSummary,
-)
+from conductor.client.http.models.search_result_task_summary import SearchResultTaskSummary
 from conductor.client.http.models.search_result_workflow import SearchResultWorkflow
-from conductor.client.http.models.search_result_workflow_schedule_execution_model import (
-    SearchResultWorkflowScheduleExecutionModel,
-)
-from conductor.client.http.models.search_result_workflow_summary import (
-    SearchResultWorkflowSummary,
-)
+from conductor.client.http.models.search_result_workflow_schedule_execution_model import SearchResultWorkflowScheduleExecutionModel
+from conductor.client.http.models.search_result_workflow_summary import SearchResultWorkflowSummary
 from conductor.client.http.models.skip_task_request import SkipTaskRequest
 from conductor.client.http.models.start_workflow import StartWorkflow
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
@@ -54,9 +42,7 @@ from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.http.models.workflow_run import WorkflowRun
 from conductor.client.http.models.workflow_schedule import WorkflowSchedule
-from conductor.client.http.models.workflow_schedule_execution_model import (
-    WorkflowScheduleExecutionModel,
-)
+from conductor.client.http.models.workflow_schedule_execution_model import WorkflowScheduleExecutionModel
 from conductor.client.http.models.workflow_status import WorkflowStatus
 from conductor.client.http.models.workflow_summary import WorkflowSummary
 from conductor.client.http.models.workflow_tag import WorkflowTag
