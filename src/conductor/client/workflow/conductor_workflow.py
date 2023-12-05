@@ -1,19 +1,27 @@
+"""Conductor Workflow
+
+The class in this module allows construction of a Conductor workflow in memory.
+"""
+
 from copy import deepcopy
 from typing import Any, Dict, List, Union
 
 from shortuuid import uuid
 from typing_extensions import Self
 
-from conductor.client.http.models import *
-from conductor.client.workflow.executor.workflow_executor import \
-    WorkflowExecutor
+from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
+from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.fork_task import ForkTask
 from conductor.client.workflow.task.join_task import JoinTask
 from conductor.client.workflow.task.task import TaskInterface
+from conductor.client.http.models.workflow_def import WorkflowDef
+from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
 
 
 class ConductorWorkflow:
+    '''A class to create a conductor Workflow using a WorkflowExecutor.'''
+
     SCHEMA_VERSION = 2
 
     def __init__(
@@ -40,74 +48,129 @@ class ConductorWorkflow:
 
     @property
     def name(self) -> str:
+        """Gets the name of this Conductor Workflow.
+
+
+        :return: The name of this Conductor Workflow.
+        :rtype: str
+        """
+
         return self._name
 
     @name.setter
     def name(self, name: str) -> None:
+        """Sets the name of this ConductorWorkflow.
+
+
+        :param name: The name of this ConductorWorkflow.
+        :type: str
+        """
+
         if not isinstance(name, str):
             raise Exception("invalid type")
         self._name = deepcopy(name)
 
     @property
     def version(self) -> int:
+        """Gets the version of this Conductor Workflow.
+
+
+        :return: The version of this Conductor Workflow.
+        :rtype: int
+        """
+
         return self._version
 
     @version.setter
     def version(self, version: int) -> None:
-        if version != None and not isinstance(version, int):
+        """Sets the version of this ConductorWorkflow.
+
+
+        :param version: The version of this ConductorWorkflow.
+        :type: int
+        """
+
+        if version is not None and not isinstance(version, int):
             raise Exception("invalid type")
         self._version = deepcopy(version)
 
     @property
     def description(self) -> str:
+        """Gets the description of this Conductor Workflow.
+
+
+        :return: The description of this Conductor Workflow.
+        :rtype: str
+        """
+
         return self._description
 
     @description.setter
     def description(self, description: str) -> None:
-        if description != None and not isinstance(description, str):
+        """Sets the description of this ConductorWorkflow.
+
+
+        :param description: The description of this ConductorWorkflow.
+        :type: str
+        """
+
+        if description is not None and not isinstance(description, str):
             raise Exception("invalid type")
         self._description = deepcopy(description)
 
     def timeout_policy(self, timeout_policy: TimeoutPolicy) -> Self:
+        '''Sets the timeout policy on this Conductor workflow.'''
+
         if not isinstance(timeout_policy, TimeoutPolicy):
             raise Exception("invalid type")
         self._timeout_policy = deepcopy(timeout_policy)
         return self
 
     def timeout_seconds(self, timeout_seconds: int) -> Self:
+        '''Sets the timeout in seconds on this Conductor workflow.'''
+
         if not isinstance(timeout_seconds, int):
             raise Exception("invalid type")
         self._timeout_seconds = deepcopy(timeout_seconds)
         return self
 
     def owner_email(self, owner_email: str) -> Self:
+        '''Sets the owner email of this Conductor workflow.'''
+
         if not isinstance(owner_email, str):
             raise Exception("invalid type")
         self._owner_email = deepcopy(owner_email)
         return self
 
-    # Name of the workflow to execute when this workflow fails.
-    # Failure workflows can be used for handling compensation logic
     def failure_workflow(self, failure_workflow: str) -> Self:
+        """Sets the failure workflow to execute when this workflow fails.
+        Failure workflows can be used for handling compensation logic.
+        """
+
         if not isinstance(failure_workflow, str):
             raise Exception("invalid type")
         self._failure_workflow = deepcopy(failure_workflow)
         return self
 
-    # If the workflow can be restarted after it has reached terminal state.
-    # Set this to false if restarting workflow can have side effects
     def restartable(self, restartable: bool) -> Self:
+        """Sets the workflow as restartable so it can be allowed to restart
+        after it has reached terminal state.
+        Set this to false if restarting workflow can have side effects.
+        """
+
         if not isinstance(restartable, bool):
             raise Exception("invalid type")
         self._restartable = deepcopy(restartable)
         return self
 
-    # Workflow output follows similar structure as task input
-    # See https://conductor.netflix.com/how-tos/Tasks/task-inputs.html for more details
     def output_parameters(self, output_parameters: Dict[str, Any]) -> Self:
-        if output_parameters == None:
+        """Sets the output parameters for the Conductor workflow.
+        Workflow output follows similar structure as task input.
+        See https://conductor.netflix.com/how-tos/Tasks/task-inputs.html."""
+
+        if output_parameters is None:
             self._output_parameters = {}
-            return
+            return self
         if not isinstance(output_parameters, dict):
             raise Exception("invalid type")
         for key in output_parameters.keys():
@@ -116,11 +179,14 @@ class ConductorWorkflow:
         self._output_parameters = deepcopy(output_parameters)
         return self
 
-    # InputTemplate template input to the workflow.  Can have combination of variables (e.g. ${workflow.input.abc}) and static values
     def input_template(self, input_template: Dict[str, Any]) -> Self:
-        if input_template == None:
+        """Sets an input template for the Conductor workflow. Can have
+        combination of variables (e.g. ${workflow.input.abc}) and static values.
+        """
+
+        if input_template is None:
             self._input_template = {}
-            return
+            return self
         if not isinstance(input_template, dict):
             raise Exception("invalid type")
         for key in input_template.keys():
@@ -129,12 +195,17 @@ class ConductorWorkflow:
         self._input_template = deepcopy(input_template)
         return self
 
-    # Variables are set using SET_VARIABLE task. Excellent way to maintain business state
-    # e.g. Variables can maintain business/user specific states which can be queried and inspected to find out the state of the workflow
     def variables(self, variables: Dict[str, Any]) -> Self:
-        if variables == None:
+        """Set the list of the variables in the conductor workflow.
+        Variables are an excellent way to maintain business state.
+        Variables can maintain business/user specific states which can be
+        queried and inspected to find out the state of the workflow.
+        They can be set using the SET_VARIABLE task.
+        """
+
+        if variables is None:
             self._variables = {}
-            return
+            return self
         if not isinstance(variables, dict):
             raise Exception("invalid type")
         for key in variables.keys():
@@ -143,8 +214,9 @@ class ConductorWorkflow:
         self._variables = deepcopy(variables)
         return self
 
-    # List of the input parameters to the workflow. Usage: documentation ONLY
     def input_parameters(self, input_parameters: List[str]) -> Self:
+        '''Set the list of the input parameters for the conductor workflow.'''
+
         if not isinstance(input_parameters, list):
             raise Exception("invalid type")
         for input_parameter in input_parameters:
@@ -153,18 +225,23 @@ class ConductorWorkflow:
         self._input_parameters = deepcopy(input_parameters)
         return self
 
-    # Register the workflow definition with the server. If overwrite is set, the definition on the server will be
-    # overwritten. When not set, the call fails if there is any change in the workflow definition between the server
-    # and what is being registered.
     def register(self, overwrite: bool):
+        """Register the workflow definition with the server.
+        If overwrite is set, the definition on the server will be overwritten.
+        When not set, the call fails if there is any change in the workflow
+        definition between the server and what is being registered.
+        """
+
         return self._executor.register_workflow(
             overwrite=overwrite,
             workflow=self.to_workflow_def(),
         )
 
-    # Executes the workflow inline without registering with the server.  Useful for one-off workflows that need not
-    # be registered.
     def start_workflow(self, start_workflow_request: StartWorkflowRequest):
+        """Executes the workflow inline without registering with the server.
+        Useful for one-off workflows that need not be registered.
+        """
+
         start_workflow_request.workflow_def = self.to_workflow_def()
         return self._executor.start_workflow(start_workflow_request)
 
@@ -174,6 +251,8 @@ class ConductorWorkflow:
         wait_until_task_ref: str = "",
         wait_for_seconds: int = 10,
     ) -> dict:
+        """Executes the conductor workflow synchronously."""
+
         request = StartWorkflowRequest()
         request.workflow_def = self.to_workflow_def()
         request.input = workflow_input
@@ -188,6 +267,8 @@ class ConductorWorkflow:
 
     # Converts the workflow to the JSON serializable format
     def to_workflow_def(self) -> WorkflowDef:
+        '''Converts the Conductor workflow to a Workflow Definition.'''
+
         return WorkflowDef(
             name=self._name,
             description=self._description,
@@ -229,8 +310,9 @@ class ConductorWorkflow:
             return self.__add_fork_join_tasks(forked_tasks)
         return self.__add_task(task)
 
-    # Append task
     def add(self, task: Union[TaskInterface, List[TaskInterface]]) -> Self:
+        """Adds a list of tasks to the conductor workflow."""
+
         if isinstance(task, list):
             for t in task:
                 self.__add_task(t)
