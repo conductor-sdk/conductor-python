@@ -39,7 +39,7 @@ class ConductorWorkflow:
         self._owner_email = None
         self._timeout_policy = None
         self._timeout_seconds = 60
-        self._failure_workflow = ""
+        self._failure_workflow = ''
         self._input_parameters = []
         self._output_parameters = {}
         self._input_template = {}
@@ -67,7 +67,7 @@ class ConductorWorkflow:
         """
 
         if not isinstance(name, str):
-            raise Exception("invalid type")
+            raise Exception('invalid type')
         self._name = deepcopy(name)
 
     @property
@@ -91,7 +91,7 @@ class ConductorWorkflow:
         """
 
         if version is not None and not isinstance(version, int):
-            raise Exception("invalid type")
+            raise Exception('invalid type')
         self._version = deepcopy(version)
 
     @property
@@ -115,14 +115,14 @@ class ConductorWorkflow:
         """
 
         if description is not None and not isinstance(description, str):
-            raise Exception("invalid type")
+            raise Exception('invalid type')
         self._description = deepcopy(description)
 
     def timeout_policy(self, timeout_policy: TimeoutPolicy) -> Self:
         '''Sets the timeout policy on this Conductor workflow.'''
 
         if not isinstance(timeout_policy, TimeoutPolicy):
-            raise Exception("invalid type")
+            raise Exception('invalid type')
         self._timeout_policy = deepcopy(timeout_policy)
         return self
 
@@ -130,7 +130,7 @@ class ConductorWorkflow:
         '''Sets the timeout in seconds on this Conductor workflow.'''
 
         if not isinstance(timeout_seconds, int):
-            raise Exception("invalid type")
+            raise Exception('invalid type')
         self._timeout_seconds = deepcopy(timeout_seconds)
         return self
 
@@ -138,7 +138,7 @@ class ConductorWorkflow:
         '''Sets the owner email of this Conductor workflow.'''
 
         if not isinstance(owner_email, str):
-            raise Exception("invalid type")
+            raise Exception('invalid type')
         self._owner_email = deepcopy(owner_email)
         return self
 
@@ -148,7 +148,7 @@ class ConductorWorkflow:
         """
 
         if not isinstance(failure_workflow, str):
-            raise Exception("invalid type")
+            raise Exception('invalid type')
         self._failure_workflow = deepcopy(failure_workflow)
         return self
 
@@ -159,7 +159,7 @@ class ConductorWorkflow:
         """
 
         if not isinstance(restartable, bool):
-            raise Exception("invalid type")
+            raise Exception('invalid type')
         self._restartable = deepcopy(restartable)
         return self
 
@@ -172,10 +172,10 @@ class ConductorWorkflow:
             self._output_parameters = {}
             return self
         if not isinstance(output_parameters, dict):
-            raise Exception("invalid type")
+            raise Exception('invalid type')
         for key in output_parameters.keys():
             if not isinstance(key, str):
-                raise Exception("invalid type")
+                raise Exception('invalid type')
         self._output_parameters = deepcopy(output_parameters)
         return self
 
@@ -188,10 +188,10 @@ class ConductorWorkflow:
             self._input_template = {}
             return self
         if not isinstance(input_template, dict):
-            raise Exception("invalid type")
+            raise Exception('invalid type')
         for key in input_template.keys():
             if not isinstance(key, str):
-                raise Exception("invalid type")
+                raise Exception('invalid type')
         self._input_template = deepcopy(input_template)
         return self
 
@@ -207,10 +207,10 @@ class ConductorWorkflow:
             self._variables = {}
             return self
         if not isinstance(variables, dict):
-            raise Exception("invalid type")
+            raise Exception('invalid type')
         for key in variables.keys():
             if not isinstance(key, str):
-                raise Exception("invalid type")
+                raise Exception('invalid type')
         self._variables = deepcopy(variables)
         return self
 
@@ -218,10 +218,10 @@ class ConductorWorkflow:
         '''Set the list of the input parameters for the conductor workflow.'''
 
         if not isinstance(input_parameters, list):
-            raise Exception("invalid type")
+            raise Exception('invalid type')
         for input_parameter in input_parameters:
             if not isinstance(input_parameter, str):
-                raise Exception("invalid type")
+                raise Exception('invalid type')
         self._input_parameters = deepcopy(input_parameters)
         return self
 
@@ -321,7 +321,7 @@ class ConductorWorkflow:
 
     def __add_task(self, task: TaskInterface) -> Self:
         if not issubclass(type(task), TaskInterface):
-            raise Exception("invalid type")
+            raise Exception('invalid type')
         self._tasks.append(deepcopy(task))
         return self
 
@@ -329,7 +329,7 @@ class ConductorWorkflow:
         for single_fork in forked_tasks:
             for task in single_fork:
                 if not issubclass(type(task), TaskInterface):
-                    raise Exception("invalid type")
+                    raise Exception('invalid type')
 
         suffix = str(uuid())
 

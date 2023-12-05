@@ -191,16 +191,16 @@ tags = [
     MetadataTag("tag3", "val3")
 ]
 
-metadata_client.setTaskTags(tags, 'PYTHON_TASK')
+metadata_client.set_task_tags(tags, 'PYTHON_TASK')
 ```
-setTaskTags will override any previously added tags.
+set_task_tags will override any previously added tags.
 
 ### Add single tag to your task
 
 You should be able to add a tag to your task:
 
 ```python
-metadata_client.addTaskTag(MetadataTag("tag1", "val1"), 'PYTHON_TASK')
+metadata_client.add_task_tag(MetadataTag("tag1", "val1"), 'PYTHON_TASK')
 ```
 
 ### Get tags added to your task
@@ -208,7 +208,7 @@ metadata_client.addTaskTag(MetadataTag("tag1", "val1"), 'PYTHON_TASK')
 You should be able to fetch tags added to your workflow:
 
 ```python
-tags = metadata_client.getTaskTags('PYTHON_TASK')
+tags = metadata_client.get_task_tags('PYTHON_TASK')
 ```
 
 ### Delete tag from your task
@@ -219,7 +219,7 @@ You should be able to delete a tag on your task:
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 
 tag = MetadataTag("tag1", "val1"),
-metadata_client.deleteTaskTag(tag, 'PYTHON_TASK')
+metadata_client.delete_task_tag(tag, 'PYTHON_TASK')
 ```
 
 ## Rate Limit Management
@@ -229,7 +229,7 @@ metadata_client.deleteTaskTag(tag, 'PYTHON_TASK')
 You should be able to add a rate limit to your workflow:
 
 ```python
-metadata_client.setWorkflowRateLimit(5, 'python_workflow_example_from_code')
+metadata_client.set_workflow_rate_limit(5, 'python_workflow_example_from_code')
 ```
 
 Here the execution limit is set as 5, which means that no more than 5 workflows will be allowed to execute at any given time.
@@ -239,7 +239,7 @@ Here the execution limit is set as 5, which means that no more than 5 workflows 
 You should be able to retrieve the rate limit that was set for your workflow previously:
 
 ```python
-rate_limit = metadata_client.getWorkflowRateLimit('python_workflow_example_from_code')
+rate_limit = metadata_client.get_workflow_rate_limit('python_workflow_example_from_code')
 ```
 
 ### Remove the rate limit on your workflow
@@ -249,4 +249,4 @@ You should be able to remove the rate limit on your workflow:
 ```python
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 
-metadata_client.removeWorkflowRateLimit('python_workflow_example_from_code')
+metadata_client.remove_workflow_rate_limit('python_workflow_example_from_code')

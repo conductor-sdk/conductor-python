@@ -435,18 +435,18 @@ class TestOrkesClients:
             MetadataTag("tag3", "val3")
         ]
 
-        self.metadata_client.addTaskTag(tags[0], TASK_TYPE)
-        fetchedTags = self.metadata_client.getTaskTags(TASK_TYPE)
+        self.metadata_client.add_task_tag(tags[0], TASK_TYPE)
+        fetchedTags = self.metadata_client.get_task_tags(TASK_TYPE)
         assert len(fetchedTags) == 1
         assert fetchedTags[0].key == tags[0].key
 
-        self.metadata_client.setTaskTags(tags, TASK_TYPE)
-        fetchedTags = self.metadata_client.getTaskTags(TASK_TYPE)
+        self.metadata_client.set_task_tags(tags, TASK_TYPE)
+        fetchedTags = self.metadata_client.get_task_tags(TASK_TYPE)
         assert len(fetchedTags) == 3
 
         tagStr = MetadataTag("tag2", "val2")
-        self.metadata_client.deleteTaskTag(tagStr, TASK_TYPE)
-        assert (len(self.metadata_client.getTaskTags(TASK_TYPE))) == 2
+        self.metadata_client.delete_task_tag(tagStr, TASK_TYPE)
+        assert (len(self.metadata_client.get_task_tags(TASK_TYPE))) == 2
 
     def __test_workflow_tags(self):
         singleTag = MetadataTag("wftag", "val")
@@ -471,16 +471,16 @@ class TestOrkesClients:
         assert (len(self.metadata_client.get_workflow_tags(WORKFLOW_NAME))) == 2
 
     def __test_workflow_rate_limit(self):
-        assert self.metadata_client.getWorkflowRateLimit(WORKFLOW_NAME) == None
+        assert self.metadata_client.get_workflow_rate_limit(WORKFLOW_NAME) == None
 
-        self.metadata_client.setWorkflowRateLimit(2, WORKFLOW_NAME)
-        assert self.metadata_client.getWorkflowRateLimit(WORKFLOW_NAME) == 2
+        self.metadata_client.set_workflow_rate_limit(2, WORKFLOW_NAME)
+        assert self.metadata_client.get_workflow_rate_limit(WORKFLOW_NAME) == 2
 
-        self.metadata_client.setWorkflowRateLimit(10, WORKFLOW_NAME)
-        assert self.metadata_client.getWorkflowRateLimit(WORKFLOW_NAME) == 10
+        self.metadata_client.set_workflow_rate_limit(10, WORKFLOW_NAME)
+        assert self.metadata_client.get_workflow_rate_limit(WORKFLOW_NAME) == 10
 
-        self.metadata_client.removeWorkflowRateLimit(WORKFLOW_NAME)
-        assert self.metadata_client.getWorkflowRateLimit(WORKFLOW_NAME) == None
+        self.metadata_client.remove_workflow_rate_limit(WORKFLOW_NAME)
+        assert self.metadata_client.get_workflow_rate_limit(WORKFLOW_NAME) == None
 
     def __test_workflow_execution_lifecycle(self):
         wfInput = {"a": 5, "b": "+", "c": [7, 8]}

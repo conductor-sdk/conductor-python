@@ -61,8 +61,8 @@ class OrkesMetadataClient(OrkesBaseClient, MetadataClient):
         self.tagsApi.add_workflow_tag(tag, workflow_name)
 
     def delete_workflow_tag(self, tag: MetadataTag, workflow_name: str):
-        tagStr = TagString(tag.key, tag.type, tag.value)
-        self.tagsApi.delete_workflow_tag(tagStr, workflow_name)
+        tag_str = TagString(tag.key, tag.type, tag.value)
+        self.tagsApi.delete_workflow_tag(tag_str, workflow_name)
 
     def get_workflow_tags(self, workflow_name: str) -> List[MetadataTag]:
         return self.tagsApi.get_workflow_tags(workflow_name)
@@ -70,34 +70,34 @@ class OrkesMetadataClient(OrkesBaseClient, MetadataClient):
     def set_workflow_tags(self, tags: List[MetadataTag], workflow_name: str):
         self.tagsApi.set_workflow_tags(tags, workflow_name)
 
-    def addTaskTag(self, tag: MetadataTag, taskName: str):
-        self.tagsApi.add_task_tag(tag, taskName)
+    def add_task_tag(self, tag: MetadataTag, task_name: str):
+        self.tagsApi.add_task_tag(tag, task_name)
 
-    def deleteTaskTag(self, tag: MetadataTag, taskName: str):
-        tagStr = TagString(tag.key, tag.type, tag.value)
-        self.tagsApi.delete_task_tag(tagStr, taskName)
+    def delete_task_tag(self, tag: MetadataTag, task_name: str):
+        tag_str = TagString(tag.key, tag.type, tag.value)
+        self.tagsApi.delete_task_tag(tag_str, task_name)
 
-    def getTaskTags(self, taskName: str) -> List[MetadataTag]:
-        return self.tagsApi.get_task_tags(taskName)
+    def get_task_tags(self, task_name: str) -> List[MetadataTag]:
+        return self.tagsApi.get_task_tags(task_name)
 
-    def setTaskTags(self, tags: List[MetadataTag], taskName: str):
-        self.tagsApi.set_task_tags(tags, taskName)
+    def set_task_tags(self, tags: List[MetadataTag], task_name: str):
+        self.tagsApi.set_task_tags(tags, task_name)
 
-    def setWorkflowRateLimit(self, rateLimit: int, workflowName: str):
-        self.removeWorkflowRateLimit(workflowName)
-        rateLimitTag = RateLimitTag(workflowName, rateLimit)
-        self.tagsApi.add_workflow_tag(rateLimitTag, workflowName)
+    def set_workflow_rate_limit(self, rateLimit: int, workflow_name: str):
+        self.remove_workflow_rate_limit(workflow_name)
+        rateLimitTag = RateLimitTag(workflow_name, rateLimit)
+        self.tagsApi.add_workflow_tag(rateLimitTag, workflow_name)
 
-    def getWorkflowRateLimit(self, workflowName: str) -> Optional[int]:
-        tags = self.tagsApi.get_workflow_tags(workflowName)
+    def get_workflow_rate_limit(self, workflow_name: str) -> Optional[int]:
+        tags = self.tagsApi.get_workflow_tags(workflow_name)
         for tag in tags:
-            if tag.type == "RATE_LIMIT" and tag.key == workflowName:
+            if tag.type == "RATE_LIMIT" and tag.key == workflow_name:
                 return tag.value
 
         return None
 
-    def removeWorkflowRateLimit(self, workflowName: str):
-        current_rate_limit = self.getWorkflowRateLimit(workflowName)
+    def remove_workflow_rate_limit(self, workflow_name: str):
+        current_rate_limit = self.get_workflow_rate_limit(workflow_name)
         if current_rate_limit:
-            rateLimitTag = RateLimitTag(workflowName, current_rate_limit)
-            self.tagsApi.delete_workflow_tag(rateLimitTag, workflowName)
+            rate_limit_tag = RateLimitTag(workflow_name, current_rate_limit)
+            self.tagsApi.delete_workflow_tag(rate_limit_tag, workflow_name)

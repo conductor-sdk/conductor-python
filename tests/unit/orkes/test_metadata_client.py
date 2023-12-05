@@ -157,64 +157,64 @@ class TestOrkesMetadataClient(unittest.TestCase):
         self.assertEqual(len(tags), 2)
 
     @patch.object(TagsApi, 'add_task_tag')
-    def test_addTaskTag(self, mock):
+    def test_add_task_tag(self, mock):
         taskTag = MetadataTag("tag1", "val1")
-        self.metadata_client.addTaskTag(taskTag, TASK_NAME)
+        self.metadata_client.add_task_tag(taskTag, TASK_NAME)
         mock.assert_called_with(taskTag, TASK_NAME)
 
     @patch.object(TagsApi, 'delete_task_tag')
-    def test_deleteTaskTag(self, mock):
+    def test_delete_task_tag(self, mock):
         taskTag = MetadataTag("tag1", "val1")
         taskTagStr = TagString("tag1", "METADATA", "val1")
-        self.metadata_client.deleteTaskTag(taskTag, TASK_NAME)
+        self.metadata_client.delete_task_tag(taskTag, TASK_NAME)
         mock.assert_called_with(taskTagStr, TASK_NAME)
 
     @patch.object(TagsApi, 'set_task_tags')
-    def test_setTaskTags(self, mock):
+    def test_set_task_tags(self, mock):
         taskTag1 = MetadataTag("tag1", "val1")
         taskTag2 = MetadataTag("tag2", "val2")
         taskTagObjs = [taskTag1, taskTag2]
-        self.metadata_client.setTaskTags(taskTagObjs, TASK_NAME)
+        self.metadata_client.set_task_tags(taskTagObjs, TASK_NAME)
         mock.assert_called_with(taskTagObjs, TASK_NAME)
 
     @patch.object(TagsApi, 'get_task_tags')
-    def test_getTaskTags(self, mock):
+    def test_get_task_tags(self, mock):
         taskTag1 = MetadataTag("tag1", "val1")
         taskTag2 = MetadataTag("tag2", "val2")
         mock.return_value = [taskTag1, taskTag2]
-        tags = self.metadata_client.getTaskTags(TASK_NAME)
+        tags = self.metadata_client.get_task_tags(TASK_NAME)
         mock.assert_called_with(TASK_NAME)
         self.assertEqual(len(tags), 2)
 
     @patch.object(TagsApi, 'get_workflow_tags')
     @patch.object(TagsApi, 'add_workflow_tag')
-    def test_setWorkflowRateLimit(self, mockSet, mockRemove):
+    def test_set_workflow_rate_limit(self, mockSet, mockRemove):
         mockRemove.return_value = []
         rateLimitTag = RateLimitTag(WORKFLOW_NAME, 5)
-        self.metadata_client.setWorkflowRateLimit(5, WORKFLOW_NAME)
+        self.metadata_client.set_workflow_rate_limit(5, WORKFLOW_NAME)
         mockRemove.assert_called_with(WORKFLOW_NAME)
         mockSet.assert_called_with(rateLimitTag, WORKFLOW_NAME)
 
     @patch.object(TagsApi, 'get_workflow_tags')
-    def test_getWorkflowRateLimit(self, mock):
+    def test_get_workflow_rate_limit(self, mock):
         metadataTag = MetadataTag("test", "val")
         rateLimitTag = RateLimitTag(WORKFLOW_NAME, 5)
         mock.return_value = [metadataTag, rateLimitTag]
-        rateLimit = self.metadata_client.getWorkflowRateLimit(WORKFLOW_NAME)
+        rateLimit = self.metadata_client.get_workflow_rate_limit(WORKFLOW_NAME)
         self.assertEqual(rateLimit, 5)
 
     @patch.object(TagsApi, 'get_workflow_tags')
-    def test_getWorkflowRateLimit_not_set(self, mock):
+    def test_get_workflow_rate_limit_not_set(self, mock):
         mock.return_value = []
-        rateLimit = self.metadata_client.getWorkflowRateLimit(WORKFLOW_NAME)
+        rateLimit = self.metadata_client.get_workflow_rate_limit(WORKFLOW_NAME)
         mock.assert_called_with(WORKFLOW_NAME)
         self.assertIsNone(rateLimit)
 
-    @patch.object(OrkesMetadataClient, 'getWorkflowRateLimit')
+    @patch.object(OrkesMetadataClient, 'get_workflow_rate_limit')
     @patch.object(TagsApi, 'delete_workflow_tag')
-    def test_removeWorkflowRateLimit(self, patchedTagsApi, patchedMetadataClient):
+    def test_remove_workflow_rate_limit(self, patchedTagsApi, patchedMetadataClient):
         patchedMetadataClient.return_value = 5
-        self.metadata_client.removeWorkflowRateLimit(WORKFLOW_NAME)
+        self.metadata_client.remove_workflow_rate_limit(WORKFLOW_NAME)
         rateLimitTag = RateLimitTag(WORKFLOW_NAME, 5)
         patchedTagsApi.assert_called_with(rateLimitTag, WORKFLOW_NAME)
 
