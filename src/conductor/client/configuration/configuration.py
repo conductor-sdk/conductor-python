@@ -1,26 +1,23 @@
+from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 import logging
 import multiprocessing
 import os
-
-from conductor.client.configuration.settings.authentication_settings import (
-    AuthenticationSettings,
-)
 
 
 class Configuration:
     AUTH_TOKEN = None
 
     def __init__(
-        self,
-        base_url: str = "http://localhost:8080",
-        debug: bool = False,
-        authentication_settings: AuthenticationSettings = None,
-        server_api_url: str = None,
+            self,
+            base_url: str = "http://localhost:8080",
+            debug: bool = False,
+            authentication_settings: AuthenticationSettings = None,
+            server_api_url: str = None,
     ):
         if server_api_url != None:
             self.host = server_api_url
         else:
-            self.host = base_url + "/api"
+            self.host = base_url + '/api'
 
         self.temp_folder_path = None
 
@@ -29,7 +26,7 @@ class Configuration:
         # Debug switch
         self.debug = debug
         # Log format
-        self.logger_format = "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
+        self.logger_format = '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
 
         # SSL/TLS verification
         # Set this to false to skip verifying SSL certificate when calling API
@@ -47,7 +44,7 @@ class Configuration:
         # Proxy URL
         self.proxy = None
         # Safe chars for path_param
-        self.safe_chars_for_path_param = ""
+        self.safe_chars_for_path_param = ''
 
         # Provide an alterative to requests.Session() for HTTP connection.
         self.http_connection = None
@@ -108,11 +105,14 @@ class Configuration:
         return self.__log_level
 
     def apply_logging_config(self):
-        logging.basicConfig(format=self.logger_format, level=self.__log_level)
+        logging.basicConfig(
+            format=self.logger_format,
+            level=self.__log_level
+        )
 
     @staticmethod
     def get_logging_formatted_name(name):
-        return f"[{os.getpid()}] {name}"
+        return f'[{os.getpid()}] {name}'
 
     def update_token(self, token: str) -> None:
         self.AUTH_TOKEN = token
