@@ -17,8 +17,10 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python3 setup.py install
         pip install pylint
+        python3 -m pip install .
+      env:
+        CONDUCTOR_PYTHON_VERSION: v0.0.0
 
     - name: Run Pylint
       run: |
