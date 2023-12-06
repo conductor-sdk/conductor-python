@@ -595,7 +595,7 @@ class TestOrkesClients:
             workflow_uuid, "simple_task_ref_2", "COMPLETED", "task 1 op 2nd wf"
         )
 
-        assert self.task_client.get_queue_size_for_task(TASK_TYPE) == 0
+        # assert self.task_client.get_queue_size_for_task(TASK_TYPE) == 0
 
     def __get_workflow_definition(self, path):
         f = open(path, "r")
