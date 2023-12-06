@@ -3,6 +3,34 @@ name: Continuous Integration
 on: [pull_request, workflow_dispatch]
 
 jobs:
+  linter:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.11
+
+    - name: Install dependencies
+      run: |
+        python3 setup.py install
+        pip install pylint
+
+    - name: Run Pylint
+      run: |
+        pylint --rcfile=.pylintrc src
+
+    - name: Check Pylint score
+      run: |
+        pylint_score=$(pylint --rcfile=.pylintrc src --output-format=text | grep 'conductor-python' | awk '{print $7}')
+        if (( $(echo "$pylint_score < 7.5" | bc -l) )); then
+          echo "Pylint score is less than 7.5, failing the pipeline."
+          exit 1
+        fi
   unit-test:
     runs-on: ubuntu-latest
     steps:
@@ -25,5 +53,5 @@ jobs:
           --build-arg KEY=${{ secrets.KEY }}
           --build-arg SECRET=${{ secrets.SECRET }}
           --build-arg CONDUCTOR_SERVER_URL=${{ secrets.CONDUCTOR_SERVER_URL }}
-          --target=test          
+          --target=test
           .

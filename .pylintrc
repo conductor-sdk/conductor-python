@@ -1,0 +1,9 @@
+[MASTER]
+disable = locally-disabled
+jobs=4
+
+[MESSAGES CONTROL]
+disable = broad-exception-caught
+
+[REPORTS]
+output-format = parseable
