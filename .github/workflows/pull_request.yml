@@ -24,7 +24,7 @@ jobs:
 
     - name: Run Pylint
       run: |
-        pylint_score=$(pylint --rcfile=.pylintrc src | grep 'Your code has been rated at' | awk '{print $7}')
+        pylint_score=$(pylint --rcfile=.pylintrc src | grep 'Your code has been rated at' | awk '{print $7}' | cut -d '/' -f1)
 
     - name: Check Pylint score
       run: |
