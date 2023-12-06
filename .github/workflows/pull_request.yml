@@ -28,8 +28,8 @@ jobs:
 
     - name: Check Pylint score
       run: |
-        if (( $(echo "$pylint_score < 7.5" | bc -l) )); then
-          echo "Pylint score is less than 7.5, failing the pipeline."
+        if (( $(echo "$pylint_score < 8.0" | bc -l) )); then
+          echo "Pylint score is less than 8.0, failing the pipeline."
           exit 1
         fi
   unit-test:
