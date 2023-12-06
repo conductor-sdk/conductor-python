@@ -24,11 +24,10 @@ jobs:
 
     - name: Run Pylint
       run: |
-        pylint --rcfile=.pylintrc src
+        pylint_score=$(pylint --rcfile=.pylintrc src | grep 'Your code has been rated at' | awk '{print $7}')
 
     - name: Check Pylint score
       run: |
-        pylint_score=$(pylint --rcfile=.pylintrc src --output-format=text | grep 'conductor-python' | awk '{print $7}')
         if (( $(echo "$pylint_score < 7.5" | bc -l) )); then
           echo "Pylint score is less than 7.5, failing the pipeline."
           exit 1
