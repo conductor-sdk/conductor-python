@@ -6,7 +6,7 @@ from conductor.client.workflow.task.simple_task import SimpleTask
 
 def WorkerTask(task_definition_name: str, poll_interval: int = 100, domain: str = None, worker_id: str = None):
     def worker_task_func(func):
-        register_decorated_fn(task_definition_name, func)
+        register_decorated_fn(name=task_definition_name, poll_interval=poll_interval, domain=domain, worker_id=worker_id, func=func)
 
         @functools.wraps(func)
         def wrapper_func(*args, **kwargs):
@@ -24,7 +24,7 @@ def WorkerTask(task_definition_name: str, poll_interval: int = 100, domain: str 
 
 def worker_task(task_definition_name: str, poll_interval: int = 100, domain: str = None, worker_id: str = None):
     def worker_task_func(func):
-        register_decorated_fn(task_definition_name, func)
+        register_decorated_fn(name=task_definition_name, poll_interval=poll_interval, domain=domain, worker_id=worker_id, func=func)
 
         @functools.wraps(func)
         def wrapper_func(*args, **kwargs):

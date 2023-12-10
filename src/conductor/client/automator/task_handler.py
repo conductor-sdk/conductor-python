@@ -22,9 +22,14 @@ logger = logging.getLogger(
 _decorated_functions = {}
 
 
-def register_decorated_fn(name: str, func):
+def register_decorated_fn(name: str, poll_interval: int, domain: str, worker_id: str, func):
     logger.info(f'decorated {name}')
-    _decorated_functions[name] = func
+    _decorated_functions[(name, domain)] = {
+        'func': func,
+        'poll_interval': poll_interval,
+        'domain': domain,
+        'worker_id': worker_id
+    }
 
 
 class TaskHandler:
@@ -51,10 +56,19 @@ class TaskHandler:
         elif not isinstance(workers, list):
             workers = [workers]
         if scan_for_annotated_workers is True:
-            for task_def_name in _decorated_functions:
-                logger.info(f'{task_def_name} has {_decorated_functions[task_def_name]}')
-                worker = Worker(task_definition_name=task_def_name,
-                                execute_function=_decorated_functions[task_def_name])
+            for (task_def_name, domain) in _decorated_functions:
+                record = _decorated_functions[(task_def_name, domain)]
+                fn = record['func']
+                worker_id = record['worker_id']
+                poll_interval = record['poll_interval']
+
+                worker = Worker(
+                    task_definition_name=task_def_name,
+                    execute_function=fn,
+                    worker_id=worker_id,
+                    domain=domain,
+                    poll_interval=poll_interval)
+                logger.info(f'created worker with name={task_def_name} and domain={domain}')
                 workers.append(worker)
 
         self.__create_task_runner_processes(workers, configuration, metrics_settings)
@@ -71,7 +85,6 @@ class TaskHandler:
         self.__stop_task_runner_processes()
         self.__stop_metrics_provider_process()
         logger.info('Stopped worker processes...')
-        logger.info('Stopping logger process...')
         self.queue.put(None)
         self.logger_process.terminate()
 
@@ -166,16 +179,6 @@ class TaskHandler:
             logger.debug(f'Killed process: {process.pid}')
 
 
-def __get_client_topmost_package_filepath():
-    module = inspect.getmodule(inspect.stack()[-1][0])
-    while module:
-        if not getattr(module, '__parent__', None):
-            logger.debug(f'parent module not found for {module}')
-            return getattr(module, '__file__', None)
-        module = getattr(module, '__parent__', None)
-    return None
-
-
 def load_worker_config():
     worker_config = ConfigParser()
 
@@ -195,7 +198,6 @@ def __get_config_file_path() -> str:
 # Setup centralized logging queue
 def _setup_logging_queue(configuration: Configuration):
     queue = Queue()
-    # logger.addHandler(QueueHandler(queue))
     if configuration:
         configuration.apply_logging_config()
         log_level = configuration.log_level

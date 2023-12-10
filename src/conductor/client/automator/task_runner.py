@@ -81,7 +81,8 @@ class TaskRunner:
             self.metrics_collector.increment_task_poll(
                 task_definition_name
             )
-        logger.debug(f'Polling task for: {task_definition_name}')
+        if task_definition_name == 'test_python_decorated_worker':
+            logger.debug(f'Polling task for: {task_definition_name} and domain {self.worker.get_domain()}')
         try:
             start_time = time.time()
             domain = self.worker.get_domain()

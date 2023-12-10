@@ -38,6 +38,7 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
         workers=workers,
         configuration=configuration,
         scan_for_annotated_workers=True,
+        import_modules=['resources.worker.python.python_worker']
     )
     set_start_method('fork', force=True)
     task_handler.start_processes()
