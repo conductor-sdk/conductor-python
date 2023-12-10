@@ -1,9 +1,12 @@
-from conductor.client.http.models.workflow_task import WorkflowTask
-from conductor.client.workflow.task.task import TaskInterface
-from conductor.client.workflow.task.task_type import TaskType
 from copy import deepcopy
 from typing import List
+
 from typing_extensions import Self
+
+from conductor.client.http.models.workflow_task import WorkflowTask
+from conductor.client.workflow.task.join_task import JoinTask
+from conductor.client.workflow.task.task import TaskInterface
+from conductor.client.workflow.task.task_type import TaskType
 
 
 def get_join_task(task_reference_name: str) -> str:
@@ -18,7 +21,8 @@ class ForkTask(TaskInterface):
         )
         self._forked_tasks = deepcopy(forked_tasks)
 
-    def to_workflow_task(self) -> WorkflowTask:
+    def to_workflow_task(self) -> [WorkflowTask]:
+        tasks = []
         workflow_task = super().to_workflow_task()
         workflow_task.fork_tasks = []
         workflow_task.join_on = []
@@ -32,4 +36,7 @@ class ForkTask(TaskInterface):
             workflow_task.join_on.append(
                 converted_inner_forked_tasks[-1].task_reference_name
             )
-        return workflow_task
+        join_task = JoinTask(workflow_task.task_reference_name + '_join', join_on=workflow_task.join_on)
+        tasks.append(workflow_task)
+        tasks.append(join_task.to_workflow_task())
+        return tasks

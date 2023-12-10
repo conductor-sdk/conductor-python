@@ -1,19 +1,17 @@
+import importlib
+import inspect
+import logging
+import os
+from configparser import ConfigParser
+from multiprocessing import Process, freeze_support, Queue
+from typing import List
+
 from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.metrics_settings import MetricsSettings
 from conductor.client.telemetry.metrics_collector import MetricsCollector
 from conductor.client.worker.worker import Worker
 from conductor.client.worker.worker_interface import WorkerInterface
-from multiprocessing import Process, freeze_support, Queue
-from configparser import ConfigParser
-from logging.handlers import QueueHandler
-from typing import List
-import ast
-import astor
-import inspect
-import logging
-import os
-import copy
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -21,12 +19,12 @@ logger = logging.getLogger(
     )
 )
 
+_decorated_functions = {}
 
-def get_annotated_workers():
-    pkg = __get_client_topmost_package_filepath()
-    workers = __get_annotated_workers_from_subtree(pkg)
-    logger.debug(f'Found {len(workers)} workers')
-    return workers
+
+def register_decorated_fn(name: str, func):
+    logger.info(f'decorated {name}')
+    _decorated_functions[name] = func
 
 
 class TaskHandler:
@@ -36,15 +34,27 @@ class TaskHandler:
             configuration: Configuration = None,
             metrics_settings: MetricsSettings = None,
             scan_for_annotated_workers: bool = None,
+            import_modules: List[str] = None
     ):
         self.logger_process, self.queue = _setup_logging_queue(configuration)
         self.worker_config = load_worker_config()
+        # imports
+        importlib.import_module('conductor.client.http.models.task')
+        importlib.import_module('conductor.client.worker.worker_task')
+        if import_modules is not None:
+            for module in import_modules:
+                logger.info(f'loading module {module}')
+                importlib.import_module(module)
+
         if workers is None:
             workers = []
         elif not isinstance(workers, list):
             workers = [workers]
         if scan_for_annotated_workers is True:
-            for worker in get_annotated_workers():
+            for task_def_name in _decorated_functions:
+                logger.info(f'{task_def_name} has {_decorated_functions[task_def_name]}')
+                worker = Worker(task_definition_name=task_def_name,
+                                execute_function=_decorated_functions[task_def_name])
                 workers.append(worker)
 
         self.__create_task_runner_processes(workers, configuration, metrics_settings)
@@ -164,74 +174,6 @@ def __get_client_topmost_package_filepath():
             return getattr(module, '__file__', None)
         module = getattr(module, '__parent__', None)
     return None
-
-
-def __get_annotated_workers_from_subtree(pkg):
-    workers = []
-    if not pkg:
-        return workers
-    pkg_path = os.path.dirname(pkg)
-    for root, _, files in os.walk(pkg_path):
-        for file in files:
-            if not file.endswith('.py') or file == '__init__.py':
-                continue
-            module_path = os.path.join(root, file)
-            with open(module_path, 'r') as file:
-                source_code = file.read()
-            module = ast.parse(source_code, filename=module_path)
-            for node in ast.walk(module):
-                if not isinstance(node, ast.FunctionDef):
-                    continue
-                for decorator in node.decorator_list:
-                    params = __extract_decorator_info(
-                        decorator)
-                    if params is None:
-                        continue
-                    try:
-                        worker = __create_worker_from_ast_node(
-                            node, params)
-                        if worker:
-                            workers.append(worker)
-                    except Exception as e:
-                        logger.debug(
-                            f'Failed to create worker from function: {node.name}. Reason: {str(e)}')
-                        continue
-    return workers
-
-
-def __extract_decorator_info(decorator):
-    if not isinstance(decorator, ast.Call):
-        return None, None
-    decorator_type = None
-    decorator_func = decorator.func
-    if isinstance(decorator_func, ast.Attribute):
-        decorator_type = decorator_func.attr
-    elif isinstance(decorator_func, ast.Name):
-        decorator_type = decorator_func.id
-    if decorator_type != 'WorkerTask':
-        return None
-    decorator_params = {}
-    if decorator.args:
-        for arg in decorator.args:
-            arg_value = astor.to_source(arg).strip()
-            decorator_params[arg_value] = ast.literal_eval(arg)
-    if decorator.keywords:
-        for keyword in decorator.keywords:
-            param_name = keyword.arg
-            param_value = ast.literal_eval(keyword.value)
-            decorator_params[param_name] = param_value
-    return decorator_params
-
-
-def __create_worker_from_ast_node(node, params):
-    auxiliar_node = copy.deepcopy(node)
-    auxiliar_node.decorator_list = []
-    function_source_code = ast.unparse(auxiliar_node)
-    exec(function_source_code)
-    execute_function = locals()[node.name]
-    params['execute_function'] = execute_function
-    worker = Worker(**params)
-    return worker
 
 
 def load_worker_config():

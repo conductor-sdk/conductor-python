@@ -1,22 +1,40 @@
-from typing import Callable, TypeVar
-from conductor.client.worker.worker import ExecuteTaskFunction
+import functools
+
+from conductor.client.automator.task_handler import register_decorated_fn
+from conductor.client.workflow.task.simple_task import SimpleTask
 
 
-class WorkerTask(ExecuteTaskFunction):
-    def __init__(self, task_definition_name: str = None,domain: str = None, poll_interval: float = None, worker_id: str = None):
-        """
-        Task Worker
-        Parameters
-        ----------
-        task_definition_name name of the task to poll for
-        domain task domain
-        poll_interval polling interval in millisecond
-        worker_id (optional) id of the worker.  defaults to hostname if not specified
-        """
-        self.task_definition_name = task_definition_name
-        self.domain = domain
-        self.poll_interval = poll_interval
-        self.worker_id = worker_id
+def WorkerTask(task_definition_name: str, poll_interval: int = 100, domain: str = None, worker_id: str = None):
+    def worker_task_func(func):
+        register_decorated_fn(task_definition_name, func)
 
-    def __call__(self, *args, **kwargs):
-        pass
+        @functools.wraps(func)
+        def wrapper_func(*args, **kwargs):
+            if 'task_ref_name' in kwargs:
+                task = SimpleTask(task_def_name=task_definition_name, task_reference_name=kwargs['task_ref_name'])
+                kwargs.pop('task_ref_name')
+                task.input_parameters.update(kwargs)
+                return task
+            return func(*args, **kwargs)
+
+        return wrapper_func
+
+    return worker_task_func
+
+
+def worker_task(task_definition_name: str, poll_interval: int = 100, domain: str = None, worker_id: str = None):
+    def worker_task_func(func):
+        register_decorated_fn(task_definition_name, func)
+
+        @functools.wraps(func)
+        def wrapper_func(*args, **kwargs):
+            if 'task_ref_name' in kwargs:
+                task = SimpleTask(task_def_name=task_definition_name, task_reference_name=kwargs['task_ref_name'])
+                kwargs.pop('task_ref_name')
+                task.input_parameters.update(kwargs)
+                return task
+            return func(*args, **kwargs)
+
+        return wrapper_func
+
+    return worker_task_func

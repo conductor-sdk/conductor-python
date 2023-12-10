@@ -1,13 +1,14 @@
-from conductor.client.workflow.task.fork_task import ForkTask
-from conductor.client.workflow.task.join_task import JoinTask
-from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from conductor.client.workflow.task.task import TaskInterface
-from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
-from conductor.client.http.models import *
 from copy import deepcopy
 from typing import Any, Dict, List, Union
-from typing_extensions import Self
+
 from shortuuid import uuid
+from typing_extensions import Self
+
+from conductor.client.http.models import *
+from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
+from conductor.client.workflow.task.fork_task import ForkTask
+from conductor.client.workflow.task.task import TaskInterface
+from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
 
 
 class ConductorWorkflow:
@@ -163,13 +164,14 @@ class ConductorWorkflow:
         start_workflow_request.workflow_def = self.to_workflow_def()
         return self._executor.start_workflow(start_workflow_request)
 
-    def execute(self, workflow_input: dict, wait_until_task_ref: str = '', wait_for_seconds : int = 10) -> dict:
+    def execute(self, workflow_input: dict, wait_until_task_ref: str = '', wait_for_seconds: int = 10) -> dict:
         request = StartWorkflowRequest()
         request.workflow_def = self.to_workflow_def()
         request.input = workflow_input
         request.name = request.workflow_def.name
         request.version = 1
-        run = self._executor.execute_workflow(request, wait_until_task_ref=wait_until_task_ref, wait_for_seconds=wait_for_seconds)
+        run = self._executor.execute_workflow(request, wait_until_task_ref=wait_until_task_ref,
+                                              wait_for_seconds=wait_for_seconds)
         return run.output
 
     # Converts the workflow to the JSON serializable format
@@ -210,7 +212,8 @@ class ConductorWorkflow:
                     forked_tasks.append(fork_task)
                 else:
                     forked_tasks.append([fork_task])
-            return self.__add_fork_join_tasks(forked_tasks)
+            self.__add_fork_join_tasks(forked_tasks)
+            return self
         return self.__add_task(task)
 
     # Append task
@@ -223,7 +226,8 @@ class ConductorWorkflow:
 
     def __add_task(self, task: TaskInterface) -> Self:
         if not issubclass(type(task), TaskInterface):
-            raise Exception('invalid type')
+            raise Exception(
+                'invalid task -- if using @worker_task or @WorkerTask decorator ensure task_ref_name is passed as argument')
         self._tasks.append(deepcopy(task))
         return self
 
@@ -239,12 +243,5 @@ class ConductorWorkflow:
             task_ref_name='forked_' + suffix,
             forked_tasks=forked_tasks
         )
-        
-        join_task = JoinTask(
-            task_ref_name='join_' + suffix,
-            join_on=fork_task.to_workflow_task().join_on
-        )
-        
         self._tasks.append(fork_task)
-        self._tasks.append(join_task)
         return self

@@ -1,11 +1,14 @@
+import inspect
 from copy import deepcopy
+from typing import Any, Callable, Union
+
+from typing_extensions import Self
+
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
+from conductor.client.worker.exception import NonRetryableException
 from conductor.client.worker.worker_interface import WorkerInterface, DEFAULT_POLLING_INTERVAL
-from typing import Any, Callable, Union
-from typing_extensions import Self
-import inspect
 
 ExecuteTaskFunction = Callable[
     [
@@ -20,7 +23,7 @@ def is_callable_input_parameter_a_task(callable: ExecuteTaskFunction, object_typ
     if len(parameters) != 1:
         return False
     parameter = parameters[list(parameters.keys())[0]]
-    return parameter.annotation == object_type
+    return parameter.annotation == object_type or parameter.annotation == parameter.empty or parameter.annotation == object
 
 
 def is_callable_return_value_of_type(callable: ExecuteTaskFunction, object_type: Any) -> bool:
@@ -37,7 +40,7 @@ class Worker(WorkerInterface):
                  worker_id: str = None,
                  ) -> Self:
         super().__init__(task_definition_name)
-        if poll_interval == None:
+        if poll_interval is None:
             self.poll_interval = DEFAULT_POLLING_INTERVAL
         else:
             self.poll_interval = deepcopy(poll_interval)
@@ -53,7 +56,11 @@ class Worker(WorkerInterface):
         if self._is_execute_function_input_parameter_a_task:
             execute_function_input = task
         else:
-            execute_function_input = task.input_data
+            execute_function_input = {}
+
+            for input_name in inspect.signature(self.execute_function).parameters:
+                if input_name in task.input_data:
+                    execute_function_input[input_name] = task.input_data[input_name]
         if self._is_execute_function_return_value_a_task_result:
             execute_function_output = self.execute_function(execute_function_input)
             if type(execute_function_output) == TaskResult:
@@ -62,7 +69,19 @@ class Worker(WorkerInterface):
             return execute_function_output
         task_result = self.get_task_result_from_task(task)
         task_result.status = TaskResultStatus.COMPLETED
-        task_result.output_data = self.execute_function(task)
+        if self._is_execute_function_input_parameter_a_task:
+            task_result.output_data = self.execute_function(task)
+        else:
+            try:
+                task_result.output_data = self.execute_function(**execute_function_input)
+            except NonRetryableException as ne:
+                task_result.status = TaskResultStatus.FAILED_WITH_TERMINAL_ERROR
+                if len(ne.args) > 0:
+                    task_result.reason_for_incompletion = ne.args[0]
+            except Exception as ne:
+                task_result.status = TaskResultStatus.FAILED
+                if len(ne.args) > 0:
+                    task_result.reason_for_incompletion = ne.args[0]
         if not isinstance(task_result.output_data, dict):
             output = task_result.output_data
             task_result.output_data = {'result': output}
