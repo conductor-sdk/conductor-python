@@ -172,9 +172,14 @@ class ApiClient(object):
             # and attributes which value is not None.
             # Convert attribute name to json key in
             # model definition for request.
-            obj_dict = {obj.attribute_map[attr]: getattr(obj, attr)
-                        for attr, _ in six.iteritems(obj.swagger_types)
-                        if getattr(obj, attr) is not None}
+            if hasattr(obj, 'attribute_map') and hasattr(obj, 'swagger_types'):
+                obj_dict = {obj.attribute_map[attr]: getattr(obj, attr)
+                            for attr, _ in six.iteritems(obj.swagger_types)
+                            if getattr(obj, attr) is not None}
+            else:
+                obj_dict = {name: getattr(obj, name)
+                             for name in vars(obj)
+                             if getattr(obj, name) is not None}
 
         return {key: self.sanitize_for_serialization(val)
                 for key, val in six.iteritems(obj_dict)}
