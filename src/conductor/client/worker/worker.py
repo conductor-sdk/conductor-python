@@ -63,7 +63,7 @@ class Worker(WorkerInterface):
             return execute_function_output
         task_result = self.get_task_result_from_task(task)
         task_result.status = TaskResultStatus.COMPLETED
-        task_result.output_data = self.execute_function(task)
+        task_result.output_data = self.execute_function(execute_function_input)
         return task_result
 
     def get_identity(self) -> str:
