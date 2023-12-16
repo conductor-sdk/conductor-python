@@ -69,35 +69,35 @@ class Worker(WorkerInterface):
 
     def execute(self, task: Task) -> TaskResult:
         task_input = {}
+        task_output = None
+        task_result: TaskResult = None
 
-        if self._is_execute_function_input_parameter_a_task:
-            task_input = task
-        else:
-            params = inspect.signature(self.execute_function).parameters
-            for input_name in params:
-                logger.info(f'{input_name} param type is {params[input_name].annotation}')
-                typ = params[input_name].annotation
-                if input_name in task.input_data:
-                    logger.info(
-                        f'input name is {input_name} and task inputs are {task.input_data} and input type is {type(task.input_data)}')
-                    if typ in utils.simple_types:
-                        task_input[input_name] = task.input_data[input_name]
-                    else:
-                        task_input[input_name] = convert(typ, task.input_data[input_name])
-
-        task_result: TaskResult = self.get_task_result_from_task(task)
         try:
-            output = self.execute_function(**task_input)
 
-            if type(output) == TaskResult:
-                output.task_id = task.task_id
-                output.workflow_instance_id = task.workflow_instance_id
-                return output
-
+            if self._is_execute_function_input_parameter_a_task:
+                task_output = self.execute_function(task)
             else:
+                params = inspect.signature(self.execute_function).parameters
+                for input_name in params:
+                    logger.info(f'{input_name} param type is {params[input_name].annotation}')
+                    typ = params[input_name].annotation
+                    if input_name in task.input_data:
+                        logger.info(
+                            f'input name is {input_name} and task inputs are {task.input_data} and input type is {type(task.input_data)}')
+                        if typ in utils.simple_types:
+                            task_input[input_name] = task.input_data[input_name]
+                        else:
+                            task_input[input_name] = convert(typ, task.input_data[input_name])
+                task_output = self.execute_function(**task_input)
 
+            if type(task_output) == TaskResult:
+                task_output.task_id = task.task_id
+                task_output.workflow_instance_id = task.workflow_instance_id
+                return task_output
+            else:
+                task_result: TaskResult = self.get_task_result_from_task(task)
                 task_result.status = TaskResultStatus.COMPLETED
-                task_result.output_data = output
+                task_result.output_data = task_output
 
         except NonRetryableException as ne:
             task_result.status = TaskResultStatus.FAILED_WITH_TERMINAL_ERROR
@@ -115,12 +115,12 @@ class Worker(WorkerInterface):
                 task_result.reason_for_incompletion = ne.args[0]
 
         if dataclasses.is_dataclass(type(task_result.output_data)):
-            output = dataclasses.asdict(task_result.output_data)
-            task_result.output_data = output
+            task_output = dataclasses.asdict(task_result.output_data)
+            task_result.output_data = task_output
             return task_result
         if not isinstance(task_result.output_data, dict):
-            output = task_result.output_data
-            task_result.output_data = self.api_client.sanitize_for_serialization(output)
+            task_output = task_result.output_data
+            task_result.output_data = self.api_client.sanitize_for_serialization(task_output)
             if not isinstance(task_result.output_data, dict):
                 task_result.output_data = {'result': task_result.output_data}
 
