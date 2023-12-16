@@ -1,3 +1,4 @@
+import logging
 import os
 from multiprocessing import set_start_method
 from sys import platform
@@ -8,7 +9,7 @@ from conductor.client.configuration.settings.authentication_settings import Auth
 from conductor.client.orkes_clients import OrkesClients
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from conductor.client.workflow.task.JavascriptTask import JavascriptTask
+from conductor.client.workflow.task.javascript_task import JavascriptTask
 from conductor.client.workflow.task.inline import InlineTask
 from examples.workers.task_workers import get_user_info, save_order, OrderInfo, process_task
 
@@ -16,8 +17,21 @@ key = os.getenv("KEY")
 secret = os.getenv("SECRET")
 url = os.getenv("CONDUCTOR_SERVER_URL")
 
+logger = logging.getLogger(
+    Configuration.get_logging_formatted_name(
+        __name__
+    )
+)
 
-def start_workers(api_config: Configuration):
+
+class OrderRequest:
+
+    def __init__(self, user_id: str, order_details: OrderInfo) -> None:
+        self.user_id = user_id
+        self.order_details = order_details
+
+
+def start_workers(api_config: Configuration) -> TaskHandler:
     task_handler: TaskHandler = TaskHandler(
         workers=[],
         configuration=api_config,
@@ -27,7 +41,7 @@ def start_workers(api_config: Configuration):
 
     # Start polling for the workers
     task_handler.start_processes()
-    # task_handler.join_processes()
+    return task_handler
 
 
 def create_workflow(workflow_executor: WorkflowExecutor):
@@ -52,7 +66,8 @@ def create_workflow(workflow_executor: WorkflowExecutor):
         'user_details': '${get_user_info.output}'
     }
     js = JavascriptTask(task_ref_name='add_address_to_order_details', script=script, bindings=bindings)
-    so : OrderInfo = save_order(task_ref_name='save_order', order_details='${add_address_to_order_details.output.result}')
+    so: OrderInfo = save_order(task_ref_name='save_order',
+                               order_details='${add_address_to_order_details.output.result}')
     workflow >> js
     workflow >> so >> process_task(task_ref_name='process_task')
     workflow.output_parameters({'final_price': so.sku_price, 'order_id': so.order_id, 'more': js.result})
@@ -63,22 +78,25 @@ def create_workflow(workflow_executor: WorkflowExecutor):
 def main():
     api_config = Configuration(authentication_settings=AuthenticationSettings(key_id=key, key_secret=secret),
                                server_api_url=url)
-    start_workers(api_config)
+    task_handler = start_workers(api_config)
     clients = OrkesClients(configuration=api_config)
     workflow_executor = clients.get_workflow_executor()
     workflow = create_workflow(workflow_executor)
 
-
     order_details = OrderInfo(order_id=991, sku_price=12.2, quantity=10, sku='S09494')
 
     workflow.register(True)
-    # Let's run this workflow synchronously and get the output (we wait for 10 second for the workflow to complete)
-    output = workflow.execute({
-        'user_id': 'user_id_1234',
-        'order_details': order_details
-    }, wait_for_seconds=10)
 
-    print(f'workflow output: {output}')
+    # Let's run this workflow synchronously and get the output (we wait for 10 second for the workflow to complete)
+    workflow_input = OrderRequest(user_id='user_id_1234', order_details=order_details)
+    output = workflow.execute(workflow_input=workflow_input, wait_for_seconds=10)
+
+    # workflow.start_workflow()
+
+    logger.info(f'workflow output: {output.status} - {output.output}')
+    if not output.is_successful():
+        logger.error(f'Workflow execution failed with the error {output.status}')
+    task_handler.stop_processes()
 
 
 if __name__ == '__main__':

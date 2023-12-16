@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
+
+from conductor.client.http.models import PollData
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
@@ -63,4 +65,8 @@ class TaskClient(ABC):
 
     @abstractmethod
     def get_task_logs(self, task_id: str) -> List[TaskExecLog]:
+        pass
+
+    @abstractmethod
+    def get_task_poll_data(self, task_type: str) -> List[PollData]:
         pass

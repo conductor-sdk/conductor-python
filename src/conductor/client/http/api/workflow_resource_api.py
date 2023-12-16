@@ -1098,12 +1098,37 @@ class WorkflowResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def get_workflows1(self, body, **kwargs):  # noqa: E501
+    def get_workflows_by_correlation_id_in_batch(self, body, **kwargs):  # noqa: E501
         """Lists workflows for the given correlation id list and workflow name list  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.get_workflows1(body, async_req=True)
+        >>> thread = api.get_workflows_by_correlation_id_in_batch(body, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param CorrelationIdsSearchRequest body: (required)
+        :param bool include_closed:
+        :param bool include_tasks:
+        :return: dict(str, list[Workflow])
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.get_workflows1_with_http_info(body, **kwargs)  # noqa: E501
+        else:
+            (data) = self.get_workflows1_with_http_info(body, **kwargs)  # noqa: E501
+            return data
+
+    def get_workflows_batch(self, body, **kwargs):  # noqa: E501
+        """
+        deprecated:: Please use get_workflows_by_correlation_id_in_batch
+        Lists workflows for the given correlation id list and workflow name list  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.get_workflows_by_correlation_id_in_batch(body, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool

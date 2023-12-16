@@ -164,7 +164,15 @@ class ConductorWorkflow:
         start_workflow_request.workflow_def = self.to_workflow_def()
         return self._executor.start_workflow(start_workflow_request)
 
-    def execute(self, workflow_input: dict, wait_until_task_ref: str = '', wait_for_seconds: int = 10) -> dict:
+    def start(self, workflow_input: Any) -> str:
+        request = StartWorkflowRequest()
+        request.workflow_def = self.to_workflow_def()
+        request.input = workflow_input
+        request.name = request.workflow_def.name
+        request.version = 1 if self.version is None else self.version
+        return self._executor.start_workflow(start_workflow_request=request)
+
+    def execute(self, workflow_input: Any, wait_until_task_ref: str = '', wait_for_seconds: int = 10) -> WorkflowRun:
         request = StartWorkflowRequest()
         request.workflow_def = self.to_workflow_def()
         request.input = workflow_input
@@ -172,7 +180,8 @@ class ConductorWorkflow:
         request.version = 1
         run = self._executor.execute_workflow(request, wait_until_task_ref=wait_until_task_ref,
                                               wait_for_seconds=wait_for_seconds)
-        return run.output
+
+        return run
 
     # Converts the workflow to the JSON serializable format
     def to_workflow_def(self) -> WorkflowDef:

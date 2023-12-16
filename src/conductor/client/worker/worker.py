@@ -79,11 +79,8 @@ class Worker(WorkerInterface):
             else:
                 params = inspect.signature(self.execute_function).parameters
                 for input_name in params:
-                    logger.info(f'{input_name} param type is {params[input_name].annotation}')
                     typ = params[input_name].annotation
                     if input_name in task.input_data:
-                        logger.info(
-                            f'input name is {input_name} and task inputs are {task.input_data} and input type is {type(task.input_data)}')
                         if typ in utils.simple_types:
                             task_input[input_name] = task.input_data[input_name]
                         else:

@@ -1,6 +1,7 @@
 from typing import Optional, List
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.models import SkipTaskRequest
+from conductor.client.http.models import SkipTaskRequest, WorkflowSummary
+from conductor.client.http.models.correlation_ids_search_request import CorrelationIdsSearchRequest
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.workflow_run import WorkflowRun
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
@@ -46,10 +47,20 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
             request_id: str,
             name: str,
             version: int,
-            wait_until_task_ref: Optional[str] = None
+            wait_until_task_ref: Optional[str] = None,
+            wait_for_seconds: int = 30
     ) -> WorkflowRun:
-        kwargs = {"wait_until_task_ref": wait_until_task_ref} if wait_until_task_ref else {}
-        return self.workflowResourceApi.execute_workflow(start_workflow_request, request_id, name, version, **kwargs)
+
+        start_workflow_request.name = name
+        start_workflow_request.version = version
+        return self.workflowResourceApi.execute_workflow(
+            body=start_workflow_request,
+            request_id=request_id,
+            version=version,
+            name=name,
+            wait_until_task_ref=wait_until_task_ref,
+            wait_for_seconds=wait_for_seconds,
+        )
 
     def pause_workflow(self, workflow_id: str):
         self.workflowResourceApi.pause_workflow(workflow_id)
@@ -60,15 +71,15 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
     def restart_workflow(self, workflow_id: str, use_latest_def: Optional[bool] = False):
         self.workflowResourceApi.restart(workflow_id, use_latest_definitions=use_latest_def)
 
-    def rerun_workflow(self, workflow_id: str, rerun_workflow_request: RerunWorkflowRequest):
-        self.workflowResourceApi.rerun(rerun_workflow_request, workflow_id)
+    def rerun_workflow(self, workflow_id: str, rerun_workflow_request: RerunWorkflowRequest) -> str:
+        return self.workflowResourceApi.rerun(rerun_workflow_request, workflow_id)
 
     def retry_workflow(self, workflow_id: str, resume_subworkflow_tasks: Optional[bool] = False):
         self.workflowResourceApi.retry(workflow_id, resume_subworkflow_tasks=resume_subworkflow_tasks)
 
     def terminate_workflow(self, workflow_id: str, reason: Optional[str] = None):
         kwargs = {"reason": reason} if reason else {}
-        self.workflowResourceApi.terminate1(workflow_id, **kwargs)
+        self.workflowResourceApi.terminate(workflow_id, **kwargs)
 
     def get_workflow(self, workflow_id: str, include_tasks: Optional[bool] = True) -> Workflow:
         return self.workflowResourceApi.get_execution_status(workflow_id, include_tasks=include_tasks)
@@ -81,3 +92,46 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
 
     def test_workflow(self, test_request: WorkflowTestRequest) -> Workflow:
         return self.workflowResourceApi.test_workflow(test_request)
+
+    def search(self, start: int = 0, size: int = 100, free_text: str = '*', query : str = None) -> List[WorkflowSummary]:
+        args = {
+            'start' : start,
+            'size': size,
+            'free_text': free_text,
+            'query': query,
+
+        }
+        return self.workflowResourceApi.search(**args)
+
+    def get_by_correlation_ids_in_batch(
+            self,
+            batch_request: CorrelationIdsSearchRequest,
+            include_completed: bool = False,
+            include_tasks: bool = False) -> dict[str, List[Workflow]]:
+
+        """Given the list of correlation ids and list of workflow names, find and return workflows
+        Returns a map with key as correlationId and value as a list of Workflows
+        When IncludeClosed is set to true, the return value also includes workflows that are completed otherwise only running workflows are returned"""
+        kwargs = {'body': batch_request, 'include_closed': include_completed, 'include_tasks': include_tasks}
+        return self.workflow_client.get_workflows_by_correlation_id_in_batch(**kwargs)
+
+    def get_by_correlation_ids(
+        self,
+        workflow_name: str,
+        correlation_ids: List[str],
+        include_completed: bool = False,
+        include_tasks: bool = False
+    ) -> dict[str, List[Workflow]]:
+        """Lists workflows for the given correlation id list"""
+        kwargs = {'include_closed': include_completed, 'include_tasks': include_tasks}
+        return self.workflowResourceApi.get_workflows(
+            body=correlation_ids,
+            name=workflow_name,
+            **kwargs
+        )
+
+    def remove_workflow(self, workflow_id: str):
+        self.workflowResourceApi.delete(workflow_id)
+
+    def update_variables(self, workflow_id: str, variables : dict[str, object] = {}):
+        self.workflowResourceApi.update_workflow_state(variables, workflow_id)

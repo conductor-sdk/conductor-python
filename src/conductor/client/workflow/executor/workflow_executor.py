@@ -117,7 +117,7 @@ class WorkflowExecutor:
         correlation_ids: List[str],
         include_closed: bool = None,
         include_tasks: bool = None
-    ) -> Dict[str, List[WorkflowDef]]:
+    ) -> dict[str, List[Workflow]]:
         """Lists workflows for the given correlation id list"""
         kwargs = {}
         if include_closed is not None:
@@ -139,7 +139,7 @@ class WorkflowExecutor:
             args['include_closed'] = True
         if include_tasks != None:
             args['include_tasks'] = True
-        return self.workflow_client.get_workflows_batch(**args)
+        return self.workflow_client.get_workflows_by_correlation_id_in_batch(**args)
 
     def pause(self, workflow_id: str) -> None:
         """Pauses the workflow"""

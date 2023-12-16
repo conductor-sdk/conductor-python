@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
 
-from conductor.client.http.models import WorkflowRun, SkipTaskRequest
+from conductor.client.http.models import WorkflowRun, SkipTaskRequest, WorkflowSummary
+from conductor.client.http.models.correlation_ids_search_request import CorrelationIdsSearchRequest
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
@@ -32,7 +33,8 @@ class WorkflowClient(ABC):
             request_id: str,
             name: str,
             version: int,
-            wait_until_task_ref: Optional[str] = None
+            wait_until_task_ref: Optional[str] = None,
+            wait_for_seconds: int = 30
     ) -> WorkflowRun:
         pass
 
@@ -62,4 +64,34 @@ class WorkflowClient(ABC):
 
     @abstractmethod
     def test_workflow(self, test_request: WorkflowTestRequest) -> Workflow:
+        pass
+
+    @abstractmethod
+    def search(self, start: int = 0, size: int = 100, free_text: str = '*', query: str = None) -> List[WorkflowSummary]:
+        pass
+
+    @abstractmethod
+    def get_by_correlation_ids_in_batch(
+            self,
+            batch_request: CorrelationIdsSearchRequest,
+            include_completed: bool = False,
+            include_tasks: bool = False) -> dict[str, List[Workflow]]:
+        pass
+
+    @abstractmethod
+    def get_by_correlation_ids(
+            self,
+            workflow_name: str,
+            correlation_ids: List[str],
+            include_completed: bool = False,
+            include_tasks: bool = False
+    ) -> dict[str, List[Workflow]]:
+        pass
+
+    @abstractmethod
+    def remove_workflow(self, workflow_id: str):
+        pass
+
+    @abstractmethod
+    def update_variables(self, workflow_id: str, variables: dict[str, object] = {}):
         pass

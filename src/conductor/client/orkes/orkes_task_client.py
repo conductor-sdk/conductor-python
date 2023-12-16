@@ -1,5 +1,6 @@
 from typing import Optional, List
 from conductor.client.configuration.configuration import Configuration
+from conductor.client.http.models import PollData
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_exec_log import TaskExecLog
@@ -61,7 +62,7 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
         if worker_id:
             kwargs.update({"workerid": worker_id})
         return self.taskResourceApi.update_task1(body, workflow_id, task_ref_name, status, **kwargs)
-    
+
     def update_task_sync(
         self,
         workflow_id: str,
@@ -86,3 +87,6 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
 
     def get_task_logs(self, task_id: str) -> List[TaskExecLog]:
         return self.taskResourceApi.get_task_logs(task_id)
+
+    def get_task_poll_data(self, task_type: str) -> List[PollData]:
+        return self.taskResourceApi.get_poll_data(task_type=task_type)
