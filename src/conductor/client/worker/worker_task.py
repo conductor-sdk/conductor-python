@@ -6,10 +6,13 @@ from conductor.client.workflow.task.simple_task import SimpleTask
 
 def WorkerTask(task_definition_name: str, poll_interval: int = 100, domain: str = None, worker_id: str = None,
                poll_interval_seconds: int = 0):
+    poll_interval_millis = poll_interval
+    if poll_interval_seconds > 0:
+        poll_interval_millis = 1000 * poll_interval_seconds
     def worker_task_func(func):
-        if poll_interval_seconds > 0:
-            poll_interval = 1000 * poll_interval_seconds
-        register_decorated_fn(name=task_definition_name, poll_interval=poll_interval, domain=domain,
+
+
+        register_decorated_fn(name=task_definition_name, poll_interval=poll_interval_millis, domain=domain,
                               worker_id=worker_id, func=func)
 
         @functools.wraps(func)
