@@ -14,12 +14,3 @@ class SimpleTask(TaskInterface):
             task_name=task_def_name,
             executor=execute_fn
         )
-
-    def __getattribute__(self, __name: str) -> Any:
-        try:
-            val = super().__getattribute__(__name)
-            return val
-        except AttributeError as ae:
-            if not __name.startswith('_'):
-                return '${' + self.task_reference_name + '.output.' + __name + '}'
-            raise ae

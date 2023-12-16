@@ -73,7 +73,7 @@ class WorkflowDef(object):
         self._version = None
         self._tasks = None
         self._input_parameters = None
-        # self._output_parameters = None
+        self._output_parameters = None
         self._failure_workflow = None
         self._schema_version = None
         self._restartable = None
