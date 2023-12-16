@@ -1420,6 +1420,19 @@ class WorkflowResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def pause_workflow1(self, workflow_id, **kwargs):  # noqa: E501
+        """
+        deprecated:: Please use pause_workflow(workflow_id) method
+        Parameters
+        ----------
+        workflow_id
+        kwargs
+
+        Returns
+        -------
+
+        """
+        self.pause_workflow(workflow_id)
     def pause_workflow(self, workflow_id, **kwargs):  # noqa: E501
         """Pauses the workflow  # noqa: E501
 
@@ -1703,6 +1716,19 @@ class WorkflowResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def restart1(self, workflow_id, **kwargs):  # noqa: E501
+        """
+        deprecated:: Please use restart(workflow_id) method
+        Parameters
+        ----------
+        workflow_id
+        kwargs
+
+        Returns
+        -------
+
+        """
+        return self.restart(workflow_id)
     def restart(self, workflow_id, **kwargs):  # noqa: E501
         """Restarts a completed workflow  # noqa: E501
 
@@ -1796,6 +1822,18 @@ class WorkflowResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def resume_workflow1(self, workflow_id):  # noqa: E501
+        """
+        deprecated:: Please use resume_workflow(workflow_id) method
+        Parameters
+        ----------
+        workflow_id
+
+        Returns
+        -------
+
+        """
+        return self.resume_workflow(workflow_id)
     def resume_workflow(self, workflow_id, **kwargs):  # noqa: E501
         """Resumes the workflow  # noqa: E501
 
@@ -1885,6 +1923,20 @@ class WorkflowResourceApi(object):
             _preload_content=params.get('_preload_content', True),
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
+
+    def retry1(self, workflow_id, **kwargs):  # noqa: E501
+        """
+        deprecated:: Please use retry(workflow_id) method
+        Parameters
+        ----------
+        workflow_id
+        kwargs
+
+        Returns
+        -------
+
+        """
+        return self.retry(workflow_id)
 
     def retry(self, workflow_id, **kwargs):  # noqa: E501
         """Retries the last failed task  # noqa: E501
@@ -2420,6 +2472,25 @@ class WorkflowResourceApi(object):
             collection_formats=collection_formats)
 
     def terminate1(self, workflow_id, **kwargs):  # noqa: E501
+        """
+        deprecated:: Please use terminate(workflow_id) method
+        Parameters
+        ----------
+        workflow_id
+        kwargs
+
+        Returns
+        -------
+
+        """
+        options = {}
+        if 'triggerFailureWorkflow' in kwargs.keys():
+            options['trigger_failure_workflow'] = kwargs['triggerFailureWorkflow']
+
+
+        return self.terminate(workflow_id, **options)
+
+    def terminate(self, workflow_id, **kwargs):  # noqa: E501
         """Terminate workflow execution  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2436,6 +2507,8 @@ class WorkflowResourceApi(object):
                  returns the request thread.
         """
         kwargs['_return_http_data_only'] = True
+        if workflow_id is None:
+            raise Exception('Missing workflow id')
         if kwargs.get('async_req'):
             return self.terminate1_with_http_info(workflow_id, **kwargs)  # noqa: E501
         else:
