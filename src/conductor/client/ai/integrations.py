@@ -12,7 +12,7 @@ class IntegrationConfig(ABC):
         pass
 
 
-class WeviateConfig(IntegrationConfig):
+class WeaviateConfig(IntegrationConfig):
 
     def __init__(self, api_key: str, endpoint: str, classname: str) -> None:
         self.api_key = api_key

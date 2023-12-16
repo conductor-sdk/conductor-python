@@ -1,7 +1,4 @@
 from enum import Enum
-from typing import List
-
-from typing_extensions import Self
 
 
 class LLMProvider(str, Enum):
