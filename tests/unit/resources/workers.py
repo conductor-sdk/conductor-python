@@ -5,6 +5,17 @@ from conductor.client.worker.worker_interface import WorkerInterface
 from typing import Any, Dict
 from requests.structures import CaseInsensitiveDict
 
+
+class UserInfo:
+    def __init__(self, name: str = 'orkes', id: int = 0, address: str = None) -> None:
+        self.name = name
+        self.id = id
+        self.address = address
+
+    def __str__(self) -> str:
+        return self.name + ':' + str(self.id)
+
+
 class FaultyExecutionWorker(WorkerInterface):
     def execute(self, task: Task) -> TaskResult:
         raise Exception('faulty execution')
@@ -17,7 +28,8 @@ class SimplePythonWorker(WorkerInterface):
         task_result.add_output_data('secret_number', 1234)
         task_result.add_output_data('is_it_true', False)
         task_result.add_output_data('dictionary_ojb', {'name': 'sdk_worker', 'idx': 465})
-        task_result.add_output_data('case_insensitive_dictionary_ojb', CaseInsensitiveDict(data={'NaMe': 'sdk_worker', 'iDX': 465}))
+        task_result.add_output_data('case_insensitive_dictionary_ojb',
+                                    CaseInsensitiveDict(data={'NaMe': 'sdk_worker', 'iDX': 465}))
         task_result.status = TaskResultStatus.COMPLETED
         return task_result
 
@@ -40,6 +52,7 @@ class ClassWorker(WorkerInterface):
         task_result.add_output_data('secret_number', 1234)
         task_result.add_output_data('is_it_true', False)
         task_result.add_output_data('dictionary_ojb', {'name': 'sdk_worker', 'idx': 465})
-        task_result.add_output_data('case_insensitive_dictionary_ojb',CaseInsensitiveDict(data={'NaMe': 'sdk_worker', 'iDX': 465}))
+        task_result.add_output_data('case_insensitive_dictionary_ojb',
+                                    CaseInsensitiveDict(data={'NaMe': 'sdk_worker', 'iDX': 465}))
         task_result.status = TaskResultStatus.COMPLETED
         return task_result

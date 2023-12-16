@@ -87,7 +87,7 @@ class TaskRunner:
             start_time = time.time()
             domain = self.worker.get_domain()
             params = {'workerid': self.worker.get_identity()}
-            if domain != None:
+            if domain is not None:
                 params['domain'] = domain
             task = self.task_client.poll(tasktype=task_definition_name,**params)
             finish_time = time.time()
@@ -193,7 +193,8 @@ class TaskRunner:
                         task_definition_name, type(e)
                     )
                 logger.error(
-                    'Failed to update task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, reason: {reason}'.format(
+                    'Failed to update task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, '
+                    'task_definition_name: {task_definition_name}, reason: {reason}'.format(
                         task_id=task_result.task_id,
                         workflow_instance_id=task_result.workflow_instance_id,
                         task_definition_name=task_definition_name,

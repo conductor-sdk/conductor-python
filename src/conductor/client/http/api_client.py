@@ -207,8 +207,7 @@ class ApiClient(object):
         try:
             return self.__deserialize(data, response_type)
         except ValueError as e:
-            logger.debug(
-                f'failed to deserialize data {data} into class {response_type}, reason: {e}')
+            logger.error(f'failed to deserialize data {data} into class {response_type}, reason: {e}')
             return None
 
     def deserialize_class(self, data, klass):
@@ -588,9 +587,10 @@ class ApiClient(object):
         :param klass: class literal.
         :return: model object.
         """
-
         if not klass.swagger_types and not self.__hasattr(klass, 'get_real_child_model'):
             return data
+        # if not self.__hasattr(klass, 'swagger_types')  and not self.__hasattr(klass, 'get_real_child_model'):
+        #     return data
 
         kwargs = {}
         if klass.swagger_types is not None:

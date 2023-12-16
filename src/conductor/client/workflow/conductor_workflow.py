@@ -227,7 +227,8 @@ class ConductorWorkflow:
     def __add_task(self, task: TaskInterface) -> Self:
         if not issubclass(type(task), TaskInterface):
             raise Exception(
-                'invalid task -- if using @worker_task or @WorkerTask decorator ensure task_ref_name is passed as argument')
+                'invalid task -- if using @worker_task or @WorkerTask decorator ensure task_ref_name is passed as '
+                'argument')
         self._tasks.append(deepcopy(task))
         return self
 
