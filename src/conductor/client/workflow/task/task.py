@@ -22,15 +22,13 @@ class TaskInterface(ABC):
                  task_name: str = None,
                  description: str = None,
                  optional: bool = None,
-                 input_parameters: Dict[str, Any] = None,
-                 executor: WorkerInterface = None) -> Self:
+                 input_parameters: Dict[str, Any] = None) -> Self:
         self.task_reference_name = task_reference_name
         self.task_type = task_type
         self.name = task_name or task_reference_name
         self.description = description
         self.optional = optional
         self.input_parameters = input_parameters
-        self.executor = executor
 
     @property
     def task_reference_name(self) -> str:
