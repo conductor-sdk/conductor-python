@@ -83,9 +83,9 @@ class TestOrkesWorkflowClient(unittest.TestCase):
         mock.return_value = expectedWfRun
         startWorkflowReq = StartWorkflowRequest()
         workflowRun = self.workflow_client.execute_workflow(
-            startWorkflowReq, "request_id", WORKFLOW_NAME, 1
+            startWorkflowReq, "request_id", WORKFLOW_NAME, 1, None, 30
         )
-        mock.assert_called_with(startWorkflowReq, "request_id", WORKFLOW_NAME, 1)
+        mock.assert_called_with(body=startWorkflowReq, request_id="request_id", name=WORKFLOW_NAME, version=1, wait_until_task_ref=None, wait_for_seconds=30)
         self.assertEqual(workflowRun, expectedWfRun)
 
     @patch.object(WorkflowResourceApi, 'pause_workflow')
@@ -124,12 +124,12 @@ class TestOrkesWorkflowClient(unittest.TestCase):
         self.workflow_client.retry_workflow(WORKFLOW_UUID, True)
         mock.assert_called_with(WORKFLOW_UUID, resume_subworkflow_tasks=True)
 
-    @patch.object(WorkflowResourceApi, 'terminate1')
+    @patch.object(WorkflowResourceApi, 'terminate')
     def test_terminateWorkflow(self, mock):
         self.workflow_client.terminate_workflow(WORKFLOW_UUID)
         mock.assert_called_with(WORKFLOW_UUID)
 
-    @patch.object(WorkflowResourceApi, 'terminate1')
+    @patch.object(WorkflowResourceApi, 'terminate')
     def test_terminateWorkflow_with_reason(self, mock):
         reason = "Unit test failed"
         self.workflow_client.terminate_workflow(WORKFLOW_UUID, reason)
