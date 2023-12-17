@@ -20,7 +20,7 @@ class MetricsSettings:
             directory: str = None,
             file_name: str = 'metrics.log',
             update_interval: float = 0.1):
-        if directory == None:
+        if directory is None:
             directory = get_default_temporary_folder()
         self.__set_dir(directory)
         self.file_name = file_name

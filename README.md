@@ -1,52 +1,60 @@
-# Netflix Conductor SDK - Python
+# Conductor OSS Python SDK
+Python SDK for working with https://github.com/conductor-oss/conductor
 
-The `conductor-python` repository provides the client SDKs to manage:
-1. Task workers
-2. Tasks & Workflows
-3. Schedules & Secrets
-4. Role Based Access Control (RBAC)
+[Conductor](https://github.com/conductor-oss/conductor) is an open source distributed, scalable and highly available 
+orchestration platform that allows developers to build powerful distributed applications.
+You can find the documentation for Conductor here: [Conductor Docs](https://orkes.io/content)
 
-## Task Workers
+## ⭐ Conductor OSS
+Show support for the Conductor OSS.  Please help spread the awareness by starring Conductor repo.
 
-Building the task workers in Python mainly consists of the following steps:
+[![GitHub stars](https://img.shields.io/github/stars/conductor-oss/conductor.svg?style=social&label=Star&maxAge=)](https://GitHub.com/conductor-oss/conductor/)
 
-1. Setup conductor-python package
-2. Create and run task workers
+## Content
 
-### Setup Conductor Python Package​
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-* Create a virtual environment to build your package
+- [Install SDK](#install-sdk)
+  - [Setup SDK](#setup-sdk)
+- [Build and run hello-world](#build-and-run-hello-world)
+- [Implement Worker](#implement-worker)
+- [Create a workflow](#create-a-workflow)
+  - [Execute workflow synchronously](#execute-workflow-synchronously)
+  - [Execute workflow asynchronously](#execute-workflow-asynchronously)
+- [Sending Signals to workflow](#sending-signals-to-workflow)
+- [Testing your workflows](#testing-your-workflows)
+- [Metrics support](#metrics-support)
+- [Setup Python Environment](#setup-python-environment)
+  - [Server Settings](#server-settings)
+  - [Authentication Settings (Optional)](#authentication-settings-optional)
+  - [Access Control Setup](#access-control-setup)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+### Install SDK
+Create a virtual environment to build your package
 ```shell
 virtualenv conductor
 source conductor/bin/activate
 ```
 
-* Get Conductor Python SDK
+Get Conductor Python SDK
 ```shell
 python3 -m pip install conductor-python
 ```
-
-#### Server Settings
-Everything related to server settings should be done within the `Configuration` class by setting the required parameter (when initializing an object) like this:
+#### Setup SDK
+SDK requires connecting to the Conductor server and optionally supplying with authentication parameters.
 
 ```python
 from conductor.client.configuration.configuration import Configuration
 
 configuration = Configuration(
     server_api_url='https://play.orkes.io/api',
-    debug=True
+    debug=False  # set to true for verbose logging
 )
 ```
-
-* server_api_url : Conductor server address. For example, if you are running locally, it would look like; `http://localhost:8000/api`.
-* debug: It can take the values true/false. `true` for verbose logging `false` to display only the errors
-
-#### Authentication Settings (Optional)
 Configure the authentication settings if your Conductor server requires authentication.
-
-#### Access Control Setup
-See [Access Control](https://orkes.io/content/docs/getting-started/concepts/access-control) for more details on role-based access control with Conductor and generating API keys for your environment.
-
 ```python
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
@@ -59,64 +67,16 @@ configuration = Configuration(
 )
 ```
 
-#### Metrics Settings (Optional)
-Conductor uses [Prometheus](https://prometheus.io/) to collect metrics.
+See [Access Control](https://orkes.io/content/docs/getting-started/concepts/access-control) for guide to getting API keys
 
-```python
-metrics_settings = MetricsSettings(
-    directory='/path/to/folder',
-    file_name='metrics_file_name.extension',
-    update_interval=0.1,
-)
-```
+### Build and run hello-world
+### Implement Worker
+### Create a workflow
+#### Execute workflow synchronously
+#### Execute workflow asynchronously
+### Sending Signals to workflow
+### Testing your workflows
+### Metrics support
 
-* `directory`: Directory to store the metrics.
-  * Ensure that you have already created this folder, or the program should have permission to create it for you.
-* `file_name`: File where the metrics are stored.
-  * example: `metrics.log`
-* `update_interval`: Time interval in seconds to refresh metrics into the file.
-  * example: `0.1` means metrics are updated every  0.1s or 100ms.
 
-### Create and Run Task Workers
 
-The next step is to [create and run task workers](https://github.com/conductor-sdk/conductor-python/tree/main/docs/worker).
-
-## Tasks & Workflows
-
-Builing tasks and workflows involve usage of Orkes Clients that can be used to do the following:
-
-### Create task and workflow definitions
-
-We can use the metadata client to [manage task and workflow definitions](https://github.com/conductor-sdk/conductor-python/tree/main/docs/metadata).
-
-### Execute Workflows using Code
-
-You can [execute workflows using code](https://github.com/conductor-sdk/conductor-python/tree/main/docs/workflow).
-
-### Task Management
-
-You can [manage tasks using code](https://github.com/conductor-sdk/conductor-python/tree/main/docs/task).
-
-### Unit Testing Workflows
-
-You can [unit test your conductor workflows on a remote server before running them on production.](https://github.com/conductor-sdk/conductor-python/tree/main/docs/testing).
-
-### Error Handling
-
-You can [handle errors returned from any of the Orkes Client SDK methods](https://github.com/conductor-sdk/conductor-python/tree/main/docs/exceptions).
-
-## Schedules & Secrets
-
-### Schedule Management
-
-You can [manage schedules using code](https://github.com/conductor-sdk/conductor-python/tree/main/docs/schedule).
-
-### Secret Management
-
-You can [manage secrets using code](https://github.com/conductor-sdk/conductor-python/tree/main/docs/secret).
-
-## Role Based Access Control (RBAC)
-
-### Access Control Management
-
-You can [manage applications, users, groups and permissions using code](https://github.com/conductor-sdk/conductor-python/tree/main/docs/authorization).
