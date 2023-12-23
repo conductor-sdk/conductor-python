@@ -2,7 +2,7 @@ from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.task_type import TaskType
 from copy import deepcopy
 from enum import Enum
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 from typing_extensions import Self
 
 
@@ -60,11 +60,26 @@ class HttpInput:
 
 
 class HttpTask(TaskInterface):
-    def __init__(self, task_ref_name: str, http_input: HttpInput) -> Self:
+    def __init__(self, task_ref_name: str, http_input: Union[HttpInput, dict]) -> Self:
+        if type(http_input) is dict and 'method' not in http_input:
+            http_input['method'] = 'GET'
         super().__init__(
             task_reference_name=task_ref_name,
             task_type=TaskType.HTTP,
-            input_parameters={
-                "http_request": http_input
-            }
+            input_parameters=http_input
         )
+
+    def status_code(self) -> int:
+        return '${' + f'{self.task_reference_name}.output.response.statusCode' + '}'
+
+    def headers(self, json_path: str = None) -> str:
+        if json_path is None:
+            return '${' + f'{self.task_reference_name}.output.response.headers' + '}'
+        else:
+            return '${' + f'{self.task_reference_name}.output.response.headers.{json_path}' + '}'
+
+    def body(self, json_path: str = None) -> str:
+        if json_path is None:
+            return '${' + f'{self.task_reference_name}.output.response.body' + '}'
+        else:
+            return '${' + f'{self.task_reference_name}.output.response.body.{json_path}' + '}'

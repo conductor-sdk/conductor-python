@@ -287,6 +287,8 @@ class ConductorWorkflow:
         self._tasks.append(fork_task)
         return self
 
-    def __call__(self, input: object = {}, correlation_id: str = None) -> str:
-        print(f'input is {input} and corr = {correlation_id}')
+    def __call__(self, **kwargs) -> WorkflowRun:
+        input = {}
+        if kwargs is not None and len(kwargs) > 0:
+            input = kwargs
         return self.execute(workflow_input=input)
