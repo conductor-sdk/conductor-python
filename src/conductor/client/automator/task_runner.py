@@ -1,20 +1,19 @@
-from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.metrics_settings import MetricsSettings
-from conductor.client.http.api_client import ApiClient
-from conductor.client.http.api.task_resource_api import TaskResourceApi
-from conductor.client.http.models.task import Task
-from conductor.client.http.models.task_result import TaskResult
-from conductor.client.http.models.task_exec_log import TaskExecLog
-from conductor.client.telemetry.metrics_collector import MetricsCollector
-from conductor.client.worker.worker_interface import WorkerInterface, DEFAULT_POLLING_INTERVAL
-from configparser import ConfigParser
-from logging.handlers import QueueHandler
-from multiprocessing import Queue
 import logging
+import os
 import sys
 import time
 import traceback
-import os
+from configparser import ConfigParser
+
+from conductor.client.configuration.configuration import Configuration
+from conductor.client.configuration.settings.metrics_settings import MetricsSettings
+from conductor.client.http.api.task_resource_api import TaskResourceApi
+from conductor.client.http.api_client import ApiClient
+from conductor.client.http.models.task import Task
+from conductor.client.http.models.task_exec_log import TaskExecLog
+from conductor.client.http.models.task_result import TaskResult
+from conductor.client.telemetry.metrics_collector import MetricsCollector
+from conductor.client.worker.worker_interface import WorkerInterface
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -22,13 +21,14 @@ logger = logging.getLogger(
     )
 )
 
+
 class TaskRunner:
     def __init__(
-        self,
-        worker: WorkerInterface,
-        configuration: Configuration = None,
-        metrics_settings: MetricsSettings = None,
-        worker_config: ConfigParser =  None
+            self,
+            worker: WorkerInterface,
+            configuration: Configuration = None,
+            metrics_settings: MetricsSettings = None,
+            worker_config: ConfigParser = None
     ):
         if not isinstance(worker, WorkerInterface):
             raise Exception('Invalid worker')
@@ -54,7 +54,7 @@ class TaskRunner:
             self.configuration.apply_logging_config()
         else:
             logger.setLevel(logging.DEBUG)
-        
+
         task_names = ','.join(self.worker.task_definition_names)
         logger.info(f'Started worker process for task(s): {task_names}')
 
@@ -89,7 +89,7 @@ class TaskRunner:
             params = {'workerid': self.worker.get_identity()}
             if domain is not None:
                 params['domain'] = domain
-            task = self.task_client.poll(tasktype=task_definition_name,**params)
+            task = self.task_client.poll(tasktype=task_definition_name, **params)
             finish_time = time.time()
             time_spent = finish_time - start_time
             if self.metrics_collector is not None:
@@ -102,7 +102,8 @@ class TaskRunner:
             )
             return None
         if task is not None:
-            logger.debug(f'Polled task: {task_definition_name}, worker_id: {self.worker.get_identity()}, domain: {self.worker.get_domain()}')
+            logger.debug(
+                f'Polled task: {task_definition_name}, worker_id: {self.worker.get_identity()}, domain: {self.worker.get_domain()}')
         return task
 
     def __execute_task(self, task: Task) -> TaskResult:
@@ -212,7 +213,7 @@ class TaskRunner:
         # If multiple tasks are supplied to the same worker, then only first
         # task will be considered for setting worker properties
         task_type = self.worker.get_task_definition_name()
-        
+
         # Fetch from ENV Variables if present
         domain = self.__get_property_value_from_env("domain", task_type)
         if domain:
@@ -236,7 +237,7 @@ class TaskRunner:
                     section = config[task_type]
                 else:
                     section = config[config.default_section]
-                
+
                 # Override domain if present in config and not in ENV
                 if not domain:
                     self.worker.domain = section.get("domain", self.worker.domain)
@@ -251,7 +252,8 @@ class TaskRunner:
                         self.worker.poll_interval = float(section.get("polling_interval", default_polling_interval))
                         logger.debug("Override polling interval to {0} ms".format(self.worker.poll_interval))
                     except Exception as e:
-                        logger.error("Exception reading polling interval: {0}. Defaulting to {1} ms".format(str(e), default_polling_interval))
+                        logger.error("Exception reading polling interval: {0}. Defaulting to {1} ms".format(str(e),
+                                                                                                            default_polling_interval))
 
     def __get_property_value_from_env(self, prop, task_type):
         prefix = "conductor_worker"

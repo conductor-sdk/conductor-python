@@ -9,7 +9,6 @@ from dacite import from_dict
 from requests.structures import CaseInsensitiveDict
 
 from conductor.client.configuration.configuration import Configuration
-from resources.workers import UserInfo
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -37,9 +36,9 @@ def convert_from_dict(cls: type, data: dict) -> object:
 
     typ = type(data)
     if not ((str(typ).startswith('dict[') or
-            str(typ).startswith('typing.Dict[') or
-            str(typ).startswith('requests.structures.CaseInsensitiveDict[') or
-            typ == dict or str(typ).startswith('OrderedDict['))):
+             str(typ).startswith('typing.Dict[') or
+             str(typ).startswith('requests.structures.CaseInsensitiveDict[') or
+             typ == dict or str(typ).startswith('OrderedDict['))):
         data = {}
 
     members = inspect.signature(cls.__init__).parameters
@@ -85,7 +84,7 @@ def convert_from_dict(cls: type, data: dict) -> object:
                     kwargs.update(data[member])
             else:
                 logger.info(f'setting value for {member} and data is {data} and kwargs is {kwargs}')
-                #kwargs[member] = data[member]
+                # kwargs[member] = data[member]
                 kwargs.update(data)
         else:
             kwargs[member] = convert_from_dict(typ, data[member])
@@ -111,4 +110,3 @@ def get_value(typ: type, val: object) -> object:
         return values
     else:
         return convert_from_dict(typ, val)
-
