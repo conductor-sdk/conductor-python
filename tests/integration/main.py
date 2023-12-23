@@ -1,4 +1,5 @@
 import sys
+from multiprocessing import set_start_method
 
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
@@ -58,4 +59,12 @@ def main():
 
 
 if __name__ == "__main__":
+    # set the no_proxy env
+    # see this thread for more context
+    # https://stackoverflow.com/questions/55408047/requests-get-not-finishing-doesnt-raise-any-error
+    if sys.platform == "darwin":
+        os.environ['no_proxy'] = '*'
+
+    # multiprocessing
+    set_start_method("fork")
     main()
