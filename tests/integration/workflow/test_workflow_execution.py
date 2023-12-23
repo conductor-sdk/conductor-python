@@ -81,7 +81,7 @@ def test_get_workflow_by_correlation_ids(workflow_executor: WorkflowExecutor):
         {
             'workflow_name': WORKFLOW_NAME,
             'correlation_ids': [
-                '2', '5', '33', '4', '32', '7', '34', '1', '3', '6', '1440'
+                '2', '5', '33', '4', '32', '7', '34', '1', '3', '6', '1440',
             ]
         }
     )

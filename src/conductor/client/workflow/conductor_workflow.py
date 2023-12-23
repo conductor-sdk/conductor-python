@@ -158,13 +158,32 @@ class ConductorWorkflow:
             workflow=self.to_workflow_def(),
         )
 
-    # Executes the workflow inline without registering with the server.  Useful for one-off workflows that need not
-    # be registered.
-    def start_workflow(self, start_workflow_request: StartWorkflowRequest):
+    def start_workflow(self, start_workflow_request: StartWorkflowRequest) -> str:
+        """
+        Executes the workflow inline without registering with the server.  Useful for one-off workflows that need not be registered.
+        Parameters
+        ----------
+        start_workflow_request
+
+        Returns
+        -------
+        Workflow Execution Id
+        """
         start_workflow_request.workflow_def = self.to_workflow_def()
         return self._executor.start_workflow(start_workflow_request)
 
     def start(self, workflow_input: Any) -> str:
+        """
+
+        Parameters
+        ----------
+        workflow_input
+        Input to the workflow
+
+        Returns
+        -------
+        Workflow Execution Id
+        """
         request = StartWorkflowRequest()
         request.workflow_def = self.to_workflow_def()
         request.input = workflow_input
@@ -172,18 +191,31 @@ class ConductorWorkflow:
         request.version = 1 if self.version is None else self.version
         return self._executor.start_workflow(start_workflow_request=request)
 
-    def execute(self, workflow_input: Any, wait_until_task_ref: str = '', wait_for_seconds: int = 10) -> WorkflowRun:
+    def execute(self, workflow_input: Any, wait_until_task_ref: str = '', wait_for_seconds: int = 10,
+                request_id: str = None) -> WorkflowRun:
+        """
+        Executes a workflow synchronously.  Useful for short duration workflow (e.g. < 20 seconds)
+        Parameters
+        ----------
+        workflow_input Input to the workflow
+        wait_until_task_ref wait reference name of the task to wait until before returning the workflow results
+        wait_for_seconds amount of time to wait in seconds before returning.
+        request_id User supplied unique id that represents this workflow run
+        Returns
+        -------
+        Workflow execution run.  check the status field to identify if the workflow was completed or still running
+        when the call completed.
+        """
         request = StartWorkflowRequest()
         request.workflow_def = self.to_workflow_def()
         request.input = workflow_input
         request.name = request.workflow_def.name
         request.version = 1
         run = self._executor.execute_workflow(request, wait_until_task_ref=wait_until_task_ref,
-                                              wait_for_seconds=wait_for_seconds)
+                                              wait_for_seconds=wait_for_seconds, request_id=request_id)
 
         return run
 
-    # Converts the workflow to the JSON serializable format
     def to_workflow_def(self) -> WorkflowDef:
         return WorkflowDef(
             name=self._name,
@@ -212,7 +244,6 @@ class ConductorWorkflow:
                 workflow_task_list.append(converted_task)
         return workflow_task_list
 
-    # Append task with the right shift operator `>>`
     def __rshift__(self, task: Union[TaskInterface, List[TaskInterface], List[List[TaskInterface]]]) -> Self:
         if isinstance(task, list):
             forked_tasks = []
@@ -255,3 +286,7 @@ class ConductorWorkflow:
         )
         self._tasks.append(fork_task)
         return self
+
+    def __call__(self, input: object = {}, correlation_id: str = None) -> str:
+        print(f'input is {input} and corr = {correlation_id}')
+        return self.execute(workflow_input=input)

@@ -1,6 +1,6 @@
 from typing import Optional, List
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.models import SkipTaskRequest, WorkflowSummary
+from conductor.client.http.models import SkipTaskRequest, WorkflowSummary, WorkflowStatus
 from conductor.client.http.models.correlation_ids_search_request import CorrelationIdsSearchRequest
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.workflow_run import WorkflowRun
@@ -77,12 +77,25 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
     def retry_workflow(self, workflow_id: str, resume_subworkflow_tasks: Optional[bool] = False):
         self.workflowResourceApi.retry(workflow_id, resume_subworkflow_tasks=resume_subworkflow_tasks)
 
-    def terminate_workflow(self, workflow_id: str, reason: Optional[str] = None):
-        kwargs = {"reason": reason} if reason else {}
+    def terminate_workflow(self, workflow_id: str, reason: Optional[str] = None, trigger_failure_workflow: bool = False):
+        kwargs = {}
+        if reason:
+            kwargs['reason'] = reason
+        if trigger_failure_workflow:
+            kwargs['trigger_failure_workflow'] = trigger_failure_workflow
         self.workflowResourceApi.terminate(workflow_id, **kwargs)
 
     def get_workflow(self, workflow_id: str, include_tasks: Optional[bool] = True) -> Workflow:
         return self.workflowResourceApi.get_execution_status(workflow_id, include_tasks=include_tasks)
+
+    def get_workflow_status(self, workflow_id: str, include_output: bool = None,
+                            include_variables: bool = None) -> WorkflowStatus:
+        kwargs = {}
+        if include_output is not None:
+            kwargs['include_output'] = include_output
+        if include_variables is not None:
+            kwargs['include_variables'] = include_variables
+        return self.workflowResourceApi.get_workflow_status_summary(workflow_id, **kwargs)
 
     def delete_workflow(self, workflow_id: str, archive_workflow: Optional[bool] = True):
         self.workflowResourceApi.delete(workflow_id, archive_workflow=archive_workflow)
@@ -93,12 +106,13 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
     def test_workflow(self, test_request: WorkflowTestRequest) -> Workflow:
         return self.workflowResourceApi.test_workflow(test_request)
 
-    def search(self, start: int = 0, size: int = 100, free_text: str = '*', query : str = None) -> List[WorkflowSummary]:
+    def search(self, start: int = 0, size: int = 100, free_text: str = '*', query : str = None, query_id: str = None) -> List[WorkflowSummary]:
         args = {
             'start' : start,
             'size': size,
             'free_text': free_text,
             'query': query,
+            'query_id': query_id
 
         }
         return self.workflowResourceApi.search(**args)
@@ -112,8 +126,14 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
         """Given the list of correlation ids and list of workflow names, find and return workflows
         Returns a map with key as correlationId and value as a list of Workflows
         When IncludeClosed is set to true, the return value also includes workflows that are completed otherwise only running workflows are returned"""
-        kwargs = {'body': batch_request, 'include_closed': include_completed, 'include_tasks': include_tasks}
-        return self.workflow_client.get_workflows_by_correlation_id_in_batch(**kwargs)
+        kwargs = {}
+
+        kwargs['body'] = batch_request
+        if include_tasks:
+            kwargs['include_tasks'] = include_tasks
+        if include_completed:
+            kwargs['include_closed'] = include_completed
+        return self.workflowResourceApi.get_workflows_by_correlation_id_in_batch(**kwargs)
 
     def get_by_correlation_ids(
         self,
@@ -123,7 +143,12 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
         include_tasks: bool = False
     ) -> dict[str, List[Workflow]]:
         """Lists workflows for the given correlation id list"""
-        kwargs = {'include_closed': include_completed, 'include_tasks': include_tasks}
+        kwargs = {}
+        if include_tasks:
+            kwargs['include_tasks'] = include_tasks
+        if include_completed:
+            kwargs['include_closed'] = include_completed
+
         return self.workflowResourceApi.get_workflows(
             body=correlation_ids,
             name=workflow_name,

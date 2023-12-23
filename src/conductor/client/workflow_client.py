@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
 
-from conductor.client.http.models import WorkflowRun, SkipTaskRequest, WorkflowSummary
+from conductor.client.http.models import WorkflowRun, SkipTaskRequest, WorkflowSummary, WorkflowStatus
 from conductor.client.http.models.correlation_ids_search_request import CorrelationIdsSearchRequest
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
@@ -19,11 +19,16 @@ class WorkflowClient(ABC):
         pass
 
     @abstractmethod
+    def get_workflow_status(self, workflow_id: str, include_output: bool = None,
+                            include_variables: bool = None) -> WorkflowStatus:
+        pass
+
+    @abstractmethod
     def delete_workflow(self, workflow_id: str, archive_workflow: Optional[bool] = True):
         pass
 
     @abstractmethod
-    def terminate_workflow(self, workflow_id: str, reason: Optional[str] = None):
+    def terminate_workflow(self, workflow_id: str, reason: Optional[str] = None, trigger_failure_workflow: bool = False):
         pass
 
     @abstractmethod

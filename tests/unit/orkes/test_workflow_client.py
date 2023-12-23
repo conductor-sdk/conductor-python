@@ -133,7 +133,7 @@ class TestOrkesWorkflowClient(unittest.TestCase):
     def test_terminateWorkflow_with_reason(self, mock):
         reason = "Unit test failed"
         self.workflow_client.terminate_workflow(WORKFLOW_UUID, reason)
-        mock.assert_called_with(WORKFLOW_UUID, reason=reason)
+        mock.assert_called_with(WORKFLOW_UUID, reason=reason, triggerFailureWorkflow=False)
 
     @patch.object(WorkflowResourceApi, 'get_execution_status')
     def test_getWorkflow(self, mock):
