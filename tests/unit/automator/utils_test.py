@@ -5,8 +5,9 @@ from typing import List
 
 from requests.structures import CaseInsensitiveDict
 
-from conductor.client.automator.utils import convert
+from conductor.client.automator.utils import convert_from_dict
 from resources.workers import UserInfo
+
 
 @dataclass
 class Address:
@@ -14,13 +15,12 @@ class Address:
     zip: str
     country: str
 
+
 @dataclass
 class UserDetails:
     name: str
     id: int
     address: List[Address]
-
-
 
 
 class SubTest:
@@ -46,7 +46,6 @@ class Test:
         print(f'd is {self.d}')
 
 
-
 class TestTaskRunner(unittest.TestCase):
     def setUp(self):
         logging.disable(logging.CRITICAL)
@@ -58,7 +57,7 @@ class TestTaskRunner(unittest.TestCase):
         dictionary = {'a': 123, 'b': [{'ba': 2}, {'ba': 21}],
                       'd': [{'name': 'conductor', 'id': 123}, {'F': 3}],
                       'g': {'userA': {'name': 'userA', 'id': 100}, 'userB': {'name': 'userB', 'id': 101}}}
-        value = convert(Test, dictionary)
+        value = convert_from_dict(Test, dictionary)
         self.assertEqual(Test, type(value))
         self.assertEqual(123, value.a)
         self.assertEqual(2, len(value.b))
@@ -66,6 +65,7 @@ class TestTaskRunner(unittest.TestCase):
         self.assertEqual(SubTest, type(value.b[1]))
 
     def test_convert_dataclass(self):
-        dictionary = {'name': 'user_a', 'id': 123, 'address': [{'street': '21 jump street', 'zip': '10101', 'country': 'USA'}]}
-        value = convert(UserDetails, dictionary)
+        dictionary = {'name': 'user_a', 'id': 123,
+                      'address': [{'street': '21 jump street', 'zip': '10101', 'country': 'USA'}]}
+        value = convert_from_dict(UserDetails, dictionary)
         self.assertEqual(UserDetails, type(value), f'expected UserInfo, found {type(value)}')

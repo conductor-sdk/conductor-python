@@ -1,7 +1,7 @@
 # Conductor OSS Python SDK
 Python SDK for working with https://github.com/conductor-oss/conductor
 
-[Conductor](https://github.com/conductor-oss/conductor) is an open source distributed, scalable and highly available 
+[Conductor](https://www.conductor-oss.org/) is an open source distributed, scalable and highly available 
 orchestration platform that allows developers to build powerful distributed applications.
 You can find the documentation for Conductor here: [Conductor Docs](https://orkes.io/content)
 
@@ -70,6 +70,11 @@ configuration = Configuration(
 See [Access Control](https://orkes.io/content/docs/getting-started/concepts/access-control) for guide to getting API keys
 
 ### Build and run hello-world
+Create a `workflow.py`
+```python
+
+```
+
 ### Implement Worker
 ### Create a workflow
 #### Execute workflow synchronously

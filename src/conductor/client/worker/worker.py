@@ -9,7 +9,7 @@ from typing import Any, Callable, Union
 from typing_extensions import Self
 
 from conductor.client.automator import utils
-from conductor.client.automator.utils import convert
+from conductor.client.automator.utils import convert_from_dict
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api_client import ApiClient
 from conductor.client.http.models import TaskExecLog
@@ -70,7 +70,7 @@ class Worker(WorkerInterface):
     def execute(self, task: Task) -> TaskResult:
         task_input = {}
         task_output = None
-        task_result: TaskResult = None
+        task_result: TaskResult = self.get_task_result_from_task(task)
 
         try:
 
@@ -84,7 +84,7 @@ class Worker(WorkerInterface):
                         if typ in utils.simple_types:
                             task_input[input_name] = task.input_data[input_name]
                         else:
-                            task_input[input_name] = convert(typ, task.input_data[input_name])
+                            task_input[input_name] = convert_from_dict(typ, task.input_data[input_name])
                 task_output = self.execute_function(**task_input)
 
             if type(task_output) == TaskResult:
@@ -92,7 +92,6 @@ class Worker(WorkerInterface):
                 task_output.workflow_instance_id = task.workflow_instance_id
                 return task_output
             else:
-                task_result: TaskResult = self.get_task_result_from_task(task)
                 task_result.status = TaskResultStatus.COMPLETED
                 task_result.output_data = task_output
 

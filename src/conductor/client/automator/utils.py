@@ -9,6 +9,7 @@ from dacite import from_dict
 from requests.structures import CaseInsensitiveDict
 
 from conductor.client.configuration.configuration import Configuration
+from resources.workers import UserInfo
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -27,12 +28,20 @@ collection_types = {
 }
 
 
-def convert(cls: type, data: dict) -> object:
+def convert_from_dict(cls: type, data: dict) -> object:
+    if type(data) == cls:
+        return data
+
     if dataclasses.is_dataclass(cls):
         return from_dict(data_class=cls, data=data)
 
-    if type(data) != dict:
+    typ = type(data)
+    if not ((str(typ).startswith('dict[') or
+            str(typ).startswith('typing.Dict[') or
+            str(typ).startswith('requests.structures.CaseInsensitiveDict[') or
+            typ == dict or str(typ).startswith('OrderedDict['))):
         data = {}
+
     members = inspect.signature(cls.__init__).parameters
     kwargs = {}
 
@@ -55,8 +64,11 @@ def convert(cls: type, data: dict) -> object:
             for val in data[member]:
                 values.append(get_value(generic_type, val))
             kwargs[member] = values
-        elif str(typ).startswith('dict[') or str(typ).startswith(
-                'typing.Dict[') or str(typ).startswith('requests.structures.CaseInsensitiveDict[') or typ == dict or str(typ).startswith('OrderedDict['):
+        elif (str(typ).startswith('dict[') or
+              str(typ).startswith('typing.Dict[') or
+              str(typ).startswith('requests.structures.CaseInsensitiveDict[') or
+              typ == dict or str(typ).startswith('OrderedDict[')):
+
             values = {}
             generic_type = object
             if len(generic_types) > 1:
@@ -66,16 +78,17 @@ def convert(cls: type, data: dict) -> object:
                 values[k] = get_value(generic_type, v)
             kwargs[member] = values
         elif typ == inspect.Parameter.empty:
-            if members[member].kind == inspect.Parameter.VAR_KEYWORD:
+            if inspect.Parameter.VAR_KEYWORD == members[member].kind:
                 if type(data) in dict_types:
                     kwargs.update(data)
                 else:
                     kwargs.update(data[member])
             else:
                 logger.info(f'setting value for {member} and data is {data} and kwargs is {kwargs}')
-                kwargs[member] = data[member]
+                #kwargs[member] = data[member]
+                kwargs.update(data)
         else:
-            kwargs[member] = convert(typ, data[member])
+            kwargs[member] = convert_from_dict(typ, data[member])
 
     return cls(**kwargs)
 
@@ -97,4 +110,5 @@ def get_value(typ: type, val: object) -> object:
             values[k] = get_value(object, v)
         return values
     else:
-        return convert(typ, val)
+        return convert_from_dict(typ, val)
+
