@@ -22,6 +22,8 @@ class OrderInfo:
 
 @worker_task(task_definition_name='get_user_info')
 def get_user_info(user_id: str) -> UserDetails:
+    if user_id is None:
+        user_id = 'none'
     return UserDetails(name='user_' + user_id, user_id=user_id, addresses=[{
         'street': '21 jump street',
         'city': 'new york'
