@@ -1,31 +1,31 @@
-ARG SDK_ORIGIN=local_sdk
+ARG SDK_ORIGIN=no_sdk
 
 FROM python:3.11-alpine as python_base
 RUN apk add --no-cache tk
-RUN mkdir /package
-COPY /src /package/src
-COPY /setup* /package/
-COPY /README.md /package/
+
+FROM python_base as python_test_base
+RUN mkdir -p /package
+COPY / /package
 WORKDIR /package
-
-FROM python_base as lint
+RUN pwd
+RUN ls -ltr
+ENV PYTHONPATH /package/src
 RUN python3 -m pip install pylint
-RUN python3 -m pylint --disable=all ./src
-
-FROM python_base as local_sdk
-ENV CONDUCTOR_PYTHON_VERSION="v0.0.0"
-RUN python3 -m pip install .
-
-FROM python_base as remote_sdk
-ARG CONDUCTOR_PYTHON_VERSION
-RUN python3 -m pip install conductor-python==${CONDUCTOR_PYTHON_VERSION}
-
-FROM ${SDK_ORIGIN} as python_test_base
-RUN rm -rf /package/src
-COPY /tests /package/tests
+#RUN python3 -m pylint --disable=all ./src
+RUN python3 -m pip install coverage
+RUN python3 -m pip install -r ./requirements.txt
 
 FROM python_test_base as unit_test
+ARG KEY
+ARG SECRET
+ARG CONDUCTOR_SERVER_URL
+ENV KEY=${KEY}
+ENV SECRET=${SECRET}
+ENV CONDUCTOR_SERVER_URL=${CONDUCTOR_SERVER_URL}
+RUN ls -ltr
 RUN python3 -m unittest discover --verbose --start-directory=./tests/unit
+RUN coverage run --source=./src/conductor/client/orkes -m unittest discover --verbose --start-directory=./tests/integration
+RUN coverage report -m
 
 FROM python_test_base as test
 ARG KEY
@@ -34,7 +34,7 @@ ARG CONDUCTOR_SERVER_URL
 ENV KEY=${KEY}
 ENV SECRET=${SECRET}
 ENV CONDUCTOR_SERVER_URL=${CONDUCTOR_SERVER_URL}
-RUN python3 /package/tests/integration/main.py
+RUN python3 ./tests/integration/main.py
 
 FROM python_base as publish
 RUN python3 -m pip install setuptools wheel build twine
