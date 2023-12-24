@@ -118,6 +118,12 @@ class TaskInterface(ABC):
             return f'${{{self._task_reference_name}.output}}'
         return f'${{{self._task_reference_name}.output.{path}}}'
 
+    def output(self, json_path: str = None) -> str:
+        if json_path is None:
+            return '${' + f'{self.task_reference_name}.output' + '}'
+        else:
+            return '${' + f'{self.task_reference_name}.output.{json_path}' + '}'
+
     def __getattribute__(self, __name: str) -> Any:
         try:
             val = super().__getattribute__(__name)

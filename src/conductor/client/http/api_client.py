@@ -645,10 +645,8 @@ class ApiClient(object):
                 response_type='Token'
             )
             return response.token
-        except Exception:
-            logger.debug(
-                f'Failed to get new token, reason: {traceback.format_exc()}'
-            )
+        except Exception as e:
+            logger.error(f'Failed to get new token, reason: {e.args}')
             return None
 
     def __get_default_headers(self, header_name: str, header_value: object) -> Dict[str, object]:

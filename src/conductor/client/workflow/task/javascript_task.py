@@ -10,8 +10,14 @@ class JavascriptTask(TaskInterface):
             task_type=TaskType.INLINE,
             input_parameters={
                 "evaluatorType": "graaljs",
-                "expression":    script,
+                "expression": script,
             }
         )
         if bindings is not None:
             self.input_parameters.update(bindings)
+
+    def output(self, json_path: str = None) -> str:
+        if json_path is None:
+            return '${' + f'{self.task_reference_name}.output.result' + '}'
+        else:
+            return '${' + f'{self.task_reference_name}.output.result.{json_path}' + '}'
