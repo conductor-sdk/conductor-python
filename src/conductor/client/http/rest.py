@@ -1,3 +1,5 @@
+from urllib3 import Timeout
+
 from conductor.client.configuration.configuration import Configuration
 from six.moves.urllib.parse import urlencode
 import certifi
@@ -60,7 +62,7 @@ class RESTClientObject(object):
         post_params = post_params or {}
         headers = headers or {}
 
-        timeout = _request_timeout if _request_timeout is not None else 90
+        timeout = _request_timeout if _request_timeout is not None else (120, 120)
 
         if 'Content-Type' not in headers:
             headers['Content-Type'] = 'application/json'
