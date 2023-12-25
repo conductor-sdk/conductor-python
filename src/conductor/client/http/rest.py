@@ -1,17 +1,11 @@
-from urllib3 import Timeout
-
-from conductor.client.configuration.configuration import Configuration
-from six.moves.urllib.parse import urlencode
-import certifi
 import io
 import json
-import logging
 import re
-import six
-import ssl
+
 import requests
-from urllib3.connection import HTTPConnection
-import socket
+from requests.adapters import HTTPAdapter
+from six.moves.urllib.parse import urlencode
+from urllib3 import Retry
 
 
 class RESTResponse(io.IOBase):
@@ -26,19 +20,17 @@ class RESTResponse(io.IOBase):
         return self.headers
 
 
-HTTPConnection.default_socket_options = (
-        HTTPConnection.default_socket_options + [
-    (socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1),
-    (socket.SOL_TCP, socket.TCP_KEEPIDLE, 45),
-    (socket.SOL_TCP, socket.TCP_KEEPINTVL, 10),
-    (socket.SOL_TCP, socket.TCP_KEEPCNT, 6)
-]
-)
-
-
 class RESTClientObject(object):
     def __init__(self, connection=None):
         self.connection = connection or requests.Session()
+        retry_strategy = Retry(
+            total=3,
+            backoff_factor=1,
+            status_forcelist=[429, 500, 502, 503, 504],
+            allowed_methods=["HEAD", "GET", "OPTIONS"],
+        )
+        self.connection.mount("https://", HTTPAdapter(max_retries=retry_strategy))
+        self.connection.mount("http://", HTTPAdapter(max_retries=retry_strategy))
 
     def request(self, method, url, query_params=None, headers=None,
                 body=None, post_params=None, _preload_content=True,
