@@ -10,6 +10,8 @@ import re
 import six
 import ssl
 import requests
+from urllib3.connection import HTTPConnection
+import socket
 
 
 class RESTResponse(io.IOBase):
@@ -24,10 +26,19 @@ class RESTResponse(io.IOBase):
         return self.headers
 
 
-class RESTClientObject(object):
-    def __init__(self, connection = None):
-        self.connection = connection or requests.Session()
+HTTPConnection.default_socket_options = (
+        HTTPConnection.default_socket_options + [
+    (socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1),
+    (socket.SOL_TCP, socket.TCP_KEEPIDLE, 45),
+    (socket.SOL_TCP, socket.TCP_KEEPINTVL, 10),
+    (socket.SOL_TCP, socket.TCP_KEEPCNT, 6)
+]
+)
 
+
+class RESTClientObject(object):
+    def __init__(self, connection=None):
+        self.connection = connection or requests.Session()
 
     def request(self, method, url, query_params=None, headers=None,
                 body=None, post_params=None, _preload_content=True,
@@ -190,7 +201,7 @@ class ApiException(Exception):
 
     def __str__(self):
         """Custom error messages for exception"""
-        error_message = "({0})\n"\
+        error_message = "({0})\n" \
                         "Reason: {1}\n".format(self.status, self.reason)
         if self.headers:
             error_message += "HTTP response headers: {0}\n".format(
