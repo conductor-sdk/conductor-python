@@ -101,7 +101,7 @@ class TestOrkesWorkflowClient(unittest.TestCase):
     @patch.object(WorkflowResourceApi, 'restart')
     def test_restartWorkflow(self, mock):
         self.workflow_client.restart_workflow(WORKFLOW_UUID)
-        mock.assert_called_with(WORKFLOW_UUID, use_latest_definitions=False)
+        mock.assert_called_with(WORKFLOW_UUID)
 
     @patch.object(WorkflowResourceApi, 'restart')
     def test_restartWorkflow_with_latest_wfDef(self, mock):
@@ -117,7 +117,7 @@ class TestOrkesWorkflowClient(unittest.TestCase):
     @patch.object(WorkflowResourceApi, 'retry')
     def test_retryWorkflow(self, mock):
         self.workflow_client.retry_workflow(WORKFLOW_UUID)
-        mock.assert_called_with(WORKFLOW_UUID, resume_subworkflow_tasks=False)
+        mock.assert_called_with(WORKFLOW_UUID)
 
     @patch.object(WorkflowResourceApi, 'retry')
     def test_retryWorkflow_with_resumeSubworkflowTasks(self, mock):
@@ -146,7 +146,7 @@ class TestOrkesWorkflowClient(unittest.TestCase):
     def test_getWorkflow_without_tasks(self, mock):
         mock.return_value = Workflow(workflow_id=WORKFLOW_UUID)
         workflow = self.workflow_client.get_workflow(WORKFLOW_UUID, False)
-        mock.assert_called_with(WORKFLOW_UUID, include_tasks=False)
+        mock.assert_called_with(WORKFLOW_UUID)
         self.assertEqual(workflow.workflow_id, WORKFLOW_UUID)
 
     @patch.object(WorkflowResourceApi, 'get_execution_status')
