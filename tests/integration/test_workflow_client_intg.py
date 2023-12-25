@@ -26,7 +26,6 @@ from conductor.client.workflow.executor.workflow_executor import WorkflowExecuto
 from client.orkes.test_orkes_clients import TestOrkesClients
 from workflow.test_workflow_execution import run_workflow_execution_tests
 from metadata.test_workflow_definition import run_workflow_definition_tests
-from client import test_async
 import logging
 import os
 

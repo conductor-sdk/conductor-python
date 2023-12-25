@@ -59,7 +59,8 @@ def test_kitchensink_workflow_registration(workflow_executor: WorkflowExecutor) 
     workflow.register(True)
     workflow_id = workflow_executor.start_workflow(
         start_workflow_request=StartWorkflowRequest(
-            name=workflow.name
+            name=workflow.name,
+            correlation_id='kitchensink_test'
         )
     )
     if type(workflow_id) != str or workflow_id == '':
