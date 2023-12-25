@@ -69,13 +69,19 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
         self.workflowResourceApi.resume_workflow(workflow_id)
 
     def restart_workflow(self, workflow_id: str, use_latest_def: Optional[bool] = False):
-        self.workflowResourceApi.restart(workflow_id, use_latest_definitions=use_latest_def)
+        kwargs = {}
+        if use_latest_def:
+            kwargs['use_latest_definitions'] = use_latest_def
+        self.workflowResourceApi.restart(workflow_id, **kwargs)
 
     def rerun_workflow(self, workflow_id: str, rerun_workflow_request: RerunWorkflowRequest) -> str:
         return self.workflowResourceApi.rerun(rerun_workflow_request, workflow_id)
 
     def retry_workflow(self, workflow_id: str, resume_subworkflow_tasks: Optional[bool] = False):
-        self.workflowResourceApi.retry(workflow_id, resume_subworkflow_tasks=resume_subworkflow_tasks)
+        kwargs = {}
+        if resume_subworkflow_tasks:
+            kwargs['resume_subworkflow_tasks'] = resume_subworkflow_tasks
+        self.workflowResourceApi.retry(workflow_id, **kwargs)
 
     def terminate_workflow(self, workflow_id: str, reason: Optional[str] = None, trigger_failure_workflow: bool = False):
         kwargs = {}
@@ -86,7 +92,10 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
         self.workflowResourceApi.terminate(workflow_id, **kwargs)
 
     def get_workflow(self, workflow_id: str, include_tasks: Optional[bool] = True) -> Workflow:
-        return self.workflowResourceApi.get_execution_status(workflow_id, include_tasks=include_tasks)
+        kwargs = {}
+        if include_tasks:
+            kwargs['include_tasks'] = include_tasks
+        return self.workflowResourceApi.get_execution_status(workflow_id, **kwargs)
 
     def get_workflow_status(self, workflow_id: str, include_output: bool = None,
                             include_variables: bool = None) -> WorkflowStatus:
