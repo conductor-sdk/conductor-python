@@ -30,12 +30,12 @@ logger = logging.getLogger(
 )
 
 
-@worker_task(task_definition_name='step1')
+@worker_task(task_definition_name='step1', poll_interval_millis=500)
 def step1(name: str):
     return 'Hello from step 1' + name
 
 
-@worker_task(task_definition_name='step2')
+@worker_task(task_definition_name='step2', poll_interval_millis=500)
 def step2(name: str):
     return 'Hello from step 2 ' + name
 
@@ -97,7 +97,7 @@ class WorkflowTests(unittest.TestCase):
         self.assertIsNotNone(workflow)
         for i in range(10):
             workflow = self.workflow_client.get_workflow(id, include_tasks=True)
-            if workflow.status is 'COMPLETED':
+            if workflow.status == 'COMPLETED':
                 break
             else:
                 sleep(1)
