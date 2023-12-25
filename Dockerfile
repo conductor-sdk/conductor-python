@@ -24,7 +24,7 @@ ENV SECRET=${SECRET}
 ENV CONDUCTOR_SERVER_URL=${CONDUCTOR_SERVER_URL}
 RUN ls -ltr
 RUN python3 -m unittest discover --verbose --start-directory=./tests/unit
-RUN coverage run --source=./src/conductor/client -m unittest discover --verbose --start-directory=./tests/integration
+RUN coverage run --source=./src/conductor/client/orkes -m unittest discover --verbose --start-directory=./tests/integration
 RUN coverage report -m
 
 FROM python_test_base as test
