@@ -292,3 +292,9 @@ class ConductorWorkflow:
         if kwargs is not None and len(kwargs) > 0:
             input = kwargs
         return self.execute(workflow_input=input)
+
+    def input(self, json_path: str) -> str:
+        if json_path is None:
+            return '${' + f'workflow.input' + '}'
+        else:
+            return '${' + f'workflow.input.{json_path}' + '}'

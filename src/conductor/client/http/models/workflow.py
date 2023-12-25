@@ -271,7 +271,7 @@ class Workflow(object):
         self._updated_by = updated_by
 
     @property
-    def status(self):
+    def status(self) -> str:
         """Gets the status of this Workflow.  # noqa: E501
 
 
