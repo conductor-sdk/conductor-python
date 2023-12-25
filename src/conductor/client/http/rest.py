@@ -29,8 +29,8 @@ class RESTClientObject(object):
             status_forcelist=[429, 500, 502, 503, 504],
             allowed_methods=["HEAD", "GET", "OPTIONS"],
         )
-        self.connection.mount("https://", HTTPAdapter(max_retries=retry_strategy))
-        self.connection.mount("http://", HTTPAdapter(max_retries=retry_strategy))
+        self.connection.mount("https://", HTTPAdapter(max_retries=retry_strategy, pool_maxsize=100))
+        self.connection.mount("http://", HTTPAdapter(max_retries=retry_strategy, pool_maxsize=100))
 
     def request(self, method, url, query_params=None, headers=None,
                 body=None, post_params=None, _preload_content=True,
