@@ -27,7 +27,7 @@ class RESTClientObject(object):
             total=3,
             backoff_factor=2,
             status_forcelist=[429, 500, 502, 503, 504],
-            allowed_methods=["HEAD", "GET", "OPTIONS"],
+            allowed_methods=["HEAD", "GET", "OPTIONS", "DELETE"],   # all the methods that are supposed to be idempotent
         )
         self.connection.mount("https://", HTTPAdapter(max_retries=retry_strategy))
         self.connection.mount("http://", HTTPAdapter(max_retries=retry_strategy))
