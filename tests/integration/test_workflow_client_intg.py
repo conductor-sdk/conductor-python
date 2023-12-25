@@ -63,7 +63,6 @@ class TestOrkesWorkflowClientIntg(unittest.TestCase):
     def test_all(self):
         logger.info('START: integration tests')
         configuration = self.config
-        api_client = ApiClient(configuration)
         workflow_executor = WorkflowExecutor(configuration)
 
         # test_async.test_async_method(api_client)
