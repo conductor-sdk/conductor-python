@@ -1,4 +1,7 @@
+import time
 from requests.structures import CaseInsensitiveDict
+
+from conductor.client.http.rest import AuthorizationException
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.thread import AwaitableThread
 from conductor.client.http import rest
@@ -62,6 +65,35 @@ class ApiClient(object):
             files=None, response_type=None, auth_settings=None,
             _return_http_data_only=None, collection_formats=None,
             _preload_content=True, _request_timeout=None):
+        try:
+            return self.__call_api_no_retry(
+                resource_path=resource_path, method=method, path_params=path_params,
+                query_params=query_params, header_params=header_params, body=body, post_params=post_params,
+                files=files, response_type=response_type, auth_settings=auth_settings,
+                _return_http_data_only=_return_http_data_only, collection_formats=collection_formats,
+                _preload_content=_preload_content, _request_timeout=_request_timeout
+            )
+        except AuthorizationException as ae:
+            if ae.token_expired:
+                logger.error(f'authentication token has expired, refreshing the token.  request= {method} {resource_path}')
+                # if the token has expired, lets refresh the token
+                self.__force_refresh_auth_token()
+                # and now retry the same request
+                return self.__call_api_no_retry(
+                    resource_path=resource_path, method=method, path_params=path_params,
+                    query_params=query_params, header_params=header_params, body=body, post_params=post_params,
+                    files=files, response_type=response_type, auth_settings=auth_settings,
+                    _return_http_data_only=_return_http_data_only, collection_formats=collection_formats,
+                    _preload_content=_preload_content, _request_timeout=_request_timeout
+                )
+            return None
+
+    def __call_api_no_retry(
+            self, resource_path, method, path_params=None,
+            query_params=None, header_params=None, body=None, post_params=None,
+            files=None, response_type=None, auth_settings=None,
+            _return_http_data_only=None, collection_formats=None,
+            _preload_content=True, _request_timeout=None):
 
         config = self.configuration
 
@@ -101,10 +133,13 @@ class ApiClient(object):
                                                     collection_formats)
 
         # auth setting
+        auth_headers = None
+        if self.configuration.authentication_settings is not None and resource_path != '/token':
+            auth_headers = self.__get_authentication_headers()
         self.update_params_for_auth(
             header_params,
             query_params,
-            self.__get_authentication_headers()
+            auth_headers
         )
 
         # body
@@ -616,6 +651,16 @@ class ApiClient(object):
     def __get_authentication_headers(self):
         if self.configuration.AUTH_TOKEN is None:
             return None
+
+        now = round(time.time() * 1000)
+        time_since_last_update = now - self.configuration.token_update_time
+
+        if time_since_last_update > self.configuration.auth_token_ttl_msec:
+            # time to refresh the token
+            logger.debug(f'refreshing authentication token')
+            token = self.__get_new_token()
+            self.configuration.update_token(token)
+
         return {
             'header': {
                 'X-Authorization': self.configuration.AUTH_TOKEN
@@ -623,9 +668,18 @@ class ApiClient(object):
         }
 
     def __refresh_auth_token(self) -> None:
-        if self.configuration.AUTH_TOKEN != None:
+        if self.configuration.AUTH_TOKEN is not None:
             return
-        if self.configuration.authentication_settings == None:
+        if self.configuration.authentication_settings is None:
+            return
+        token = self.__get_new_token()
+        self.configuration.update_token(token)
+
+    def __force_refresh_auth_token(self) -> None:
+        """
+        Forces the token refresh.  Unlike the __refresh_auth_token method above
+        """
+        if self.configuration.authentication_settings is None:
             return
         token = self.__get_new_token()
         self.configuration.update_token(token)

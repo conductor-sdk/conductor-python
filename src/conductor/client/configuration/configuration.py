@@ -1,3 +1,5 @@
+import time
+
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 import logging
 import multiprocessing
@@ -13,8 +15,9 @@ class Configuration:
             debug: bool = False,
             authentication_settings: AuthenticationSettings = None,
             server_api_url: str = None,
+            auth_token_ttl_min: int = 45
     ):
-        if server_api_url != None:
+        if server_api_url is not None:
             self.host = server_api_url
         else:
             self.host = base_url + '/api'
@@ -48,6 +51,10 @@ class Configuration:
 
         # Provide an alterative to requests.Session() for HTTP connection.
         self.http_connection = None
+
+        # not updated yet
+        self.token_update_time = 0
+        self.auth_token_ttl_msec = auth_token_ttl_min * 60 * 1000
 
     @property
     def debug(self):
@@ -116,3 +123,4 @@ class Configuration:
 
     def update_token(self, token: str) -> None:
         self.AUTH_TOKEN = token
+        self.token_update_time = round(time.time() * 1000)
