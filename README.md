@@ -23,6 +23,11 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
   - [Step 2: Write Worker](#step-2-write-worker)
   - [Step 3: Write _your_ application](#step-3-write-_your_-application)
 - [Implementing Workers](#implementing-workers)
+- [System Tasks](#system-tasks)
+  - [HTTP Task](#http-task)
+  - [Wait Task](#wait-task)
+  - [JQ Processing](#jq-processing)
+  - [Javascript Executor Task](#javascript-executor-task)
 - [Executing Workflows](#executing-workflows)
   - [Execute workflow asynchronously](#execute-workflow-asynchronously)
   - [Execute workflow synchronously](#execute-workflow-synchronously)
@@ -39,7 +44,8 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
   - [Resume paused workflow](#resume-paused-workflow)
 - [Searching for workflows](#searching-for-workflows)
 - [Testing your workflows](#testing-your-workflows)
-- [Metrics support](#metrics-support)
+- [Eventing Support with Kafka, AMQP, NATS, SQS](#eventing-support-with-kafka-amqp-nats-sqs)
+- [](#)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -94,6 +100,21 @@ Note: A single workflow application can have workers written in different langua
 
 ### Step 1: Create a Workflow
 
+**Use Code to create workflows**
+
+Create greetings_workflow.py with the following:
+```python
+from conductor.client.workflow.conductor_workflow import ConductorWorkflow
+from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
+from examples.greetings import greet
+
+def greetings_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
+    workflow = ConductorWorkflow(name='hello', executor=workflow_executor)
+    workflow >> greet(task_ref_name='greet_ref', name=workflow.input('name'))
+    return workflow
+
+```
+
 **Use JSON to create workflows**
 
 Create workflow.json with the following:
@@ -120,21 +141,6 @@ Now, register this workflow with the server:
 ```shell
 curl -X POST -H "Content-Type:application/json" \
 http://localhost:8080/api/metadata/workflow -d @workflow.json
-```
-
-**Use Code to create workflows**
-
-Create greetings_workflow.py with the following:
-```python
-from conductor.client.workflow.conductor_workflow import ConductorWorkflow
-from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from examples.greetings import greet
-
-def greetings_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
-    workflow = ConductorWorkflow(name='hello', executor=workflow_executor)
-    workflow >> greet(task_ref_name='greet_ref', name=workflow.input('name'))
-    return workflow
-
 ```
 
 ### Step 2: Write Worker
@@ -225,6 +231,16 @@ def process_order(order_info: OrderInfo) -> str:
     return 'order_id_42'
 
 ```
+## System Tasks
+System tasks are the pre-built workers that are available in every Conductor server.  
+These are commonly used task workers which are generic in nature and battle tested by Conductor community over the years.
+
+### HTTP Task
+
+### Wait Task
+### JQ Processing
+### Javascript Executor Task
+
 
 ## Executing Workflows
 [WorkflowClient](src/conductor/client/workflow_client.py) interface provides all the APIs required to work with workflow executions.
@@ -293,6 +309,7 @@ see [dynamic_workflow.py](examples/dynamic_workflow.py) for a fully functional e
 **For more complex workflow example with all the supported features, see [kitchensink.py](examples/kitchensink.py)**
 
 ## Managing Workflow Executions
+
 ### Get the execution status
 ### Update a task in the workflow
 ### Update workflow state variables
@@ -304,8 +321,10 @@ see [dynamic_workflow.py](examples/dynamic_workflow.py) for a fully functional e
 ### Resume paused workflow
 
 ## Searching for workflows
+
 ## Testing your workflows
-## Metrics support
+## Eventing Support with Kafka, AMQP, NATS, SQS
+## 
 
 
 
