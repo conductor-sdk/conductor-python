@@ -23,12 +23,21 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
   - [Step 2: Write Worker](#step-2-write-worker)
   - [Step 3: Write _your_ application](#step-3-write-_your_-application)
 - [Implementing Workers](#implementing-workers)
-  - [Referencing a worker inside a workflow](#referencing-a-worker-inside-a-workflow)
 - [Executing Workflows](#executing-workflows)
-  - [Execute workflow synchronously](#execute-workflow-synchronously)
   - [Execute workflow asynchronously](#execute-workflow-asynchronously)
+  - [Execute workflow synchronously](#execute-workflow-synchronously)
   - [Execute dynamic workflows using Code](#execute-dynamic-workflows-using-code)
-- [Sending Signals to workflow](#sending-signals-to-workflow)
+- [Managing Workflow Executions](#managing-workflow-executions)
+  - [Get the execution status](#get-the-execution-status)
+  - [Update a task in the workflow](#update-a-task-in-the-workflow)
+  - [Update workflow state variables](#update-workflow-state-variables)
+  - [Terminate running workflows](#terminate-running-workflows)
+  - [Retry failed workflows](#retry-failed-workflows)
+  - [Restart workflows](#restart-workflows)
+  - [Rerun a workflow from a specific task](#rerun-a-workflow-from-a-specific-task)
+  - [Pause a running workflow](#pause-a-running-workflow)
+  - [Resume paused workflow](#resume-paused-workflow)
+- [Searching for workflows](#searching-for-workflows)
 - [Testing your workflows](#testing-your-workflows)
 - [Metrics support](#metrics-support)
 
@@ -283,7 +292,18 @@ see [dynamic_workflow.py](examples/dynamic_workflow.py) for a fully functional e
 
 **For more complex workflow example with all the supported features, see [kitchensink.py](examples/kitchensink.py)**
 
-## Sending Signals to workflow
+## Managing Workflow Executions
+### Get the execution status
+### Update a task in the workflow
+### Update workflow state variables
+### Terminate running workflows
+### Retry failed workflows
+### Restart workflows
+### Rerun a workflow from a specific task
+### Pause a running workflow
+### Resume paused workflow
+
+## Searching for workflows
 ## Testing your workflows
 ## Metrics support
 
