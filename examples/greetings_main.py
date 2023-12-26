@@ -9,14 +9,13 @@ from examples.greetings import greetings_workflow
 
 
 def main():
-
     # Key and Secret are required for the servers with authentication enabled.
     key = os.getenv("KEY")
     secret = os.getenv("SECRET")
     url = os.getenv("CONDUCTOR_SERVER_URL")
 
     api_config = Configuration(authentication_settings=AuthenticationSettings(key_id=key, key_secret=secret),
-                               server_api_url=url, debug=False)
+                               server_api_url=url)
 
     workflow_executor = WorkflowExecutor(configuration=api_config)
     task_handler = TaskHandler(
@@ -28,6 +27,7 @@ def main():
     result = greetings_workflow('Orkes', workflow_executor)
     print(f'workflow result: {result}')
     task_handler.stop_processes()
+
 
 if __name__ == '__main__':
     set_start_method('fork')
