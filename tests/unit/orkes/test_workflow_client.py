@@ -82,8 +82,10 @@ class TestOrkesWorkflowClient(unittest.TestCase):
         expectedWfRun = WorkflowRun()
         mock.return_value = expectedWfRun
         startWorkflowReq = StartWorkflowRequest()
+        startWorkflowReq.name = WORKFLOW_NAME
+        startWorkflowReq.version = 1
         workflowRun = self.workflow_client.execute_workflow(
-            startWorkflowReq, "request_id", WORKFLOW_NAME, 1, None, 30
+            startWorkflowReq, "request_id", None, 30
         )
         mock.assert_called_with(body=startWorkflowReq, request_id="request_id", name=WORKFLOW_NAME, version=1, wait_until_task_ref=None, wait_for_seconds=30)
         self.assertEqual(workflowRun, expectedWfRun)

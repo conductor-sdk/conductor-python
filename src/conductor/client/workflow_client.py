@@ -36,8 +36,6 @@ class WorkflowClient(ABC):
             self,
             start_workflow_request: StartWorkflowRequest,
             request_id: str,
-            name: str,
-            version: int,
             wait_until_task_ref: Optional[str] = None,
             wait_for_seconds: int = 30
     ) -> WorkflowRun:

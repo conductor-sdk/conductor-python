@@ -109,7 +109,8 @@ Create workflow.json with the following:
 ```
 Now, register this workflow with the server:
 ```shell
-curl -X POST -H "Content-Type:application/json" http://localhost:8080/api/metadata/workflow -d @workflow.json
+curl -X POST -H "Content-Type:application/json" \
+http://localhost:8080/api/metadata/workflow -d @workflow.json
 ```
 
 **Use Code to create workflows**
@@ -215,51 +216,72 @@ def process_order(order_info: OrderInfo) -> str:
     return 'order_id_42'
 
 ```
-### Referencing a worker inside a workflow
-A task inside a workflow represents a worker.  (sometimes both these words are used interchangeably).
-Each task inside the workflow has two important identifiers:
-1. name: Name of the task that represents the unique worker (e.g. task_definition_name in the above example)
-2. reference name: Unique name _within_ the workflow for the task.  A single task can be added multiple times inside a workflow, reference name allows unique referencing of a specific instance of task in the workflow definition.
-
-**Example when creating workflow in code**
-
-```python
-from conductor.client.workflow.conductor_workflow import ConductorWorkflow
-
-# ---------- task ↓ ------------->task reference name ↓ ---- task inputs ↓ ---
-workflow >> proces_order(task_ref_name='process_order_ref', order_info=OrderInfo())
-```
-
-**Example when creating workflow in JSON**
-```json
-{
-  "name": "order_processing_wf",
-  "description": "order_processing_wf",
-  "version": 1,
-  "tasks": [
-    {
-      "name": "process_order",
-      "taskReferenceName": "process_order_ref",
-      "type": "SIMPLE",
-      "inputParameters": {
-        "order_info": {}
-      }
-    }
-  ],
-  "timeoutPolicy": "TIME_OUT_WF",
-  "timeoutSeconds": 60
-}
-```
 
 ## Executing Workflows
 [WorkflowClient](src/conductor/client/workflow_client.py) interface provides all the APIs required to work with workflow executions.
 ```python
+from conductor.client.configuration.configuration import Configuration
+from conductor.client.orkes_clients import OrkesClients
+
 api_config = Configuration()
-workflow_client = 
+clients = OrkesClients(configuration=api_config)
+workflow_client = clients.get_workflow_client() 
+```
+### Execute workflow asynchronously
+Useful when workflows are long-running  
+```python
+from conductor.client.http.models import StartWorkflowRequest
+
+request = StartWorkflowRequest()
+request.name = 'hello'
+request.version = 1
+request.input = {'name': 'Orkes'}
+# workflow id is the unique execution id associated with this execution
+workflow_id = workflow_client.start_workflow(request)
 ```
 ### Execute workflow synchronously
-### Execute workflow asynchronously
+Useful when workflows complete very quickly - usually under 20-30 second
+```python
+from conductor.client.http.models import StartWorkflowRequest
+
+request = StartWorkflowRequest()
+request.name = 'hello'
+request.version = 1
+request.input = {'name': 'Orkes'}
+
+workflow_run = workflow_client.execute_workflow(
+        start_workflow_request=request, 
+        wait_for_seconds=12)
+```
 ### Execute dynamic workflows using Code
+For cases, where the workflows cannot be created statically ahead of the time, 
+Conductor is a powerful dynamic workflow execution platform that lets you create
+very complex workflows in code and execute them.  Useful when the workflow is unique for each execution.
+
+```python
+from conductor.client.automator.task_handler import TaskHandler
+from conductor.client.configuration.configuration import Configuration
+from conductor.client.orkes_clients import OrkesClients
+from conductor.client.worker.worker_task import worker_task
+from conductor.client.workflow.conductor_workflow import ConductorWorkflow
+
+
+workflow = ConductorWorkflow(name='dynamic_workflow', version=1, executor=workflow_executor)
+get_email = get_user_email(task_ref_name='get_user_email_ref', userid=workflow.input('userid'))
+sendmail = send_email(task_ref_name='send_email_ref', email=get_email.output('result'), subject='Hello from Orkes',
+                      body='Test Email')
+workflow >> get_email >> sendmail
+
+# Execute the workflow and get the workflow run result
+result = workflow.execute(workflow_input={'userid': 'usera'})
+
+# Print the workflow status
+print(f'workflow completed with status {result.status}')
+
+```
+see [dynamic_workflow.py](examples/dynamic_workflow.py) for a fully functional example.
+
+**For more complex workflow example with all the supported features, see [kitchensink.py](examples/kitchensink.py)**
 
 ## Sending Signals to workflow
 ## Testing your workflows
