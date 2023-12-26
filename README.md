@@ -24,10 +24,10 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
   - [Step 3: Write _your_ application](#step-3-write-_your_-application)
 - [Implementing Workers](#implementing-workers)
 - [System Tasks](#system-tasks)
-  - [HTTP Task](#http-task)
   - [Wait Task](#wait-task)
-  - [JQ Processing](#jq-processing)
+  - [HTTP Task](#http-task)
   - [Javascript Executor Task](#javascript-executor-task)
+  - [JQ Processing](#jq-processing)
 - [Executing Workflows](#executing-workflows)
   - [Execute workflow asynchronously](#execute-workflow-asynchronously)
   - [Execute workflow synchronously](#execute-workflow-synchronously)
@@ -45,7 +45,6 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
 - [Searching for workflows](#searching-for-workflows)
 - [Testing your workflows](#testing-your-workflows)
 - [Eventing Support with Kafka, AMQP, NATS, SQS](#eventing-support-with-kafka-amqp-nats-sqs)
-- [](#)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -160,6 +159,7 @@ def greet(name: str) -> str:
 ### Step 3: Write _your_ application
 
 Let's add [greetings_main.py](examples/greetings_main.py) with the `main` method:
+
 ```python
 from multiprocessing import set_start_method
 
@@ -169,15 +169,25 @@ from conductor.client.http.models import WorkflowRun
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from examples.greetings_workflow import greetings_workflow
 
+
 def greetings_workflow_run(name: str, workflow_executor: WorkflowExecutor) -> WorkflowRun:
     return workflow_executor.execute(name='hello', version=1, workflow_input={'name': name})
 
 
+def register_workflow(workflow_executor: WorkflowExecutor):
+    workflow = greetings_workflow(workflow_executor=workflow_executor)
+    workflow.register(True)
+
 def main():
+  
     # points to http://localhost:8080/api by default
     api_config = Configuration()
 
     workflow_executor = WorkflowExecutor(configuration=api_config)
+
+    # Needs to be done only when registering a workflow one-time
+    register_workflow(workflow_executor)
+
     task_handler = TaskHandler(
         workers=[],
         configuration=api_config,
@@ -186,12 +196,6 @@ def main():
     )
     task_handler.start_processes()
 
-    # ------------------------------------------------------------------------------------
-    # Important: When defining the workflow using code, un-comment the following two lines
-    # ------------------------------------------------------------------------------------
-    # workflow = greetings_workflow(workflow_executor=workflow_executor)
-    # workflow.register(True)
-  
     result = greetings_workflow_run('Orkes', workflow_executor)
     print(f'workflow result: {result.output["result"]}')
     task_handler.stop_processes()
@@ -228,7 +232,7 @@ class OrderInfo:
     
 @worker_task(task_definition_name='process_order')
 def process_order(order_info: OrderInfo) -> str:
-    return 'order_id_42'
+    return f'order: {order_info.order_id}'
 
 ```
 ## System Tasks
@@ -377,7 +381,6 @@ see [dynamic_workflow.py](examples/dynamic_workflow.py) for a fully functional e
 
 ## Testing your workflows
 ## Eventing Support with Kafka, AMQP, NATS, SQS
-## 
 
 
 
