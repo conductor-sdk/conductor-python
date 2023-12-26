@@ -232,9 +232,11 @@ def process_order(order_info: OrderInfo) -> str:
 
 ```
 ## System Tasks
-System tasks are the pre-built workers that are available in every Conductor server.  
-These are commonly used task workers which are generic in nature and battle tested by Conductor community over the years.
-
+System tasks are the pre-built workers that are available in every Conductor server.
+>[!note]
+> System tasks automates the repeated tasks such as calling an HTTP endpoint, 
+> executing lightweight ECMA compliant javascript code, publishing to an event broker etc.
+> 
 ### HTTP Task
 
 ### Wait Task
