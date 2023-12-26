@@ -237,12 +237,63 @@ System tasks are the pre-built workers that are available in every Conductor ser
 > System tasks automates the repeated tasks such as calling an HTTP endpoint, 
 > executing lightweight ECMA compliant javascript code, publishing to an event broker etc.
 > 
-### HTTP Task
 
 ### Wait Task
-### JQ Processing
+Wait is a powerful way to have your system wait for a certain trigger such as an external event, certain date/time
+or duration such as 2 hours without having to manage threads, background processes or jobs.
+
+**Using code to create WAIT task**
+```python
+from conductor.client.workflow.task.wait_task import WaitTask
+
+# waits for 2 seconds before scheduling the next task
+wait_for_two_sec = WaitTask(task_ref_name='wait_for_2_sec', wait_for_seconds=2)
+
+# wait until end of jan
+wait_till_jan_31 = WaitTask(task_ref_name='wait_till_jan_end', wait_until='2024-01-31 00:00 UTC')
+
+# waits until an API call or an event is triggered
+wait_for_signal = WaitTask(task_ref_name='wait_till_jan_end')
+
+```
+**JSON configuration**
+```json
+{
+  "name": "wait",
+  "taskReferenceName": "wait_till_jan_end",
+  "type": "WAIT",
+  "inputParameters": {
+    "until": "2024-01-31 00:00 UTC"
+  }
+}
+```
+### HTTP Task
+Make a request to an HTTP(S) endpoint. The task allows making GET, PUT, POST, DELETE, HEAD, PATCH requests.
+
+**Using code to create an HTTP task**
+```python
+from conductor.client.workflow.task.http_task import HttpTask
+
+HttpTask(task_ref_name='call_remote_api', http_input={
+        'uri': 'https://orkes-api-tester.orkesconductor.com/api'
+    })
+```
+
+**JSON configuration**
+
+```json
+{
+  "name": "http_task",
+  "taskReferenceName": "http_task_ref",
+  "type" : "HTTP",
+  "uri": "https://orkes-api-tester.orkesconductor.com/api",
+  "method": "GET"
+}
+```
+
 ### Javascript Executor Task
 
+### JQ Processing
 
 ## Executing Workflows
 [WorkflowClient](src/conductor/client/workflow_client.py) interface provides all the APIs required to work with workflow executions.

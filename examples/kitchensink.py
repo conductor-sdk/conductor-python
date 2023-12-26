@@ -69,7 +69,7 @@ def main():
         'uri': js.output('url')
     })
 
-    wait_for_two_sec = WaitTask(task_ref_name='wait_for_2_sec', wait_for_seconds=1)
+    wait_for_two_sec = WaitTask(task_ref_name='wait_for_2_sec', wait_for_seconds=2)
     jq_script = """
     { key3: (.key1.value1 + .key2.value2) }
     """
