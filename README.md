@@ -130,6 +130,69 @@ if __name__ == '__main__':
 ```
 
 ### Implement Worker
+The workers can be implemented by writing a simple python function and annotating the function with the `@worker_task`
+Conductor workers are services (similar to microservices) that follow [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single_responsibility_principle)
+
+Workers can be hosted along with the workflow or running a distributed environment where a single workflow uses workers 
+that are deployed and running in different machines/vms/containers.  Whether to keep all the workers in the same application or 
+run them as distributed application is a design and architectural choice.  Conductor is well suited for both kind of scenarios.
+
+A worker can take inputs which are primitives - `str`, `int`, `float`, `bool` etc. or can be complex data classes.
+
+Here is an example worker that uses `dataclass` as part of the worker input.
+
+```python
+from conductor.client.worker.worker_task import worker_task
+from dataclasses import dataclass
+
+@dataclass
+class OrderInfo:
+    order_id: int
+    sku: str
+    quantity: int
+    sku_price: float
+
+    
+@worker_task(task_definition_name='process_order')
+def process_order(order_info: OrderInfo) -> str:
+    return 'order_id_42'
+
+```
+#### Referencing a worker inside a workflow
+A task inside a workflow represents a worker.  (sometimes both these words are used interchangeably).
+Each task inside the workflow has two important identifiers:
+1. name: Name of the task that represents the unique worker (e.g. task_definition_name in the above example)
+2. reference name: Unique name _within_ the workflow for the task.  A single task can be added multiple times inside a workflow, reference name allows unique referencing of a specific instance of task in the workflow definition.
+
+**Example when creating workflow in code**
+
+```python
+from conductor.client.workflow.conductor_workflow import ConductorWorkflow
+workflow = ConductorWorkflow()
+workflow >> proces_order(task_ref_name='process_order_ref', order_info={})
+```
+
+**Example when creating workflow in JSON**
+```json
+{
+  "name": "order_processing_wf",
+  "description": "order_processing_wf",
+  "version": 1,
+  "tasks": [
+    {
+      "name": "process_order",
+      "taskReferenceName": "process_order_ref",
+      "type": "SIMPLE",
+      "inputParameters": {
+        "order_info": {}
+      }
+    }
+  ],
+  "timeoutPolicy": "TIME_OUT_WF",
+  "timeoutSeconds": 60
+}
+```
+
 ### Create a workflow
 #### Execute workflow synchronously
 #### Execute workflow asynchronously
