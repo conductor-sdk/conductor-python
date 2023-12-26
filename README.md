@@ -16,10 +16,14 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Install SDK](#install-sdk)
-  - [Setup SDK](#setup-sdk)
+    - [Setup SDK](#setup-sdk)
 - [Build a conductor workflow based application](#build-a-conductor-workflow-based-application)
-- [Implement Worker](#implement-worker)
-- [Create a workflow](#create-a-workflow)
+  - [Step 1: Create a Workflow](#step-1-create-a-workflow)
+  - [Step 2: Write Worker](#step-2-write-worker)
+  - [Step 3: Write _your_ application](#step-3-write-_your_-application)
+- [Implementing Workers](#implementing-workers)
+  - [Referencing a worker inside a workflow](#referencing-a-worker-inside-a-workflow)
+- [Executing Workflows](#executing-workflows)
   - [Execute workflow synchronously](#execute-workflow-synchronously)
   - [Execute workflow asynchronously](#execute-workflow-asynchronously)
 - [Sending Signals to workflow](#sending-signals-to-workflow)
@@ -139,7 +143,7 @@ from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models import WorkflowRun
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-
+from examples.greetings_workflow import greetings_workflow
 
 def greetings_workflow_run(name: str, workflow_executor: WorkflowExecutor) -> WorkflowRun:
     return workflow_executor.execute(name='hello', version=1, workflow_input={'name': name})
@@ -158,6 +162,12 @@ def main():
     )
     task_handler.start_processes()
 
+    # ------------------------------------------------------------------------------------
+    # Important: When defining the workflow using code, un-comment the following two lines
+    # ------------------------------------------------------------------------------------
+    # workflow = greetings_workflow(workflow_executor=workflow_executor)
+    # workflow.register(True)
+  
     result = greetings_workflow_run('Orkes', workflow_executor)
     print(f'workflow result: {result.output["result"]}')
     task_handler.stop_processes()
@@ -168,17 +178,7 @@ if __name__ == '__main__':
     main()
 ```
 
-> [!IMPORTANT]  
-> If you are writing your workflows in code, ensure you register the workflow before you start. 
-> Here is the code snippet
-> 
-> ```python
-workflow = greetings_workflow(workflow_executor=workflow_executor)
-workflow.register(True)
-```
-
-
-### Implement Worker
+## Implementing Workers
 The workers can be implemented by writing a simple python function and annotating the function with the `@worker_task`
 Conductor workers are services (similar to microservices) that follow [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single_responsibility_principle)
 
@@ -207,7 +207,7 @@ def process_order(order_info: OrderInfo) -> str:
     return 'order_id_42'
 
 ```
-#### Referencing a worker inside a workflow
+### Referencing a worker inside a workflow
 A task inside a workflow represents a worker.  (sometimes both these words are used interchangeably).
 Each task inside the workflow has two important identifiers:
 1. name: Name of the task that represents the unique worker (e.g. task_definition_name in the above example)
@@ -243,13 +243,13 @@ workflow >> proces_order(task_ref_name='process_order_ref', order_info=OrderInfo
 }
 ```
 
-### Executing Workflows
+## Executing Workflows
 
-#### Execute workflow synchronously
-#### Execute workflow asynchronously
-### Sending Signals to workflow
-### Testing your workflows
-### Metrics support
+### Execute workflow synchronously
+### Execute workflow asynchronously
+## Sending Signals to workflow
+## Testing your workflows
+## Metrics support
 
 
 
