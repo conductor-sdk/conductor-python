@@ -206,6 +206,9 @@ if __name__ == '__main__':
     main()
 ```
 
+> [!NOTE]
+> That's it - you just created your first distributed python app!
+> 
 ## Implementing Workers
 The workers can be implemented by writing a simple python function and annotating the function with the `@worker_task`
 Conductor workers are services (similar to microservices) that follow [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single_responsibility_principle)
@@ -237,7 +240,7 @@ def process_order(order_info: OrderInfo) -> str:
 ```
 ## System Tasks
 System tasks are the pre-built workers that are available in every Conductor server.
->[!note]
+>[!tip]
 > System tasks automates the repeated tasks such as calling an HTTP endpoint, 
 > executing lightweight ECMA compliant javascript code, publishing to an event broker etc.
 > 
