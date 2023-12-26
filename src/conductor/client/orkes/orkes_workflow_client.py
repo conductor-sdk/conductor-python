@@ -45,19 +45,15 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
             self,
             start_workflow_request: StartWorkflowRequest,
             request_id: str,
-            name: str,
-            version: int,
             wait_until_task_ref: Optional[str] = None,
             wait_for_seconds: int = 30
     ) -> WorkflowRun:
 
-        start_workflow_request.name = name
-        start_workflow_request.version = version
         return self.workflowResourceApi.execute_workflow(
             body=start_workflow_request,
             request_id=request_id,
-            version=version,
-            name=name,
+            version=start_workflow_request.version,
+            name=start_workflow_request.name,
             wait_until_task_ref=wait_until_task_ref,
             wait_for_seconds=wait_for_seconds,
         )

@@ -18,7 +18,9 @@ def main():
                                server_api_url=url)
 
     clients = OrkesClients(configuration=api_config)
-    wf = ConductorWorkflow(name='hello_world', version=1, executor=clients.get_workflow_executor())
+    workflow_executor = clients.get_workflow_executor()
+
+    wf = ConductorWorkflow(name='hello_world', version=1, executor=workflow_executor)
 
     say_hello_js = """
     function greetings() {
@@ -28,7 +30,7 @@ def main():
     }
     greetings();
     """
-    
+
     js = JavascriptTask(task_ref_name='hello_script', script=say_hello_js, bindings={'name': '${workflow.input.name}'})
     http_call = HttpTask(task_ref_name='call_remote_api', http_input={
         'uri': 'https://orkes-api-tester.orkesconductor.com/api'
@@ -38,7 +40,7 @@ def main():
     wf.output_parameters({
         'greetings': js.output()
     })
-    result = wf(name='orkes')
+    result = wf.execute(workflow_input={'name': 'Orkes'})
     op = result.output
     print(f'Workflow output: {op}')
 
