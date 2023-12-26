@@ -1,31 +1,34 @@
-import os
 from multiprocessing import set_start_method
 
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
+from conductor.client.http.models import WorkflowRun
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from examples.greetings import greetings_workflow
+from examples.greetings_workflow import greetings_workflow
+
+
+def greetings_workflow_run(name: str, workflow_executor: WorkflowExecutor) -> WorkflowRun:
+    return workflow_executor.execute(name='hello', version=1, workflow_input={'name': name})
 
 
 def main():
-    # Key and Secret are required for the servers with authentication enabled.
-    key = os.getenv("KEY")
-    secret = os.getenv("SECRET")
-    url = os.getenv("CONDUCTOR_SERVER_URL")
-
-    api_config = Configuration(authentication_settings=AuthenticationSettings(key_id=key, key_secret=secret),
-                               server_api_url=url)
+    # points to http://localhost:8080/api by default
+    api_config = Configuration()
 
     workflow_executor = WorkflowExecutor(configuration=api_config)
     task_handler = TaskHandler(
         workers=[],
         configuration=api_config,
         scan_for_annotated_workers=True,
+        import_modules=['examples.greetings']
     )
     task_handler.start_processes()
-    result = greetings_workflow('Orkes', workflow_executor)
-    print(f'workflow result: {result}')
+
+    workflow = greetings_workflow(workflow_executor=workflow_executor)
+    workflow.register(True)
+
+    result = greetings_workflow_run('Orkes', workflow_executor)
+    print(f'workflow result: {result.output["result"]}')
     task_handler.stop_processes()
 
 

@@ -28,7 +28,7 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-### Install SDK
+## Install SDK
 Create a virtual environment to build your package
 ```shell
 virtualenv conductor
@@ -45,12 +45,10 @@ SDK requires connecting to the Conductor server and optionally supplying with au
 ```python
 from conductor.client.configuration.configuration import Configuration
 
-configuration = Configuration(
-    server_api_url='https://play.orkes.io/api',
-    debug=False  # set to true for verbose logging
-)
+configuration = Configuration(server_api_url='https://play.orkes.io/api')
 ```
-Configure the authentication settings if your Conductor server requires authentication.
+Configure the authentication settings _if your Conductor server requires authentication_.
+See [Access Control](https://orkes.io/content/docs/getting-started/concepts/access-control) for guide to getting API keys
 ```python
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
@@ -63,71 +61,122 @@ configuration = Configuration(
 )
 ```
 
-See [Access Control](https://orkes.io/content/docs/getting-started/concepts/access-control) for guide to getting API keys
-
-### Build a conductor workflow based application
+## Build a conductor workflow based application
 Conductor lets you create workflows either in code or using the configuration in JSON that can be created form the code or from the UI.
-Let's create a simple hello world application.
+We will explore both the options here.
+
+An application using Conductor uses the following:
+1. **Workflow**: Describes the application's state and how functions are wired.  Workflow is what gives your application's code durability and full-blown visualization in the Conductor UI.
+2. **Worker**: Stateless components.  Workers can be exposed as HTTP endpoints (aka Microservices) or can be simple task workers implemented using lightweight Conductor SDK in the framework and language of your choice.
+
+Note: A single workflow application can have workers written in different languages.
+
+### Step 1: Create a Workflow
+
+**Use JSON to create workflows**
+
+Create workflow.json with the following:
+```json
+{
+  "name": "hello",
+  "description": "hello workflow",
+  "version": 1,
+  "tasks": [
+    {
+      "name": "greet",
+      "taskReferenceName": "greet_ref",
+      "type": "SIMPLE",
+      "inputParameters": {
+        "name": "${workflow.input.name}"
+      }
+    }
+  ],
+  "timeoutPolicy": "TIME_OUT_WF",
+  "timeoutSeconds": 60
+}
+```
+Now, register this workflow with the server:
+```shell
+curl -X POST -H "Content-Type:application/json" http://localhost:8080/api/metadata/workflow -d @workflow.json
+```
+
+**Use Code to create workflows**
+
+Create greetings_workflow.py with the following:
+```python
+from conductor.client.workflow.conductor_workflow import ConductorWorkflow
+from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
+from examples.greetings import greet
+
+def greetings_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
+    workflow = ConductorWorkflow(name='hello', executor=workflow_executor)
+    workflow >> greet(task_ref_name='greet_ref', name=workflow.input('name'))
+    return workflow
+
+```
+
+### Step 2: Write Worker
 
 Create [greetings.py](examples/greetings.py) with a simple worker and a workflow function.
 
 ```python
 from conductor.client.worker.worker_task import worker_task
-from conductor.client.workflow.conductor_workflow import ConductorWorkflow
-from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 
 
-@worker_task(task_definition_name='save_order')
+@worker_task(task_definition_name='greet')
 def greet(name: str) -> str:
     return f'Hello my friend {name}'
 
-
-def greetings_workflow(name: str, workflow_executor: WorkflowExecutor) -> dict:
-    workflow = ConductorWorkflow(name='hello', executor=workflow_executor)
-    workflow >> greet(task_ref_name='greet_ref', name=workflow.input('name'))
-    run = workflow.execute(workflow_input={'name': name})
-    return run.output['result']
-
 ```
+
+### Step 3: Write _your_ application
 
 Let's add [greetings_main.py](examples/greetings_main.py) with the `main` method:
 ```python
-import os
 from multiprocessing import set_start_method
 
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
+from conductor.client.http.models import WorkflowRun
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from examples.greetings import greetings_workflow
+
+
+def greetings_workflow_run(name: str, workflow_executor: WorkflowExecutor) -> WorkflowRun:
+    return workflow_executor.execute(name='hello', version=1, workflow_input={'name': name})
 
 
 def main():
-    # Key and Secret are required for the servers with authentication enabled.
-    key = os.getenv("KEY")
-    secret = os.getenv("SECRET")
-    url = os.getenv("CONDUCTOR_SERVER_URL")
-
-    api_config = Configuration(authentication_settings=AuthenticationSettings(key_id=key, key_secret=secret),
-                               server_api_url=url)
+    # points to http://localhost:8080/api by default
+    api_config = Configuration()
 
     workflow_executor = WorkflowExecutor(configuration=api_config)
     task_handler = TaskHandler(
         workers=[],
         configuration=api_config,
         scan_for_annotated_workers=True,
+        import_modules=['examples.greetings']
     )
     task_handler.start_processes()
-    result = greetings_workflow('Orkes', workflow_executor)
-    print(f'workflow result: {result}')
+
+    result = greetings_workflow_run('Orkes', workflow_executor)
+    print(f'workflow result: {result.output["result"]}')
     task_handler.stop_processes()
 
 
 if __name__ == '__main__':
     set_start_method('fork')
     main()
-
 ```
+
+> [!IMPORTANT]  
+> If you are writing your workflows in code, ensure you register the workflow before you start. 
+> Here is the code snippet
+> 
+> ```python
+workflow = greetings_workflow(workflow_executor=workflow_executor)
+workflow.register(True)
+```
+
 
 ### Implement Worker
 The workers can be implemented by writing a simple python function and annotating the function with the `@worker_task`

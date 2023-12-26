@@ -1,7 +1,7 @@
 import uuid
 from typing import Any, Dict, List
 
-from typing_extensions import Self
+from typing_extensions import Self, Optional
 
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
@@ -51,6 +51,32 @@ class WorkflowExecutor:
         specific task in the workflow """
         if request_id is None:
             request_id = str(uuid.uuid4())
+
+        return self.workflow_client.execute_workflow(
+            start_workflow_request=request,
+            request_id=request_id,
+            version=request.version,
+            name=request.name,
+            wait_until_task_ref=wait_until_task_ref,
+            wait_for_seconds=wait_for_seconds,
+        )
+
+    def execute(self, name: str, version: Optional[int] = None, workflow_input: Any = {},
+                wait_until_task_ref: str = None, wait_for_seconds: int = 10,
+                request_id: str = None, correlation_id: str = None, domain: str = None) -> WorkflowRun:
+        """Executes a workflow with StartWorkflowRequest and waits for the completion of the workflow or until a
+        specific task in the workflow """
+        if request_id is None:
+            request_id = str(uuid.uuid4())
+
+        request = StartWorkflowRequest()
+        request.name = name
+        if version:
+            request.version = version
+        request.input = workflow_input
+        request.correlation_id = correlation_id
+        if domain is not None:
+            request.task_to_domain = {'*': domain}
 
         return self.workflow_client.execute_workflow(
             start_workflow_request=request,
