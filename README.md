@@ -168,6 +168,7 @@ Each task inside the workflow has two important identifiers:
 
 ```python
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
+
 workflow = ConductorWorkflow()
 workflow >> proces_order(task_ref_name='process_order_ref', order_info={})
 ```
@@ -193,7 +194,7 @@ workflow >> proces_order(task_ref_name='process_order_ref', order_info={})
 }
 ```
 
-### Create a workflow
+### Executing Workflows
 #### Execute workflow synchronously
 #### Execute workflow asynchronously
 ### Sending Signals to workflow
