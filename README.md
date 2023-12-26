@@ -240,14 +240,14 @@ def process_order(order_info: OrderInfo) -> str:
 ```
 ## System Tasks
 System tasks are the pre-built workers that are available in every Conductor server.
->[!tip]
+> [!tip]
 > System tasks automates the repeated tasks such as calling an HTTP endpoint, 
 > executing lightweight ECMA compliant javascript code, publishing to an event broker etc.
 > 
 
 ### Wait Task
-Wait is a powerful way to have your system wait for a certain trigger such as an external event, certain date/time
-or duration such as 2 hours without having to manage threads, background processes or jobs.
+> [!tip]
+> Wait is a powerful way to have your system wait for a certain trigger such as an external event, certain date/time or duration such as 2 hours without having to manage threads, background processes or jobs.
 
 **Using code to create WAIT task**
 ```python
