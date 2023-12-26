@@ -256,7 +256,7 @@ from conductor.client.workflow.task.wait_task import WaitTask
 wait_for_two_sec = WaitTask(task_ref_name='wait_for_2_sec', wait_for_seconds=2)
 
 # wait until end of jan
-wait_till_jan_31 = WaitTask(task_ref_name='wait_till_jan_end', wait_until='2024-01-31 00:00 UTC')
+wait_till_jan = WaitTask(task_ref_name='wait_till_jsn', wait_until='2024-01-31 00:00 UTC')
 
 # waits until an API call or an event is triggered
 wait_for_signal = WaitTask(task_ref_name='wait_till_jan_end')
