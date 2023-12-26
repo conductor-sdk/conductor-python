@@ -43,7 +43,7 @@ Get Conductor Python SDK
 ```shell
 python3 -m pip install conductor-python
 ```
-#### Setup SDK
+### Setup SDK
 SDK requires connecting to the Conductor server and optionally supplying with authentication parameters.
 
 ```python
@@ -64,6 +64,12 @@ configuration = Configuration(
     )
 )
 ```
+
+## Start Conductor Server
+```shell
+docker run --init -p 8080:8080 -p 1234:5000 conductoross/conductor-standalone:3.15.0
+```
+After starting the server navigate to http://localhost:1234 to ensure the server has started successfully.
 
 ## Build a conductor workflow based application
 Conductor lets you create workflows either in code or using the configuration in JSON that can be created form the code or from the UI.
@@ -218,7 +224,7 @@ Each task inside the workflow has two important identifiers:
 ```python
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 
-workflow = ConductorWorkflow(name='order_processing_wf', version=1)
+# ---------- task ↓ ------------->task reference name ↓ ---- task inputs ↓ ---
 workflow >> proces_order(task_ref_name='process_order_ref', order_info=OrderInfo())
 ```
 
@@ -244,9 +250,15 @@ workflow >> proces_order(task_ref_name='process_order_ref', order_info=OrderInfo
 ```
 
 ## Executing Workflows
-
+[WorkflowClient](src/conductor/client/workflow_client.py) interface provides all the APIs required to work with workflow executions.
+```python
+api_config = Configuration()
+workflow_client = 
+```
 ### Execute workflow synchronously
 ### Execute workflow asynchronously
+### Execute dynamic workflows using Code
+
 ## Sending Signals to workflow
 ## Testing your workflows
 ## Metrics support
