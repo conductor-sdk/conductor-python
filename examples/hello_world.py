@@ -3,7 +3,6 @@ import os
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from conductor.client.orkes_clients import OrkesClients
-from conductor.client.worker.worker_task import worker_task
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.task.http_task import HttpTask
 from conductor.client.workflow.task.javascript_task import JavascriptTask

@@ -1,21 +1,18 @@
 import os
 import time
-import uuid
-from multiprocessing import set_start_method, Process
+from multiprocessing import set_start_method
 from sys import platform
+
 from conductor.client.ai.configuration import LLMProvider
-from conductor.client.ai.integrations import AzureOpenAIConfig, OpenAIConfig
+from conductor.client.ai.integrations import OpenAIConfig
 from conductor.client.ai.orchestrator import AIOrchestrator
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from conductor.client.http.models import TaskResult, Task
-from conductor.client.worker.worker import Worker
-from conductor.client.worker.worker_task import WorkerTask, worker_task
+from conductor.client.worker.worker_task import worker_task
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.task.llm_tasks.llm_text_complete import LlmTextComplete
 from conductor.client.workflow.task.llm_tasks.utils.prompt import Prompt
-from conductor.client.workflow.task.simple_task import SimpleTask
 
 key = os.getenv("KEY")
 secret = os.getenv("SECRET")
