@@ -82,8 +82,8 @@ def greet(name: str) -> str:
     return f'Hello my friend {name}'
 
 
-def greetings_workflow(name: str, workflow_exectuor: WorkflowExecutor) -> dict:
-    workflow = ConductorWorkflow(name='hello', executor=workflow_exectuor)
+def greetings_workflow(name: str, workflow_executor: WorkflowExecutor) -> dict:
+    workflow = ConductorWorkflow(name='hello', executor=workflow_executor)
     workflow >> greet(task_ref_name='greet_ref', name=workflow.input('name'))
     run = workflow.execute(workflow_input={'name': name})
     return run.output['result']
@@ -169,7 +169,7 @@ Each task inside the workflow has two important identifiers:
 ```python
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 
-workflow = ConductorWorkflow()
+workflow = ConductorWorkflow(name='order_processing_wf', version=1)
 workflow >> proces_order(task_ref_name='process_order_ref', order_info=OrderInfo())
 ```
 
@@ -195,6 +195,7 @@ workflow >> proces_order(task_ref_name='process_order_ref', order_info=OrderInfo
 ```
 
 ### Executing Workflows
+
 #### Execute workflow synchronously
 #### Execute workflow asynchronously
 ### Sending Signals to workflow
