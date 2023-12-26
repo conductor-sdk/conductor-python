@@ -17,7 +17,7 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
 
 - [Install SDK](#install-sdk)
   - [Setup SDK](#setup-sdk)
-- [Build and run hello-world](#build-and-run-hello-world)
+- [Build a conductor workflow based application](#build-a-conductor-workflow-based-application)
 - [Implement Worker](#implement-worker)
 - [Create a workflow](#create-a-workflow)
   - [Execute workflow synchronously](#execute-workflow-synchronously)
