@@ -16,7 +16,8 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Install SDK](#install-sdk)
-    - [Setup SDK](#setup-sdk)
+  - [Setup SDK](#setup-sdk)
+- [Start Conductor Server](#start-conductor-server)
 - [Build a conductor workflow based application](#build-a-conductor-workflow-based-application)
   - [Step 1: Create a Workflow](#step-1-create-a-workflow)
   - [Step 2: Write Worker](#step-2-write-worker)
@@ -26,6 +27,7 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
 - [Executing Workflows](#executing-workflows)
   - [Execute workflow synchronously](#execute-workflow-synchronously)
   - [Execute workflow asynchronously](#execute-workflow-asynchronously)
+  - [Execute dynamic workflows using Code](#execute-dynamic-workflows-using-code)
 - [Sending Signals to workflow](#sending-signals-to-workflow)
 - [Testing your workflows](#testing-your-workflows)
 - [Metrics support](#metrics-support)
