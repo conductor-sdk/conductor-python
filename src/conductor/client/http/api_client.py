@@ -686,6 +686,10 @@ class ApiClient(object):
 
     def __get_new_token(self) -> str:
         try:
+            if self.configuration.authentication_settings.key_id is None or self.configuration.authentication_settings.key_secret is None:
+                logger.error('Authentication Key or Secret is set.  Failed to get the auth token')
+                return None
+
             response = self.call_api(
                 '/token', 'POST',
                 header_params={

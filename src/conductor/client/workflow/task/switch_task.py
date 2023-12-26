@@ -9,6 +9,7 @@ from typing_extensions import Self
 
 class EvaluatorType(str, Enum):
     JAVASCRIPT = "javascript",
+    ECMASCRIPT = "graaljs",
     VALUE_PARAM = "value-param"
 
 
@@ -40,7 +41,7 @@ class SwitchTask(TaskInterface):
     def to_workflow_task(self) -> WorkflowTask:
         workflow = super().to_workflow_task()
         if self._use_javascript:
-            workflow.evaluator_type = EvaluatorType.JAVASCRIPT
+            workflow.evaluator_type = EvaluatorType.ECMASCRIPT
             workflow.expression = self._expression
         else:
             workflow.evaluator_type = EvaluatorType.VALUE_PARAM
