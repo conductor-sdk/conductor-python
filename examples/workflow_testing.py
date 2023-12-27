@@ -1,93 +1,95 @@
-import os
-from multiprocessing import set_start_method
-from sys import platform
-from uuid import uuid4
+import unittest
 
-from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
 from conductor.client.orkes_clients import OrkesClients
-from conductor.client.worker.worker_task import worker_task
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.task.http_task import HttpTask
-from conductor.client.workflow.task.javascript_task import JavascriptTask
-from conductor.client.workflow.task.json_jq_task import JsonJQTask
-from conductor.client.workflow.task.set_variable_task import SetVariableTask
 from conductor.client.workflow.task.simple_task import SimpleTask
 from conductor.client.workflow.task.switch_task import SwitchTask
-from conductor.client.workflow.task.terminate_task import TerminateTask, WorkflowStatus
-from conductor.client.workflow.task.wait_task import WaitTask
+from greetings import greet
 
 
-def main():
-    api_config = Configuration()
-    clients = OrkesClients(configuration=api_config)
-    workflow_executor = clients.get_workflow_executor()
-    workflow_client = clients.get_workflow_client()
+class WorkflowUnitTest(unittest.TestCase):
 
-    wf = ConductorWorkflow(name='unit_testing_example', version=1, executor=workflow_executor)
-    task1 = SimpleTask(task_def_name='hello', task_reference_name='hello_ref_1')
-    task2 = SimpleTask(task_def_name='hello', task_reference_name='hello_ref_2')
-    task3 = SimpleTask(task_def_name='hello', task_reference_name='hello_ref_3')
+    @classmethod
+    def setUpClass(cls) -> None:
+        api_config = Configuration()
+        clients = OrkesClients(configuration=api_config)
+        cls.workflow_executor = clients.get_workflow_executor()
+        cls.workflow_client = clients.get_workflow_client()
 
-    decision = SwitchTask(task_ref_name='switch_ref', case_expression=task1.output('city'))
-    decision.switch_case('NYC', task2)
-    decision.default_case(task3)
+    def test_greetings_worker(self):
+        """
+        Tests for the workers
+        Conductor workers are regular python functions and can be unit or integrated tested just like any other function
+        """
+        name = 'test'
+        result = greet(name=name)
+        self.assertEqual(f'Hello my friend {name}', result)
 
-    wf >> HttpTask(task_ref_name='http', http_input={'uri': 'https://orkes-api-tester.orkesconductor.com/api'})
-    wf >> task1 >> decision
+    def test_workflow_execution(self):
+        """
+        Test a complete workflow end to end with mock outputs for the task executions
+        """
+        wf = ConductorWorkflow(name='unit_testing_example', version=1, executor=self.workflow_executor)
+        task1 = SimpleTask(task_def_name='hello', task_reference_name='hello_ref_1')
+        task2 = SimpleTask(task_def_name='hello', task_reference_name='hello_ref_2')
+        task3 = SimpleTask(task_def_name='hello', task_reference_name='hello_ref_3')
 
-    task_ref_to_mock_output = {}
+        decision = SwitchTask(task_ref_name='switch_ref', case_expression=task1.output('city'))
+        decision.switch_case('NYC', task2)
+        decision.default_case(task3)
 
-    # task1 has two attempts, first one failed and second succeeded
-    task_ref_to_mock_output[task1.task_reference_name] = [{
-        'status': 'FAILED',
-        'output': {
-            'key': 'failed'
-        }
-    },
-        {
-            'status': 'COMPLETED',
+        wf >> HttpTask(task_ref_name='http', http_input={'uri': 'https://orkes-api-tester.orkesconductor.com/api'})
+        wf >> task1 >> decision
+
+        task_ref_to_mock_output = {}
+
+        # task1 has two attempts, first one failed and second succeeded
+        task_ref_to_mock_output[task1.task_reference_name] = [{
+            'status': 'FAILED',
             'output': {
-                'city': 'NYC'
+                'key': 'failed'
             }
-        }
-    ]
-
-    task_ref_to_mock_output[task2.task_reference_name] = [
-        {
-            'status': 'COMPLETED',
-            'output': {
-                'key': 'task2.output'
+        },
+            {
+                'status': 'COMPLETED',
+                'output': {
+                    'city': 'NYC'
+                }
             }
-        }
-    ]
+        ]
 
-    test_request = WorkflowTestRequest(name=wf.name, version=wf.version,
-                                       task_ref_to_mock_output=task_ref_to_mock_output,
-                                       workflow_def=wf.to_workflow_def())
-    run = workflow_client.test_workflow(test_request=test_request)
+        task_ref_to_mock_output[task2.task_reference_name] = [
+            {
+                'status': 'COMPLETED',
+                'output': {
+                    'key': 'task2.output'
+                }
+            }
+        ]
 
-    print(f'completed the test run')
-    print(f'status: {run.status}')
-    assert run.status == 'COMPLETED'
+        test_request = WorkflowTestRequest(name=wf.name, version=wf.version,
+                                           task_ref_to_mock_output=task_ref_to_mock_output,
+                                           workflow_def=wf.to_workflow_def())
+        run = self.workflow_client.test_workflow(test_request=test_request)
 
-    print(f'first task (HTTP) status: {run.tasks[0].task_type}')
-    assert run.tasks[0].task_type == 'HTTP'
+        print(f'completed the test run')
+        print(f'status: {run.status}')
+        self.assertEqual(run.status, 'COMPLETED')
 
-    print(f'{run.tasks[1].reference_task_name} status: {run.tasks[1].status} (expected to be FAILED)')
-    assert run.tasks[1].status == 'FAILED'
+        print(f'first task (HTTP) status: {run.tasks[0].task_type}')
+        self.assertEqual(run.tasks[0].task_type, 'HTTP')
 
-    print(f'{run.tasks[2].reference_task_name} status: {run.tasks[2].status} (expected to be COMPLETED')
-    assert run.tasks[2].status == 'COMPLETED'
+        print(f'{run.tasks[1].reference_task_name} status: {run.tasks[1].status} (expected to be FAILED)')
+        self.assertEqual(run.tasks[1].status, 'FAILED')
 
-    print(f'{run.tasks[4].reference_task_name} status: {run.tasks[4].status} (expected to be COMPLETED')
-    assert run.tasks[4].status == 'COMPLETED'
+        print(f'{run.tasks[2].reference_task_name} status: {run.tasks[2].status} (expected to be COMPLETED')
+        self.assertEqual(run.tasks[2].status, 'COMPLETED')
 
-    # assert that the task3 was executed
-    assert run.tasks[4].reference_task_name == task2.task_reference_name
+        print(f'{run.tasks[4].reference_task_name} status: {run.tasks[4].status} (expected to be COMPLETED')
+        self.assertEqual(run.tasks[4].status, 'COMPLETED')
 
-
-if __name__ == '__main__':
-    main()
+        # assert that the task2 was executed
+        self.assertEqual(run.tasks[4].reference_task_name, task2.task_reference_name)

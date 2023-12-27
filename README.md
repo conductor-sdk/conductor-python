@@ -561,13 +561,11 @@ The goal of the test framework is as follows:
 2. Confirm the execution of the workflow and tasks given fixed set of inputs and outputs
 3. Validate that the workflow completes or fails given specific inputs
 
-See [workflow_testing.py](examples/workflow_testing.py) for a fully functional example on how to test a moderately complex
-workflow with branches.
-
 Here is example assertions from the test:
-Note: The example uses `assert` methods to keep things simple, but for production use, we recommend using any of the available testing frameworks such as `unittest`
 
 ```python
+
+...
 test_request = WorkflowTestRequest(name=wf.name, version=wf.version,
                                        task_ref_to_mock_output=task_ref_to_mock_output,
                                        workflow_def=wf.to_workflow_def())
@@ -575,26 +573,18 @@ run = workflow_client.test_workflow(test_request=test_request)
 
 print(f'completed the test run')
 print(f'status: {run.status}')
-assert run.status == 'COMPLETED'
+self.assertEqual(run.status, 'COMPLETED')
 
-print(f'first task (HTTP) status: {run.tasks[0].task_type}')
-assert run.tasks[0].task_type == 'HTTP'
+...
 
-print(f'{run.tasks[1].reference_task_name} status: {run.tasks[1].status} (expected to be FAILED)')
-assert run.tasks[1].status == 'FAILED'
-
-print(f'{run.tasks[2].reference_task_name} status: {run.tasks[2].status} (expected to be COMPLETED')
-assert run.tasks[2].status == 'COMPLETED'
-
-print(f'{run.tasks[4].reference_task_name} status: {run.tasks[4].status} (expected to be COMPLETED')
-assert run.tasks[4].status == 'COMPLETED'
-
-# assert that the task3 was executed
-assert run.tasks[4].reference_task_name == task2.task_reference_name
 ```
 
-### Testing your workers
-Workflow workers are your regular python functions and can be tested with any of the available testing frameworks.
+> [!note]
+> Workflow workers are your regular python functions and can be tested with any of the available testing frameworks.
+
+### Example Unit Testing application
+See [workflow_testing.py](examples/workflow_testing.py) for a fully functional example on how to test a moderately complex
+workflow with branches.
 
 ## Working with Tasks using APIs
 
