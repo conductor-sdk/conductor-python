@@ -550,6 +550,22 @@ POST /api/metadata/taskdef -d @task_def.json
 See [task_configure.py](examples/task_configure.py) for a detailed working app.
 
 ## Testing your workflows
+Conductor SDK for python provides a full feature testing framework for your workflow based applications.
+The framework works well with any testing framework you prefer to use without imposing any specific framework.
+
+Conductor server provide a test endpoint `POST /api/workflow/test` that allows you to post a workflow along with the
+test execution data to evaluate the workflow.
+
+The goal of the test framework is as follows:
+1. Ability test the various branches of the workflow
+2. Confirm the execution of the workflow and tasks given fixed set of inputs and outputs
+3. Validate that the workflow completes or fails given specific inputs
+
+See [workflow_testing.py](examples/workflow_testing.py) for a fully functional example on how to test a moderately complex
+workflow with branches.
+
+### Testing your workers
+Workflow workers are your regular python functions and can be tested with any of the available testing frameworks.
 
 ## Working with Tasks using APIs
 
