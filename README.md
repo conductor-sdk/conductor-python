@@ -368,16 +368,78 @@ see [dynamic_workflow.py](examples/dynamic_workflow.py) for a fully functional e
 **For more complex workflow example with all the supported features, see [kitchensink.py](examples/kitchensink.py)**
 
 ## Managing Workflow Executions
+Workflows represent te application state.  With Conductor, you can query the workflow execution state anytime during its lifecycle.
+You can also send Signals to the workflow that determines the outcome of the workflow state.
+
+[WorkflowClient](src/conductor/client/workflow_client.py) is the client interface used to manage workflow executions.
+
+```python
+from conductor.client.configuration.configuration import Configuration
+from conductor.client.orkes_clients import OrkesClients
+
+api_config = Configuration()
+clients = OrkesClients(configuration=api_config)
+workflow_client = clients.get_workflow_client()
+```
 
 ### Get the execution status
-### Update a task in the workflow
+The following method lets you query the status of the workflow execution given the id.
+When the `include_tasks` is set the response also includes all the completed and in progress tasks.
+
+`get_workflow(workflow_id: str, include_tasks: Optional[bool] = True) -> Workflow`
+
 ### Update workflow state variables
+Variables inside a workflow are the equivalent to global variables in a program. 
+
+`update_variables(self, workflow_id: str, variables: dict[str, object] = {})`
+
 ### Terminate running workflows
+Terminates a running workflow.  Any pending tasks are cancelled and no further work is scheduled for this workflow upon termination.
+A failure workflow will be triggered, but can be avoided if `trigger_failure_workflow` is set to False.
+
+`terminate_workflow(self, workflow_id: str, reason: Optional[str] = None, trigger_failure_workflow: bool = False)`
+
 ### Retry failed workflows
+If the workflow has failed due to one of the task failure after exhausting the retries for the task, the workflow can 
+still be resumed by calling the retry.
+
+`retry_workflow(self, workflow_id: str, resume_subworkflow_tasks: Optional[bool] = False)`
+
+When a sub-workflow inside a workflow has failed, there are two options:
+1. re-trigger the sub-workflow from the start (Default behavior)
+2. resume the sub-workflow from the failed task (set `resume_subworkflow_tasks` to `True`)
+
+``
 ### Restart workflows
+A workflow in the terminal state (COMPLETED, TERMINATED, FAILED) can be restarted from the beginning. 
+Useful when retrying from the last failed task is not enough and the whole workflow needs to be started again.
+
+`restart_workflow(self, workflow_id: str, use_latest_def: Optional[bool] = False)`
+
 ### Rerun a workflow from a specific task
+In the cases where a worflow needs to be restarted from a specific task rather than from the beginning, `re-run` provides that option.
+When issuing the re-run command to the workflow, you have the ability to specify the id of the task from where the workflow 
+should be restarted (as opposed to from the beginning) and optionally, the input of the workflow can also be changed:
+
+`rerun_workflow(self, workflow_id: str, rerun_workflow_request: RerunWorkflowRequest)`
+
+> [!tip]
+> re-run is one of the most powerful feature Conductor has, givingin you unparalleled control over the workflow restart
+> 
+
 ### Pause a running workflow
+A running workflow can be put to a PAUSED ⏸️status.  A paused workflow lets the currently running tasks complete, 
+but does not schedule any new tasks until resumed.
+
+`pause_workflow(self, workflow_id: str)`
+
 ### Resume paused workflow
+Resume operation resumes the currently paused workflow, immediately evaluating its state and scheduling the next set of
+tasks.
+
+`resume_workflow(self, workflow_id: str)`
+
+## Working with Tasks inside a workflow using APIs
 
 ## Searching for workflows
 

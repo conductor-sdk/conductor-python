@@ -180,26 +180,9 @@ class ConductorWorkflow:
         Workflow Execution Id
         """
         start_workflow_request.workflow_def = self.to_workflow_def()
+        start_workflow_request.name = self.name
+        start_workflow_request.version = self.version
         return self._executor.start_workflow(start_workflow_request)
-
-    def start(self, workflow_input: Any) -> str:
-        """
-
-        Parameters
-        ----------
-        workflow_input
-        Input to the workflow
-
-        Returns
-        -------
-        Workflow Execution Id
-        """
-        request = StartWorkflowRequest()
-        request.workflow_def = self.to_workflow_def()
-        request.input = workflow_input
-        request.name = request.workflow_def.name
-        request.version = 1 if self.version is None else self.version
-        return self._executor.start_workflow(start_workflow_request=request)
 
     def execute(self, workflow_input: Any, wait_until_task_ref: str = '', wait_for_seconds: int = 10,
                 request_id: str = None) -> WorkflowRun:

@@ -71,6 +71,7 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
         self.workflowResourceApi.restart(workflow_id, **kwargs)
 
     def rerun_workflow(self, workflow_id: str, rerun_workflow_request: RerunWorkflowRequest) -> str:
+        rerun_workflow_request.re_run_from_workflow_id = workflow_id
         return self.workflowResourceApi.rerun(rerun_workflow_request, workflow_id)
 
     def retry_workflow(self, workflow_id: str, resume_subworkflow_tasks: Optional[bool] = False):
@@ -163,5 +164,5 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
     def remove_workflow(self, workflow_id: str):
         self.workflowResourceApi.delete(workflow_id)
 
-    def update_variables(self, workflow_id: str, variables : dict[str, object] = {}):
+    def update_variables(self, workflow_id: str, variables : dict[str, object] = {}) -> None:
         self.workflowResourceApi.update_workflow_state(variables, workflow_id)
