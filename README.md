@@ -368,6 +368,10 @@ see [dynamic_workflow.py](examples/dynamic_workflow.py) for a fully functional e
 **For more complex workflow example with all the supported features, see [kitchensink.py](examples/kitchensink.py)**
 
 ## Managing Workflow Executions
+> [!note] 
+> See [workflow_ops.py](examples/workflow_ops.py) for a fully working application that demonstrates
+> working with the workflow executions
+
 Workflows represent te application state.  With Conductor, you can query the workflow execution state anytime during its lifecycle.
 You can also send Signals to the workflow that determines the outcome of the workflow state.
 
@@ -428,7 +432,7 @@ should be restarted (as opposed to from the beginning) and optionally, the input
 > 
 
 ### Pause a running workflow
-A running workflow can be put to a PAUSED ⏸️status.  A paused workflow lets the currently running tasks complete, 
+A running workflow can be put to a PAUSED status.  A paused workflow lets the currently running tasks complete, 
 but does not schedule any new tasks until resumed.
 
 `pause_workflow(self, workflow_id: str)`
