@@ -79,8 +79,6 @@ class WorkflowExecutor:
         return self.workflow_client.execute_workflow(
             start_workflow_request=request,
             request_id=request_id,
-            version=request.version,
-            name=request.name,
             wait_until_task_ref=wait_until_task_ref,
             wait_for_seconds=wait_for_seconds,
         )

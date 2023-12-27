@@ -29,7 +29,7 @@ def main():
         workers=[],
         configuration=api_config,
         scan_for_annotated_workers=True,
-        import_modules=['examples.greetings']
+        import_modules=['greetings']
     )
     task_handler.start_processes()
 
