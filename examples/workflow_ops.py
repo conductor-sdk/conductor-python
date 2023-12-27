@@ -3,7 +3,6 @@ import uuid
 
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models import StartWorkflowRequest, RerunWorkflowRequest, TaskResult
-from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.orkes_clients import OrkesClients
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
@@ -59,7 +58,8 @@ def main():
         f'workflow status is {workflow.status} and status of last task {last_task.reference_task_name} is {last_task.status}')
 
     # Mark the WAIT task as completed by calling Task completion API
-    task_result = TaskResult(workflow_instance_id=workflow_id, task_id=last_task.task_id, status='COMPLETED', output_data={'greetings': 'hello from Orkes'})
+    task_result = TaskResult(workflow_instance_id=workflow_id, task_id=last_task.task_id, status='COMPLETED',
+                             output_data={'greetings': 'hello from Orkes'})
     task_client.update_task(task_result)
     workflow = workflow_client.get_workflow(workflow_id=workflow_id, include_tasks=True)
     last_task = workflow.tasks[len(workflow.tasks) - 1]
@@ -93,7 +93,8 @@ def main():
     workflow_client.resume_workflow(workflow_id=workflow_id)
     workflow = workflow_client.get_workflow(workflow_id=workflow_id, include_tasks=True)
     # There should be 2 tasks
-    print(f'no. of tasks in workflow are {len(workflow.tasks)} and last task is {workflow.tasks[len(workflow.tasks)-1].reference_task_name}')
+    print(
+        f'no. of tasks in workflow are {len(workflow.tasks)} and last task is {workflow.tasks[len(workflow.tasks) - 1].reference_task_name}')
 
     search_results = workflow_client.search(start=0, size=100, free_text='*',
                                             query=' status IN (RUNNING) AND correlationId = "correlation_123" ')

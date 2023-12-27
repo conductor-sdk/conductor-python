@@ -4,7 +4,7 @@ from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models import WorkflowRun
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from examples.greetings_workflow import greetings_workflow
+from greetings_workflow import greetings_workflow
 
 
 def greetings_workflow_run(name: str, workflow_executor: WorkflowExecutor) -> WorkflowRun:

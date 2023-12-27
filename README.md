@@ -368,6 +368,8 @@ print(f'workflow completed with status {result.status}')
 ```
 see [dynamic_workflow.py](examples/dynamic_workflow.py) for a fully functional example.
 
+see [kitchensink.py](examples/kitchensink.py) for a more complex example. 
+
 **For more complex workflow example with all the supported features, see [kitchensink.py](examples/kitchensink.py)**
 
 ## Managing Workflow Executions
