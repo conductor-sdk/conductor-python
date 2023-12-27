@@ -586,7 +586,7 @@ self.assertEqual(run.status, 'COMPLETED')
 > Workflow workers are your regular python functions and can be tested with any of the available testing frameworks.
 
 ### Example Unit Testing application
-See [workflow_testing.py](examples/workflow_testing.py) for a fully functional example on how to test a moderately complex
+See [test_workflows.py](examples/test_workflows.py) for a fully functional example on how to test a moderately complex
 workflow with branches.
 
 ## Working with Tasks using APIs
