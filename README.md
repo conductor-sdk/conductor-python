@@ -465,10 +465,93 @@ Supported fields for **query**
 
 
 ## Handling Failures, Retries and Rate Limits
+Conductor lets you embrace failures rather than worry about failures and complexities that are introduced in the system
+to handle failures.
+
+All the aspect of handling failures, retries, rate limits etc. are driven by the configuration that can be updated in 
+real-time without having to re-deploy your application.
+
+### Retries
+Each task in Conductor workflow can be configured to handle failures with retries, 
+along with the retry policy (linear, fixed, exponential backoff) and max. number of retry attempts allowed.
+
+See [Error Handling](https://orkes.io/content/error-handling) for more details.
+
+### Rate Limits
+What happens when a task is operating on a critical resource that can only handle so many requests at a time?
+Tasks can be configured to have a fixed concurrency (X request at a time) or a rate (Y tasks / time window).
+
+**Task Registration**
+```python
+from conductor.client.configuration.configuration import Configuration
+from conductor.client.http.models import TaskDef
+from conductor.client.orkes_clients import OrkesClients
+
+
+def main():
+    api_config = Configuration()
+    clients = OrkesClients(configuration=api_config)
+    metadata_client = clients.get_metadata_client()
+
+    task_def = TaskDef()
+    task_def.name = 'task_with_retries'
+    task_def.retry_count = 3
+    task_def.retry_logic = 'LINEAR_BACKOFF'
+    task_def.retry_delay_seconds = 1
+
+    # only allow 3 tasks at a time to be in the IN_PROGRESS status
+    task_def.concurrent_exec_limit = 3
+
+    # timeout the task if not polled within 60 seconds of scheduling
+    task_def.poll_timeout_seconds = 60
+
+    # timeout the task if the task does not COMPLETE in 2 minutes
+    task_def.timeout_seconds = 120
+
+    # for the long running tasks, timeout if the task does not get updated in COMPLETED or IN_PROGRESS status in
+    # 60 seconds after the last update
+    task_def.response_timeout_seconds = 60
+
+    # only allow 100 executions in a 10-second window! -- Note, this is complementary to concurrent_exec_limit
+    task_def.rate_limit_per_frequency = 100
+    task_def.rate_limit_frequency_in_seconds = 10
+
+    metadata_client.register_task_def(task_def=task_def)
+```
+
+
+```json
+{
+  "name": "task_with_retries",
+  
+  "retryCount": 3,
+  "retryLogic": "LINEAR_BACKOFF",
+  "retryDelaySeconds": 1,
+  "backoffScaleFactor": 1,
+  
+  "timeoutSeconds": 120,
+  "responseTimeoutSeconds": 60,
+  "pollTimeoutSeconds": 60,
+  "timeoutPolicy": "TIME_OUT_WF",
+  
+  "concurrentExecLimit": 3,
+  
+  "rateLimitPerFrequency": 0,
+  "rateLimitFrequencyInSeconds": 1
+}
+```
+Update the task definition:
+```shell
+POST /api/metadata/taskdef -d @task_def.json
+```
+
+See [task_configure.py](examples/task_configure.py) for a detailed working app.
+
+## Testing your workflows
 
 ## Working with Tasks inside a workflow using APIs
 
-## Testing your workflows
+
 
 
 
