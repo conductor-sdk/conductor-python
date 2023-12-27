@@ -1,4 +1,5 @@
 import time
+import uuid
 
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models import StartWorkflowRequest, RerunWorkflowRequest, TaskResult
@@ -94,6 +95,17 @@ def main():
     # There should be 2 tasks
     print(f'no. of tasks in workflow are {len(workflow.tasks)} and last task is {workflow.tasks[len(workflow.tasks)-1].reference_task_name}')
 
+    search_results = workflow_client.search(start=0, size=100, free_text='*',
+                                            query=' status IN (RUNNING) AND correlationId = "correlation_123" ')
+
+    print(f'found {len(search_results.results)} executions that are in the running status with correlation_id  '
+          f'"correlation_123" ')
+
+    correlation_id = str(uuid.uuid4())
+    search_results = workflow_client.search(start=0, size=100, free_text='*',
+                                            query=f' status IN (RUNNING) AND correlationId = "{correlation_id}" ')
+    # shouldn't find anything!
+    print(f'found {len(search_results.results)} workflows with correlation id {correlation_id}')
 
 
 if __name__ == '__main__':

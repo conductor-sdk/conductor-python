@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
 
-from conductor.client.http.models import WorkflowRun, SkipTaskRequest, WorkflowSummary, WorkflowStatus
+from conductor.client.http.models import WorkflowRun, SkipTaskRequest, WorkflowStatus, \
+    ScrollableSearchResultWorkflowSummary
 from conductor.client.http.models.correlation_ids_search_request import CorrelationIdsSearchRequest
-from conductor.client.http.models.workflow import Workflow
-from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
+from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
+from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
 
 
@@ -28,7 +29,8 @@ class WorkflowClient(ABC):
         pass
 
     @abstractmethod
-    def terminate_workflow(self, workflow_id: str, reason: Optional[str] = None, trigger_failure_workflow: bool = False):
+    def terminate_workflow(self, workflow_id: str, reason: Optional[str] = None,
+                           trigger_failure_workflow: bool = False):
         pass
 
     @abstractmethod
@@ -70,7 +72,8 @@ class WorkflowClient(ABC):
         pass
 
     @abstractmethod
-    def search(self, start: int = 0, size: int = 100, free_text: str = '*', query: str = None) -> List[WorkflowSummary]:
+    def search(self, start: int = 0, size: int = 100, free_text: str = '*',
+               query: str = None) -> ScrollableSearchResultWorkflowSummary:
         pass
 
     @abstractmethod

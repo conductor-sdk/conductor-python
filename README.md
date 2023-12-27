@@ -443,12 +443,31 @@ tasks.
 
 `resume_workflow(self, workflow_id: str)`
 
+## Searching for workflows
+Workflow executions are retained until removed from Conductor.  This gives complete visibility into all the executions an 
+application has - regardless of the number of executions.  Conductor has a poewrful search API that allows you to search 
+for workflow executions. 
+
+`search(self, start, size, free_text: str = '*', query: str = None) -> ScrollableSearchResultWorkflowSummary`
+
+* **free_text**: Free text search to look for specific words in the workflow and task input/output
+* **query** SQL like query to search against specific fields in the workflow. 
+
+Supported fields for **query**
+
+| field       | description     |
+|-------------|-----------------|
+| status      |workflow status  |
+| correlationId |correlation Id   |
+| workflowType |name of the workflow |
+ | version     |workflow version |
+|startTime|start time of the workflow in unix millis|
+
 ## Working with Tasks inside a workflow using APIs
 
-## Searching for workflows
+## Handling Failures, Retries and Rate Limits
 
 ## Testing your workflows
-## Eventing Support with Kafka, AMQP, NATS, SQS
 
 
 

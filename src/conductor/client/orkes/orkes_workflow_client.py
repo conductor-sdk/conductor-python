@@ -1,15 +1,17 @@
 from typing import Optional, List
+
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.models import SkipTaskRequest, WorkflowSummary, WorkflowStatus
+from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
+from conductor.client.http.models import SkipTaskRequest, WorkflowStatus, \
+    ScrollableSearchResultWorkflowSummary
 from conductor.client.http.models.correlation_ids_search_request import CorrelationIdsSearchRequest
+from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
+from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.workflow_run import WorkflowRun
-from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
-from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
 from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
-from conductor.client.workflow_client import WorkflowClient
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
-from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
+from conductor.client.workflow_client import WorkflowClient
 
 
 @for_all_methods(api_exception_handler, ["__init__"])
@@ -80,7 +82,8 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
             kwargs['resume_subworkflow_tasks'] = resume_subworkflow_tasks
         self.workflowResourceApi.retry(workflow_id, **kwargs)
 
-    def terminate_workflow(self, workflow_id: str, reason: Optional[str] = None, trigger_failure_workflow: bool = False):
+    def terminate_workflow(self, workflow_id: str, reason: Optional[str] = None,
+                           trigger_failure_workflow: bool = False):
         kwargs = {}
         if reason:
             kwargs['reason'] = reason
@@ -112,9 +115,10 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
     def test_workflow(self, test_request: WorkflowTestRequest) -> Workflow:
         return self.workflowResourceApi.test_workflow(test_request)
 
-    def search(self, start: int = 0, size: int = 100, free_text: str = '*', query : str = None, query_id: str = None) -> List[WorkflowSummary]:
+    def search(self, start: int = 0, size: int = 100, free_text: str = '*', query: str = None,
+               query_id: str = None) -> ScrollableSearchResultWorkflowSummary:
         args = {
-            'start' : start,
+            'start': start,
             'size': size,
             'free_text': free_text,
             'query': query,
@@ -142,11 +146,11 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
         return self.workflowResourceApi.get_workflows_by_correlation_id_in_batch(**kwargs)
 
     def get_by_correlation_ids(
-        self,
-        workflow_name: str,
-        correlation_ids: List[str],
-        include_completed: bool = False,
-        include_tasks: bool = False
+            self,
+            workflow_name: str,
+            correlation_ids: List[str],
+            include_completed: bool = False,
+            include_tasks: bool = False
     ) -> dict[str, List[Workflow]]:
         """Lists workflows for the given correlation id list"""
         kwargs = {}
@@ -164,5 +168,5 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
     def remove_workflow(self, workflow_id: str):
         self.workflowResourceApi.delete(workflow_id)
 
-    def update_variables(self, workflow_id: str, variables : dict[str, object] = {}) -> None:
+    def update_variables(self, workflow_id: str, variables: dict[str, object] = {}) -> None:
         self.workflowResourceApi.update_workflow_state(variables, workflow_id)
