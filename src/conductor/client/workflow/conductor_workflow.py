@@ -248,7 +248,6 @@ class ConductorWorkflow:
                 join_on = list(map(lambda ft: ft[len(ft) - 1].task_reference_name, wft.fork_tasks))
                 join = JoinTask(task_ref_name='join_' + wft.task_reference_name, join_on=join_on)
                 updated_task_list.append(join.to_workflow_task())
-                print(f'missng jOIN task after {join.task_type}')
 
         return updated_task_list
 
