@@ -34,7 +34,6 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
   - [Execute dynamic workflows using Code](#execute-dynamic-workflows-using-code)
 - [Managing Workflow Executions](#managing-workflow-executions)
   - [Get the execution status](#get-the-execution-status)
-  - [Update a task in the workflow](#update-a-task-in-the-workflow)
   - [Update workflow state variables](#update-workflow-state-variables)
   - [Terminate running workflows](#terminate-running-workflows)
   - [Retry failed workflows](#retry-failed-workflows)
@@ -43,8 +42,9 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
   - [Pause a running workflow](#pause-a-running-workflow)
   - [Resume paused workflow](#resume-paused-workflow)
 - [Searching for workflows](#searching-for-workflows)
+- [Handling Failures, Retries and Rate Limits](#handling-failures-retries-and-rate-limits)
+- [Working with Tasks inside a workflow using APIs](#working-with-tasks-inside-a-workflow-using-apis)
 - [Testing your workflows](#testing-your-workflows)
-- [Eventing Support with Kafka, AMQP, NATS, SQS](#eventing-support-with-kafka-amqp-nats-sqs)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -463,9 +463,10 @@ Supported fields for **query**
  | version     |workflow version |
 |startTime|start time of the workflow in unix millis|
 
-## Working with Tasks inside a workflow using APIs
 
 ## Handling Failures, Retries and Rate Limits
+
+## Working with Tasks inside a workflow using APIs
 
 ## Testing your workflows
 
