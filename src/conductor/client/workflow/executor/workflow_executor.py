@@ -24,8 +24,8 @@ class WorkflowExecutor:
         kwargs = {}
         if overwrite is not None:
             kwargs['overwrite'] = overwrite
-        return self.metadata_client.create(
-            body=workflow, **kwargs
+        return self.metadata_client.update1(
+            body=[workflow], **kwargs
         )
 
     def start_workflow(self, start_workflow_request: StartWorkflowRequest) -> str:
