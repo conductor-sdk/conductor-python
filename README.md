@@ -43,8 +43,10 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
   - [Resume paused workflow](#resume-paused-workflow)
 - [Searching for workflows](#searching-for-workflows)
 - [Handling Failures, Retries and Rate Limits](#handling-failures-retries-and-rate-limits)
-- [Working with Tasks inside a workflow using APIs](#working-with-tasks-inside-a-workflow-using-apis)
+  - [Retries](#retries)
+  - [Rate Limits](#rate-limits)
 - [Testing your workflows](#testing-your-workflows)
+- [Working with Tasks using APIs](#working-with-tasks-using-apis)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -549,7 +551,7 @@ See [task_configure.py](examples/task_configure.py) for a detailed working app.
 
 ## Testing your workflows
 
-## Working with Tasks inside a workflow using APIs
+## Working with Tasks using APIs
 
 
 
