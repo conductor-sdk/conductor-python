@@ -97,9 +97,9 @@ def main():
         f'no. of tasks in workflow are {len(workflow.tasks)} and last task is {workflow.tasks[len(workflow.tasks) - 1].reference_task_name}')
 
     search_results = workflow_client.search(start=0, size=100, free_text='*',
-                                            query=' status IN (RUNNING) AND correlationId = "correlation_123" ')
+                                            query='correlationId = "correlation_123" ')
 
-    print(f'found {len(search_results.results)} executions that are in the running status with correlation_id  '
+    print(f'found {len(search_results.results)} execution  with correlation_id  '
           f'"correlation_123" ')
 
     correlation_id = str(uuid.uuid4())
