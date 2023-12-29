@@ -486,7 +486,7 @@ class TestOrkesClients:
 
     def __test_workflow_execution_lifecycle(self):
         wfInput = {"a": 5, "b": "+", "c": [7, 8]}
-        workflow_uuid = self.workflow_client.startWorkflowByName(WORKFLOW_NAME, wfInput)
+        workflow_uuid = self.workflow_client.start_workflow_by_name(WORKFLOW_NAME, wfInput)
         assert workflow_uuid is not None
 
         workflow = self.workflow_client.get_workflow(workflow_uuid, False)
