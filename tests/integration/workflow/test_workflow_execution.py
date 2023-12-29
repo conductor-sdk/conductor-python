@@ -123,7 +123,7 @@ def test_decorated_workers(
     workflow_id_2 = workflow_executor.start_workflow(start_wf_req)
 
     logger.debug(f'started TestPythonDecoratedWorkerWf with domain:cool and id: {workflow_id_2}')
-    sleep(5)
+    sleep(15)
 
     _run_with_retry_attempt(
         validate_workflow_status,
