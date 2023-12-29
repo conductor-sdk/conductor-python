@@ -1,17 +1,19 @@
-from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.metrics_settings import MetricsSettings
-from conductor.client.telemetry.model.metric_documentation import MetricDocumentation
-from conductor.client.telemetry.model.metric_label import MetricLabel
-from conductor.client.telemetry.model.metric_name import MetricName
+import logging
+import os
+import time
+from typing import Any, Dict, List
+
 from prometheus_client import CollectorRegistry
 from prometheus_client import Counter
 from prometheus_client import Gauge
 from prometheus_client import write_to_textfile
 from prometheus_client.multiprocess import MultiProcessCollector
-from typing import Any, Dict, List
-import logging
-import os
-import time
+
+from conductor.client.configuration.configuration import Configuration
+from conductor.client.configuration.settings.metrics_settings import MetricsSettings
+from conductor.client.telemetry.model.metric_documentation import MetricDocumentation
+from conductor.client.telemetry.model.metric_label import MetricLabel
+from conductor.client.telemetry.model.metric_name import MetricName
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -195,10 +197,10 @@ class MetricsCollector:
         )
 
     def __increment_counter(
-        self,
-        name: MetricName,
-        documentation: MetricDocumentation,
-        labels: Dict[MetricLabel, str]
+            self,
+            name: MetricName,
+            documentation: MetricDocumentation,
+            labels: Dict[MetricLabel, str]
     ) -> None:
         if not self.must_collect_metrics:
             return
@@ -210,11 +212,11 @@ class MetricsCollector:
         counter.labels(*labels.values()).inc()
 
     def __record_gauge(
-        self,
-        name: MetricName,
-        documentation: MetricDocumentation,
-        labels: Dict[MetricLabel, str],
-        value: Any
+            self,
+            name: MetricName,
+            documentation: MetricDocumentation,
+            labels: Dict[MetricLabel, str],
+            value: Any
     ) -> None:
         if not self.must_collect_metrics:
             return
@@ -226,10 +228,10 @@ class MetricsCollector:
         gauge.labels(*labels.values()).set(value)
 
     def __get_counter(
-        self,
-        name: MetricName,
-        documentation: MetricDocumentation,
-        labelnames: List[MetricLabel]
+            self,
+            name: MetricName,
+            documentation: MetricDocumentation,
+            labelnames: List[MetricLabel]
     ) -> Counter:
         if name not in self.counters:
             self.counters[name] = self.__generate_counter(
@@ -238,10 +240,10 @@ class MetricsCollector:
         return self.counters[name]
 
     def __get_gauge(
-        self,
-        name: MetricName,
-        documentation: MetricDocumentation,
-        labelnames: List[MetricLabel]
+            self,
+            name: MetricName,
+            documentation: MetricDocumentation,
+            labelnames: List[MetricLabel]
     ) -> Gauge:
         if name not in self.gauges:
             self.gauges[name] = self.__generate_gauge(
@@ -250,10 +252,10 @@ class MetricsCollector:
         return self.gauges[name]
 
     def __generate_counter(
-        self,
-        name: MetricName,
-        documentation: MetricDocumentation,
-        labelnames: List[MetricLabel]
+            self,
+            name: MetricName,
+            documentation: MetricDocumentation,
+            labelnames: List[MetricLabel]
     ) -> Counter:
         return Counter(
             name=name,
@@ -263,10 +265,10 @@ class MetricsCollector:
         )
 
     def __generate_gauge(
-        self,
-        name: MetricName,
-        documentation: MetricDocumentation,
-        labelnames: List[MetricLabel]
+            self,
+            name: MetricName,
+            documentation: MetricDocumentation,
+            labelnames: List[MetricLabel]
     ) -> Gauge:
         return Gauge(
             name=name,

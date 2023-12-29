@@ -1,5 +1,5 @@
-from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
+from conductor.client.http.api_client import ApiClient
 
 
 def test_async_method(api_client: ApiClient):
@@ -7,4 +7,4 @@ def test_async_method(api_client: ApiClient):
     thread = metadata_client.get_task_def(
         async_req=True, tasktype='python_integration_test_task')
     thread.wait()
-    assert thread.get() != None
+    assert thread.get() is not None

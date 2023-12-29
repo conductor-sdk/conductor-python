@@ -1,11 +1,12 @@
-from conductor.client.http.models.task import Task
-from conductor.client.http.models.task_result import TaskResult
-
 import abc
 import socket
 from typing import Union
 
-DEFAULT_POLLING_INTERVAL = 100 # ms
+from conductor.client.http.models.task import Task
+from conductor.client.http.models.task_result import TaskResult
+
+DEFAULT_POLLING_INTERVAL = 100  # ms
+
 
 class WorkerInterface(abc.ABC):
     def __init__(self, task_definition_name: Union[str, list]):
@@ -50,6 +51,13 @@ class WorkerInterface(abc.ABC):
         :return: TaskResult
         """
         return self.task_definition_name_cache
+
+    @property
+    def task_definition_names(self):
+        if isinstance(self.task_definition_name, list):
+            return self.task_definition_name
+        else:
+            return [self.task_definition_name]
 
     @property
     def task_definition_name_cache(self):

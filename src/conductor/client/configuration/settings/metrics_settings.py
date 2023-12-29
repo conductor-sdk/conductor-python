@@ -1,7 +1,8 @@
-from conductor.client.configuration.configuration import Configuration
-from pathlib import Path
 import logging
 import os
+from pathlib import Path
+
+from conductor.client.configuration.configuration import Configuration
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -20,7 +21,7 @@ class MetricsSettings:
             directory: str = None,
             file_name: str = 'metrics.log',
             update_interval: float = 0.1):
-        if directory == None:
+        if directory is None:
             directory = get_default_temporary_folder()
         self.__set_dir(directory)
         self.file_name = file_name

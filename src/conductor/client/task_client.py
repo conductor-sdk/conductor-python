@@ -1,66 +1,72 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
+
+from conductor.client.http.models import PollData
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.http.models.task_exec_log import TaskExecLog
 
+
 class TaskClient(ABC):
     @abstractmethod
-    def pollTask(self, taskType: str, workerId: Optional[str] = None, domain: Optional[str] = None) -> Optional[Task]:
+    def poll_task(self, task_type: str, worker_id: Optional[str] = None, domain: Optional[str] = None) -> Optional[Task]:
         pass
-    
+
     @abstractmethod
-    def batchPollTasks(
-        self,
-        taskType: str,
-        workerId: Optional[str] = None,
-        count: Optional[int] = None,
-        timeoutInMillisecond: Optional[int] = None,
-        domain: Optional[str] = None
+    def batch_poll_tasks(
+            self,
+            task_type: str,
+            worker_id: Optional[str] = None,
+            count: Optional[int] = None,
+            timeout_in_millisecond: Optional[int] = None,
+            domain: Optional[str] = None
     ) -> List[Task]:
         pass
 
     @abstractmethod
-    def getTask(self, taskId: str) -> Task:
+    def get_task(self, task_id: str) -> Task:
         pass
 
     @abstractmethod
-    def updateTask(self, taskResult: TaskResult) -> str:
+    def update_task(self, task_result: TaskResult) -> str:
         pass
-    
+
     @abstractmethod
-    def updateTaskByRefName(
-        self,
-        workflowId: str,
-        taskRefName: str,
-        status: TaskResultStatus,
-        output: object,
-        workerId: Optional[str] = None
+    def update_task_by_ref_name(
+            self,
+            workflow_id: str,
+            task_ref_name: str,
+            status: TaskResultStatus,
+            output: object,
+            worker_id: Optional[str] = None
     ) -> str:
         pass
-    
+
     @abstractmethod
-    def updateTaskSync(
-        self,
-        workflowId: str,
-        taskRefName: str,
-        status: TaskResultStatus,
-        output: object,
-        workerId: Optional[str] = None
+    def update_task_sync(
+            self,
+            workflow_id: str,
+            task_ref_name: str,
+            status: TaskResultStatus,
+            output: object,
+            worker_id: Optional[str] = None
     ) -> Workflow:
         pass
-    
+
     @abstractmethod
-    def getQueueSizeForTask(self, taskType: str) -> int:
+    def get_queue_size_for_task(self, task_type: str) -> int:
         pass
 
     @abstractmethod
-    def addTaskLog(self, taskId: str, logMessage: str):
+    def add_task_log(self, task_id: str, log_message: str):
         pass
 
     @abstractmethod
-    def getTaskLogs(self, taskId: str) -> List[TaskExecLog]:
+    def get_task_logs(self, task_id: str) -> List[TaskExecLog]:
         pass
 
+    @abstractmethod
+    def get_task_poll_data(self, task_type: str) -> List[PollData]:
+        pass

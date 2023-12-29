@@ -1,13 +1,16 @@
-from conductor.client.workflow.task.fork_task import ForkTask
-from conductor.client.workflow.task.join_task import JoinTask
-from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from conductor.client.workflow.task.task import TaskInterface
-from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
-from conductor.client.http.models import *
 from copy import deepcopy
 from typing import Any, Dict, List, Union
-from typing_extensions import Self
+
 from shortuuid import uuid
+from typing_extensions import Self
+
+from conductor.client.http.models import *
+from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
+from conductor.client.workflow.task.fork_task import ForkTask
+from conductor.client.workflow.task.join_task import JoinTask
+from conductor.client.workflow.task.task import TaskInterface
+from conductor.client.workflow.task.task_type import TaskType
+from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
 
 
 class ConductorWorkflow:
@@ -140,12 +143,20 @@ class ConductorWorkflow:
 
     # List of the input parameters to the workflow. Usage: documentation ONLY
     def input_parameters(self, input_parameters: List[str]) -> Self:
+        if isinstance(input_parameters, dict) or isinstance(input_parameters, Dict):
+            self._input_template = input_parameters
+            return self
         if not isinstance(input_parameters, list):
             raise Exception('invalid type')
         for input_parameter in input_parameters:
             if not isinstance(input_parameter, str):
                 raise Exception('invalid type')
         self._input_parameters = deepcopy(input_parameters)
+        return self
+
+    def workflow_input(self, input: dict) -> Self:
+        keys = list(input.keys())
+        self.input_template(input)
         return self
 
     # Register the workflow definition with the server. If overwrite is set, the definition on the server will be
@@ -157,13 +168,47 @@ class ConductorWorkflow:
             workflow=self.to_workflow_def(),
         )
 
-    # Executes the workflow inline without registering with the server.  Useful for one-off workflows that need not
-    # be registered.
-    def start_workflow(self, start_workflow_request: StartWorkflowRequest):
+    def start_workflow(self, start_workflow_request: StartWorkflowRequest) -> str:
+        """
+        Executes the workflow inline without registering with the server.  Useful for one-off workflows that need not be registered.
+        Parameters
+        ----------
+        start_workflow_request
+
+        Returns
+        -------
+        Workflow Execution Id
+        """
         start_workflow_request.workflow_def = self.to_workflow_def()
+        start_workflow_request.name = self.name
+        start_workflow_request.version = self.version
         return self._executor.start_workflow(start_workflow_request)
 
-    # Converts the workflow to the JSON serializable format
+    def execute(self, workflow_input: Any, wait_until_task_ref: str = '', wait_for_seconds: int = 10,
+                request_id: str = None) -> WorkflowRun:
+        """
+        Executes a workflow synchronously.  Useful for short duration workflow (e.g. < 20 seconds)
+        Parameters
+        ----------
+        workflow_input Input to the workflow
+        wait_until_task_ref wait reference name of the task to wait until before returning the workflow results
+        wait_for_seconds amount of time to wait in seconds before returning.
+        request_id User supplied unique id that represents this workflow run
+        Returns
+        -------
+        Workflow execution run.  check the status field to identify if the workflow was completed or still running
+        when the call completed.
+        """
+        request = StartWorkflowRequest()
+        request.workflow_def = self.to_workflow_def()
+        request.input = workflow_input
+        request.name = request.workflow_def.name
+        request.version = 1
+        run = self._executor.execute_workflow(request, wait_until_task_ref=wait_until_task_ref,
+                                              wait_for_seconds=wait_for_seconds, request_id=request_id)
+
+        return run
+
     def to_workflow_def(self) -> WorkflowDef:
         return WorkflowDef(
             name=self._name,
@@ -181,6 +226,11 @@ class ConductorWorkflow:
             input_template=self._input_template,
         )
 
+    def to_workflow_task(self):
+        sub_workflow_task = InlineSubWorkflowTask(task_ref_name=self.name + '_' + str(uuid()), workflow=self)
+        sub_workflow_task.input_parameters.update(self._input_template)
+        return sub_workflow_task.to_workflow_task()
+
     def __get_workflow_task_list(self) -> List[WorkflowTask]:
         workflow_task_list = []
         for task in self._tasks:
@@ -190,9 +240,17 @@ class ConductorWorkflow:
                     workflow_task_list.append(subtask)
             else:
                 workflow_task_list.append(converted_task)
-        return workflow_task_list
+        updated_task_list = []
+        for i in range(len(workflow_task_list)):
+            wft: WorkflowTask = workflow_task_list[i]
+            updated_task_list.append(wft)
+            if wft.type == 'FORK_JOIN' and i < len(workflow_task_list) - 1 and workflow_task_list[i + 1].type != 'JOIN':
+                join_on = list(map(lambda ft: ft[len(ft) - 1].task_reference_name, wft.fork_tasks))
+                join = JoinTask(task_ref_name='join_' + wft.task_reference_name, join_on=join_on)
+                updated_task_list.append(join.to_workflow_task())
 
-    # Append task with the right shift operator `>>`
+        return updated_task_list
+
     def __rshift__(self, task: Union[TaskInterface, List[TaskInterface], List[List[TaskInterface]]]) -> Self:
         if isinstance(task, list):
             forked_tasks = []
@@ -201,23 +259,35 @@ class ConductorWorkflow:
                     forked_tasks.append(fork_task)
                 else:
                     forked_tasks.append([fork_task])
-            return self.__add_fork_join_tasks(forked_tasks)
+            self.__add_fork_join_tasks(forked_tasks)
+            return self
+        elif isinstance(task, ConductorWorkflow):
+            inline = InlineSubWorkflowTask(task_ref_name=task.name + '_' + str(uuid()), workflow=task)
+            inline.input_parameters.update(task._input_template)
+            self.__add_task(inline)
+            return self
         return self.__add_task(task)
 
     # Append task
-    def add(self, task: TaskInterface) -> Self:
+    def add(self, task: Union[TaskInterface, List[TaskInterface]]) -> Self:
+        if isinstance(task, list):
+            for t in task:
+                self.__add_task(t)
+            return self
         return self.__add_task(task)
 
     def __add_task(self, task: TaskInterface) -> Self:
-        if not issubclass(type(task), TaskInterface):
-            raise Exception('invalid type')
+        if not (issubclass(type(task), TaskInterface) or isinstance(task, ConductorWorkflow)):
+            raise Exception(
+                f'invalid task -- if using @worker_task or @WorkerTask decorator ensure task_ref_name is passed as '
+                f'argument.  task is {type(task)}')
         self._tasks.append(deepcopy(task))
         return self
 
     def __add_fork_join_tasks(self, forked_tasks: List[List[TaskInterface]]) -> Self:
         for single_fork in forked_tasks:
             for task in single_fork:
-                if not issubclass(type(task), TaskInterface):
+                if not (issubclass(type(task), TaskInterface) or isinstance(task, ConductorWorkflow)):
                     raise Exception('invalid type')
 
         suffix = str(uuid())
@@ -226,12 +296,37 @@ class ConductorWorkflow:
             task_ref_name='forked_' + suffix,
             forked_tasks=forked_tasks
         )
-        
-        join_task = JoinTask(
-            task_ref_name='join_' + suffix,
-            join_on=fork_task.to_workflow_task().join_on
-        )
-        
         self._tasks.append(fork_task)
-        self._tasks.append(join_task)
         return self
+
+    def __call__(self, **kwargs) -> WorkflowRun:
+        input = {}
+        if kwargs is not None and len(kwargs) > 0:
+            input = kwargs
+        return self.execute(workflow_input=input)
+
+    def input(self, json_path: str) -> str:
+        if json_path is None:
+            return '${' + f'workflow.input' + '}'
+        else:
+            return '${' + f'workflow.input.{json_path}' + '}'
+
+
+class InlineSubWorkflowTask(TaskInterface):
+    def __init__(self, task_ref_name: str, workflow: ConductorWorkflow) -> Self:
+        super().__init__(
+            task_reference_name=task_ref_name,
+            task_type=TaskType.SUB_WORKFLOW,
+        )
+        self._workflow_name = deepcopy(workflow.name)
+        self._workflow_version = deepcopy(workflow.version)
+        self._workflow_definition = deepcopy(workflow.to_workflow_def())
+
+    def to_workflow_task(self) -> WorkflowTask:
+        workflow = super().to_workflow_task()
+        workflow.sub_workflow_param = SubWorkflowParams(
+            name=self._workflow_name,
+            version=self._workflow_version,
+            workflow_definition=self._workflow_definition,
+        )
+        return workflow

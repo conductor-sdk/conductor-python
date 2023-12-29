@@ -1,10 +1,11 @@
-from typing import List
+from copy import deepcopy
+
+from typing_extensions import Self
+
 from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.task.join_task import JoinTask
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.task_type import TaskType
-from copy import deepcopy
-from typing_extensions import Self
 
 
 class DynamicForkTask(TaskInterface):

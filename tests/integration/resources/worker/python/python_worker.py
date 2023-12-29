@@ -49,6 +49,7 @@ def decorated_worker(obj: object) -> object:
         'status': 'COMPLETED'
     }
 
+
 @WorkerTask(task_definition_name='test_python_decorated_worker', domain='cool', poll_interval=500.0)
 def decorated_worker_with_domain_and_poll_interval(obj: object) -> object:
     return {
@@ -59,6 +60,7 @@ def decorated_worker_with_domain_and_poll_interval(obj: object) -> object:
         'task_input': obj,
         'status': 'COMPLETED'
     }
+
 
 def worker_with_task_input_and_task_result_output(task: Task) -> TaskResult:
     task_result = TaskResult(

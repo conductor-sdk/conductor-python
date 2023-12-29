@@ -60,7 +60,7 @@ You should be able to register your workflow at the Conductor Server:
 from conductor.client.http.models.workflow_def import WorkflowDef
 
 workflowDef = workflow.to_workflow_def()
-metadata_client.registerWorkflowDef(workflowDef, True)
+metadata_client.register_workflow_def(workflowDef, True)
 ```
 
 ### Get Workflow Definition
@@ -68,7 +68,7 @@ metadata_client.registerWorkflowDef(workflowDef, True)
 You should be able to get your workflow definiton that you added previously:
 
 ```python
-wfDef = metadata_client.getWorkflowDef('python_workflow_example_from_code')
+wfDef = metadata_client.get_workflow_def('python_workflow_example_from_code')
 ```
 
 In case there is an error in fetching the definition, errorStr will be populated.
@@ -80,7 +80,7 @@ You should be able to update your workflow after adding new tasks:
 ```python
 workflow >> SimpleTask("simple_task", "simple_task_ref_2")
 updatedWorkflowDef = workflow.to_workflow_def()
-metadata_client.updateWorkflowDef(updatedWorkflowDef, True)
+metadata_client.update_workflow_def(updatedWorkflowDef, True)
 ```
 
 ### Unregister Workflow Definition
@@ -88,7 +88,7 @@ metadata_client.updateWorkflowDef(updatedWorkflowDef, True)
 You should be able to unregister your workflow by passing name and version:
 
 ```python
-metadata_client.unregisterWorkflowDef('python_workflow_example_from_code', 1)
+metadata_client.unregister_workflow_def('python_workflow_example_from_code', 1)
 ```
 
 ## Task Definition Management
@@ -101,11 +101,11 @@ You should be able to register your task at the Conductor Server:
 from conductor.client.http.models.task_def import TaskDef
 
 taskDef = TaskDef(
-    name= "PYTHON_TASK",
+    name="PYTHON_TASK",
     description="Python Task Example",
     input_keys=["a", "b"]
 )
-metadata_client.registerTaskDef(taskDef)
+metadata_client.register_task_def(taskDef)
 ```
 
 ### Get Task Definition
@@ -113,7 +113,7 @@ metadata_client.registerTaskDef(taskDef)
 You should be able to get your task definiton that you added previously:
 
 ```python
-taskDef = metadata_client.getTaskDef('PYTHON_TASK')
+taskDef = metadata_client.get_task_def('PYTHON_TASK')
 ```
 
 ### Update Task Definition
@@ -123,7 +123,7 @@ You should be able to update your task definition by modifying field values:
 ```python
 taskDef.description = "Python Task Example New Description"
 taskDef.input_keys = ["a", "b", "c"]
-metadata_client.updateTaskDef(taskDef)
+metadata_client.update_task_def(taskDef)
 ```
 
 ### Unregister Task Definition
@@ -131,7 +131,7 @@ metadata_client.updateTaskDef(taskDef)
 You should be able to unregister your task at the Conductor Server:
 
 ```python
-metadata_client.unregisterTaskDef('python_task_example_from_code')
+metadata_client.unregister_task_def('python_task_example_from_code')
 ```
 
 ## Tag Management
@@ -148,7 +148,7 @@ tags = [
     MetadataTag("wftag2", "val2")
 ]
 
-metadata_client.setWorkflowTags(tags, 'python_workflow_example_from_code')
+metadata_client.set_workflow_tags(tags, 'python_workflow_example_from_code')
 ```
 
 ### Add single tag to your workflow
@@ -157,7 +157,7 @@ You should be able to add a single tag to your workflow:
 
 ```python
 tag = MetadataTag("wftag", "val")
-metadata_client.addWorkflowTag(tag, 'python_workflow_example_from_code')
+metadata_client.add_workflow_tag(tag, 'python_workflow_example_from_code')
 ```
 
 ### Fetch tags added to your workflow
@@ -165,7 +165,7 @@ metadata_client.addWorkflowTag(tag, 'python_workflow_example_from_code')
 You should be able to fetch tags added to your workflow:
 
 ```python
-tags = metadata_client.getWorkflowTags('python_workflow_example_from_code')
+tags = metadata_client.get_workflow_tags('python_workflow_example_from_code')
 ```
 
 ### Delete tag from your workflow
@@ -176,7 +176,7 @@ You should be able to delete a tag on your workflow:
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 
 tag = MetadataTag("wftag2", "val2")
-metadata_client.deleteWorkflowTag(tag, 'python_workflow_example_from_code')
+metadata_client.delete_workflow_tag(tag, 'python_workflow_example_from_code')
 ```
 
 ### Add tags to your task

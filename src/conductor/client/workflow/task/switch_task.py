@@ -1,14 +1,17 @@
-from conductor.client.http.models.workflow_task import WorkflowTask
-from conductor.client.workflow.task.task import TaskInterface, get_task_interface_list_as_workflow_task_list
-from conductor.client.workflow.task.task_type import TaskType
 from copy import deepcopy
 from enum import Enum
 from typing import List
+
 from typing_extensions import Self
+
+from conductor.client.http.models.workflow_task import WorkflowTask
+from conductor.client.workflow.task.task import TaskInterface, get_task_interface_list_as_workflow_task_list
+from conductor.client.workflow.task.task_type import TaskType
 
 
 class EvaluatorType(str, Enum):
     JAVASCRIPT = "javascript",
+    ECMASCRIPT = "graaljs",
     VALUE_PARAM = "value-param"
 
 
@@ -40,7 +43,7 @@ class SwitchTask(TaskInterface):
     def to_workflow_task(self) -> WorkflowTask:
         workflow = super().to_workflow_task()
         if self._use_javascript:
-            workflow.evaluator_type = EvaluatorType.JAVASCRIPT
+            workflow.evaluator_type = EvaluatorType.ECMASCRIPT
             workflow.expression = self._expression
         else:
             workflow.evaluator_type = EvaluatorType.VALUE_PARAM

@@ -179,11 +179,13 @@ class MetadataResourceApi(object):
         # verify the required parameter 'body' is set
         if ('body' not in params or
                 params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `create_workflow_metadata`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `body` when calling `create_workflow_metadata`")  # noqa: E501
         # verify the required parameter 'name' is set
         if ('name' not in params or
                 params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `create_workflow_metadata`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `name` when calling `create_workflow_metadata`")  # noqa: E501
 
         collection_formats = {}
 
@@ -282,11 +284,13 @@ class MetadataResourceApi(object):
         # verify the required parameter 'name' is set
         if ('name' not in params or
                 params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `delete_workflow_metadata`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `name` when calling `delete_workflow_metadata`")  # noqa: E501
         # verify the required parameter 'version' is set
         if ('version' not in params or
                 params['version'] is None):
-            raise ValueError("Missing the required parameter `version` when calling `delete_workflow_metadata`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `version` when calling `delete_workflow_metadata`")  # noqa: E501
 
         collection_formats = {}
 
@@ -939,7 +943,8 @@ class MetadataResourceApi(object):
         # verify the required parameter 'tasktype' is set
         if ('tasktype' not in params or
                 params['tasktype'] is None):
-            raise ValueError("Missing the required parameter `tasktype` when calling `unregister_task_def`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `tasktype` when calling `unregister_task_def`")  # noqa: E501
 
         collection_formats = {}
 
@@ -1030,11 +1035,13 @@ class MetadataResourceApi(object):
         # verify the required parameter 'name' is set
         if ('name' not in params or
                 params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `unregister_workflow_def`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `name` when calling `unregister_workflow_def`")  # noqa: E501
         # verify the required parameter 'version' is set
         if ('version' not in params or
                 params['version'] is None):
-            raise ValueError("Missing the required parameter `version` when calling `unregister_workflow_def`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `version` when calling `unregister_workflow_def`")  # noqa: E501
 
         collection_formats = {}
 

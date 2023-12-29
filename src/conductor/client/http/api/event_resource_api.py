@@ -169,11 +169,13 @@ class EventResourceApi(object):
         # verify the required parameter 'queue_type' is set
         if ('queue_type' not in params or
                 params['queue_type'] is None):
-            raise ValueError("Missing the required parameter `queue_type` when calling `delete_queue_config`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `queue_type` when calling `delete_queue_config`")  # noqa: E501
         # verify the required parameter 'queue_name' is set
         if ('queue_name' not in params or
                 params['queue_name'] is None):
-            raise ValueError("Missing the required parameter `queue_name` when calling `delete_queue_config`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `queue_name` when calling `delete_queue_config`")  # noqa: E501
 
         collection_formats = {}
 
@@ -351,7 +353,8 @@ class EventResourceApi(object):
         # verify the required parameter 'event' is set
         if ('event' not in params or
                 params['event'] is None):
-            raise ValueError("Missing the required parameter `event` when calling `get_event_handlers_for_event`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `event` when calling `get_event_handlers_for_event`")  # noqa: E501
 
         collection_formats = {}
 
@@ -448,11 +451,13 @@ class EventResourceApi(object):
         # verify the required parameter 'queue_type' is set
         if ('queue_type' not in params or
                 params['queue_type'] is None):
-            raise ValueError("Missing the required parameter `queue_type` when calling `get_queue_config`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `queue_type` when calling `get_queue_config`")  # noqa: E501
         # verify the required parameter 'queue_name' is set
         if ('queue_name' not in params or
                 params['queue_name'] is None):
-            raise ValueError("Missing the required parameter `queue_name` when calling `get_queue_config`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `queue_name` when calling `get_queue_config`")  # noqa: E501
 
         collection_formats = {}
 
@@ -640,11 +645,13 @@ class EventResourceApi(object):
         # verify the required parameter 'queue_type' is set
         if ('queue_type' not in params or
                 params['queue_type'] is None):
-            raise ValueError("Missing the required parameter `queue_type` when calling `put_queue_config`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `queue_type` when calling `put_queue_config`")  # noqa: E501
         # verify the required parameter 'queue_name' is set
         if ('queue_name' not in params or
                 params['queue_name'] is None):
-            raise ValueError("Missing the required parameter `queue_name` when calling `put_queue_config`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `queue_name` when calling `put_queue_config`")  # noqa: E501
 
         collection_formats = {}
 
@@ -741,7 +748,8 @@ class EventResourceApi(object):
         # verify the required parameter 'name' is set
         if ('name' not in params or
                 params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `remove_event_handler_status`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `name` when calling `remove_event_handler_status`")  # noqa: E501
 
         collection_formats = {}
 

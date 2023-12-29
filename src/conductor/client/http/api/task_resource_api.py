@@ -1,10 +1,10 @@
 from __future__ import absolute_import
 
 import re  # noqa: F401
+import socket
 
 # python 2 and python 3 compatibility library
 import six
-import socket
 
 from conductor.client.http.api_client import ApiClient
 
@@ -403,9 +403,11 @@ class TaskResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.get_external_storage_location1_with_http_info(path, operation, payload_type, **kwargs)  # noqa: E501
+            return self.get_external_storage_location1_with_http_info(path, operation, payload_type,
+                                                                      **kwargs)  # noqa: E501
         else:
-            (data) = self.get_external_storage_location1_with_http_info(path, operation, payload_type, **kwargs)  # noqa: E501
+            (data) = self.get_external_storage_location1_with_http_info(path, operation, payload_type,
+                                                                        **kwargs)  # noqa: E501
             return data
 
     def get_external_storage_location1_with_http_info(self, path, operation, payload_type, **kwargs):  # noqa: E501
@@ -443,15 +445,18 @@ class TaskResourceApi(object):
         # verify the required parameter 'path' is set
         if ('path' not in params or
                 params['path'] is None):
-            raise ValueError("Missing the required parameter `path` when calling `get_external_storage_location1`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `path` when calling `get_external_storage_location1`")  # noqa: E501
         # verify the required parameter 'operation' is set
         if ('operation' not in params or
                 params['operation'] is None):
-            raise ValueError("Missing the required parameter `operation` when calling `get_external_storage_location1`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `operation` when calling `get_external_storage_location1`")  # noqa: E501
         # verify the required parameter 'payload_type' is set
         if ('payload_type' not in params or
                 params['payload_type'] is None):
-            raise ValueError("Missing the required parameter `payload_type` when calling `get_external_storage_location1`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `payload_type` when calling `get_external_storage_location1`")  # noqa: E501
 
         collection_formats = {}
 
@@ -1029,7 +1034,8 @@ class TaskResourceApi(object):
         # verify the required parameter 'task_type' is set
         if ('task_type' not in params or
                 params['task_type'] is None):
-            raise ValueError("Missing the required parameter `task_type` when calling `requeue_pending_task`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `task_type` when calling `requeue_pending_task`")  # noqa: E501
 
         collection_formats = {}
 
@@ -1556,7 +1562,7 @@ class TaskResourceApi(object):
             path_params['status'] = params['status']  # noqa: E501
 
         query_params = []
-        
+
         if 'workerid' not in params:
             params['workerid'] = socket.gethostname()
         query_params.append(('workerid', params['workerid']))  # noqa: E501
@@ -1616,9 +1622,11 @@ class TaskResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.update_task_sync_with_http_info(body, workflow_id, task_ref_name, status, **kwargs)  # noqa: E501
+            return self.update_task_sync_with_http_info(body, workflow_id, task_ref_name, status,
+                                                        **kwargs)  # noqa: E501
         else:
-            (data) = self.update_task_sync_with_http_info(body, workflow_id, task_ref_name, status, **kwargs)  # noqa: E501
+            (data) = self.update_task_sync_with_http_info(body, workflow_id, task_ref_name, status,
+                                                          **kwargs)  # noqa: E501
             return data
 
     def update_task_sync_with_http_info(self, body, workflow_id, task_ref_name, status, **kwargs):  # noqa: E501

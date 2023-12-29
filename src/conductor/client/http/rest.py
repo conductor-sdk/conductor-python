@@ -1,13 +1,11 @@
-from conductor.client.configuration.configuration import Configuration
-from six.moves.urllib.parse import urlencode
-import certifi
 import io
 import json
-import logging
 import re
-import six
-import ssl
+
 import requests
+from requests.adapters import HTTPAdapter
+from six.moves.urllib.parse import urlencode
+from urllib3 import Retry
 
 
 class RESTResponse(io.IOBase):
@@ -23,9 +21,16 @@ class RESTResponse(io.IOBase):
 
 
 class RESTClientObject(object):
-    def __init__(self, connection = None):
+    def __init__(self, connection=None):
         self.connection = connection or requests.Session()
-
+        retry_strategy = Retry(
+            total=3,
+            backoff_factor=2,
+            status_forcelist=[429, 500, 502, 503, 504],
+            allowed_methods=["HEAD", "GET", "OPTIONS", "DELETE"],  # all the methods that are supposed to be idempotent
+        )
+        self.connection.mount("https://", HTTPAdapter(max_retries=retry_strategy))
+        self.connection.mount("http://", HTTPAdapter(max_retries=retry_strategy))
 
     def request(self, method, url, query_params=None, headers=None,
                 body=None, post_params=None, _preload_content=True,
@@ -60,7 +65,7 @@ class RESTClientObject(object):
         post_params = post_params or {}
         headers = headers or {}
 
-        timeout = _request_timeout if _request_timeout is not None else 45
+        timeout = _request_timeout if _request_timeout is not None else (120, 120)
 
         if 'Content-Type' not in headers:
             headers['Content-Type'] = 'application/json'
@@ -100,6 +105,9 @@ class RESTClientObject(object):
 
         if _preload_content:
             r = RESTResponse(r)
+
+        if r.status == 401 or r.status == 403:
+            raise AuthorizationException(http_resp=r)
 
         if not 200 <= r.status <= 299:
             raise ApiException(http_resp=r)
@@ -177,18 +185,29 @@ class ApiException(Exception):
     def __init__(self, status=None, reason=None, http_resp=None, body=None):
         if http_resp:
             self.status = http_resp.status
+            self.code = http_resp.status
             self.reason = http_resp.reason
             self.body = http_resp.resp.text
+            try:
+                if http_resp.resp.text:
+                    error = json.loads(http_resp.resp.text)
+                    self.message = error['message']
+                else:
+                    self.message = http_resp.resp.text
+            except Exception as e:
+                self.message = http_resp.resp.text
             self.headers = http_resp.getheaders()
         else:
             self.status = status
+            self.code = status
             self.reason = reason
             self.body = body
+            self.message = body
             self.headers = None
 
     def __str__(self):
         """Custom error messages for exception"""
-        error_message = "({0})\n"\
+        error_message = "({0})\n" \
                         "Reason: {1}\n".format(self.status, self.reason)
         if self.headers:
             error_message += "HTTP response headers: {0}\n".format(
@@ -196,5 +215,40 @@ class ApiException(Exception):
 
         if self.body:
             error_message += "HTTP response body: {0}\n".format(self.body)
+
+        return error_message
+
+
+class AuthorizationException(ApiException):
+    def __init__(self, status=None, reason=None, http_resp=None, body=None):
+        try:
+            data = json.loads(http_resp.resp.text)
+            if 'error' in data:
+                self._error_code = data['error']
+        except (Exception):
+            self._error_code = ''
+        super().__init__(status, reason, http_resp, body)
+
+    @property
+    def error_code(self):
+        return self._error_code
+
+    @property
+    def status_code(self):
+        return self.status
+
+    @property
+    def token_expired(self) -> bool:
+        return self._error_code == 'EXPIRED_TOKEN'
+
+    def __str__(self):
+        """Custom error messages for exception"""
+        error_message = f'authorization error: {self._error_code}.  status_code: {self.status}, reason: {self.reason}'
+
+        if self.headers:
+            error_message += f', headers: {self.headers}'
+
+        if self.body:
+            error_message += f', response: {self.body}'
 
         return error_message

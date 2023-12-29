@@ -1,7 +1,9 @@
-from conductor.client.http.models.task_result_status import TaskResultStatus
 import pprint
 import re  # noqa: F401
+
 import six
+
+from conductor.client.http.models.task_result_status import TaskResultStatus
 
 
 class TaskResult(object):
@@ -42,7 +44,9 @@ class TaskResult(object):
         'sub_workflow_id': 'subWorkflowId'
     }
 
-    def __init__(self, workflow_instance_id=None, task_id=None, reason_for_incompletion=None, callback_after_seconds=None, worker_id=None, status=None, output_data=None, logs=None, external_output_payload_storage_path=None, sub_workflow_id=None):  # noqa: E501
+    def __init__(self, workflow_instance_id=None, task_id=None, reason_for_incompletion=None,
+                 callback_after_seconds=None, worker_id=None, status=None, output_data=None, logs=None,
+                 external_output_payload_storage_path=None, sub_workflow_id=None):  # noqa: E501
         """TaskResult - a model defined in Swagger"""  # noqa: E501
         self._workflow_instance_id = None
         self._task_id = None

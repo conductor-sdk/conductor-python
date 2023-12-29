@@ -1,11 +1,12 @@
+from typing_extensions import Self
+
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.task_type import TaskType
-from typing import Any, Dict, List
-from typing_extensions import Self
 
 
 class LlmSearchIndex(TaskInterface):
-    def __init__(self, task_name: str, task_ref_name: str, vector_db: str, namespace: str, index: str, llm_provider: str, model: str, prompt_name: str, query: str) -> Self:
+    def __init__(self, task_name: str, task_ref_name: str, vector_db: str, namespace: str, index: str,
+                 llm_provider: str, model: str, prompt_name: str, query: str) -> Self:
         super().__init__(
             task_name=task_name,
             task_reference_name=task_ref_name,

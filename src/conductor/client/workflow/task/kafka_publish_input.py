@@ -1,5 +1,6 @@
 from copy import deepcopy
 from typing import Any, Dict
+
 from typing_extensions import Self
 
 
@@ -19,5 +20,5 @@ class KafkaPublishInput:
         self._value = deepcopy(value)
         self._request_timeout_ms = deepcopy(request_timeout_ms)
         self._max_block_ms = deepcopy(max_block_ms)
-        self. _headers = deepcopy(headers)
+        self._headers = deepcopy(headers)
         self._topic = deepcopy(topic)

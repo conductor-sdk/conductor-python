@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
-from conductor.client.http.models.workflow_task import WorkflowTask
-from conductor.client.workflow.task.task_type import TaskType
 from copy import deepcopy
 from typing import Any, Dict, List
+
 from typing_extensions import Self
+
+from conductor.client.http.models.workflow_task import WorkflowTask
+from conductor.client.workflow.task.task_type import TaskType
 
 
 def get_task_interface_list_as_workflow_task_list(*tasks: Self) -> List[WorkflowTask]:
@@ -85,14 +87,14 @@ class TaskInterface(ABC):
 
     @input_parameters.setter
     def input_parameters(self, input_parameters: Dict[str, Any]) -> None:
-        if input_parameters == None:
+        if input_parameters is None:
             self._input_parameters = {}
             return
         if not isinstance(input_parameters, dict):
-            raise Exception('invalid type')
-        for key in input_parameters.keys():
-            if not isinstance(key, str):
-                raise Exception('invalid type')
+            try:
+                self._input_parameters = input_parameters.__dict__
+            except:
+                raise Exception(f'invalid type: {type(input_parameters)}')
         self._input_parameters = deepcopy(input_parameters)
 
     def input(self, key: str, value: Any) -> Self:
@@ -115,3 +117,18 @@ class TaskInterface(ABC):
         if path == '':
             return f'${{{self._task_reference_name}.output}}'
         return f'${{{self._task_reference_name}.output.{path}}}'
+
+    def output(self, json_path: str = None) -> str:
+        if json_path is None:
+            return '${' + f'{self.task_reference_name}.output' + '}'
+        else:
+            return '${' + f'{self.task_reference_name}.output.{json_path}' + '}'
+
+    def __getattribute__(self, __name: str) -> Any:
+        try:
+            val = super().__getattribute__(__name)
+            return val
+        except AttributeError as ae:
+            if not __name.startswith('_'):
+                return '${' + self.task_reference_name + '.output.' + __name + '}'
+            raise ae

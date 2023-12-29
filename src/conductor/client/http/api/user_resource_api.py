@@ -167,7 +167,8 @@ class UserResourceApi(object):
         # verify the required parameter 'user_id' is set
         if ('user_id' not in params or
                 params['user_id'] is None):
-            raise ValueError("Missing the required parameter `user_id` when calling `get_granted_permissions`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `user_id` when calling `get_granted_permissions`")  # noqa: E501
 
         collection_formats = {}
 

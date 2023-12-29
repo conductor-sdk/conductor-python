@@ -1,68 +1,69 @@
 from typing import Optional, List
-from conductor.client.configuration.configuration import Configuration
-from conductor.client.orkes.models.metadata_tag import MetadataTag
-from conductor.client.http.models.workflow_schedule import WorkflowSchedule
-from conductor.client.scheduler_client import SchedulerClient
-from conductor.client.http.models.save_schedule_request import SaveScheduleRequest
-from conductor.client.http.models.search_result_workflow_schedule_execution_model import SearchResultWorkflowScheduleExecutionModel
-from conductor.client.orkes.orkes_base_client import OrkesBaseClient
-from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
 
-@for_all_methods(api_exception_handler, ["__init__"])
+from conductor.client.configuration.configuration import Configuration
+from conductor.client.http.models.save_schedule_request import SaveScheduleRequest
+from conductor.client.http.models.search_result_workflow_schedule_execution_model import \
+    SearchResultWorkflowScheduleExecutionModel
+from conductor.client.http.models.workflow_schedule import WorkflowSchedule
+from conductor.client.orkes.models.metadata_tag import MetadataTag
+from conductor.client.orkes.orkes_base_client import OrkesBaseClient
+from conductor.client.scheduler_client import SchedulerClient
+
+
 class OrkesSchedulerClient(OrkesBaseClient, SchedulerClient):
     def __init__(self, configuration: Configuration):
         super(OrkesSchedulerClient, self).__init__(configuration)
-        
-    def saveSchedule(self, saveScheduleRequest: SaveScheduleRequest):
-        self.schedulerResourceApi.save_schedule(saveScheduleRequest)
-    
-    def getSchedule(self, name: str) -> WorkflowSchedule:
+
+    def save_schedule(self, save_schedule_request: SaveScheduleRequest):
+        self.schedulerResourceApi.save_schedule(save_schedule_request)
+
+    def get_schedule(self, name: str) -> WorkflowSchedule:
         return self.schedulerResourceApi.get_schedule(name)
 
-    def getAllSchedules(self, workflowName: Optional[str] = None) -> List[WorkflowSchedule]:
+    def get_all_schedules(self, workflow_name: Optional[str] = None) -> List[WorkflowSchedule]:
         kwargs = {}
-        if workflowName:
-            kwargs.update({"workflow_name": workflowName})
+        if workflow_name:
+            kwargs.update({"workflow_name": workflow_name})
 
         return self.schedulerResourceApi.get_all_schedules(**kwargs)
 
-    def getNextFewScheduleExecutionTimes(self,
-        cronExpression: str,
-        scheduleStartTime: Optional[int] = None,
-        scheduleEndTime: Optional[int] = None,
-        limit: Optional[int] = None,
-    ) -> List[int]:
+    def get_next_few_schedule_execution_times(self,
+                                              cron_expression: str,
+                                              schedule_start_time: Optional[int] = None,
+                                              schedule_end_time: Optional[int] = None,
+                                              limit: Optional[int] = None,
+                                              ) -> List[int]:
         kwargs = {}
-        if scheduleStartTime:
-            kwargs.update({"schedule_start_time": scheduleStartTime})
-        if scheduleEndTime:
-            kwargs.update({"schedule_end_time": scheduleEndTime})
+        if schedule_start_time:
+            kwargs.update({"schedule_start_time": schedule_start_time})
+        if schedule_end_time:
+            kwargs.update({"schedule_end_time": schedule_end_time})
         if limit:
             kwargs.update({"limit": limit})
-        return self.schedulerResourceApi.get_next_few_schedules(cronExpression, **kwargs)
+        return self.schedulerResourceApi.get_next_few_schedules(cron_expression, **kwargs)
 
-    def deleteSchedule(self, name: str):
+    def delete_schedule(self, name: str):
         self.schedulerResourceApi.delete_schedule(name)
 
-    def pauseSchedule(self, name: str):
+    def pause_schedule(self, name: str):
         self.schedulerResourceApi.pause_schedule(name)
-    
-    def pauseAllSchedules(self):
+
+    def pause_all_schedules(self):
         self.schedulerResourceApi.pause_all_schedules()
 
-    def resumeSchedule(self, name: str):
+    def resume_schedule(self, name: str):
         self.schedulerResourceApi.resume_schedule(name)
-    
-    def resumeAllSchedules(self):
+
+    def resume_all_schedules(self):
         self.schedulerResourceApi.resume_all_schedules()
-    
-    def searchScheduleExecutions(self,
-        start: Optional[int] = None,
-        size: Optional[int] = None,
-        sort: Optional[str] = None,
-        freeText: Optional[str] = None,
-        query: Optional[str] = None,
-    ) -> SearchResultWorkflowScheduleExecutionModel:
+
+    def search_schedule_executions(self,
+                                   start: Optional[int] = None,
+                                   size: Optional[int] = None,
+                                   sort: Optional[str] = None,
+                                   free_text: Optional[str] = None,
+                                   query: Optional[str] = None,
+                                   ) -> SearchResultWorkflowScheduleExecutionModel:
         kwargs = {}
         if start:
             kwargs.update({"start": start})
@@ -70,20 +71,20 @@ class OrkesSchedulerClient(OrkesBaseClient, SchedulerClient):
             kwargs.update({"size": size})
         if sort:
             kwargs.update({"sort": sort})
-        if freeText:
-            kwargs.update({"freeText": freeText})
+        if free_text:
+            kwargs.update({"freeText": free_text})
         if query:
             kwargs.update({"query": query})
         return self.schedulerResourceApi.search_v21(**kwargs)
-    
-    def requeueAllExecutionRecords(self):
+
+    def requeue_all_execution_records(self):
         self.schedulerResourceApi.requeue_all_execution_records()
-    
-    def setSchedulerTags(self, tags: List[MetadataTag], name: str):
+
+    def set_scheduler_tags(self, tags: List[MetadataTag], name: str):
         self.schedulerResourceApi.put_tag_for_schedule(tags, name)
 
-    def getSchedulerTags(self, name: str) -> List[MetadataTag]:
+    def get_scheduler_tags(self, name: str) -> List[MetadataTag]:
         return self.schedulerResourceApi.get_tags_for_schedule(name)
-        
-    def deleteSchedulerTags(self, tags: List[MetadataTag], name: str)  -> List[MetadataTag]:
+
+    def delete_scheduler_tags(self, tags: List[MetadataTag], name: str) -> List[MetadataTag]:
         self.schedulerResourceApi.delete_tag_for_schedule(tags, name)

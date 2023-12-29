@@ -1,12 +1,16 @@
+from typing import Optional, List
+
+from typing_extensions import Self
+
+from conductor.client.workflow.task.llm_tasks.utils.prompt import Prompt
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.task_type import TaskType
-from conductor.client.workflow.task.llm_tasks.utils.prompt import Prompt
-from typing import Optional, List
-from typing_extensions import Self
 
 
 class LlmTextComplete(TaskInterface):
-    def __init__(self, task_name: str, task_ref_name: str, llm_provider: str, model: str, prompt: Prompt, stop_words: Optional[List[str]], max_tokens: Optional[int], temperature: int = 0, top_p: int = 0) -> Self:
+    def __init__(self, task_name: str, task_ref_name: str, llm_provider: str, model: str, prompt: Prompt,
+                 stop_words: Optional[List[str]] = [], max_tokens: Optional[int] = 100,
+                 temperature: int = 0, top_p: int = 1) -> Self:
         optional_input_params = {}
 
         if stop_words:
@@ -14,8 +18,8 @@ class LlmTextComplete(TaskInterface):
 
         if max_tokens:
             optional_input_params.update({"maxTokens": max_tokens})
-        
-        input_params={
+
+        input_params = {
             "llmProvider": llm_provider,
             "model": model,
             "promptName": prompt.name,
@@ -23,9 +27,9 @@ class LlmTextComplete(TaskInterface):
             "temperature": temperature,
             "topP": top_p,
         }
-        
+
         input_params.update(optional_input_params)
-        
+
         super().__init__(
             task_name=task_name,
             task_reference_name=task_ref_name,
