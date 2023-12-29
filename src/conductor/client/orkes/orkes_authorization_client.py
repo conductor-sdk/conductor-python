@@ -2,7 +2,6 @@ from typing import Dict, List, Optional
 
 from conductor.client.authorization_client import AuthorizationClient
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
 from conductor.client.http.models.authorization_request import AuthorizationRequest
 from conductor.client.http.models.conductor_application import ConductorApplication
 from conductor.client.http.models.conductor_user import ConductorUser
@@ -20,7 +19,6 @@ from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
 
 
-@for_all_methods(api_exception_handler, ["__init__"])
 class OrkesAuthorizationClient(OrkesBaseClient, AuthorizationClient):
     def __init__(self, configuration: Configuration):
         super(OrkesAuthorizationClient, self).__init__(configuration)

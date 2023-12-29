@@ -17,7 +17,6 @@ def api_exception_handler(function):
         try:
             return function(*args, **kwargs)
         except ApiException as e:
-            message = "Unknown failure"
 
             if e.status == 404:
                 code = APIErrorCode.NOT_FOUND

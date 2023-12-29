@@ -1,7 +1,6 @@
 from typing import Optional, List
 
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
 from conductor.client.http.models import PollData
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_exec_log import TaskExecLog
@@ -11,7 +10,6 @@ from conductor.client.orkes.orkes_base_client import OrkesBaseClient
 from conductor.client.task_client import TaskClient
 
 
-@for_all_methods(api_exception_handler, ["__init__"])
 class OrkesTaskClient(OrkesBaseClient, TaskClient):
     def __init__(self, configuration: Configuration):
         super(OrkesTaskClient, self).__init__(configuration)

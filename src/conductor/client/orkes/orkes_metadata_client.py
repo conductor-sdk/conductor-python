@@ -1,7 +1,6 @@
 from typing import Optional, List
 
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
 from conductor.client.http.models.tag_string import TagString
 from conductor.client.http.models.task_def import TaskDef
 from conductor.client.http.models.workflow_def import WorkflowDef
@@ -11,7 +10,6 @@ from conductor.client.orkes.models.ratelimit_tag import RateLimitTag
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
 
 
-@for_all_methods(api_exception_handler, ["__init__"])
 class OrkesMetadataClient(OrkesBaseClient, MetadataClient):
     def __init__(self, configuration: Configuration):
         super(OrkesMetadataClient, self).__init__(configuration)

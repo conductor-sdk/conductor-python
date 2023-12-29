@@ -3,6 +3,7 @@ from shortuuid import uuid
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api_client import ApiClient
 from conductor.client.http.models import SkipTaskRequest
+from conductor.client.http.rest import ApiException
 from conductor.client.orkes_clients import OrkesClients
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
@@ -22,7 +23,6 @@ from conductor.client.http.models.upsert_user_request import UpsertUserRequest
 from conductor.client.http.models.upsert_group_request import UpsertGroupRequest
 from conductor.client.http.models.create_or_update_application_request import CreateOrUpdateApplicationRequest
 from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
-from conductor.client.exceptions.api_error import APIError, APIErrorCode
 
 SUFFIX = str(uuid())
 WORKFLOW_NAME = 'IntegrationTestOrkesClientsWf_' + SUFFIX
@@ -103,8 +103,8 @@ class TestOrkesClients:
         self.metadata_client.unregister_task_def(TASK_TYPE)
         try:
             self.metadata_client.get_task_def(TASK_TYPE)
-        except APIError as e:
-            assert e.code == APIErrorCode.NOT_FOUND
+        except ApiException as e:
+            assert e.code == 404
             assert e.message == "Task {0} not found".format(TASK_TYPE)
 
     def test_secret_lifecycle(self):
@@ -139,8 +139,8 @@ class TestOrkesClients:
 
         try:
             self.secret_client.get_secret(SECRET_NAME + "_2")
-        except APIError as e:
-            assert e.code == APIErrorCode.NOT_FOUND
+        except ApiException as e:
+            assert e.code == 404
 
     def test_scheduler_lifecycle(self, workflowDef):
         startWorkflowRequest = StartWorkflowRequest(
@@ -187,8 +187,8 @@ class TestOrkesClients:
 
         try:
             schedule = self.scheduler_client.get_schedule(SCHEDULE_NAME)
-        except APIError as e:
-            assert e.code == APIErrorCode.NOT_FOUND
+        except ApiException as e:
+            assert e.code == 404
             assert e.message == "Schedule '{0}' not found".format(SCHEDULE_NAME)
 
     def test_application_lifecycle(self):
@@ -237,8 +237,8 @@ class TestOrkesClients:
         self.authorization_client.delete_application(created_app.id)
         try:
             application = self.authorization_client.get_application(created_app.id)
-        except APIError as e:
-            assert e.code == APIErrorCode.NOT_FOUND
+        except ApiException as e:
+            assert e.code == 404
             assert e.message == "Application '{0}' not found".format(created_app.id)
 
     def test_user_group_permissions_lifecycle(self, workflowDef):
@@ -314,15 +314,15 @@ class TestOrkesClients:
         self.authorization_client.delete_user(USER_ID)
         try:
             self.authorization_client.get_user(USER_ID)
-        except APIError as e:
-            assert e.code == APIErrorCode.NOT_FOUND
+        except ApiException as e:
+            assert e.code == 404
             assert e.message == "User '{0}' not found".format(USER_ID)
 
         self.authorization_client.delete_group(GROUP_ID)
         try:
             self.authorization_client.get_group(GROUP_ID)
-        except APIError as e:
-            assert e.code == APIErrorCode.NOT_FOUND
+        except ApiException as e:
+            assert e.code == 404
             assert e.message == "Group '{0}' not found".format(GROUP_ID)
 
     def __test_register_workflow_definition(self, workflowDef: WorkflowDef):
@@ -424,8 +424,8 @@ class TestOrkesClients:
 
         try:
             self.metadata_client.get_workflow_def(WORKFLOW_NAME, 1)
-        except APIError as e:
-            assert e.code == APIErrorCode.NOT_FOUND
+        except ApiException as e:
+            assert e.code == 404
             assert e.message == 'No such workflow found by name: {0}, version: 1'.format(WORKFLOW_NAME)
 
     def __test_task_tags(self):
@@ -516,8 +516,8 @@ class TestOrkesClients:
         self.workflow_client.delete_workflow(workflow_uuid)
         try:
             workflow = self.workflow_client.get_workflow(workflow_uuid, False)
-        except APIError as e:
-            assert e.code == APIErrorCode.NOT_FOUND
+        except ApiException as e:
+            assert e.code == 404
             assert e.message == "Workflow with Id: {} not found.".format(workflow_uuid)
 
     def __test_task_execution_lifecycle(self):

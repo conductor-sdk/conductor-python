@@ -1,7 +1,6 @@
 from typing import Optional, List
 
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
 from conductor.client.http.models import SkipTaskRequest, WorkflowStatus, \
     ScrollableSearchResultWorkflowSummary
 from conductor.client.http.models.correlation_ids_search_request import CorrelationIdsSearchRequest
@@ -14,7 +13,6 @@ from conductor.client.orkes.orkes_base_client import OrkesBaseClient
 from conductor.client.workflow_client import WorkflowClient
 
 
-# @for_all_methods(api_exception_handler, ["__init__"])
 class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
     def __init__(
             self,

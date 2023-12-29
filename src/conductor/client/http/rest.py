@@ -185,13 +185,24 @@ class ApiException(Exception):
     def __init__(self, status=None, reason=None, http_resp=None, body=None):
         if http_resp:
             self.status = http_resp.status
+            self.code = http_resp.status
             self.reason = http_resp.reason
             self.body = http_resp.resp.text
+            try:
+                if http_resp.resp.text:
+                    error = json.loads(http_resp.resp.text)
+                    self.message = error['message']
+                else:
+                    self.message = http_resp.resp.text
+            except Exception as e:
+                self.message = http_resp.resp.text
             self.headers = http_resp.getheaders()
         else:
             self.status = status
+            self.code = status
             self.reason = reason
             self.body = body
+            self.message = body
             self.headers = None
 
     def __str__(self):

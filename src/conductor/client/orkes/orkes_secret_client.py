@@ -1,13 +1,11 @@
 from typing import List
 
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
 from conductor.client.secret_client import SecretClient
 
 
-@for_all_methods(api_exception_handler, ["__init__"])
 class OrkesSecretClient(OrkesBaseClient, SecretClient):
     def __init__(self, configuration: Configuration):
         super(OrkesSecretClient, self).__init__(configuration)
