@@ -14,7 +14,7 @@ from conductor.client.orkes.orkes_base_client import OrkesBaseClient
 from conductor.client.workflow_client import WorkflowClient
 
 
-@for_all_methods(api_exception_handler, ["__init__"])
+# @for_all_methods(api_exception_handler, ["__init__"])
 class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
     def __init__(
             self,

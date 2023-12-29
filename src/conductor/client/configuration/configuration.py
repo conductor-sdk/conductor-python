@@ -1,9 +1,8 @@
+import logging
+import os
 import time
 
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-import logging
-import multiprocessing
-import os
 
 
 class Configuration:
