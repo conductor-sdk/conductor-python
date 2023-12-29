@@ -55,9 +55,8 @@ class TestOrkesWorkflowClientIntg(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        configuration = Configuration("http://localhost:8080/api")
-        cls.workflow_client = OrkesWorkflowClient(configuration)
         cls.config = get_configuration()
+        cls.workflow_client = OrkesWorkflowClient(cls.config)
         logger.info(f'setting up TestOrkesWorkflowClientIntg with config {cls.config}')
 
     def test_all(self):
