@@ -4,9 +4,9 @@ from dataclasses import dataclass
 from typing import List
 
 from requests.structures import CaseInsensitiveDict
+from resources.workers import UserInfo
 
 from conductor.client.automator.utils import convert_from_dict
-from resources.workers import UserInfo
 
 
 @dataclass

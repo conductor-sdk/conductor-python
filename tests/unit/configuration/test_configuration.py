@@ -1,7 +1,8 @@
-from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.api_client import ApiClient
 import base64
 import unittest
+
+from conductor.client.configuration.configuration import Configuration
+from conductor.client.http.api_client import ApiClient
 
 
 class TestConfiguration(unittest.TestCase):
@@ -40,7 +41,7 @@ class TestConfiguration(unittest.TestCase):
             configuration.host, expected_host,
         )
         token = "Basic " + \
-            base64.b64encode(bytes(basic_auth, "utf-8")).decode("utf-8")
+                base64.b64encode(bytes(basic_auth, "utf-8")).decode("utf-8")
         api_client = ApiClient(configuration)
         self.assertEqual(
             api_client.default_headers,

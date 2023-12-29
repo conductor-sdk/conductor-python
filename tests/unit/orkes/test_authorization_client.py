@@ -1,30 +1,29 @@
 import logging
 import unittest
-import json
-
 from unittest.mock import patch
+
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.api.user_resource_api import UserResourceApi
-from conductor.client.http.api.group_resource_api import GroupResourceApi
 from conductor.client.http.api.application_resource_api import ApplicationResourceApi
 from conductor.client.http.api.authorization_resource_api import AuthorizationResourceApi
-from conductor.client.http.models.upsert_user_request import UpsertUserRequest
-from conductor.client.http.models.upsert_group_request import UpsertGroupRequest
+from conductor.client.http.api.group_resource_api import GroupResourceApi
+from conductor.client.http.api.user_resource_api import UserResourceApi
 from conductor.client.http.models.authorization_request import AuthorizationRequest
-from conductor.client.http.models.role import Role
+from conductor.client.http.models.conductor_application import ConductorApplication
+from conductor.client.http.models.conductor_user import ConductorUser
+from conductor.client.http.models.create_or_update_application_request import CreateOrUpdateApplicationRequest
 from conductor.client.http.models.group import Group
 from conductor.client.http.models.permission import Permission
+from conductor.client.http.models.role import Role
 from conductor.client.http.models.subject_ref import SubjectRef, SubjectType
 from conductor.client.http.models.target_ref import TargetRef, TargetType
-from conductor.client.http.models.conductor_user import ConductorUser
-from conductor.client.http.models.conductor_application import ConductorApplication
-from conductor.client.http.models.create_or_update_application_request import CreateOrUpdateApplicationRequest
-from conductor.client.orkes.models.access_type import AccessType
-from conductor.client.orkes.models.metadata_tag import MetadataTag
+from conductor.client.http.models.upsert_group_request import UpsertGroupRequest
+from conductor.client.http.models.upsert_user_request import UpsertUserRequest
 from conductor.client.orkes.models.access_key import AccessKey
 from conductor.client.orkes.models.access_key_status import AccessKeyStatus
+from conductor.client.orkes.models.access_type import AccessType
 from conductor.client.orkes.models.created_access_key import CreatedAccessKey
 from conductor.client.orkes.models.granted_permission import GrantedPermission
+from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.orkes_authorization_client import OrkesAuthorizationClient
 
 APP_ID = '5d860b70-a429-4b20-8d28-6b5198155882'
@@ -38,7 +37,8 @@ USER_NAME = 'UT USER'
 GROUP_ID = 'ut_group'
 GROUP_NAME = 'Test Group'
 WF_NAME = 'workflow_name'
-ERROR_BODY= '{"message":"No such application found by id"}'
+ERROR_BODY = '{"message":"No such application found by id"}'
+
 
 class TestOrkesAuthorizationClient(unittest.TestCase):
 
@@ -70,7 +70,7 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
             encrypted_id=False,
             encrypted_id_display_value=USER_ID
         )
-        cls.group_roles =  [
+        cls.group_roles = [
             Role(
                 "USER", [
                     Permission(name="CREATE_TASK_DEF"),
@@ -80,7 +80,7 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
             )
         ]
         cls.conductor_group = Group(GROUP_ID, GROUP_NAME, cls.group_roles)
-        
+
     def setUp(self):
         logging.disable(logging.CRITICAL)
 
@@ -129,7 +129,7 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
         app_names = self.authorization_client.list_applications()
         self.assertTrue(mock.called)
         self.assertListEqual(app_names, [self.conductor_application])
-    
+
     @patch.object(ApplicationResourceApi, 'delete_application')
     def test_deleteApplication(self, mock):
         self.authorization_client.delete_application(APP_ID)
@@ -167,7 +167,7 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
         tags = [tag1, tag2]
         self.authorization_client.set_application_tags(tags, APP_ID)
         mock.assert_called_with(tags, APP_ID)
-        
+
     @patch.object(ApplicationResourceApi, 'get_tags_for_application')
     def test_getApplicationTags(self, mock):
         tag1 = MetadataTag("tag1", "val1")
@@ -176,7 +176,7 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
         tags = self.authorization_client.get_application_tags(APP_ID)
         mock.assert_called_with(APP_ID)
         self.assertEqual(len(tags), 2)
-    
+
     @patch.object(ApplicationResourceApi, 'delete_tags_for_application')
     def test_deleteApplicationTags(self, mock):
         tag1 = MetadataTag("tag1", "val1")
@@ -212,7 +212,7 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
         access_keys = self.authorization_client.get_access_keys(APP_ID)
         mock.assert_called_with(APP_ID)
         self.assertListEqual(access_keys, self.app_keys)
-    
+
     @patch.object(ApplicationResourceApi, 'toggle_access_key_status')
     def test_toggleAccessKeyStatus(self, mock):
         mock.return_value = {
@@ -223,7 +223,7 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
         access_key = self.authorization_client.toggle_access_key_status(APP_ID, ACCESS_KEY_ID)
         mock.assert_called_with(APP_ID, ACCESS_KEY_ID)
         self.assertEqual(access_key.status, AccessKeyStatus.INACTIVE)
-        
+
     @patch.object(ApplicationResourceApi, 'delete_access_key')
     def test_deleteAccessKey(self, mock):
         self.authorization_client.delete_access_key(APP_ID, ACCESS_KEY_ID)
@@ -301,7 +301,7 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
     def test_deleteGroup(self, mock):
         self.authorization_client.delete_group(GROUP_ID)
         mock.assert_called_with(GROUP_ID)
-    
+
     @patch.object(GroupResourceApi, 'add_user_to_group')
     def test_addUserToGroup(self, mock):
         mock.return_value = self.conductor_group
@@ -323,7 +323,7 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
     def test_removeUserFromGroup(self, mock):
         self.authorization_client.remove_user_from_group(GROUP_ID, USER_ID)
         mock.assert_called_with(GROUP_ID, USER_ID)
-        
+
     @patch.object(GroupResourceApi, 'get_granted_permissions1')
     def test_getGrantedPermissionsForGroup(self, mock):
         mock.return_value = {
@@ -345,7 +345,7 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
         mock.assert_called_with(GROUP_ID)
         expected_perm = GrantedPermission(
             target=TargetRef(TargetType.WORKFLOW_DEF, WF_NAME),
-            access = ["EXECUTE", "UPDATE", "READ"]
+            access=["EXECUTE", "UPDATE", "READ"]
         )
         self.assertEqual(perms, [expected_perm])
 
@@ -370,7 +370,7 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
         mock.assert_called_with(USER_ID)
         expected_perm = GrantedPermission(
             target=TargetRef(TargetType.WORKFLOW_DEF, WF_NAME),
-            access = ["EXECUTE", "UPDATE", "READ"]
+            access=["EXECUTE", "UPDATE", "READ"]
         )
         self.assertEqual(perms, [expected_perm])
 
@@ -378,11 +378,11 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
     def test_getPermissions(self, mock):
         mock.return_value = {
             "EXECUTE": [
-                { "type": "USER", "id": USER_ID },
+                {"type": "USER", "id": USER_ID},
             ],
             "READ": [
-                { "type": "USER", "id": USER_ID },
-                { "type": "GROUP", "id": GROUP_ID }
+                {"type": "USER", "id": USER_ID},
+                {"type": "GROUP", "id": GROUP_ID}
             ]
         }
         permissions = self.authorization_client.get_permissions(

@@ -1,18 +1,20 @@
+import logging
+import os
+import time
+import unittest
+from unittest.mock import patch, ANY, Mock
+
+from requests.structures import CaseInsensitiveDict
+
 from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
+from conductor.client.worker.worker_interface import DEFAULT_POLLING_INTERVAL
 from tests.unit.resources.workers import ClassWorker
 from tests.unit.resources.workers import FaultyExecutionWorker
-from conductor.client.worker.worker_interface import DEFAULT_POLLING_INTERVAL
-from unittest.mock import patch, ANY, Mock
-import os
-import logging
-import time
-import unittest
-from requests.structures import CaseInsensitiveDict
 
 
 class TestTaskRunner(unittest.TestCase):

@@ -70,7 +70,7 @@
     "accountNumber": "${fetch_user_details.output.userAccount}",
     "creditRating": "${get_credit_score.output.creditRating}",
     "authorizedLoanAmount": "${calculate_loan_amount.output.authorizedLoanAmount}",
-    "phoneNumberValid" : "${check_phone_number_valid.output.valid}"
+    "phoneNumberValid": "${check_phone_number_valid.output.valid}"
   },
   "schemaVersion": 2
 }

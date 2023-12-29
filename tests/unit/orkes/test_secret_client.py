@@ -1,15 +1,16 @@
 import logging
 import unittest
-
 from unittest.mock import patch
+
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api.secret_resource_api import SecretResourceApi
-from conductor.client.orkes.orkes_secret_client import OrkesSecretClient
 from conductor.client.orkes.models.metadata_tag import MetadataTag
+from conductor.client.orkes.orkes_secret_client import OrkesSecretClient
 
 SECRET_KEY = 'ut_secret_key'
 SECRET_VALUE = 'ut_secret_value'
-ERROR_BODY= '{"message":"No such secret found by key"}'
+ERROR_BODY = '{"message":"No such secret found by key"}'
+
 
 class TestOrkesSecretClient(unittest.TestCase):
 
@@ -17,7 +18,7 @@ class TestOrkesSecretClient(unittest.TestCase):
     def setUpClass(cls):
         configuration = Configuration("http://localhost:8080/api")
         cls.secret_client = OrkesSecretClient(configuration)
-        
+
     def setUp(self):
         logging.disable(logging.CRITICAL)
 
@@ -47,7 +48,7 @@ class TestOrkesSecretClient(unittest.TestCase):
         secret_names = self.secret_client.list_all_secret_names()
         self.assertTrue(mock.called)
         self.assertSetEqual(secret_names, set(secret_list))
-        
+
     @patch.object(SecretResourceApi, 'list_secrets_that_user_can_grant_access_to')
     def test_listSecretsThatUserCanGrantAccessTo(self, mock):
         secret_list = ["TEST_SECRET_1", "TEST_SECRET_2"]
@@ -55,18 +56,18 @@ class TestOrkesSecretClient(unittest.TestCase):
         secret_names = self.secret_client.list_secrets_that_user_can_grant_access_to()
         self.assertTrue(mock.called)
         self.assertListEqual(secret_names, secret_list)
-    
+
     @patch.object(SecretResourceApi, 'delete_secret')
     def test_deleteSecret(self, mock):
         self.secret_client.delete_secret(SECRET_KEY)
         mock.assert_called_with(SECRET_KEY)
-    
+
     @patch.object(SecretResourceApi, 'secret_exists')
     def test_secretExists(self, mock):
         mock.return_value = True
         self.assertTrue(self.secret_client.secret_exists(SECRET_KEY))
         mock.assert_called_with(SECRET_KEY)
-    
+
     @patch.object(SecretResourceApi, 'put_tag_for_secret')
     def test_setSecretTags(self, mock):
         tag1 = MetadataTag("tag1", "val1")
@@ -74,7 +75,7 @@ class TestOrkesSecretClient(unittest.TestCase):
         tags = [tag1, tag2]
         self.secret_client.set_secret_tags(tags, SECRET_KEY)
         mock.assert_called_with(tags, SECRET_KEY)
-        
+
     @patch.object(SecretResourceApi, 'get_tags')
     def test_getSecretTags(self, mock):
         tag1 = MetadataTag("tag1", "val1")
@@ -83,7 +84,7 @@ class TestOrkesSecretClient(unittest.TestCase):
         tags = self.secret_client.get_secret_tags(SECRET_KEY)
         mock.assert_called_with(SECRET_KEY)
         self.assertEqual(len(tags), 2)
-    
+
     @patch.object(SecretResourceApi, 'delete_tag_for_secret')
     def test_deleteSecretTags(self, mock):
         tag1 = MetadataTag("tag1", "val1")

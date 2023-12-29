@@ -1,13 +1,12 @@
+import multiprocessing
+import unittest
+from unittest.mock import Mock
+from unittest.mock import patch
+
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.automator.task_runner import TaskRunner
 from conductor.client.configuration.configuration import Configuration
 from tests.unit.resources.workers import ClassWorker
-from unittest.mock import Mock
-from unittest.mock import patch
-from configparser import ConfigParser
-import multiprocessing
-import unittest
-import tempfile
 
 
 class PickableMock(Mock):

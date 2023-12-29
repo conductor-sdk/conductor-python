@@ -1,28 +1,30 @@
 import json
+
 from shortuuid import uuid
+
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api_client import ApiClient
 from conductor.client.http.models import SkipTaskRequest
+from conductor.client.http.models.create_or_update_application_request import CreateOrUpdateApplicationRequest
+from conductor.client.http.models.save_schedule_request import SaveScheduleRequest
+from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
+from conductor.client.http.models.subject_ref import SubjectRef, SubjectType
+from conductor.client.http.models.target_ref import TargetRef, TargetType
+from conductor.client.http.models.task_def import TaskDef
+from conductor.client.http.models.task_result import TaskResult
+from conductor.client.http.models.task_result_status import TaskResultStatus
+from conductor.client.http.models.upsert_group_request import UpsertGroupRequest
+from conductor.client.http.models.upsert_user_request import UpsertUserRequest
+from conductor.client.http.models.workflow_def import WorkflowDef
+from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
 from conductor.client.http.rest import ApiException
+from conductor.client.orkes.models.access_key_status import AccessKeyStatus
+from conductor.client.orkes.models.access_type import AccessType
+from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes_clients import OrkesClients
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.simple_task import SimpleTask
-from conductor.client.orkes.models.access_type import AccessType
-from conductor.client.orkes.models.access_key_status import AccessKeyStatus
-from conductor.client.orkes.models.metadata_tag import MetadataTag
-from conductor.client.http.models.task_def import TaskDef
-from conductor.client.http.models.task_result import TaskResult
-from conductor.client.http.models.workflow_def import WorkflowDef
-from conductor.client.http.models.target_ref import TargetRef, TargetType
-from conductor.client.http.models.subject_ref import SubjectRef, SubjectType
-from conductor.client.http.models.task_result_status import TaskResultStatus
-from conductor.client.http.models.save_schedule_request import SaveScheduleRequest
-from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
-from conductor.client.http.models.upsert_user_request import UpsertUserRequest
-from conductor.client.http.models.upsert_group_request import UpsertGroupRequest
-from conductor.client.http.models.create_or_update_application_request import CreateOrUpdateApplicationRequest
-from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
 
 SUFFIX = str(uuid())
 WORKFLOW_NAME = 'IntegrationTestOrkesClientsWf_' + SUFFIX

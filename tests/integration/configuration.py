@@ -1,7 +1,6 @@
 import os
 
 from conductor.client.configuration.configuration import Configuration
-
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 
 

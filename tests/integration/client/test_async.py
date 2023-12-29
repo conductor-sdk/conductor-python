@@ -1,5 +1,5 @@
-from conductor.client.http.api_client import ApiClient
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
+from conductor.client.http.api_client import ApiClient
 
 
 def test_async_method(api_client: ApiClient):

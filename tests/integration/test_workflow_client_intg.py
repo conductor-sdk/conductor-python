@@ -1,33 +1,14 @@
 import logging
 import os
 import unittest
-import json
 
-from unittest.mock import Mock, patch, MagicMock
-
-from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from conductor.client.http.api_client import ApiClient
-from conductor.client.http.models import SkipTaskRequest
-from conductor.client.http.rest import ApiException
-from conductor.client.orkes.orkes_workflow_client import OrkesWorkflowClient
-from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
-from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
-from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
-from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
-from conductor.client.http.models.workflow import Workflow
-from conductor.client.http.models.workflow_def import WorkflowDef
-from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.models.workflow_run import WorkflowRun
-from conductor.client.exceptions.api_error import APIError
-from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from conductor.client.http.api_client import ApiClient
-from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from client.orkes.test_orkes_clients import TestOrkesClients
-from workflow.test_workflow_execution import run_workflow_execution_tests
+from conductor.client.configuration.configuration import Configuration
+from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
+from conductor.client.orkes.orkes_workflow_client import OrkesWorkflowClient
+from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from metadata.test_workflow_definition import run_workflow_definition_tests
-import logging
-import os
+from workflow.test_workflow_execution import run_workflow_execution_tests
 
 WORKFLOW_NAME = 'ut_wf'
 WORKFLOW_UUID = 'ut_wf_uuid'
@@ -39,6 +20,7 @@ logger = logging.getLogger(
         __name__
     )
 )
+
 
 def get_configuration():
     key = os.getenv('KEY')

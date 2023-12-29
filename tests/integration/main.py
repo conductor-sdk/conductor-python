@@ -1,22 +1,23 @@
+import logging
+import os
 import sys
 from multiprocessing import set_start_method
 
+from client import test_async
+from client.orkes.test_orkes_clients import TestOrkesClients
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from conductor.client.http.api_client import ApiClient
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from client.orkes.test_orkes_clients import TestOrkesClients
-from workflow.test_workflow_execution import run_workflow_execution_tests
 from metadata.test_workflow_definition import run_workflow_definition_tests
-from client import test_async
-import logging
-import os
+from workflow.test_workflow_execution import run_workflow_execution_tests
 
 _logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
         __name__
     )
 )
+
 
 def generate_configuration():
     required_envs = {

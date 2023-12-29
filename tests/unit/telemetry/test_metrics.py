@@ -1,6 +1,7 @@
-from conductor.client.configuration.settings.metrics_settings import MetricsSettings
 import logging
 import unittest
+
+from conductor.client.configuration.settings.metrics_settings import MetricsSettings
 
 
 class TestMetricsCollection(unittest.TestCase):
