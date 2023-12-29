@@ -20,7 +20,7 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
     ):
         super(OrkesWorkflowClient, self).__init__(configuration)
 
-    def startWorkflowByName(
+    def start_workflow_by_name(
             self,
             name: str,
             input: dict[str, object],

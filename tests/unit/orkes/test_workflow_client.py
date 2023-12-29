@@ -42,28 +42,28 @@ class TestOrkesWorkflowClient(unittest.TestCase):
     @patch.object(WorkflowResourceApi, 'start_workflow1')
     def test_startWorkflowByName(self, mock):
         mock.return_value = WORKFLOW_UUID
-        wfId = self.workflow_client.startWorkflowByName(WORKFLOW_NAME, self.input)
+        wfId = self.workflow_client.start_workflow_by_name(WORKFLOW_NAME, self.input)
         mock.assert_called_with(self.input, WORKFLOW_NAME)
         self.assertEqual(wfId, WORKFLOW_UUID)
 
     @patch.object(WorkflowResourceApi, 'start_workflow1')
     def test_startWorkflowByName_with_version(self, mock):
         mock.return_value = WORKFLOW_UUID
-        wfId = self.workflow_client.startWorkflowByName(WORKFLOW_NAME, self.input, version=1)
+        wfId = self.workflow_client.start_workflow_by_name(WORKFLOW_NAME, self.input, version=1)
         mock.assert_called_with(self.input, WORKFLOW_NAME, version=1)
         self.assertEqual(wfId, WORKFLOW_UUID)
 
     @patch.object(WorkflowResourceApi, 'start_workflow1')
     def test_startWorkflowByName_with_correlation_id(self, mock):
         mock.return_value = WORKFLOW_UUID
-        wfId = self.workflow_client.startWorkflowByName(WORKFLOW_NAME, self.input, correlationId=CORRELATION_ID)
+        wfId = self.workflow_client.start_workflow_by_name(WORKFLOW_NAME, self.input, correlationId=CORRELATION_ID)
         mock.assert_called_with(self.input, WORKFLOW_NAME, correlation_id=CORRELATION_ID)
         self.assertEqual(wfId, WORKFLOW_UUID)
 
     @patch.object(WorkflowResourceApi, 'start_workflow1')
     def test_startWorkflowByName_with_version_and_priority(self, mock):
         mock.return_value = WORKFLOW_UUID
-        wfId = self.workflow_client.startWorkflowByName(WORKFLOW_NAME, self.input, version=1, priority=1)
+        wfId = self.workflow_client.start_workflow_by_name(WORKFLOW_NAME, self.input, version=1, priority=1)
         mock.assert_called_with(self.input, WORKFLOW_NAME, version=1, priority=1)
         self.assertEqual(wfId, WORKFLOW_UUID)
 

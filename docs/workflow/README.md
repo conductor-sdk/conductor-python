@@ -42,9 +42,10 @@ workflow_id = workflow_client.start_workflow(startWorkflowRequest)
 ```
 
 #### Start using Workflow Name
+
 ```python
-wfInput = { "a" : 5, "b": "+", "c" : [7, 8] }
-workflow_id = workflow_client.startWorkflowByName("WORKFLOW_NAME", wfInput)
+wfInput = {"a": 5, "b": "+", "c": [7, 8]}
+workflow_id = workflow_client.start_workflow_by_name("WORKFLOW_NAME", wfInput)
 ```
 
 #### Execute workflow synchronously
