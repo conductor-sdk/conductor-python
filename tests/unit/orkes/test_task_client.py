@@ -128,7 +128,7 @@ class TestOrkesTaskClient(unittest.TestCase):
         returnedWorkflow = self.task_client.update_task_sync(
             workflowId, "test_task_ref_name", status, output
         )
-        mock.assert_called_with({"result": output}, workflowId, "test_task_ref_name", status)
+        mock.assert_called_with(output, workflowId, "test_task_ref_name", status)
         self.assertEqual(returnedWorkflow, workflow)
 
     @patch.object(TaskResourceApi, 'update_task_sync')
@@ -141,7 +141,7 @@ class TestOrkesTaskClient(unittest.TestCase):
         returnedWorkflow = self.task_client.update_task_sync(
             workflowId, "test_task_ref_name", status, output, "worker_id"
         )
-        mock.assert_called_with({"result": output}, workflowId, "test_task_ref_name", status, workerid="worker_id")
+        mock.assert_called_with(output, workflowId, "test_task_ref_name", status, workerid="worker_id")
         self.assertEqual(returnedWorkflow, workflow)
 
     @patch.object(TaskResourceApi, 'size')

@@ -1,7 +1,5 @@
 import importlib
 import logging
-import os
-from configparser import ConfigParser
 from multiprocessing import Process, freeze_support, Queue
 from typing import List
 
@@ -41,7 +39,7 @@ class TaskHandler:
             import_modules: List[str] = None
     ):
         self.logger_process, self.queue = _setup_logging_queue(configuration)
-        self.worker_config = load_worker_config()
+
         # imports
         importlib.import_module('conductor.client.http.models.task')
         importlib.import_module('conductor.client.worker.worker_task')
@@ -131,7 +129,7 @@ class TaskHandler:
             configuration: Configuration,
             metrics_settings: MetricsSettings
     ) -> None:
-        task_runner = TaskRunner(worker, configuration, metrics_settings, self.worker_config)
+        task_runner = TaskRunner(worker, configuration, metrics_settings)
         process = Process(target=task_runner.run)
         self.task_runner_processes.append(process)
 
@@ -176,22 +174,6 @@ class TaskHandler:
             logger.debug(f'Failed to terminate process: {process.pid}, reason: {e}')
             process.kill()
             logger.debug(f'Killed process: {process.pid}')
-
-
-def load_worker_config():
-    worker_config = ConfigParser()
-
-    try:
-        file = __get_config_file_path()
-        worker_config.read(file)
-    except Exception as e:
-        logger.error(str(e))
-
-    return worker_config
-
-
-def __get_config_file_path() -> str:
-    return os.getcwd() + "/worker.ini"
 
 
 # Setup centralized logging queue

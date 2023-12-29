@@ -9,7 +9,7 @@ from typing import Any, Callable, Union
 from typing_extensions import Self
 
 from conductor.client.automator import utils
-from conductor.client.automator.utils import convert_from_dict
+from conductor.client.automator.utils import convert_from_dict, convert_from_dict_or_list
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api_client import ApiClient
 from conductor.client.http.models import TaskExecLog
@@ -80,11 +80,17 @@ class Worker(WorkerInterface):
                 params = inspect.signature(self.execute_function).parameters
                 for input_name in params:
                     typ = params[input_name].annotation
+                    default_value = params[input_name].default
                     if input_name in task.input_data:
                         if typ in utils.simple_types:
                             task_input[input_name] = task.input_data[input_name]
                         else:
-                            task_input[input_name] = convert_from_dict(typ, task.input_data[input_name])
+                            task_input[input_name] = convert_from_dict_or_list(typ, task.input_data[input_name])
+                    else:
+                        if default_value is not inspect.Parameter.empty:
+                            task_input[input_name] = default_value
+                        else:
+                            task_input[input_name] = None
                 task_output = self.execute_function(**task_input)
 
             if type(task_output) == TaskResult:

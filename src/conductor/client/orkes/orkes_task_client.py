@@ -71,7 +71,9 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
         output: object,
         worker_id: Optional[str] = None
     ) -> Workflow:
-        body = { "result": output }
+        if not isinstance(output, dict):
+            output = {'result': output}
+        body = output
         kwargs = {}
         if worker_id:
             kwargs.update({"workerid": worker_id})

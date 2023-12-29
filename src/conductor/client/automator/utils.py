@@ -27,7 +27,22 @@ collection_types = {
 }
 
 
+def convert_from_dict_or_list(cls: type, data: typing.Union[dict, list]) -> object:
+    is_list = type(data) in collection_types
+    if is_list:
+        val_list = []
+        for val in data:
+            generic_types = typing.get_args(cls)[0]
+            converted = convert_from_dict(generic_types, val)
+            val_list.append(converted)
+        return val_list
+    return convert_from_dict(cls, data)
+
+
 def convert_from_dict(cls: type, data: dict) -> object:
+    if data is None:
+        return data
+
     if type(data) == cls:
         return data
 
@@ -83,7 +98,6 @@ def convert_from_dict(cls: type, data: dict) -> object:
                 else:
                     kwargs.update(data[member])
             else:
-                logger.info(f'setting value for {member} and data is {data} and kwargs is {kwargs}')
                 # kwargs[member] = data[member]
                 kwargs.update(data)
         else:

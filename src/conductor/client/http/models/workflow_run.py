@@ -3,6 +3,8 @@ import re  # noqa: F401
 
 import six
 
+from conductor.client.http.models import Task
+
 terminal_status = {'COMPLETED', 'FAILED','TIMED_OUT','TERMINATED'}
 successful_status = {'PAUSED','COMPLETED'}
 running_status = {'RUNNING','PAUSED'}
@@ -405,3 +407,11 @@ class WorkflowRun(object):
     def __ne__(self, other):
         """Returns true if both objects are not equal"""
         return not self == other
+
+    @property
+    def current_task(self) -> Task:
+        current = None
+        for task in self.tasks:
+            if task.status == 'SCHEDULED' or task.status == 'IN_PROGRESS':
+                current = task
+        return current
