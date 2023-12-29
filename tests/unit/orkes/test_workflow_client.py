@@ -1,21 +1,19 @@
+import json
 import logging
 import unittest
-import json
+from unittest.mock import patch, MagicMock
 
-from unittest.mock import Mock, patch, MagicMock
-
-from conductor.client.http.models import SkipTaskRequest
-from conductor.client.http.rest import ApiException
-from conductor.client.orkes.orkes_workflow_client import OrkesWorkflowClient
+from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
-from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
+from conductor.client.http.models import SkipTaskRequest
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
-from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
+from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.workflow_def import WorkflowDef
-from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models.workflow_run import WorkflowRun
-from conductor.client.exceptions.api_error import APIError
+from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
+from conductor.client.http.rest import ApiException
+from conductor.client.orkes.orkes_workflow_client import OrkesWorkflowClient
 
 WORKFLOW_NAME = 'ut_wf'
 WORKFLOW_UUID = 'ut_wf_uuid'
@@ -87,7 +85,8 @@ class TestOrkesWorkflowClient(unittest.TestCase):
         workflowRun = self.workflow_client.execute_workflow(
             startWorkflowReq, "request_id", None, 30
         )
-        mock.assert_called_with(body=startWorkflowReq, request_id="request_id", name=WORKFLOW_NAME, version=1, wait_until_task_ref=None, wait_for_seconds=30)
+        mock.assert_called_with(body=startWorkflowReq, request_id="request_id", name=WORKFLOW_NAME, version=1,
+                                wait_until_task_ref=None, wait_for_seconds=30)
         self.assertEqual(workflowRun, expectedWfRun)
 
     @patch.object(WorkflowResourceApi, 'pause_workflow')
@@ -155,7 +154,7 @@ class TestOrkesWorkflowClient(unittest.TestCase):
     def test_getWorkflow_non_existent(self, mock):
         error_body = {'status': 404, 'message': 'Workflow not found'}
         mock.side_effect = MagicMock(side_effect=ApiException(status=404, body=json.dumps(error_body)))
-        with self.assertRaises(APIError):
+        with self.assertRaises(ApiException):
             self.workflow_client.get_workflow(WORKFLOW_UUID, False)
             mock.assert_called_with(WORKFLOW_UUID, include_tasks=False)
 
