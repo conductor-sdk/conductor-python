@@ -80,7 +80,13 @@ class Workflow(object):
         'workflow_version': 'workflowVersion'
     }
 
-    def __init__(self, owner_app=None, create_time=None, update_time=None, created_by=None, updated_by=None, status=None, end_time=None, workflow_id=None, parent_workflow_id=None, parent_workflow_task_id=None, tasks=None, input=None, output=None, correlation_id=None, re_run_from_workflow_id=None, reason_for_incompletion=None, event=None, task_to_domain=None, failed_reference_task_names=None, workflow_definition=None, external_input_payload_storage_path=None, external_output_payload_storage_path=None, priority=None, variables=None, last_retried_time=None, start_time=None, workflow_name=None, workflow_version=None):  # noqa: E501
+    def __init__(self, owner_app=None, create_time=None, update_time=None, created_by=None, updated_by=None,
+                 status=None, end_time=None, workflow_id=None, parent_workflow_id=None, parent_workflow_task_id=None,
+                 tasks=None, input=None, output=None, correlation_id=None, re_run_from_workflow_id=None,
+                 reason_for_incompletion=None, event=None, task_to_domain=None, failed_reference_task_names=None,
+                 workflow_definition=None, external_input_payload_storage_path=None,
+                 external_output_payload_storage_path=None, priority=None, variables=None, last_retried_time=None,
+                 start_time=None, workflow_name=None, workflow_version=None):  # noqa: E501
         """Workflow - a model defined in Swagger"""  # noqa: E501
         self._owner_app = None
         self._create_time = None
@@ -816,7 +822,7 @@ class Workflow(object):
                 current = task
         return current
 
-    def get_task(self, name : str = None, task_reference_name: str = None) -> Task:
+    def get_task(self, name: str = None, task_reference_name: str = None) -> Task:
         if name is None and task_reference_name is None:
             raise Exception('ONLY one of name or task_reference_name MUST be provided.  None were provided')
         if name is not None and not task_reference_name is None:

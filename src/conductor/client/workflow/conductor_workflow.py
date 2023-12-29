@@ -242,9 +242,9 @@ class ConductorWorkflow:
                 workflow_task_list.append(converted_task)
         updated_task_list = []
         for i in range(len(workflow_task_list)):
-            wft : WorkflowTask = workflow_task_list[i]
+            wft: WorkflowTask = workflow_task_list[i]
             updated_task_list.append(wft)
-            if wft.type == 'FORK_JOIN' and i < len(workflow_task_list) - 1 and workflow_task_list[i+1].type != 'JOIN':
+            if wft.type == 'FORK_JOIN' and i < len(workflow_task_list) - 1 and workflow_task_list[i + 1].type != 'JOIN':
                 join_on = list(map(lambda ft: ft[len(ft) - 1].task_reference_name, wft.fork_tasks))
                 join = JoinTask(task_ref_name='join_' + wft.task_reference_name, join_on=join_on)
                 updated_task_list.append(join.to_workflow_task())

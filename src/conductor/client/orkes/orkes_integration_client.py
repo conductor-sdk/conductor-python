@@ -1,7 +1,9 @@
 from __future__ import absolute_import
+
 from typing import List
 
 from conductor.client.configuration.configuration import Configuration
+from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
 from conductor.client.http.models.integration import Integration
 from conductor.client.http.models.integration_api import IntegrationApi
 from conductor.client.http.models.integration_api_update import IntegrationApiUpdate
@@ -9,7 +11,6 @@ from conductor.client.http.models.integration_update import IntegrationUpdate
 from conductor.client.http.models.prompt_template import PromptTemplate
 from conductor.client.integration_client import IntegrationClient
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
-from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
 
 
 @for_all_methods(api_exception_handler, ["__init__"])

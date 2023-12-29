@@ -1,23 +1,22 @@
-import time
-from requests.structures import CaseInsensitiveDict
-
-from conductor.client.http.rest import AuthorizationException
-from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.thread import AwaitableThread
-from conductor.client.http import rest
-from six.moves.urllib.parse import quote
-from typing import Dict
-import conductor.client.http.models as http_models
 import datetime
-import json
 import logging
 import mimetypes
 import os
 import re
-import six
 import tempfile
-import traceback
+import time
+from typing import Dict
+
+import six
 import urllib3
+from requests.structures import CaseInsensitiveDict
+from six.moves.urllib.parse import quote
+
+import conductor.client.http.models as http_models
+from conductor.client.configuration.configuration import Configuration
+from conductor.client.http import rest
+from conductor.client.http.rest import AuthorizationException
+from conductor.client.http.thread import AwaitableThread
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -75,7 +74,8 @@ class ApiClient(object):
             )
         except AuthorizationException as ae:
             if ae.token_expired:
-                logger.error(f'authentication token has expired, refreshing the token.  request= {method} {resource_path}')
+                logger.error(
+                    f'authentication token has expired, refreshing the token.  request= {method} {resource_path}')
                 # if the token has expired, lets refresh the token
                 self.__force_refresh_auth_token()
                 # and now retry the same request
@@ -213,8 +213,8 @@ class ApiClient(object):
                             if getattr(obj, attr) is not None}
             else:
                 obj_dict = {name: getattr(obj, name)
-                             for name in vars(obj)
-                             if getattr(obj, name) is not None}
+                            for name in vars(obj)
+                            if getattr(obj, name) is not None}
 
         return {key: self.sanitize_for_serialization(val)
                 for key, val in six.iteritems(obj_dict)}

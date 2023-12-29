@@ -44,7 +44,7 @@ class PromptTemplate(object):
 
     def __init__(self, created_by=None, created_on=None, description=None, integrations=None, name=None, tags=None,
                  template=None, updated_by=None, updated_on=None, variables=None):  # noqa: E501
-        """MessageTemplate - a model defined in Swagger"""  # noqa: E501
+        """PromptTemplate - a model defined in Swagger"""  # noqa: E501
         self._created_by = None
         self._created_on = None
         self._description = None
@@ -79,20 +79,20 @@ class PromptTemplate(object):
 
     @property
     def created_by(self):
-        """Gets the created_by of this MessageTemplate.  # noqa: E501
+        """Gets the created_by of this PromptTemplate.  # noqa: E501
 
 
-        :return: The created_by of this MessageTemplate.  # noqa: E501
+        :return: The created_by of this PromptTemplate.  # noqa: E501
         :rtype: str
         """
         return self._created_by
 
     @created_by.setter
     def created_by(self, created_by):
-        """Sets the created_by of this MessageTemplate.
+        """Sets the created_by of this PromptTemplate.
 
 
-        :param created_by: The created_by of this MessageTemplate.  # noqa: E501
+        :param created_by: The created_by of this PromptTemplate.  # noqa: E501
         :type: str
         """
 
@@ -100,20 +100,20 @@ class PromptTemplate(object):
 
     @property
     def created_on(self):
-        """Gets the created_on of this MessageTemplate.  # noqa: E501
+        """Gets the created_on of this PromptTemplate.  # noqa: E501
 
 
-        :return: The created_on of this MessageTemplate.  # noqa: E501
+        :return: The created_on of this PromptTemplate.  # noqa: E501
         :rtype: int
         """
         return self._created_on
 
     @created_on.setter
     def created_on(self, created_on):
-        """Sets the created_on of this MessageTemplate.
+        """Sets the created_on of this PromptTemplate.
 
 
-        :param created_on: The created_on of this MessageTemplate.  # noqa: E501
+        :param created_on: The created_on of this PromptTemplate.  # noqa: E501
         :type: int
         """
 
@@ -121,20 +121,20 @@ class PromptTemplate(object):
 
     @property
     def description(self):
-        """Gets the description of this MessageTemplate.  # noqa: E501
+        """Gets the description of this PromptTemplate.  # noqa: E501
 
 
-        :return: The description of this MessageTemplate.  # noqa: E501
+        :return: The description of this PromptTemplate.  # noqa: E501
         :rtype: str
         """
         return self._description
 
     @description.setter
     def description(self, description):
-        """Sets the description of this MessageTemplate.
+        """Sets the description of this PromptTemplate.
 
 
-        :param description: The description of this MessageTemplate.  # noqa: E501
+        :param description: The description of this PromptTemplate.  # noqa: E501
         :type: str
         """
 
@@ -142,20 +142,20 @@ class PromptTemplate(object):
 
     @property
     def integrations(self):
-        """Gets the integrations of this MessageTemplate.  # noqa: E501
+        """Gets the integrations of this PromptTemplate.  # noqa: E501
 
 
-        :return: The integrations of this MessageTemplate.  # noqa: E501
+        :return: The integrations of this PromptTemplate.  # noqa: E501
         :rtype: list[str]
         """
         return self._integrations
 
     @integrations.setter
     def integrations(self, integrations):
-        """Sets the integrations of this MessageTemplate.
+        """Sets the integrations of this PromptTemplate.
 
 
-        :param integrations: The integrations of this MessageTemplate.  # noqa: E501
+        :param integrations: The integrations of this PromptTemplate.  # noqa: E501
         :type: list[str]
         """
 
@@ -163,20 +163,20 @@ class PromptTemplate(object):
 
     @property
     def name(self):
-        """Gets the name of this MessageTemplate.  # noqa: E501
+        """Gets the name of this PromptTemplate.  # noqa: E501
 
 
-        :return: The name of this MessageTemplate.  # noqa: E501
+        :return: The name of this PromptTemplate.  # noqa: E501
         :rtype: str
         """
         return self._name
 
     @name.setter
     def name(self, name):
-        """Sets the name of this MessageTemplate.
+        """Sets the name of this PromptTemplate.
 
 
-        :param name: The name of this MessageTemplate.  # noqa: E501
+        :param name: The name of this PromptTemplate.  # noqa: E501
         :type: str
         """
 
@@ -184,20 +184,20 @@ class PromptTemplate(object):
 
     @property
     def tags(self):
-        """Gets the tags of this MessageTemplate.  # noqa: E501
+        """Gets the tags of this PromptTemplate.  # noqa: E501
 
 
-        :return: The tags of this MessageTemplate.  # noqa: E501
+        :return: The tags of this PromptTemplate.  # noqa: E501
         :rtype: list[TagObject]
         """
         return self._tags
 
     @tags.setter
     def tags(self, tags):
-        """Sets the tags of this MessageTemplate.
+        """Sets the tags of this PromptTemplate.
 
 
-        :param tags: The tags of this MessageTemplate.  # noqa: E501
+        :param tags: The tags of this PromptTemplate.  # noqa: E501
         :type: list[TagObject]
         """
 
@@ -205,20 +205,20 @@ class PromptTemplate(object):
 
     @property
     def template(self):
-        """Gets the template of this MessageTemplate.  # noqa: E501
+        """Gets the template of this PromptTemplate.  # noqa: E501
 
 
-        :return: The template of this MessageTemplate.  # noqa: E501
+        :return: The template of this PromptTemplate.  # noqa: E501
         :rtype: str
         """
         return self._template
 
     @template.setter
     def template(self, template):
-        """Sets the template of this MessageTemplate.
+        """Sets the template of this PromptTemplate.
 
 
-        :param template: The template of this MessageTemplate.  # noqa: E501
+        :param template: The template of this PromptTemplate.  # noqa: E501
         :type: str
         """
 
@@ -226,20 +226,20 @@ class PromptTemplate(object):
 
     @property
     def updated_by(self):
-        """Gets the updated_by of this MessageTemplate.  # noqa: E501
+        """Gets the updated_by of this PromptTemplate.  # noqa: E501
 
 
-        :return: The updated_by of this MessageTemplate.  # noqa: E501
+        :return: The updated_by of this PromptTemplate.  # noqa: E501
         :rtype: str
         """
         return self._updated_by
 
     @updated_by.setter
     def updated_by(self, updated_by):
-        """Sets the updated_by of this MessageTemplate.
+        """Sets the updated_by of this PromptTemplate.
 
 
-        :param updated_by: The updated_by of this MessageTemplate.  # noqa: E501
+        :param updated_by: The updated_by of this PromptTemplate.  # noqa: E501
         :type: str
         """
 
@@ -247,20 +247,20 @@ class PromptTemplate(object):
 
     @property
     def updated_on(self):
-        """Gets the updated_on of this MessageTemplate.  # noqa: E501
+        """Gets the updated_on of this PromptTemplate.  # noqa: E501
 
 
-        :return: The updated_on of this MessageTemplate.  # noqa: E501
+        :return: The updated_on of this PromptTemplate.  # noqa: E501
         :rtype: int
         """
         return self._updated_on
 
     @updated_on.setter
     def updated_on(self, updated_on):
-        """Sets the updated_on of this MessageTemplate.
+        """Sets the updated_on of this PromptTemplate.
 
 
-        :param updated_on: The updated_on of this MessageTemplate.  # noqa: E501
+        :param updated_on: The updated_on of this PromptTemplate.  # noqa: E501
         :type: int
         """
 
@@ -268,20 +268,20 @@ class PromptTemplate(object):
 
     @property
     def variables(self):
-        """Gets the variables of this MessageTemplate.  # noqa: E501
+        """Gets the variables of this PromptTemplate.  # noqa: E501
 
 
-        :return: The variables of this MessageTemplate.  # noqa: E501
+        :return: The variables of this PromptTemplate.  # noqa: E501
         :rtype: list[str]
         """
         return self._variables
 
     @variables.setter
     def variables(self, variables):
-        """Sets the variables of this MessageTemplate.
+        """Sets the variables of this PromptTemplate.
 
 
-        :param variables: The variables of this MessageTemplate.  # noqa: E501
+        :param variables: The variables of this PromptTemplate.  # noqa: E501
         :type: list[str]
         """
 

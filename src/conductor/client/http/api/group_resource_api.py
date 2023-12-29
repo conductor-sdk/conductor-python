@@ -268,7 +268,8 @@ class GroupResourceApi(object):
         # verify the required parameter 'group_id' is set
         if ('group_id' not in params or
                 params['group_id'] is None):
-            raise ValueError("Missing the required parameter `group_id` when calling `get_granted_permissions1`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `group_id` when calling `get_granted_permissions1`")  # noqa: E501
 
         collection_formats = {}
 
@@ -634,11 +635,13 @@ class GroupResourceApi(object):
         # verify the required parameter 'group_id' is set
         if ('group_id' not in params or
                 params['group_id'] is None):
-            raise ValueError("Missing the required parameter `group_id` when calling `remove_user_from_group`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `group_id` when calling `remove_user_from_group`")  # noqa: E501
         # verify the required parameter 'user_id' is set
         if ('user_id' not in params or
                 params['user_id'] is None):
-            raise ValueError("Missing the required parameter `user_id` when calling `remove_user_from_group`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `user_id` when calling `remove_user_from_group`")  # noqa: E501
 
         collection_formats = {}
 

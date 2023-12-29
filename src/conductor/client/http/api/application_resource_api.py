@@ -76,11 +76,13 @@ class ApplicationResourceApi(object):
         # verify the required parameter 'application_id' is set
         if ('application_id' not in params or
                 params['application_id'] is None):
-            raise ValueError("Missing the required parameter `application_id` when calling `add_role_to_application_user`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `application_id` when calling `add_role_to_application_user`")  # noqa: E501
         # verify the required parameter 'role' is set
         if ('role' not in params or
                 params['role'] is None):
-            raise ValueError("Missing the required parameter `role` when calling `add_role_to_application_user`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `role` when calling `add_role_to_application_user`")  # noqa: E501
 
         collection_formats = {}
 
@@ -367,7 +369,8 @@ class ApplicationResourceApi(object):
         # verify the required parameter 'application_id' is set
         if ('application_id' not in params or
                 params['application_id'] is None):
-            raise ValueError("Missing the required parameter `application_id` when calling `delete_access_key`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `application_id` when calling `delete_access_key`")  # noqa: E501
         # verify the required parameter 'key_id' is set
         if ('key_id' not in params or
                 params['key_id'] is None):
@@ -832,11 +835,13 @@ class ApplicationResourceApi(object):
         # verify the required parameter 'application_id' is set
         if ('application_id' not in params or
                 params['application_id'] is None):
-            raise ValueError("Missing the required parameter `application_id` when calling `remove_role_from_application_user`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `application_id` when calling `remove_role_from_application_user`")  # noqa: E501
         # verify the required parameter 'role' is set
         if ('role' not in params or
                 params['role'] is None):
-            raise ValueError("Missing the required parameter `role` when calling `remove_role_from_application_user`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `role` when calling `remove_role_from_application_user`")  # noqa: E501
 
         collection_formats = {}
 
@@ -933,11 +938,13 @@ class ApplicationResourceApi(object):
         # verify the required parameter 'application_id' is set
         if ('application_id' not in params or
                 params['application_id'] is None):
-            raise ValueError("Missing the required parameter `application_id` when calling `toggle_access_key_status`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `application_id` when calling `toggle_access_key_status`")  # noqa: E501
         # verify the required parameter 'key_id' is set
         if ('key_id' not in params or
                 params['key_id'] is None):
-            raise ValueError("Missing the required parameter `key_id` when calling `toggle_access_key_status`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `key_id` when calling `toggle_access_key_status`")  # noqa: E501
 
         collection_formats = {}
 
@@ -1139,7 +1146,8 @@ class ApplicationResourceApi(object):
         # verify the required parameter 'body' is set
         if ('body' not in params or
                 params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `put_tag_for_application`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `body` when calling `put_tag_for_application`")  # noqa: E501
         # verify the required parameter 'id' is set
         if ('id' not in params or
                 params['id'] is None):
@@ -1238,7 +1246,8 @@ class ApplicationResourceApi(object):
         # verify the required parameter 'id' is set
         if ('id' not in params or
                 params['id'] is None):
-            raise ValueError("Missing the required parameter `id` when calling `get_tags_for_application`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `id` when calling `get_tags_for_application`")  # noqa: E501
 
         collection_formats = {}
 
@@ -1333,11 +1342,13 @@ class ApplicationResourceApi(object):
         # verify the required parameter 'body' is set
         if ('body' not in params or
                 params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `delete_tag_for_application`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `body` when calling `delete_tag_for_application`")  # noqa: E501
         # verify the required parameter 'id' is set
         if ('id' not in params or
                 params['id'] is None):
-            raise ValueError("Missing the required parameter `id` when calling `delete_tag_for_application`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `id` when calling `delete_tag_for_application`")  # noqa: E501
 
         collection_formats = {}
 

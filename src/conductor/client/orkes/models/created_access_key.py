@@ -1,5 +1,6 @@
 from typing_extensions import Self
 
+
 class CreatedAccessKey:
     def __init__(self, id: str, secret: str) -> Self:
         self._id = id
@@ -22,7 +23,7 @@ class CreatedAccessKey:
         :type: str
         """
         self._id = id
-        
+
     @property
     def secret(self):
         """Gets the secret of this CreatedAccessKey.  # noqa: E501

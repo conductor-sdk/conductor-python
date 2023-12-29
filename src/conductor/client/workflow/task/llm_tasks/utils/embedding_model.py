@@ -16,7 +16,7 @@ class EmbeddingModel(object):
     @property
     def provider(self) -> str:
         return self._provider
-    
+
     @property
     def model(self) -> str:
         return self._model
@@ -24,7 +24,7 @@ class EmbeddingModel(object):
     @provider.setter
     def provider(self, provider: str):
         self._provider = provider
-        
+
     @model.setter
     def model(self, model: str):
         self._model = model

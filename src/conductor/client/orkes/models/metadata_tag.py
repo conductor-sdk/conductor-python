@@ -1,5 +1,6 @@
-from conductor.client.http.models.tag_object import TagObject
 from typing_extensions import Self
+
+from conductor.client.http.models.tag_object import TagObject
 
 
 class MetadataTag(TagObject):

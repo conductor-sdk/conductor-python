@@ -9,7 +9,7 @@ from typing import Any, Callable, Union
 from typing_extensions import Self
 
 from conductor.client.automator import utils
-from conductor.client.automator.utils import convert_from_dict, convert_from_dict_or_list
+from conductor.client.automator.utils import convert_from_dict_or_list
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api_client import ApiClient
 from conductor.client.http.models import TaskExecLog

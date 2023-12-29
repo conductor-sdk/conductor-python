@@ -262,7 +262,8 @@ class SchedulerResourceApi(object):
         # verify the required parameter 'cron_expression' is set
         if ('cron_expression' not in params or
                 params['cron_expression'] is None):
-            raise ValueError("Missing the required parameter `cron_expression` when calling `get_next_few_schedules`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `cron_expression` when calling `get_next_few_schedules`")  # noqa: E501
 
         collection_formats = {}
 
@@ -1125,7 +1126,6 @@ class SchedulerResourceApi(object):
             _preload_content=params.get('_preload_content', True),
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
-    
 
     def put_tag_for_schedule(self, body, name, **kwargs):  # noqa: E501
         """Put a tag to schedule  # noqa: E501
@@ -1377,11 +1377,13 @@ class SchedulerResourceApi(object):
         # verify the required parameter 'body' is set
         if ('body' not in params or
                 params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `delete_tag_for_schedule`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `body` when calling `delete_tag_for_schedule`")  # noqa: E501
         # verify the required parameter 'name' is set
         if ('name' not in params or
                 params['name'] is None):
-            raise ValueError("Missing the required parameter `name` when calling `delete_tag_for_schedule`")  # noqa: E501
+            raise ValueError(
+                "Missing the required parameter `name` when calling `delete_tag_for_schedule`")  # noqa: E501
 
         collection_formats = {}
 

@@ -1,5 +1,3 @@
-from typing import Any
-
 from typing_extensions import Self
 
 from conductor.client.workflow.task.task import TaskInterface
@@ -19,4 +17,3 @@ def simple_task(task_def_name: str, task_reference_name: str, inputs: dict[str, 
     task = SimpleTask(task_def_name=task_def_name, task_reference_name=task_reference_name)
     task.input_parameters.update(inputs)
     return task
-

@@ -1,20 +1,23 @@
 from typing import Optional, List
+
 from conductor.client.configuration.configuration import Configuration
+from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
 from conductor.client.http.models import PollData
 from conductor.client.http.models.task import Task
-from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_exec_log import TaskExecLog
-from conductor.client.task_client import TaskClient
+from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
-from conductor.client.exceptions.api_exception_handler import api_exception_handler, for_all_methods
+from conductor.client.task_client import TaskClient
+
 
 @for_all_methods(api_exception_handler, ["__init__"])
 class OrkesTaskClient(OrkesBaseClient, TaskClient):
     def __init__(self, configuration: Configuration):
         super(OrkesTaskClient, self).__init__(configuration)
 
-    def poll_task(self, task_type: str, worker_id: Optional[str] = None, domain: Optional[str] = None) -> Optional[Task]:
+    def poll_task(self, task_type: str, worker_id: Optional[str] = None, domain: Optional[str] = None) -> Optional[
+        Task]:
         kwargs = {}
         if worker_id:
             kwargs.update({"workerid": worker_id})
@@ -24,12 +27,12 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
         return self.taskResourceApi.poll(task_type, **kwargs)
 
     def batch_poll_tasks(
-        self,
-        task_type: str,
-        worker_id: Optional[str] = None,
-        count: Optional[int] = None,
-        timeout_in_millisecond: Optional[int] = None,
-        domain: Optional[str] = None
+            self,
+            task_type: str,
+            worker_id: Optional[str] = None,
+            count: Optional[int] = None,
+            timeout_in_millisecond: Optional[int] = None,
+            domain: Optional[str] = None
     ) -> List[Task]:
         kwargs = {}
         if worker_id:
@@ -50,26 +53,26 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
         return self.taskResourceApi.update_task(task_result)
 
     def update_task_by_ref_name(
-        self,
-        workflow_id: str,
-        task_ref_name: str,
-        status: str,
-        output: object,
-        worker_id: Optional[str] = None
+            self,
+            workflow_id: str,
+            task_ref_name: str,
+            status: str,
+            output: object,
+            worker_id: Optional[str] = None
     ) -> str:
-        body = { "result": output }
+        body = {"result": output}
         kwargs = {}
         if worker_id:
             kwargs.update({"workerid": worker_id})
         return self.taskResourceApi.update_task1(body, workflow_id, task_ref_name, status, **kwargs)
 
     def update_task_sync(
-        self,
-        workflow_id: str,
-        task_ref_name: str,
-        status: str,
-        output: object,
-        worker_id: Optional[str] = None
+            self,
+            workflow_id: str,
+            task_ref_name: str,
+            status: str,
+            output: object,
+            worker_id: Optional[str] = None
     ) -> Workflow:
         if not isinstance(output, dict):
             output = {'result': output}

@@ -1,9 +1,9 @@
-from conductor.client.http.models.task import Task
-from conductor.client.http.models.task_result import TaskResult
-
 import abc
 import socket
 from typing import Union
+
+from conductor.client.http.models.task import Task
+from conductor.client.http.models.task_result import TaskResult
 
 DEFAULT_POLLING_INTERVAL = 100  # ms
 

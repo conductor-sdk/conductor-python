@@ -1458,6 +1458,7 @@ class WorkflowResourceApi(object):
 
         """
         self.pause_workflow(workflow_id)
+
     def pause_workflow(self, workflow_id, **kwargs):  # noqa: E501
         """Pauses the workflow  # noqa: E501
 
@@ -1754,6 +1755,7 @@ class WorkflowResourceApi(object):
 
         """
         return self.restart(workflow_id)
+
     def restart(self, workflow_id, **kwargs):  # noqa: E501
         """Restarts a completed workflow  # noqa: E501
 
@@ -1859,6 +1861,7 @@ class WorkflowResourceApi(object):
 
         """
         return self.resume_workflow(workflow_id)
+
     def resume_workflow(self, workflow_id, **kwargs):  # noqa: E501
         """Resumes the workflow  # noqa: E501
 
@@ -2511,7 +2514,6 @@ class WorkflowResourceApi(object):
         options = {}
         if 'triggerFailureWorkflow' in kwargs.keys():
             options['trigger_failure_workflow'] = kwargs['triggerFailureWorkflow']
-
 
         return self.terminate(workflow_id, **options)
 

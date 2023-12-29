@@ -10,6 +10,7 @@ from conductor.client.http.models.generate_token_request import GenerateTokenReq
 from conductor.client.http.models.group import Group
 from conductor.client.http.models.permission import Permission
 from conductor.client.http.models.poll_data import PollData
+from conductor.client.http.models.prompt_template import PromptTemplate
 from conductor.client.http.models.rate_limit import RateLimit
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
 from conductor.client.http.models.response import Response
@@ -19,7 +20,8 @@ from conductor.client.http.models.scrollable_search_result_workflow_summary impo
 from conductor.client.http.models.search_result_task import SearchResultTask
 from conductor.client.http.models.search_result_task_summary import SearchResultTaskSummary
 from conductor.client.http.models.search_result_workflow import SearchResultWorkflow
-from conductor.client.http.models.search_result_workflow_schedule_execution_model import SearchResultWorkflowScheduleExecutionModel
+from conductor.client.http.models.search_result_workflow_schedule_execution_model import \
+    SearchResultWorkflowScheduleExecutionModel
 from conductor.client.http.models.search_result_workflow_summary import SearchResultWorkflowSummary
 from conductor.client.http.models.skip_task_request import SkipTaskRequest
 from conductor.client.http.models.start_workflow import StartWorkflow

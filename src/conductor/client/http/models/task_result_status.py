@@ -9,5 +9,3 @@ class TaskResultStatus(str, Enum):
 
     def __str__(self) -> str:
         return self.name.__str__()
-
-

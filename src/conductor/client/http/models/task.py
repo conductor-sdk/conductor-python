@@ -2,8 +2,8 @@ import pprint
 import re  # noqa: F401
 
 import six
-from conductor.client.http.models.task_result import TaskResult
 
+from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
 
 

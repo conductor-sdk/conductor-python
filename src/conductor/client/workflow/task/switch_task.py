@@ -1,10 +1,12 @@
-from conductor.client.http.models.workflow_task import WorkflowTask
-from conductor.client.workflow.task.task import TaskInterface, get_task_interface_list_as_workflow_task_list
-from conductor.client.workflow.task.task_type import TaskType
 from copy import deepcopy
 from enum import Enum
 from typing import List
+
 from typing_extensions import Self
+
+from conductor.client.http.models.workflow_task import WorkflowTask
+from conductor.client.workflow.task.task import TaskInterface, get_task_interface_list_as_workflow_task_list
+from conductor.client.workflow.task.task_type import TaskType
 
 
 class EvaluatorType(str, Enum):

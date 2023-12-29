@@ -1,9 +1,11 @@
-from conductor.client.workflow.task.task import TaskInterface
-from conductor.client.workflow.task.task_type import TaskType
 from copy import deepcopy
 from enum import Enum
 from typing import Any, Dict, List, Union
+
 from typing_extensions import Self
+
+from conductor.client.workflow.task.task import TaskInterface
+from conductor.client.workflow.task.task_type import TaskType
 
 
 class HttpMethod(str, Enum):

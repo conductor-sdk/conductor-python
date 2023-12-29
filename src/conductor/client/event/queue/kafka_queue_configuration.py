@@ -1,6 +1,7 @@
+from typing import Any, Dict
+
 from conductor.client.event.queue.queue_configuration import QueueConfiguration
 from conductor.client.event.queue.queue_worker_configuration import QueueWorkerConfiguration
-from typing import Any, Dict
 
 
 class KafkaQueueConfiguration(QueueConfiguration):

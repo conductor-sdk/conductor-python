@@ -14,4 +14,3 @@ class AwaitableThread(threading.Thread):
 
     def get(self):
         return self._result
-    

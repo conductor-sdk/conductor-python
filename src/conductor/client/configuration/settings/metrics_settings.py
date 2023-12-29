@@ -1,7 +1,8 @@
-from conductor.client.configuration.configuration import Configuration
-from pathlib import Path
 import logging
 import os
+from pathlib import Path
+
+from conductor.client.configuration.configuration import Configuration
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
