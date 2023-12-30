@@ -16,7 +16,7 @@ class ChatMessage:
 class LlmChatComplete(TaskInterface):
     def __init__(self, task_ref_name: str, llm_provider: str, model: str, messages: List[ChatMessage],
                  stop_words: Optional[List[str]] = [], max_tokens: Optional[int] = 100,
-                 temperature: int = 0, top_p: int = 1, conversation_start_template: str = None,
+                 temperature: int = 0, top_p: int = 1, instructions_template: str = None,
                  template_variables: dict[str, object] = {}) -> Self:
         optional_input_params = {}
 
@@ -32,7 +32,7 @@ class LlmChatComplete(TaskInterface):
             "promptVariables": template_variables,
             "temperature": temperature,
             "topP": top_p,
-            "conversationStartTemplate": conversation_start_template,
+            "instructions": instructions_template,
             "messages": messages
         }
 

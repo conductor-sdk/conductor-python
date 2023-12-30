@@ -3,6 +3,7 @@ import re  # noqa: F401
 
 import six
 
+from conductor.client.http.models import WorkflowTask
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
 
@@ -798,7 +799,7 @@ class Task(object):
         self._output_data = output_data
 
     @property
-    def workflow_task(self):
+    def workflow_task(self) -> WorkflowTask:
         """Gets the workflow_task of this Task.  # noqa: E501
 
 

@@ -9,7 +9,7 @@ from conductor.client.workflow.task.task_type import TaskType
 
 
 def get_for_loop_condition(task_ref_name: str, iterations: int) -> str:
-    return f"if ( $.{task_ref_name}.iteration < $.{iterations} ) {{ true; }} else {{ false; }}"
+    return f"if ( $.{task_ref_name}.iteration < {iterations} ) {{ true; }} else {{ false; }}"
 
 
 class DoWhileTask(TaskInterface):

@@ -31,6 +31,7 @@ from conductor.client.http.models.subject_ref import SubjectRef
 from conductor.client.http.models.tag_object import TagObject
 from conductor.client.http.models.tag_string import TagString
 from conductor.client.http.models.target_ref import TargetRef
+from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_def import TaskDef
 from conductor.client.http.models.task_details import TaskDetails
@@ -48,4 +49,4 @@ from conductor.client.http.models.workflow_schedule_execution_model import Workf
 from conductor.client.http.models.workflow_status import WorkflowStatus
 from conductor.client.http.models.workflow_summary import WorkflowSummary
 from conductor.client.http.models.workflow_tag import WorkflowTag
-from conductor.client.http.models.workflow_task import WorkflowTask
+

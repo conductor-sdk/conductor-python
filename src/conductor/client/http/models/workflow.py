@@ -4,6 +4,7 @@ import re  # noqa: F401
 import six
 
 from conductor.client.http.models import Task
+from conductor.client.http.models.workflow_run import terminal_status, successful_status, running_status
 
 
 class Workflow(object):
@@ -289,7 +290,21 @@ class Workflow(object):
         """
         return self._status
 
-    @status.setter
+    def is_completed(self) -> bool:
+        """Checks if the workflow has completed
+        :return: True if the workflow status is COMPLETED, FAILED or TERMINATED
+        """
+        return self._status in terminal_status
+
+    def is_successful(self) -> bool:
+        """Checks if the workflow has completed in successful state (ie COMPLETED)
+        :return: True if the workflow status is COMPLETED
+        """
+        return self._status in successful_status
+
+    def is_running(self) -> bool:
+        return self.status in running_status
+
     def status(self, status):
         """Sets the status of this Workflow.
 

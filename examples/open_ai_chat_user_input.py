@@ -9,6 +9,7 @@ from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from conductor.client.http.models import Task
+from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.orkes_clients import OrkesClients
 from conductor.client.worker.worker_task import worker_task
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
@@ -22,11 +23,11 @@ from conductor.client.workflow.task.wait_task import WaitTask
 key = os.getenv("KEY")
 secret = os.getenv("SECRET")
 url = os.getenv("CONDUCTOR_SERVER_URL")
-open_ai_key = os.getenv('OPENAI_KEY')
 
 
 @worker_task(task_definition_name='prep', poll_interval_millis=2000)
-def collect_history(user_input: str, seed_question: str, assistant_response: str, history: list[ChatMessage]) -> List[ChatMessage]:
+def collect_history(user_input: str, seed_question: str, assistant_response: str, history: list[ChatMessage]) -> List[
+    ChatMessage]:
     all_history = []
 
     if history is not None:
@@ -54,7 +55,7 @@ def start_workers(api_config):
 
 
 def main():
-    llm_provider = 'open_ai_' + os.getlogin()
+    llm_provider = 'open_ai_root'
     chat_complete_model = 'gpt-4'
     text_complete_model = 'text-davinci-003'
 
@@ -83,45 +84,27 @@ def main():
     q_prompt_name = 'generate_us_history_question'
     # end of seed question generator prompt
 
-    follow_up_question_generator = """
-    You are an expert in US history and events surrounding major historical events in US.
-    Here the context:
-    ${context}
-    And so far we have discussed the following questions:
-    ${past_questions}
-    Generate a follow-up question to dive deeper into the topic.  Ensure you do not repeat the question from the previous
-    list to make discussion more broad.
-    Do not deviate from the topic and keep the question consistent with the theme.
-    """
-    follow_up_prompt_name = "follow_up_question"
-
     # The following needs to be done only one time
 
     kernel = AIOrchestrator(api_configuration=api_config)
-    found = kernel.get_prompt_template(prompt_name + 'xxx')
-    print(f'found prompt template {found}')
     kernel.add_prompt_template(prompt_name, prompt_text, 'chat instructions')
     kernel.add_prompt_template(q_prompt_name, question_generator_prompt, 'Generates a question about american history')
-    kernel.add_prompt_template(follow_up_prompt_name, follow_up_question_generator,
-                               'Generates a question about the context')
 
     # associate the prompts
     kernel.associate_prompt_template(prompt_name, llm_provider, [chat_complete_model])
     kernel.associate_prompt_template(q_prompt_name, llm_provider, [text_complete_model])
-    kernel.associate_prompt_template(follow_up_prompt_name, llm_provider, [text_complete_model])
 
     wf = ConductorWorkflow(name='my_chatbot', version=1, executor=workflow_executor)
+
     question_gen = LlmTextComplete(task_ref_name='gen_question_ref', llm_provider=llm_provider,
                                    model=text_complete_model,
                                    temperature=0.7,
                                    prompt_name=q_prompt_name)
 
-    follow_up_gen = LlmTextComplete(task_ref_name='followup_question_ref', llm_provider=llm_provider,
-                                    model=text_complete_model,
-                                    prompt_name=follow_up_prompt_name)
+    user_input = WaitTask(task_ref_name='user_input_ref')
 
     collect_history_task = collect_history(task_ref_name='collect_history_ref',
-                                           user_input=follow_up_gen.output('result'),
+                                           user_input=user_input.output('question'),
                                            seed_question=question_gen.output('result'),
                                            history='${chat_complete_ref.input.messages}',
                                            assistant_response='${chat_complete_ref.output.result}')
@@ -130,9 +113,6 @@ def main():
                                     llm_provider=llm_provider, model=chat_complete_model,
                                     instructions_template=prompt_name,
                                     messages=collect_history_task.output('result'))
-
-    follow_up_gen.prompt_variable('context', chat_complete.output('result'))
-    follow_up_gen.prompt_variable('past_questions', "${collect_history_ref.input.history[?(@.role=='user')].message}")
 
     collector_js = """
     (function(){ 
@@ -159,23 +139,31 @@ def main():
     })
 
     #  ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-    loop_tasks = [collect_history_task, chat_complete, follow_up_gen]
+    loop_tasks = [collect_history_task, chat_complete, user_input]
     #  ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑
 
-    chat_loop = LoopTask(task_ref_name='loop', iterations=1, tasks=loop_tasks)
+    chat_loop = LoopTask(task_ref_name='loop', iterations=5, tasks=loop_tasks)
 
     wf >> question_gen >> chat_loop >> collect
 
     # let's make sure we don't run it for more than 2 minutes -- avoid runaway loops
     wf.timeout_seconds(120).timeout_policy(timeout_policy=TimeoutPolicy.TIME_OUT_WORKFLOW)
 
-    result = wf.execute(wait_until_task_ref=follow_up_gen.task_reference_name, wait_for_seconds=10)
-    workflow_id = result.workflow_id
-    while result.is_completed():
-        result = workflow_client.get_workflow(workflow_id=workflow_id, include_tasks=True)
+    workflow_run = wf.execute(wait_until_task_ref=user_input.task_reference_name, wait_for_seconds=10)
+    workflow_id = workflow_run.workflow_id
+    print(f'Subject Question: {workflow_run.get_task(task_reference_name=question_gen.task_reference_name).output_data["result"]}')
+    while workflow_run.is_running():
+        if workflow_run.current_task.workflow_task.task_reference_name == user_input.task_reference_name:
+            assistant = workflow_run.get_task(task_reference_name=chat_complete.task_reference_name).output_data['result']
+            print(f'assistant: {assistant}')
+            question = input('Ask a Question: >> ')
+            task_client.update_task_sync(workflow_id=workflow_id, task_ref_name=user_input.task_reference_name,
+                                         status=TaskResultStatus.COMPLETED,
+                                         output={'question': question})
         time.sleep(0.5)
+        workflow_run = workflow_client.get_workflow(workflow_id=workflow_id, include_tasks=True)
 
-    print(f'{result.output}')
+    print(f'{workflow_run.output}')
     task_handler.stop_processes()
 
 
@@ -186,11 +174,4 @@ if __name__ == '__main__':
     if platform == "darwin":
         os.environ['no_proxy'] = '*'
     set_start_method('fork')
-    kwargs = {}
-    kwargs = {
-        'role': 'user',
-        'message': 'hello'
-    }
-    msg = ChatMessage(**kwargs)
-    print(f'msg is {msg.message} nad {msg.role}')
     main()
