@@ -66,9 +66,9 @@ python3 -m pip install conductor-python
 SDK requires connecting to the Conductor server and optionally supplying with authentication parameters.
 
 Lets setup connectivity to the Conductor server:
->[:note] 
-> The following is ONLY required when connecting to a remote server or if your 
-> CONDUCTOR_AUTH_KEY and CONDUCTOR_AUTH_SECRET are only required if your server requires authentication (e.g Orkes hosted)
+> [!note] 
+> CONDUCTOR_SERVER_URL is required if the server APIs are not running on http://localhost:8080/api 
+> CONDUCTOR_AUTH_KEY and CONDUCTOR_AUTH_SECRET are only required if your server requires authentication (e.g. Orkes hosted)
 ```shell
 
 export CONDUCTOR_SERVER_URL=https://play.orkes.io/api
