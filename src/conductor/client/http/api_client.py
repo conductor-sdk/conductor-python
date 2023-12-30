@@ -86,7 +86,7 @@ class ApiClient(object):
                     _return_http_data_only=_return_http_data_only, collection_formats=collection_formats,
                     _preload_content=_preload_content, _request_timeout=_request_timeout
                 )
-            return None
+            raise  ae
 
     def __call_api_no_retry(
             self, resource_path, method, path_params=None,

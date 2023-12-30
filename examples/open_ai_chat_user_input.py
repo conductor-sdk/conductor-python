@@ -1,47 +1,23 @@
+import logging
 import os
 import time
 from multiprocessing import set_start_method
 from sys import platform
-from typing import List
 
 from conductor.client.ai.orchestrator import AIOrchestrator
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
-from conductor.client.http.models import Task
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.orkes_clients import OrkesClients
-from conductor.client.worker.worker_task import worker_task
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
-from conductor.client.workflow.task.do_while_task import DoWhileTask, LoopTask
+from conductor.client.workflow.task.do_while_task import LoopTask
 from conductor.client.workflow.task.javascript_task import JavascriptTask
-from conductor.client.workflow.task.llm_tasks.llm_chat_complete import LlmChatComplete, ChatMessage
+from conductor.client.workflow.task.llm_tasks.llm_chat_complete import LlmChatComplete
 from conductor.client.workflow.task.llm_tasks.llm_text_complete import LlmTextComplete
 from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
 from conductor.client.workflow.task.wait_task import WaitTask
-
-key = os.getenv("KEY")
-secret = os.getenv("SECRET")
-url = os.getenv("CONDUCTOR_SERVER_URL")
-
-
-@worker_task(task_definition_name='prep', poll_interval_millis=2000)
-def collect_history(user_input: str, seed_question: str, assistant_response: str, history: list[ChatMessage]) -> List[
-    ChatMessage]:
-    all_history = []
-
-    if history is not None:
-        all_history = history
-
-    if assistant_response is not None:
-        all_history.append(ChatMessage(message=assistant_response, role='assistant'))
-
-    if user_input is not None:
-        all_history.append(ChatMessage(message=user_input, role='user'))
-    else:
-        all_history.append(ChatMessage(message=seed_question, role='user'))
-
-    return all_history
+from examples.workers.chat_workers import collect_history
 
 
 def start_workers(api_config):
@@ -55,12 +31,12 @@ def start_workers(api_config):
 
 
 def main():
-    llm_provider = 'open_ai_root'
+    llm_provider = 'open_ai_' + os.getlogin()
     chat_complete_model = 'gpt-4'
     text_complete_model = 'text-davinci-003'
 
-    api_config = Configuration(authentication_settings=AuthenticationSettings(key_id=key, key_secret=secret),
-                               server_api_url=url, debug=False)
+    api_config = Configuration()
+    api_config.apply_logging_config(level=logging.DEBUG)
     clients = OrkesClients(configuration=api_config)
     workflow_executor = clients.get_workflow_executor()
     workflow_client = clients.get_workflow_client()
@@ -151,10 +127,12 @@ def main():
 
     workflow_run = wf.execute(wait_until_task_ref=user_input.task_reference_name, wait_for_seconds=10)
     workflow_id = workflow_run.workflow_id
-    print(f'Subject Question: {workflow_run.get_task(task_reference_name=question_gen.task_reference_name).output_data["result"]}')
+    print(
+        f'Subject Question: {workflow_run.get_task(task_reference_name=question_gen.task_reference_name).output_data["result"]}')
     while workflow_run.is_running():
         if workflow_run.current_task.workflow_task.task_reference_name == user_input.task_reference_name:
-            assistant = workflow_run.get_task(task_reference_name=chat_complete.task_reference_name).output_data['result']
+            assistant = workflow_run.get_task(task_reference_name=chat_complete.task_reference_name).output_data[
+                'result']
             print(f'assistant: {assistant}')
             question = input('Ask a Question: >> ')
             task_client.update_task_sync(workflow_id=workflow_id, task_ref_name=user_input.task_reference_name,
@@ -168,10 +146,4 @@ def main():
 
 
 if __name__ == '__main__':
-    # set the no_proxy env
-    # see this thread for more context
-    # https://stackoverflow.com/questions/55408047/requests-get-not-finishing-doesnt-raise-any-error
-    if platform == "darwin":
-        os.environ['no_proxy'] = '*'
-    set_start_method('fork')
     main()
