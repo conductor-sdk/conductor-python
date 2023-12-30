@@ -115,7 +115,7 @@ def greetings_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow
 
 ```
 
-**Use JSON to create workflows**
+** (alternatively) Use JSON to create workflows**
 
 Create workflow.json with the following:
 ```json
