@@ -93,7 +93,8 @@ An application using Conductor uses the following:
 1. **Workflow**: Describes the application's state and how functions are wired.  Workflow is what gives your application's code durability and full-blown visualization in the Conductor UI.
 2. **Worker**: Stateless components.  Workers can be exposed as HTTP endpoints (aka Microservices) or can be simple task workers implemented using lightweight Conductor SDK in the framework and language of your choice.
 
-Note: A single workflow application can have workers written in different languages.
+> [!note]
+> A single workflow application can have workers written in different languages.
 
 ### Step 1: Create a Workflow
 
