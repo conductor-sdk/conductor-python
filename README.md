@@ -63,23 +63,20 @@ Get Conductor Python SDK
 python3 -m pip install conductor-python
 ```
 ### Setup SDK
-SDK requires connecting to the Conductor server and optionally supplying with authentication parameters.
 
-Lets setup connectivity to the Conductor server:
-> [!note] 
-> CONDUCTOR_SERVER_URL is required if the server APIs are not running on http://localhost:8080/api 
-> CONDUCTOR_AUTH_KEY and CONDUCTOR_AUTH_SECRET are only required if your server requires authentication (e.g. Orkes hosted)
+Point the SDK to the Conductor Server API endpoint
 ```shell
+export CONDUCTOR_SERVER_URL=http://localhost:8080/api
+```
+(Optionally) If you are using a Conductor server that requires authentication
 
-export CONDUCTOR_SERVER_URL=https://play.orkes.io/api
+[How to obtain the key and secret from the conductor server
+](https://orkes.io/content/docs/getting-started/concepts/access-control)
 
-# Obtain the key and secret from the conductor server
-# https://orkes.io/content/docs/getting-started/concepts/access-control
-# Required ONLY if your server requires authentication
 
+```shell
 export CONDUCTOR_AUTH_KEY=your_key
 export CONDUCTOR_AUTH_SECRET=your_key_secret
-
 ```
 
 ## Start Conductor Server
