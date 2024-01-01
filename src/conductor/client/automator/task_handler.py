@@ -1,7 +1,7 @@
 import importlib
 import logging
 import os
-from multiprocessing import Process, freeze_support, Queue, set_start_method
+from multiprocessing import Process, freeze_support, Queue, set_start_method, get_context
 from sys import platform
 from typing import List
 
@@ -21,8 +21,11 @@ logger = logging.getLogger(
 _decorated_functions = {}
 _mp_fork_set = False
 if not _mp_fork_set:
-    set_start_method('fork')
-    _mp_fork_set = True
+    try:
+        set_start_method('fork')
+        _mp_fork_set = True
+    except Exception as e:
+        print(f'error when setting multiprocessing.set_start_method to fork - maybe the context is set {e.args}')
     if platform == "darwin":
         os.environ['no_proxy'] = '*'
 

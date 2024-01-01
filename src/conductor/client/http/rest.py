@@ -241,6 +241,10 @@ class AuthorizationException(ApiException):
     def token_expired(self) -> bool:
         return self._error_code == 'EXPIRED_TOKEN'
 
+    @property
+    def invalid_token(self) -> bool:
+        return self._error_code == 'INVALID_TOKEN'
+
     def __str__(self):
         """Custom error messages for exception"""
         error_message = f'authorization error: {self._error_code}.  status_code: {self.status}, reason: {self.reason}'

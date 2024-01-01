@@ -55,14 +55,16 @@ class AIOrchestrator:
                                               stop_words)
 
     def add_ai_integration(self, ai_integration_name: str, provider: LLMProvider, models: List[str], description: str,
-                           config: IntegrationConfig):
+                           config: IntegrationConfig, overwrite : bool = False):
         details = IntegrationUpdate()
         details.configuration = config.to_dict()
         details.type = provider.value
         details.category = 'AI_MODEL'
         details.enabled = True
         details.description = description
-        self.integration_client.save_integration(ai_integration_name, details)
+        existing_integration = self.integration_client.get_integration(integration_name=ai_integration_name)
+        if existing_integration is not None:
+            self.integration_client.save_integration(ai_integration_name, details)
         for model in models:
             api_details = IntegrationApiUpdate()
             api_details.enabled = True

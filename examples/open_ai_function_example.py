@@ -1,22 +1,16 @@
-import json
 import os
 import time
-from multiprocessing import set_start_method
-from sys import platform
 
 from conductor.client.ai.orchestrator import AIOrchestrator
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.orkes_clients import OrkesClients
 from conductor.client.worker.worker_task import worker_task
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.task.do_while_task import LoopTask
 from conductor.client.workflow.task.dynamic_task import DynamicTask
-from conductor.client.workflow.task.javascript_task import JavascriptTask
-from conductor.client.workflow.task.llm_tasks.llm_chat_complete import LlmChatComplete, ChatMessage
-from conductor.client.workflow.task.llm_tasks.llm_text_complete import LlmTextComplete
+from conductor.client.workflow.task.llm_tasks.llm_chat_complete import LlmChatComplete
 from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
 from conductor.client.workflow.task.wait_task import WaitTask
 from examples.workers.chat_workers import collect_history
@@ -111,8 +105,8 @@ def main():
             if workflow_run.current_task.workflow_task.task_reference_name == user_input.task_reference_name:
                 question = input('Question: >> ')
                 task_client.update_task_sync(workflow_id=workflow_id, task_ref_name=user_input.task_reference_name,
-                                            status=TaskResultStatus.COMPLETED,
-                                            output={'question': question})
+                                             status=TaskResultStatus.COMPLETED,
+                                             output={'question': question})
         time.sleep(0.5)
         workflow_run = workflow_client.get_workflow(workflow_id=workflow_id, include_tasks=True)
 

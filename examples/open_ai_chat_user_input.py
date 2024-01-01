@@ -1,13 +1,11 @@
+import json
 import logging
 import os
 import time
-from multiprocessing import set_start_method
-from sys import platform
 
 from conductor.client.ai.orchestrator import AIOrchestrator
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.orkes_clients import OrkesClients
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
@@ -17,7 +15,7 @@ from conductor.client.workflow.task.llm_tasks.llm_chat_complete import LlmChatCo
 from conductor.client.workflow.task.llm_tasks.llm_text_complete import LlmTextComplete
 from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
 from conductor.client.workflow.task.wait_task import WaitTask
-from examples.workers.chat_workers import collect_history
+from workers.chat_workers import collect_history
 
 
 def start_workers(api_config):
@@ -74,17 +72,10 @@ def main():
 
     wf = ConductorWorkflow(name='my_chatbot', version=1, executor=workflow_executor)
 
-    question_gen = LlmTextComplete(task_ref_name='gen_question_ref', llm_provider=llm_provider,
-                                   model=text_complete_model,
-                                   temperature=0.1,
-                                   top_p=0.5,
-                                   prompt_name=q_prompt_name)
-
     user_input = WaitTask(task_ref_name='user_input_ref')
 
     collect_history_task = collect_history(task_ref_name='collect_history_ref',
                                            user_input=user_input.output('question'),
-                                           seed_question=question_gen.output('result'),
                                            history='${chat_complete_ref.input.messages}',
                                            assistant_response='${chat_complete_ref.output.result}')
 
@@ -118,33 +109,36 @@ def main():
     })
 
     #  ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-    loop_tasks = [collect_history_task, chat_complete, user_input]
+    loop_tasks = [user_input, collect_history_task, chat_complete]
     #  ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑
 
+    # iterations are set to 5 to limit the no. of iterations
     chat_loop = LoopTask(task_ref_name='loop', iterations=5, tasks=loop_tasks)
 
-    wf >> question_gen >> chat_loop >> collect
+    wf >> chat_loop >> collect
 
     # let's make sure we don't run it for more than 2 minutes -- avoid runaway loops
     wf.timeout_seconds(120).timeout_policy(timeout_policy=TimeoutPolicy.TIME_OUT_WORKFLOW)
 
-    workflow_run = wf.execute(wait_until_task_ref=user_input.task_reference_name, wait_for_seconds=10)
+    workflow_run = wf.execute(wait_until_task_ref=chat_loop.task_reference_name, wait_for_seconds=1)
     workflow_id = workflow_run.workflow_id
-    print(
-        f'Subject Question: {workflow_run.get_task(task_reference_name=question_gen.task_reference_name).output_data["result"]}')
+    print('I am a bot that can answer questions about US history')
     while workflow_run.is_running():
         if workflow_run.current_task.workflow_task.task_reference_name == user_input.task_reference_name:
-            assistant = workflow_run.get_task(task_reference_name=chat_complete.task_reference_name).output_data[
-                'result']
-            print(f'assistant: {assistant}')
-            question = input('Ask a Question: >> ')
-            task_client.update_task_sync(workflow_id=workflow_id, task_ref_name=user_input.task_reference_name,
-                                         status=TaskResultStatus.COMPLETED,
-                                         output={'question': question})
+            assistant_task = workflow_run.get_task(task_reference_name=chat_complete.task_reference_name)
+            if assistant_task is not None:
+                assistant = assistant_task.output_data['result']
+                print(f'assistant: {assistant}')
+            if workflow_run.current_task.workflow_task.task_reference_name == user_input.task_reference_name:
+                question = input('Ask a Question: >> ')
+                task_client.update_task_sync(workflow_id=workflow_id, task_ref_name=user_input.task_reference_name,
+                                             status=TaskResultStatus.COMPLETED,
+                                             output={'question': question})
         time.sleep(0.5)
         workflow_run = workflow_client.get_workflow(workflow_id=workflow_id, include_tasks=True)
 
-    print(f'{workflow_run.output}')
+    print(f'\n\n\n chat log \n\n\n')
+    print(json.dumps(workflow_run.output["result"], indent=3))
     task_handler.stop_processes()
 
 

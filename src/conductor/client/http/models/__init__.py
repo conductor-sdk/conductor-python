@@ -49,4 +49,5 @@ from conductor.client.http.models.workflow_schedule_execution_model import Workf
 from conductor.client.http.models.workflow_status import WorkflowStatus
 from conductor.client.http.models.workflow_summary import WorkflowSummary
 from conductor.client.http.models.workflow_tag import WorkflowTag
-
+from conductor.client.http.models.integration import Integration
+from conductor.client.http.models.integration_api import IntegrationApi

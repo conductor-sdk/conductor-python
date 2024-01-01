@@ -1,21 +1,19 @@
+import json
 import os
 import time
-from multiprocessing import set_start_method
-from sys import platform
 
 from conductor.client.ai.orchestrator import AIOrchestrator
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from conductor.client.http.models.workflow_run import terminal_status
 from conductor.client.orkes_clients import OrkesClients
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.task.do_while_task import LoopTask
 from conductor.client.workflow.task.javascript_task import JavascriptTask
-from conductor.client.workflow.task.llm_tasks.llm_chat_complete import LlmChatComplete, ChatMessage
+from conductor.client.workflow.task.llm_tasks.llm_chat_complete import LlmChatComplete
 from conductor.client.workflow.task.llm_tasks.llm_text_complete import LlmTextComplete
 from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
-from examples.workers.chat_workers import collect_history
+from workers.chat_workers import collect_history
 
 
 def start_workers(api_config):
@@ -37,10 +35,9 @@ def main():
     clients = OrkesClients(configuration=api_config)
     workflow_executor = clients.get_workflow_executor()
     workflow_client = clients.get_workflow_client()
-    task_client = clients.get_task_client()
     task_handler = start_workers(api_config=api_config)
 
-    # Define and associate prompt with the ai integration
+    # Define and associate prompt with the AI integration
     prompt_name = 'chat_instructions'
     prompt_text = """
     You are a helpful bot that knows a lot about US history.  
@@ -135,7 +132,7 @@ def main():
     loop_tasks = [collect_history_task, chat_complete, follow_up_gen]
     #  ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑
 
-    chat_loop = LoopTask(task_ref_name='loop', iterations=5, tasks=loop_tasks)
+    chat_loop = LoopTask(task_ref_name='loop', iterations=2, tasks=loop_tasks)
 
     wf >> question_gen >> chat_loop >> collect
 
@@ -143,18 +140,18 @@ def main():
     wf.timeout_seconds(120).timeout_policy(timeout_policy=TimeoutPolicy.TIME_OUT_WORKFLOW)
 
     result = wf.execute(wait_until_task_ref=collect_history_task.task_reference_name, wait_for_seconds=10)
+
     print(f'{result.get_task(task_reference_name=question_gen.task_reference_name).output_data["result"]}')
     workflow_id = result.workflow_id
     while not result.is_completed():
         result = workflow_client.get_workflow(workflow_id=workflow_id, include_tasks=True)
-        chat_complete_task = result.get_task(task_reference_name=chat_complete.task_reference_name)
-        if chat_complete_task is not None and chat_complete_task.status in terminal_status:
-            print(f'>> {chat_complete_task.input_data["messages"][-1]["message"]}')
-            print(f'{chat_complete_task.output_data["result"]}')
-            print('---')
+        follow_up_q = result.get_task(task_reference_name=follow_up_gen.task_reference_name)
+        if follow_up_q is not None and follow_up_q.status in terminal_status:
+            print(f'thinking about... {follow_up_q.output_data["result"].strip()}')
         time.sleep(0.5)
 
-    print(f'{result.output}')
+    # print the final
+    print(json.dumps(result.output["result"], indent=3))
     task_handler.stop_processes()
 
 
