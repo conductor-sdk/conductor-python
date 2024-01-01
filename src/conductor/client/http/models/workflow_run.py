@@ -5,9 +5,9 @@ import six
 
 from conductor.client.http.models import Task
 
-terminal_status = {'COMPLETED', 'FAILED', 'TIMED_OUT', 'TERMINATED'}
-successful_status = {'PAUSED', 'COMPLETED'}
-running_status = {'RUNNING', 'PAUSED'}
+terminal_status = ('COMPLETED', 'FAILED', 'TIMED_OUT', 'TERMINATED')
+successful_status = ('PAUSED', 'COMPLETED')
+running_status = ('RUNNING', 'PAUSED')
 
 
 class WorkflowRun(object):

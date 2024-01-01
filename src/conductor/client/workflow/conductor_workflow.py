@@ -114,6 +114,13 @@ class ConductorWorkflow:
         self._output_parameters = deepcopy(output_parameters)
         return self
 
+    def output_parameter(self, key: str, value: Any) -> Self:
+        if self._output_parameters is None:
+            self._output_parameters = {}
+
+        self._output_parameters[key] = value
+        return self
+
     # InputTemplate template input to the workflow.  Can have combination of variables (e.g. ${workflow.input.abc}) and static values
     def input_template(self, input_template: Dict[str, Any]) -> Self:
         if input_template == None:
@@ -310,6 +317,12 @@ class ConductorWorkflow:
             return '${' + f'workflow.input' + '}'
         else:
             return '${' + f'workflow.input.{json_path}' + '}'
+
+    def output(self, json_path: str) -> str:
+        if json_path is None:
+            return '${' + f'workflow.output' + '}'
+        else:
+            return '${' + f'workflow.output.{json_path}' + '}'
 
 
 class InlineSubWorkflowTask(TaskInterface):

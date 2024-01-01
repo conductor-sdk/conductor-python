@@ -1,11 +1,14 @@
 import base64
+import os
 import unittest
+from unittest import mock
 
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api_client import ApiClient
 
 
 class TestConfiguration(unittest.TestCase):
+    @mock.patch.dict(os.environ, {"CONDUCTOR_SERVER_URL": "http://localhost:8080/api"})
     def test_initialization_default(self):
         configuration = Configuration()
         self.assertEqual(

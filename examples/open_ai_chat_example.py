@@ -7,6 +7,7 @@ from conductor.client.ai.orchestrator import AIOrchestrator
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
+from conductor.client.http.models.workflow_run import terminal_status
 from conductor.client.orkes_clients import OrkesClients
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.task.do_while_task import LoopTask
@@ -32,8 +33,7 @@ def main():
     chat_complete_model = 'gpt-4'
     text_complete_model = 'text-davinci-003'
 
-    api_config = Configuration(authentication_settings=AuthenticationSettings(key_id=key, key_secret=secret),
-                               server_api_url=url, debug=False)
+    api_config = Configuration()
     clients = OrkesClients(configuration=api_config)
     workflow_executor = clients.get_workflow_executor()
     workflow_client = clients.get_workflow_client()
@@ -72,8 +72,7 @@ def main():
     # The following needs to be done only one time
 
     kernel = AIOrchestrator(api_configuration=api_config)
-    found = kernel.get_prompt_template(prompt_name + 'xxx')
-    print(f'found prompt template {found}')
+
     kernel.add_prompt_template(prompt_name, prompt_text, 'chat instructions')
     kernel.add_prompt_template(q_prompt_name, question_generator_prompt, 'Generates a question about american history')
     kernel.add_prompt_template(follow_up_prompt_name, follow_up_question_generator,
@@ -136,17 +135,23 @@ def main():
     loop_tasks = [collect_history_task, chat_complete, follow_up_gen]
     #  ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑
 
-    chat_loop = LoopTask(task_ref_name='loop', iterations=1, tasks=loop_tasks)
+    chat_loop = LoopTask(task_ref_name='loop', iterations=5, tasks=loop_tasks)
 
     wf >> question_gen >> chat_loop >> collect
 
     # let's make sure we don't run it for more than 2 minutes -- avoid runaway loops
     wf.timeout_seconds(120).timeout_policy(timeout_policy=TimeoutPolicy.TIME_OUT_WORKFLOW)
 
-    result = wf.execute(wait_until_task_ref=follow_up_gen.task_reference_name, wait_for_seconds=10)
+    result = wf.execute(wait_until_task_ref=collect_history_task.task_reference_name, wait_for_seconds=10)
+    print(f'{result.get_task(task_reference_name=question_gen.task_reference_name).output_data["result"]}')
     workflow_id = result.workflow_id
-    while result.is_completed():
+    while not result.is_completed():
         result = workflow_client.get_workflow(workflow_id=workflow_id, include_tasks=True)
+        chat_complete_task = result.get_task(task_reference_name=chat_complete.task_reference_name)
+        if chat_complete_task is not None and chat_complete_task.status in terminal_status:
+            print(f'>> {chat_complete_task.input_data["messages"][-1]["message"]}')
+            print(f'{chat_complete_task.output_data["result"]}')
+            print('---')
         time.sleep(0.5)
 
     print(f'{result.output}')
@@ -154,17 +159,4 @@ def main():
 
 
 if __name__ == '__main__':
-    # set the no_proxy env
-    # see this thread for more context
-    # https://stackoverflow.com/questions/55408047/requests-get-not-finishing-doesnt-raise-any-error
-    if platform == "darwin":
-        os.environ['no_proxy'] = '*'
-    set_start_method('fork')
-    kwargs = {}
-    kwargs = {
-        'role': 'user',
-        'message': 'hello'
-    }
-    msg = ChatMessage(**kwargs)
-    print(f'msg is {msg.message} nad {msg.role}')
     main()

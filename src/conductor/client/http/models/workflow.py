@@ -294,7 +294,7 @@ class Workflow(object):
         """Checks if the workflow has completed
         :return: True if the workflow status is COMPLETED, FAILED or TERMINATED
         """
-        return self._status in terminal_status
+        return self.status in terminal_status
 
     def is_successful(self) -> bool:
         """Checks if the workflow has completed in successful state (ie COMPLETED)

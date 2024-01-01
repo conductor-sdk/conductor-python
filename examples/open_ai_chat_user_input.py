@@ -56,6 +56,8 @@ def main():
     question_generator_prompt = """
     You are an expert in US history and events surrounding major historical events in US.
     Think of a random event in the US history and create a question about it.
+    Try be quite broad in your thinking about the event. Avoid very common questions about the history to keep this more
+    engaging.
     """
     q_prompt_name = 'generate_us_history_question'
     # end of seed question generator prompt
@@ -74,7 +76,8 @@ def main():
 
     question_gen = LlmTextComplete(task_ref_name='gen_question_ref', llm_provider=llm_provider,
                                    model=text_complete_model,
-                                   temperature=0.7,
+                                   temperature=0.1,
+                                   top_p=0.5,
                                    prompt_name=q_prompt_name)
 
     user_input = WaitTask(task_ref_name='user_input_ref')
