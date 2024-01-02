@@ -27,7 +27,6 @@ class CreateOrUpdateApplicationRequest(object):
     def __init__(self, name=None):  # noqa: E501
         """CreateOrUpdateApplicationRequest - a model defined in Swagger"""  # noqa: E501
         self._name = None
-        self.discriminator = None
         self.name = name
 
     @property
