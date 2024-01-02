@@ -66,6 +66,10 @@ def main():
     print(
         f'workflow status is {workflow.status} and status of last task {last_task.reference_task_name} is {last_task.status}')
 
+    # wait for a couple of seconds for the workflow to complete
+    time.sleep(2)
+
+
     rerun_request = RerunWorkflowRequest()
     rerun_request.re_run_from_task_id = workflow.tasks[1].task_id
     workflow_client.rerun_workflow(workflow_id=workflow_id, rerun_workflow_request=rerun_request)

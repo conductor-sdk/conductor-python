@@ -1,5 +1,3 @@
-from multiprocessing import set_start_method
-
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.orkes_clients import OrkesClients
@@ -40,5 +38,4 @@ def main():
 
 
 if __name__ == '__main__':
-    set_start_method('fork')
     main()

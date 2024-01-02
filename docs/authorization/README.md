@@ -5,14 +5,9 @@
 ### Initialization
 ```python
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from conductor.client.orkes.orkes_authorization_client import OrkesAuthorizationClient
 
-configuration = Configuration(
-    server_api_url=SERVER_API_URL,
-    debug=False,
-    authentication_settings=AuthenticationSettings(key_id=KEY_ID, key_secret=KEY_SECRET)
-)
+configuration = Configuration()
 
 authorization_client = OrkesAuthorizationClient(configuration)
 ```
@@ -24,9 +19,13 @@ Creates an application and returns a ConductorApplication object.
 
 ```python
 from conductor.client.http.models.create_or_update_application_request import CreateOrUpdateApplicationRequest
-from conductor.client.http.models.conductor_application import ConductorApplication
+from conductor.client.orkes.orkes_authorization_client import OrkesAuthorizationClient
+from conductor.client.configuration.configuration import Configuration
 
-request = CreateOrUpdateApplicationRequest("APPLICATION_NAME")
+configuration = Configuration()
+authorization_client = OrkesAuthorizationClient(configuration)
+
+request = CreateOrUpdateApplicationRequest(name="APPLICATION_NAME")
 app = authorization_client.create_application(request)
 application_id = app.id
 ```

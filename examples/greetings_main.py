@@ -34,10 +34,9 @@ def main():
     task_handler.start_processes()
 
     result = greetings_workflow_run('Orkes', workflow_executor)
-    print(f'workflow result: {result.output["result"]}')
+    print(f'\nworkflow result: {result.output["result"]}\n')
     task_handler.stop_processes()
 
 
 if __name__ == '__main__':
-    set_start_method('fork')
     main()

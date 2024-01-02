@@ -10,7 +10,7 @@ class Configuration:
 
     def __init__(
             self,
-            base_url: str = "http://localhost:8080",
+            base_url: str = None,
             debug: bool = False,
             authentication_settings: AuthenticationSettings = None,
             server_api_url: str = None,
@@ -18,12 +18,25 @@ class Configuration:
     ):
         if server_api_url is not None:
             self.host = server_api_url
-        else:
+        elif base_url is not None:
             self.host = base_url + '/api'
+        else:
+            self.host = os.getenv('CONDUCTOR_SERVER_URL')
+
+        if self.host is None:
+            self.host = 'http://localhost:8080/api'
 
         self.temp_folder_path = None
 
-        self.authentication_settings = authentication_settings
+        if authentication_settings is not None:
+            self.authentication_settings = authentication_settings
+        else:
+            key = os.getenv('CONDUCTOR_AUTH_KEY')
+            secret = os.getenv('CONDUCTOR_AUTH_SECRET')
+            if key is not None and secret is not None:
+                self.authentication_settings = AuthenticationSettings(key_id=key, key_secret=secret)
+            else:
+                self.authentication_settings = None
 
         # Debug switch
         self.debug = debug
@@ -110,10 +123,14 @@ class Configuration:
         """
         return self.__log_level
 
-    def apply_logging_config(self):
+    def apply_logging_config(self, log_format : str = None, level = None):
+        if log_format is None:
+            log_format = self.logger_format
+        if level is None:
+            level = self.__log_level
         logging.basicConfig(
-            format=self.logger_format,
-            level=self.__log_level
+            format=log_format,
+            level=level
         )
 
     @staticmethod

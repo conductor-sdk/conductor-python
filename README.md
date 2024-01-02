@@ -63,25 +63,20 @@ Get Conductor Python SDK
 python3 -m pip install conductor-python
 ```
 ### Setup SDK
-SDK requires connecting to the Conductor server and optionally supplying with authentication parameters.
 
-```python
-from conductor.client.configuration.configuration import Configuration
-
-configuration = Configuration(server_api_url='https://play.orkes.io/api')
+Point the SDK to the Conductor Server API endpoint
+```shell
+export CONDUCTOR_SERVER_URL=http://localhost:8080/api
 ```
-Configure the authentication settings _if your Conductor server requires authentication_.
-See [Access Control](https://orkes.io/content/docs/getting-started/concepts/access-control) for guide to getting API keys
-```python
-from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
+(Optionally) If you are using a Conductor server that requires authentication
 
-configuration = Configuration(
-    authentication_settings=AuthenticationSettings(
-        key_id='key',
-        key_secret='secret'
-    )
-)
+[How to obtain the key and secret from the conductor server
+](https://orkes.io/content/docs/getting-started/concepts/access-control)
+
+
+```shell
+export CONDUCTOR_AUTH_KEY=your_key
+export CONDUCTOR_AUTH_SECRET=your_key_secret
 ```
 
 ## Start Conductor Server
@@ -98,7 +93,8 @@ An application using Conductor uses the following:
 1. **Workflow**: Describes the application's state and how functions are wired.  Workflow is what gives your application's code durability and full-blown visualization in the Conductor UI.
 2. **Worker**: Stateless components.  Workers can be exposed as HTTP endpoints (aka Microservices) or can be simple task workers implemented using lightweight Conductor SDK in the framework and language of your choice.
 
-Note: A single workflow application can have workers written in different languages.
+> [!note]
+> A single workflow application can have workers written in different languages.
 
 ### Step 1: Create a Workflow
 
@@ -117,7 +113,7 @@ def greetings_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow
 
 ```
 
-**Use JSON to create workflows**
+**(alternatively) Use JSON to create workflows**
 
 Create workflow.json with the following:
 ```json

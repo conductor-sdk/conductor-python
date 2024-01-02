@@ -5,9 +5,9 @@ import six
 
 from conductor.client.http.models import Task
 
-terminal_status = {'COMPLETED', 'FAILED', 'TIMED_OUT', 'TERMINATED'}
-successful_status = {'PAUSED', 'COMPLETED'}
-running_status = {'RUNNING', 'PAUSED'}
+terminal_status = ('COMPLETED', 'FAILED', 'TIMED_OUT', 'TERMINATED')
+successful_status = ('PAUSED', 'COMPLETED')
+running_status = ('RUNNING', 'PAUSED')
 
 
 class WorkflowRun(object):
@@ -252,6 +252,18 @@ class WorkflowRun(object):
         """
         return self._status
 
+    def is_completed(self) -> bool:
+        """Checks if the workflow has completed
+        :return: True if the workflow status is COMPLETED, FAILED or TERMINATED
+        """
+        return self._status in terminal_status
+
+    def is_successful(self) -> bool:
+        """Checks if the workflow has completed in successful state (ie COMPLETED)
+        :return: True if the workflow status is COMPLETED
+        """
+        return self._status in successful_status
+
     @property
     def reason_for_incompletion(self):
         return self._reason_for_incompletion
@@ -302,6 +314,18 @@ class WorkflowRun(object):
         """
 
         self._tasks = tasks
+
+    def get_task(self, name: str = None, task_reference_name: str = None) -> Task:
+        if name is None and task_reference_name is None:
+            raise Exception('ONLY one of name or task_reference_name MUST be provided.  None were provided')
+        if name is not None and not task_reference_name is None:
+            raise Exception('ONLY one of name or task_reference_name MUST be provided.  both were provided')
+
+        current = None
+        for task in self.tasks:
+            if task.task_def_name == name or task.workflow_task.task_reference_name == task_reference_name:
+                current = task
+        return current
 
     @property
     def update_time(self):

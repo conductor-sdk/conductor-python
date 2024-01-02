@@ -19,7 +19,9 @@ from conductor.client.workflow_client import WorkflowClient
 
 
 class OrkesClients:
-    def __init__(self, configuration: Configuration):
+    def __init__(self, configuration: Configuration = None):
+        if configuration is None:
+            configuration = Configuration()
         self.configuration = configuration
 
     def get_workflow_client(self) -> WorkflowClient:

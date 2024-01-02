@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from abc import ABC, abstractmethod
 
 
@@ -28,7 +29,9 @@ class WeaviateConfig(IntegrationConfig):
 
 class OpenAIConfig(IntegrationConfig):
 
-    def __init__(self, api_key: str) -> None:
+    def __init__(self, api_key: str = None) -> None:
+        if api_key is None:
+            api_key = os.getenv('OPENAI_API_KEY')
         self.api_key = api_key
 
     def to_dict(self) -> dict:

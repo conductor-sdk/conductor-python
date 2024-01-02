@@ -41,7 +41,8 @@ class WorkflowUnitTest(unittest.TestCase):
         decision.switch_case('NYC', task2)
         decision.default_case(task3)
 
-        wf >> HttpTask(task_ref_name='http', http_input={'uri': 'https://orkes-api-tester.orkesconductor.com/api'})
+        http = HttpTask(task_ref_name='http', http_input={'uri': 'https://orkes-api-tester.orkesconductor.com/api'})
+        wf >> http
         wf >> task1 >> decision
 
         task_ref_to_mock_output = {}
@@ -66,6 +67,15 @@ class WorkflowUnitTest(unittest.TestCase):
                 'status': 'COMPLETED',
                 'output': {
                     'key': 'task2.output'
+                }
+            }
+        ]
+
+        task_ref_to_mock_output[http.task_reference_name] = [
+            {
+                'status': 'COMPLETED',
+                'output': {
+                    'key': 'http.output'
                 }
             }
         ]

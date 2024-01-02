@@ -1,6 +1,8 @@
 import importlib
 import logging
-from multiprocessing import Process, freeze_support, Queue
+import os
+from multiprocessing import Process, freeze_support, Queue, set_start_method, get_context
+from sys import platform
 from typing import List
 
 from conductor.client.automator.task_runner import TaskRunner
@@ -17,6 +19,15 @@ logger = logging.getLogger(
 )
 
 _decorated_functions = {}
+_mp_fork_set = False
+if not _mp_fork_set:
+    try:
+        set_start_method('fork')
+        _mp_fork_set = True
+    except Exception as e:
+        print(f'error when setting multiprocessing.set_start_method to fork - maybe the context is set {e.args}')
+    if platform == "darwin":
+        os.environ['no_proxy'] = '*'
 
 
 def register_decorated_fn(name: str, poll_interval: int, domain: str, worker_id: str, func):

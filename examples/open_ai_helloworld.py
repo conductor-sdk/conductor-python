@@ -1,6 +1,6 @@
 import os
 import time
-from multiprocessing import set_start_method
+from multiprocessing import set_start_method, get_context
 from sys import platform
 
 from conductor.client.ai.configuration import LLMProvider
@@ -8,21 +8,15 @@ from conductor.client.ai.integrations import OpenAIConfig
 from conductor.client.ai.orchestrator import AIOrchestrator
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from conductor.client.worker.worker_task import worker_task
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.task.llm_tasks.llm_text_complete import LlmTextComplete
 from conductor.client.workflow.task.llm_tasks.utils.prompt import Prompt
 
-key = os.getenv("KEY")
-secret = os.getenv("SECRET")
-url = os.getenv("CONDUCTOR_SERVER_URL")
-open_ai_key = os.getenv('OPENAI_KEY')
-
 
 @worker_task(task_definition_name='get_friends_name')
 def get_friend_name():
-    name = os.getenv('friend')
+    name = os.getlogin()
     if name is None:
         return 'anonymous'
     else:
@@ -44,13 +38,10 @@ def main():
     text_complete_model = 'text-davinci-003'
     embedding_complete_model = 'text-embedding-ada-002'
 
-    api_config = Configuration(authentication_settings=AuthenticationSettings(key_id=key, key_secret=secret),
-                               server_api_url=url, debug=False)
+    api_config = Configuration()
     task_workers = start_workers(api_config)
-    task_workers.join_processes()
-    time.sleep(60)
 
-    open_ai_config = OpenAIConfig(open_ai_key)
+    open_ai_config = OpenAIConfig()
 
     kernel = AIOrchestrator(api_configuration=api_config)
 
@@ -75,10 +66,11 @@ def main():
     # Create a 2-step LLM Chain and execute it
 
     get_name = get_friend_name(task_ref_name='get_friend_name_ref')
-    prompt = Prompt(name=prompt_name, variables={'friend_name': get_name.output('result')})
 
-    text_complete = LlmTextComplete('say_hi', 'say_hi_ref', llm_provider, text_complete_model, prompt=prompt)
-    text_complete.input('friend_name', get_name.output('result'))
+    text_complete = LlmTextComplete(task_ref_name='say_hi_ref', llm_provider=llm_provider, model=text_complete_model,
+                                    prompt_name=prompt_name)
+
+    text_complete.prompt_variable(variable='friend_name', value=get_name.output('result'))
 
     workflow = ConductorWorkflow(executor=kernel.workflow_executor, name='say_hi_to_the_friend')
     workflow >> get_name >> text_complete
@@ -86,18 +78,12 @@ def main():
     workflow.output_parameters = {'greetings': text_complete.output('result')}
 
     # execute the workflow to get the results
-    result = workflow()
-    print(f'output of the LLM chain workflow: {result.output}')
+    result = workflow.execute(workflow_input={}, wait_for_seconds=10)
+    print(f'\nOutput of the LLM chain workflow: {result.output["result"]}\n\n')
 
     # cleanup and stop
-    # task_workers.stop_processes()
+    task_workers.stop_processes()
 
 
 if __name__ == '__main__':
-    # set the no_proxy env
-    # see this thread for more context
-    # https://stackoverflow.com/questions/55408047/requests-get-not-finishing-doesnt-raise-any-error
-    if platform == "darwin":
-        os.environ['no_proxy'] = '*'
-    set_start_method('fork')
     main()

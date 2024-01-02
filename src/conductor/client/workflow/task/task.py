@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from copy import deepcopy
 from typing import Any, Dict, List
 
-from typing_extensions import Self
+from typing_extensions import Self, Union
 
 from conductor.client.http.models.workflow_task import WorkflowTask
 from conductor.client.workflow.task.task_type import TaskType
@@ -77,7 +77,7 @@ class TaskInterface(ABC):
 
     @optional.setter
     def optional(self, optional: bool) -> None:
-        if optional != None and not isinstance(optional, bool):
+        if optional is not None and not isinstance(optional, bool):
             raise Exception('invalid type')
         self._optional = deepcopy(optional)
 
@@ -97,7 +97,7 @@ class TaskInterface(ABC):
                 raise Exception(f'invalid type: {type(input_parameters)}')
         self._input_parameters = deepcopy(input_parameters)
 
-    def input(self, key: str, value: Any) -> Self:
+    def input_parameter(self, key: str, value: Any) -> Self:
         if not isinstance(key, str):
             raise Exception('invalid type')
         self._input_parameters[key] = deepcopy(value)
@@ -113,16 +113,23 @@ class TaskInterface(ABC):
             optional=self._optional,
         )
 
-    def output_ref(self, path: str) -> str:
-        if path == '':
-            return f'${{{self._task_reference_name}.output}}'
-        return f'${{{self._task_reference_name}.output.{path}}}'
-
     def output(self, json_path: str = None) -> str:
         if json_path is None:
             return '${' + f'{self.task_reference_name}.output' + '}'
         else:
             return '${' + f'{self.task_reference_name}.output.{json_path}' + '}'
+
+    def input(self, json_path: str = None, key : str = None, value : Any = None) -> Union[str, Self]:
+        if key is not None and value is not None:
+            """
+            For the backwards compatibility
+            """
+            return self.input_parameter(key, value)
+
+        if json_path is None:
+            return '${' + f'{self.task_reference_name}.input' + '}'
+        else:
+            return '${' + f'{self.task_reference_name}.input.{json_path}' + '}'
 
     def __getattribute__(self, __name: str) -> Any:
         try:

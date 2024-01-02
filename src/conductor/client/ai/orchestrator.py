@@ -11,6 +11,7 @@ from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models.integration_api_update import IntegrationApiUpdate
 from conductor.client.http.models.integration_update import IntegrationUpdate
 from conductor.client.http.models.prompt_template import PromptTemplate
+from conductor.client.http.rest import ApiException
 from conductor.client.orkes_clients import OrkesClients
 
 
@@ -32,7 +33,12 @@ class AIOrchestrator:
         return self
 
     def get_prompt_template(self, template_name: str) -> PromptTemplate:
-        return self.prompt_client.get_prompt(template_name)
+        try:
+            return self.prompt_client.get_prompt(template_name)
+        except ApiException as e:
+            if e.code == 404:
+                return None
+            raise e
 
     def associate_prompt_template(self, name: str, ai_integration: str, ai_models: List[str]):
         for ai_model in ai_models:
@@ -49,14 +55,16 @@ class AIOrchestrator:
                                               stop_words)
 
     def add_ai_integration(self, ai_integration_name: str, provider: LLMProvider, models: List[str], description: str,
-                           config: IntegrationConfig):
+                           config: IntegrationConfig, overwrite : bool = False):
         details = IntegrationUpdate()
         details.configuration = config.to_dict()
         details.type = provider.value
         details.category = 'AI_MODEL'
         details.enabled = True
         details.description = description
-        self.integration_client.save_integration(ai_integration_name, details)
+        existing_integration = self.integration_client.get_integration(integration_name=ai_integration_name)
+        if existing_integration is not None:
+            self.integration_client.save_integration(ai_integration_name, details)
         for model in models:
             api_details = IntegrationApiUpdate()
             api_details.enabled = True

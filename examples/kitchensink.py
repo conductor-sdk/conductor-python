@@ -98,15 +98,9 @@ def main():
 
     result = wf.execute(workflow_input={'name': 'Orkes', 'country': 'US'})
     op = result.output
-    print(f'Workflow output: {op}')
+    print(f'\n\nWorkflow output: {op}\n\n')
     task_handler.stop_processes()
 
 
 if __name__ == '__main__':
-    # set the no_proxy env
-    # see this thread for more context
-    # https://stackoverflow.com/questions/55408047/requests-get-not-finishing-doesnt-raise-any-error
-    if platform == "darwin":
-        os.environ['no_proxy'] = '*'
-    set_start_method('fork')
     main()

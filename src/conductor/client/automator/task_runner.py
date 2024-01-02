@@ -11,6 +11,7 @@ from conductor.client.http.api_client import ApiClient
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_exec_log import TaskExecLog
 from conductor.client.http.models.task_result import TaskResult
+from conductor.client.http.rest import AuthorizationException
 from conductor.client.telemetry.metrics_collector import MetricsCollector
 from conductor.client.worker.worker_interface import WorkerInterface
 
@@ -91,6 +92,14 @@ class TaskRunner:
             time_spent = finish_time - start_time
             if self.metrics_collector is not None:
                 self.metrics_collector.record_task_poll_time(task_definition_name, time_spent)
+        except AuthorizationException as auth_exception:
+            if self.metrics_collector is not None:
+                self.metrics_collector.increment_task_poll_error(task_definition_name, type(auth_exception))
+            if auth_exception.invalid_token:
+                logger.fatal(f'failed to poll task {task_definition_name} due to invalid auth token')
+            else:
+                logger.fatal(f'failed to poll task {task_definition_name} error: {auth_exception.status} - {auth_exception.error_code}')
+            return None
         except Exception as e:
             if self.metrics_collector is not None:
                 self.metrics_collector.increment_task_poll_error(task_definition_name, type(e))
