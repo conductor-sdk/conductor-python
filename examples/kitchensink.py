@@ -30,7 +30,7 @@ def start_workers(api_config):
     task_handler = TaskHandler(
         workers=[],
         configuration=api_config,
-        scan_for_annotated_workers=True,
+        scan_for_annotated_workers=True
     )
     task_handler.start_processes()
     return task_handler
