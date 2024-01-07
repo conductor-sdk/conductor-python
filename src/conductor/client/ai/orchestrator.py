@@ -73,7 +73,7 @@ class AIOrchestrator:
             if existing_integration_api is None or overwrite:
                 self.integration_client.save_integration_api(ai_integration_name, model, api_details)
 
-    def add_vector_store(self, name: str, provider: VectorDB, indices: List[str],config: IntegrationConfig,
+    def add_vector_store(self, db_integration_name: str, provider: VectorDB, indices: List[str],config: IntegrationConfig,
                          description: str = None,overwrite : bool = False):
         vector_db = IntegrationUpdate()
         vector_db.configuration = config.to_dict()
@@ -81,18 +81,18 @@ class AIOrchestrator:
         vector_db.category = 'VECTOR_DB'
         vector_db.enabled = True
         if description is None:
-            description = name
+            description = db_integration_name
         vector_db.description = description
-        existing_integration = self.integration_client.get_integration(name, vector_db)
+        existing_integration = self.integration_client.get_integration(db_integration_name)
         if existing_integration is None or overwrite:
-            self.integration_client.save_integration(name, vector_db)
+            self.integration_client.save_integration(db_integration_name, vector_db)
         for index in indices:
             api_details = IntegrationApiUpdate()
             api_details.enabled = True
             api_details.description = description
-            existing_integration_api = self.integration_client.get_integration_api(name, index)
+            existing_integration_api = self.integration_client.get_integration_api(db_integration_name, index)
             if existing_integration_api is None or overwrite:
-                self.integration_client.save_integration_api(name, index, api_details)
+                self.integration_client.save_integration_api(db_integration_name, index, api_details)
         pass
 
     def get_token_used(self, ai_integration: str) -> dict:

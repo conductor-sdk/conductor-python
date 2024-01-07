@@ -6,6 +6,7 @@ from typing import List
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models.prompt_template import PromptTemplate
 from conductor.client.http.models.prompt_test_request import PromptTemplateTestRequest
+from conductor.client.http.rest import ApiException
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
 from conductor.client.prompt_client import PromptClient
@@ -23,7 +24,12 @@ class OrkesPromptClient(OrkesBaseClient, PromptClient):
         self.promptApi.save_message_template(prompt_template, description, prompt_name)
 
     def get_prompt(self, prompt_name: str) -> PromptTemplate:
-        return self.promptApi.get_message_template(prompt_name)
+        try:
+            return self.promptApi.get_message_template(prompt_name)
+        except ApiException as e:
+            if e.is_not_found():
+                return None
+            raise e
 
     def get_prompts(self):
         return self.promptApi.get_message_templates()

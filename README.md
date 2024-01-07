@@ -314,13 +314,13 @@ Execute ECMA compliant Javascript code.  Useful when you need to write a script 
 from conductor.client.workflow.task.javascript_task import JavascriptTask
 
 say_hello_js = """
-    function greetings() {
-        return {
-            "text": "hello " + $.name
-        }
+function greetings() {
+    return {
+        "text": "hello " + $.name
     }
-    greetings();
-    """
+}
+greetings();
+"""
 
 js = JavascriptTask(task_ref_name='hello_script', script=say_hello_js, bindings={'name': '${workflow.input.name}'})
 ```
@@ -331,7 +331,7 @@ js = JavascriptTask(task_ref_name='hello_script', script=say_hello_js, bindings=
   "taskReferenceName": "inline_task_ref",
   "type": "INLINE",
   "inputParameters": {
-    "expression": " function greetings() {\n        return {\n            \"text\": \"hello \" + $.name\n        }\n    }\n    greetings();",
+    "expression": " function greetings() {\n  return {\n            \"text\": \"hello \" + $.name\n        }\n    }\n    greetings();",
     "evaluatorType": "graaljs",
     "name": "${workflow.input.name}"
   }

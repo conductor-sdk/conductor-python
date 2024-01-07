@@ -27,6 +27,9 @@ class Configuration:
             self.host = 'http://localhost:8080/api'
 
         self.temp_folder_path = None
+        self.__ui_host = os.getenv('CONDUCTOR_UI_SERVER_URL')
+        if self.__ui_host is None:
+            self.__ui_host = self.host
 
         if authentication_settings is not None:
             self.authentication_settings = authentication_settings
@@ -122,6 +125,17 @@ class Configuration:
         :type: str
         """
         return self.__log_level
+
+    @property
+    def ui_host(self):
+        """
+
+        The log_level will be updated when sets logger_format.
+
+        :param value: The format string.
+        :type: str
+        """
+        return self.__ui_host
 
     def apply_logging_config(self, log_format : str = None, level = None):
         if log_format is None:
