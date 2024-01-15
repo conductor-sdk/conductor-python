@@ -49,7 +49,6 @@ def main():
     metadata_client = clients.get_metadata_client()
     task_handler = start_workers(api_config=api_config)
 
-
     # register our two tasks
     metadata_client.register_task_def(task_def=TaskDef(name='get_weather'))
     metadata_client.register_task_def(task_def=TaskDef(name='get_price_from_amazon'))

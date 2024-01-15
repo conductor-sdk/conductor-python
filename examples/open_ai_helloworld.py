@@ -1,7 +1,4 @@
 import os
-import time
-from multiprocessing import set_start_method, get_context
-from sys import platform
 
 from conductor.client.ai.configuration import LLMProvider
 from conductor.client.ai.integrations import OpenAIConfig
@@ -10,9 +7,7 @@ from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.worker.worker_task import worker_task
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
-from conductor.client.workflow.task.llm_tasks.llm_chat_complete import LlmChatComplete
 from conductor.client.workflow.task.llm_tasks.llm_text_complete import LlmTextComplete
-from conductor.client.workflow.task.llm_tasks.utils.prompt import Prompt
 
 
 @worker_task(task_definition_name='get_friends_name')
@@ -47,9 +42,9 @@ def main():
     orchestrator = AIOrchestrator(api_configuration=api_config)
 
     orchestrator.add_ai_integration(ai_integration_name=llm_provider, provider=LLMProvider.OPEN_AI,
-                              models=[text_complete_model, embedding_complete_model],
-                              description='openai config',
-                              config=open_ai_config)
+                                    models=[text_complete_model, embedding_complete_model],
+                                    description='openai config',
+                                    config=open_ai_config)
 
     # Define and associate prompt with the ai integration
     prompt_name = 'say_hi_to_friend'
@@ -60,7 +55,7 @@ def main():
 
     # Test the prompt
     result = orchestrator.test_prompt_template('give an evening greeting to ${friend_name}. go: ',
-                                         {'friend_name': 'Orkes'}, llm_provider, text_complete_model)
+                                               {'friend_name': 'Orkes'}, llm_provider, text_complete_model)
 
     print(f'test prompt: {result}')
 

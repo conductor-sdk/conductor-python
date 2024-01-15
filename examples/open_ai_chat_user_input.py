@@ -12,7 +12,6 @@ from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.task.do_while_task import LoopTask
 from conductor.client.workflow.task.javascript_task import JavascriptTask
 from conductor.client.workflow.task.llm_tasks.llm_chat_complete import LlmChatComplete
-from conductor.client.workflow.task.llm_tasks.llm_text_complete import LlmTextComplete
 from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
 from conductor.client.workflow.task.wait_task import WaitTask
 from workers.chat_workers import collect_history
@@ -53,7 +52,6 @@ def main():
     # The following needs to be done only one time
     orchestrator = AIOrchestrator(api_configuration=api_config)
     orchestrator.add_prompt_template(prompt_name, prompt_text, 'chat instructions')
-
 
     # associate the prompts
     orchestrator.associate_prompt_template(prompt_name, llm_provider, [chat_complete_model])

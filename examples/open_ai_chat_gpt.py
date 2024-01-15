@@ -13,7 +13,6 @@ from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.task.do_while_task import LoopTask
 from conductor.client.workflow.task.javascript_task import JavascriptTask
 from conductor.client.workflow.task.llm_tasks.llm_chat_complete import LlmChatComplete
-from conductor.client.workflow.task.llm_tasks.llm_text_complete import LlmTextComplete
 from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
 from workers.chat_workers import collect_history
 

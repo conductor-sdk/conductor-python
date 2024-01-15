@@ -1,5 +1,3 @@
-from multiprocessing import set_start_method
-
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models import WorkflowRun
@@ -29,7 +27,7 @@ def main():
         workers=[],
         configuration=api_config,
         scan_for_annotated_workers=True,
-        import_modules=['greetings']    # import workers from this module
+        import_modules=['greetings']  # import workers from this module
     )
     task_handler.start_processes()
 

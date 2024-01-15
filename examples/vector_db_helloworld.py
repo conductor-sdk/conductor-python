@@ -1,9 +1,6 @@
 import os
-import time
-from multiprocessing import set_start_method, get_context
-from sys import platform
 
-from conductor.client.ai.configuration import LLMProvider, VectorDB
+from conductor.client.ai.configuration import VectorDB
 from conductor.client.ai.integrations import OpenAIConfig, PineconeConfig
 from conductor.client.ai.orchestrator import AIOrchestrator
 from conductor.client.automator.task_handler import TaskHandler
@@ -19,7 +16,6 @@ from conductor.client.workflow.task.llm_tasks.llm_query_embeddings import LlmQue
 from conductor.client.workflow.task.llm_tasks.llm_search_index import LlmSearchIndex
 from conductor.client.workflow.task.llm_tasks.llm_text_complete import LlmTextComplete
 from conductor.client.workflow.task.llm_tasks.utils.embedding_model import EmbeddingModel
-from conductor.client.workflow.task.llm_tasks.utils.prompt import Prompt
 
 
 @worker_task(task_definition_name='get_friends_name')
@@ -100,16 +96,17 @@ def main():
 
     question = 'what is the first amendment to the constitution?'
     search_index = LlmSearchIndex(task_ref_name='search_vectordb', vector_db=vector_db, index='test',
-                                  embedding_model=embedding_model, embedding_model_provider = llm_provider,
+                                  embedding_model=embedding_model, embedding_model_provider=llm_provider,
                                   namespace='us_constitution', query=question, max_results=2)
 
-    text_complete = LlmTextComplete(task_ref_name='us_constitution_qna', llm_provider=llm_provider, model=text_complete_model,
+    text_complete = LlmTextComplete(task_ref_name='us_constitution_qna', llm_provider=llm_provider,
+                                    model=text_complete_model,
                                     prompt_name=prompt_name)
 
     chat_complete = LlmChatComplete(task_ref_name='chat_complete_ref',
                                     llm_provider=llm_provider, model=chat_complete_model,
                                     instructions_template=prompt_name,
-                                    messages= [ChatMessage(
+                                    messages=[ChatMessage(
                                         role="user", message=question
                                     )])
 

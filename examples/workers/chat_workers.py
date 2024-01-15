@@ -5,7 +5,8 @@ from conductor.client.workflow.task.llm_tasks.llm_chat_complete import ChatMessa
 
 
 @worker_task(task_definition_name='prep', poll_interval_millis=2000)
-def collect_history(user_input: str, seed_question: str, assistant_response: str, history: list[ChatMessage]) -> List[ChatMessage]:
+def collect_history(user_input: str, seed_question: str, assistant_response: str, history: list[ChatMessage]) -> List[
+    ChatMessage]:
     all_history = []
 
     if history is not None:
@@ -20,6 +21,3 @@ def collect_history(user_input: str, seed_question: str, assistant_response: str
         all_history.append(ChatMessage(message=seed_question, role='user'))
 
     return all_history
-
-
-
