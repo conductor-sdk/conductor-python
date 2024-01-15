@@ -66,6 +66,4 @@ if __name__ == "__main__":
     if sys.platform == "darwin":
         os.environ['no_proxy'] = '*'
 
-    # multiprocessing
-    set_start_method("fork")
     main()

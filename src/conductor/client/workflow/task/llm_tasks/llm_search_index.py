@@ -5,8 +5,11 @@ from conductor.client.workflow.task.task_type import TaskType
 
 
 class LlmSearchIndex(TaskInterface):
-    def __init__(self, task_name: str, task_ref_name: str, vector_db: str, namespace: str, index: str,
-                 llm_provider: str, model: str, prompt_name: str, query: str) -> Self:
+    def __init__(self, task_ref_name: str, vector_db: str, namespace: str, index: str,
+                 embedding_model_provider: str, embedding_model: str, query: str, task_name: str = None, max_results : int = 1) -> Self:
+        if task_name is None:
+            task_name = 'llm_search_index'
+
         super().__init__(
             task_name=task_name,
             task_reference_name=task_ref_name,
@@ -15,9 +18,9 @@ class LlmSearchIndex(TaskInterface):
                 "vectorDB": vector_db,
                 "namespace": namespace,
                 "index": index,
-                "llmProvider": llm_provider,
-                "model": model,
-                "promptName": prompt_name,
-                "query": query
+                "embeddingModelProvider": embedding_model_provider,
+                "embeddingModel": embedding_model,
+                "query": query,
+                "maxResults": max_results
             }
         )

@@ -32,8 +32,9 @@ def main():
     sendmail = send_email(task_ref_name='send_email_ref', email=get_email.output('result'), subject='Hello from Orkes',
                           body='Test Email')
     workflow >> get_email >> sendmail
+
     result = workflow.execute(workflow_input={'userid': 'user_a'})
-    print(f'workflow completed with status {result.status}')
+    print(f'\nworkflow completed with status {result.status}\n')
     task_handler.stop_processes()
 
 
