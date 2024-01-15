@@ -36,7 +36,9 @@ ENV SECRET=${SECRET}
 ENV CONDUCTOR_SERVER_URL=${CONDUCTOR_SERVER_URL}
 RUN python3 ./tests/integration/main.py
 
-FROM python_base as publish
+FROM python_test_base as publish
+WORKDIR /package
+RUN ls -ltr
 RUN python3 -m pip install setuptools wheel build twine
 ARG CONDUCTOR_PYTHON_VERSION
 ENV CONDUCTOR_PYTHON_VERSION=${CONDUCTOR_PYTHON_VERSION}
