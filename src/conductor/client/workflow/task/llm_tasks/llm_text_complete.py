@@ -2,7 +2,6 @@ from typing import Optional, List
 
 from typing_extensions import Self
 
-from conductor.client.workflow.task.llm_tasks.utils.prompt import Prompt
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.task_type import TaskType
 
@@ -39,14 +38,12 @@ class LlmTextComplete(TaskInterface):
             task_type=TaskType.LLM_TEXT_COMPLETE,
             input_parameters=input_params
         )
+        self.input_parameters['promptVariables'] = {}
 
-    def prompt_variables(self, variables : dict[str, object]) -> Self:
-        self.input_parameters['promptVariables'] = variables
+    def prompt_variables(self, variables: dict[str, object]) -> Self:
+        self.input_parameters['promptVariables'].update(variables)
         return self
 
-    def prompt_variable(self, variable : str, value : object) -> Self:
-        self.input_parameters['promptVariables'] = {variable : value}
+    def prompt_variable(self, variable: str, value: object) -> Self:
+        self.input_parameters['promptVariables'][variable] = value
         return self
-
-
-

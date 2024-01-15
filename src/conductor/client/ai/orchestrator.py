@@ -63,28 +63,36 @@ class AIOrchestrator:
         details.enabled = True
         details.description = description
         existing_integration = self.integration_client.get_integration(integration_name=ai_integration_name)
-        if existing_integration is not None:
+        if existing_integration is None or overwrite:
             self.integration_client.save_integration(ai_integration_name, details)
         for model in models:
             api_details = IntegrationApiUpdate()
             api_details.enabled = True
             api_details.description = description
-            self.integration_client.save_integration_api(ai_integration_name, model, api_details)
+            existing_integration_api = self.integration_client.get_integration_api(ai_integration_name, model)
+            if existing_integration_api is None or overwrite:
+                self.integration_client.save_integration_api(ai_integration_name, model, api_details)
 
-    def add_vector_store(self, name: str, provider: VectorDB, indices: List[str], description: str,
-                         config: IntegrationConfig):
+    def add_vector_store(self, db_integration_name: str, provider: VectorDB, indices: List[str],config: IntegrationConfig,
+                         description: str = None,overwrite : bool = False):
         vector_db = IntegrationUpdate()
         vector_db.configuration = config.to_dict()
         vector_db.type = provider.value
         vector_db.category = 'VECTOR_DB'
         vector_db.enabled = True
+        if description is None:
+            description = db_integration_name
         vector_db.description = description
-        self.integration_client.save_integration(name, vector_db)
+        existing_integration = self.integration_client.get_integration(db_integration_name)
+        if existing_integration is None or overwrite:
+            self.integration_client.save_integration(db_integration_name, vector_db)
         for index in indices:
             api_details = IntegrationApiUpdate()
             api_details.enabled = True
             api_details.description = description
-            self.integration_client.save_integration_api(name, index, api_details)
+            existing_integration_api = self.integration_client.get_integration_api(db_integration_name, index)
+            if existing_integration_api is None or overwrite:
+                self.integration_client.save_integration_api(db_integration_name, index, api_details)
         pass
 
     def get_token_used(self, ai_integration: str) -> dict:

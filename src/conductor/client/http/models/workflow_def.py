@@ -1,10 +1,12 @@
 import json
 import pprint
 import re  # noqa: F401
+from typing import List
 
 import six
 
 from conductor.client.helpers.helper import ObjectMapper
+from conductor.client.http.models import WorkflowTask
 
 object_mapper = ObjectMapper()
 
@@ -77,7 +79,7 @@ class WorkflowDef(object):
         self._name = None
         self._description = None
         self._version = None
-        self._tasks = None
+        self._tasks = []
         self._input_parameters = None
         self._output_parameters = None
         self._failure_workflow = None
@@ -303,10 +305,12 @@ class WorkflowDef(object):
         :return: The tasks of this WorkflowDef.  # noqa: E501
         :rtype: list[WorkflowTask]
         """
+        if self._tasks is None:
+            self._tasks = []
         return self._tasks
 
     @tasks.setter
-    def tasks(self, tasks):
+    def tasks(self, tasks: List[WorkflowTask]):
         """Sets the tasks of this WorkflowDef.
 
 
@@ -596,6 +600,10 @@ class WorkflowDef(object):
     def __ne__(self, other):
         """Returns true if both objects are not equal"""
         return not self == other
+
+    def toJSON(self):
+        return object_mapper.to_json(obj=self)
+
 
 
 def to_workflow_def(data: str) -> WorkflowDef:

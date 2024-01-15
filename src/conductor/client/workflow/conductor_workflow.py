@@ -318,7 +318,7 @@ class ConductorWorkflow:
         else:
             return '${' + f'workflow.input.{json_path}' + '}'
 
-    def output(self, json_path: str) -> str:
+    def output(self, json_path: str = None) -> str:
         if json_path is None:
             return '${' + f'workflow.output' + '}'
         else:

@@ -1,10 +1,5 @@
-import os
-from multiprocessing import set_start_method
-from sys import platform
-
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
 from conductor.client.orkes_clients import OrkesClients
 from conductor.client.worker.worker_task import worker_task
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
@@ -16,10 +11,6 @@ from conductor.client.workflow.task.switch_task import SwitchTask
 from conductor.client.workflow.task.terminate_task import TerminateTask, WorkflowStatus
 from conductor.client.workflow.task.wait_task import WaitTask
 
-key = os.getenv("KEY")
-secret = os.getenv("SECRET")
-url = os.getenv("CONDUCTOR_SERVER_URL")
-
 
 @worker_task(task_definition_name='route')
 def route(country: str) -> str:
@@ -30,15 +21,14 @@ def start_workers(api_config):
     task_handler = TaskHandler(
         workers=[],
         configuration=api_config,
-        scan_for_annotated_workers=True,
+        scan_for_annotated_workers=True
     )
     task_handler.start_processes()
     return task_handler
 
 
 def main():
-    api_config = Configuration(authentication_settings=AuthenticationSettings(key_id=key, key_secret=secret),
-                               server_api_url=url)
+    api_config = Configuration()
 
     clients = OrkesClients(configuration=api_config)
     workflow_executor = clients.get_workflow_executor()
@@ -99,6 +89,7 @@ def main():
     result = wf.execute(workflow_input={'name': 'Orkes', 'country': 'US'})
     op = result.output
     print(f'\n\nWorkflow output: {op}\n\n')
+    print(f'See the execution at {api_config.ui_host}/execution/{result.workflow_id}')
     task_handler.stop_processes()
 
 

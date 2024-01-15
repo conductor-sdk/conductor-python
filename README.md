@@ -23,11 +23,12 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
   - [Step 2: Write Worker](#step-2-write-worker)
   - [Step 3: Write _your_ application](#step-3-write-_your_-application)
 - [Implementing Workers](#implementing-workers)
+  - [Design Principles for Workers](#design-principles-for-workers)
 - [System Tasks](#system-tasks)
   - [Wait Task](#wait-task)
   - [HTTP Task](#http-task)
   - [Javascript Executor Task](#javascript-executor-task)
-  - [JQ Processing](#jq-processing)
+  - [Json Processing using JQ](#json-processing-using-jq)
 - [Executing Workflows](#executing-workflows)
   - [Execute workflow asynchronously](#execute-workflow-asynchronously)
   - [Execute workflow synchronously](#execute-workflow-synchronously)
@@ -237,6 +238,15 @@ def process_order(order_info: OrderInfo) -> str:
     return f'order: {order_info.order_id}'
 
 ```
+
+### Design Principles for Workers
+Each worker embodies design pattern and follows certain basic principles:
+
+1. Workers are stateless and do not implement a workflow specific logic.
+2. Each worker executes a very specific task and produces well-defined output given specific inputs.
+3. Workers are meant to be idempotent (or should handle cases where the task that partially executed gets rescheduled due to timeouts etc.)
+4. Workers do not implement the logic to handle retries etc, that is taken care by the Conductor server.
+
 ## System Tasks
 System tasks are the pre-built workers that are available in every Conductor server.
 
@@ -297,8 +307,63 @@ HttpTask(task_ref_name='call_remote_api', http_input={
 ```
 
 ### Javascript Executor Task
+Execute ECMA compliant Javascript code.  Useful when you need to write a script to do data mapping, calculations etc.
 
-### JQ Processing
+
+```python
+from conductor.client.workflow.task.javascript_task import JavascriptTask
+
+say_hello_js = """
+function greetings() {
+    return {
+        "text": "hello " + $.name
+    }
+}
+greetings();
+"""
+
+js = JavascriptTask(task_ref_name='hello_script', script=say_hello_js, bindings={'name': '${workflow.input.name}'})
+```
+
+```json
+{
+  "name": "inline_task",
+  "taskReferenceName": "inline_task_ref",
+  "type": "INLINE",
+  "inputParameters": {
+    "expression": " function greetings() {\n  return {\n            \"text\": \"hello \" + $.name\n        }\n    }\n    greetings();",
+    "evaluatorType": "graaljs",
+    "name": "${workflow.input.name}"
+  }
+}
+```
+
+### Json Processing using JQ
+[jq](https://jqlang.github.io/jq/) is like sed for JSON data - you can use it to slice and filter and map and transform 
+structured data with the same ease that sed, awk, grep and friends let you play with text.
+
+```python
+from conductor.client.workflow.task.json_jq_task import JsonJQTask
+
+jq_script = """
+{ key3: (.key1.value1 + .key2.value2) }
+"""
+
+jq = JsonJQTask(task_ref_name='jq_process', script=jq_script)
+```
+
+```json
+{
+  "name": "json_transform_task",
+  "taskReferenceName": "json_transform_task_ref",
+  "type": "JSON_JQ_TRANSFORM",
+  "inputParameters": {
+    "key1": "k1",        
+    "key2": "k2",
+    "queryExpression": "{ key3: (.key1.value1 + .key2.value2) }",
+  }
+}
+```
 
 ## Executing Workflows
 [WorkflowClient](src/conductor/client/workflow_client.py) interface provides all the APIs required to work with workflow executions.

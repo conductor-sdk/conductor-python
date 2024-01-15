@@ -8,6 +8,7 @@ from conductor.client.http.models.integration_api import IntegrationApi
 from conductor.client.http.models.integration_api_update import IntegrationApiUpdate
 from conductor.client.http.models.integration_update import IntegrationUpdate
 from conductor.client.http.models.prompt_template import PromptTemplate
+from conductor.client.http.rest import ApiException
 from conductor.client.integration_client import IntegrationClient
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
 
@@ -27,13 +28,23 @@ class OrkesIntegrationClient(OrkesBaseClient, IntegrationClient):
         self.integrationApi.delete_integration_provider(integration_name)
 
     def get_integration_api(self, api_name: str, integration_name: str) -> IntegrationApi:
-        return self.integrationApi.get_integration_api(api_name, integration_name)
+        try:
+            return self.integrationApi.get_integration_api(api_name, integration_name)
+        except ApiException as e:
+            if e.is_not_found():
+                return None
+            raise e
 
     def get_integration_apis(self, integration_name: str) -> List[IntegrationApi]:
         return self.integrationApi.get_integration_apis(integration_name)
 
     def get_integration(self, integration_name: str) -> Integration:
-        return self.integrationApi.get_integration_provider(integration_name)
+        try:
+            return self.integrationApi.get_integration_provider(integration_name)
+        except ApiException as e:
+            if e.is_not_found():
+                return None
+            raise e
 
     def get_integrations(self) -> List[Integration]:
         return self.integrationApi.get_integration_providers()

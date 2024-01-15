@@ -218,6 +218,8 @@ class ApiException(Exception):
 
         return error_message
 
+    def is_not_found(self) -> bool:
+        return self.code == 404
 
 class AuthorizationException(ApiException):
     def __init__(self, status=None, reason=None, http_resp=None, body=None):

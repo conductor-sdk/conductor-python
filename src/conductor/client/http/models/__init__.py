@@ -51,3 +51,4 @@ from conductor.client.http.models.workflow_summary import WorkflowSummary
 from conductor.client.http.models.workflow_tag import WorkflowTag
 from conductor.client.http.models.integration import Integration
 from conductor.client.http.models.integration_api import IntegrationApi
+from conductor.client.http.models.state_change_event import StateChangeEvent, StateChangeConfig, StateChangeEventType

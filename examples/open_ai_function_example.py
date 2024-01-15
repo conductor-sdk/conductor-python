@@ -4,6 +4,7 @@ import time
 from conductor.client.ai.orchestrator import AIOrchestrator
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
+from conductor.client.http.models import TaskDef
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.orkes_clients import OrkesClients
 from conductor.client.worker.worker_task import worker_task
@@ -13,7 +14,7 @@ from conductor.client.workflow.task.dynamic_task import DynamicTask
 from conductor.client.workflow.task.llm_tasks.llm_chat_complete import LlmChatComplete
 from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
 from conductor.client.workflow.task.wait_task import WaitTask
-from examples.workers.chat_workers import collect_history
+from workers.chat_workers import collect_history
 
 
 def start_workers(api_config):
@@ -45,9 +46,14 @@ def main():
     workflow_executor = clients.get_workflow_executor()
     workflow_client = clients.get_workflow_client()
     task_client = clients.get_task_client()
+    metadata_client = clients.get_metadata_client()
     task_handler = start_workers(api_config=api_config)
 
-    # Define and associate prompt with the ai integration
+    # register our two tasks
+    metadata_client.register_task_def(task_def=TaskDef(name='get_weather'))
+    metadata_client.register_task_def(task_def=TaskDef(name='get_price_from_amazon'))
+
+    # Define and associate prompt with the AI integration
     prompt_name = 'chat_function_instructions'
     prompt_text = """
     You are a helpful assistant that can answer questions using tools provided.  
@@ -64,11 +70,11 @@ def main():
     }
     """
 
-    kernel = AIOrchestrator(api_configuration=api_config)
-    kernel.add_prompt_template(prompt_name, prompt_text, 'chat instructions')
+    orchestrator = AIOrchestrator(api_configuration=api_config)
+    orchestrator.add_prompt_template(prompt_name, prompt_text, 'chat instructions')
 
     # associate the prompts
-    kernel.associate_prompt_template(prompt_name, llm_provider, [chat_complete_model])
+    orchestrator.associate_prompt_template(prompt_name, llm_provider, [chat_complete_model])
 
     wf = ConductorWorkflow(name='my_function_chatbot', version=1, executor=workflow_executor)
 
@@ -97,11 +103,21 @@ def main():
 
     # let's make sure we don't run it for more than 2 minutes -- avoid runaway loops
     wf.timeout_seconds(120).timeout_policy(timeout_policy=TimeoutPolicy.TIME_OUT_WORKFLOW)
-
-    workflow_run = wf.execute(wait_until_task_ref=user_input.task_reference_name, wait_for_seconds=10)
+    message = """
+    AI Function call example.  
+    This chatbot is programmed to handle two types of queries:
+    1. Get the weather for a location
+    2. Get the price of an item 
+    """
+    print(message)
+    workflow_run = wf.execute(wait_until_task_ref=user_input.task_reference_name, wait_for_seconds=1)
     workflow_id = workflow_run.workflow_id
     while workflow_run.is_running():
         if workflow_run.current_task.workflow_task.task_reference_name == user_input.task_reference_name:
+            function_call_task = workflow_run.get_task(task_reference_name=function_call.task_reference_name)
+            if function_call_task is not None:
+                assistant = function_call_task.output_data['result']
+                print(f'assistant: {assistant}')
             if workflow_run.current_task.workflow_task.task_reference_name == user_input.task_reference_name:
                 question = input('Question: >> ')
                 task_client.update_task_sync(workflow_id=workflow_id, task_ref_name=user_input.task_reference_name,

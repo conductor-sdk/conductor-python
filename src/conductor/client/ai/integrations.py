@@ -55,13 +55,31 @@ class AzureOpenAIConfig(IntegrationConfig):
 
 class PineconeConfig(IntegrationConfig):
 
-    def __init__(self, api_key: str, endpoint: str, classname: str) -> None:
-        self.api_key = api_key
-        self.endpoint = endpoint
-        self.classname = classname
+    def __init__(self, api_key: str = None, endpoint: str = None, environment: str = None, project_name: str = None) -> None:
+        if api_key is None:
+            self.api_key = os.getenv('PINECONE_API_KEY')
+        else:
+            self.api_key = api_key
+
+        if endpoint is None:
+            self.endpoint = os.getenv('PINECONE_ENDPOINT')
+        else:
+            self.endpoint = endpoint
+
+        if environment is None:
+            self.environment = os.getenv('PINECONE_ENV')
+        else:
+            self.environment = environment
+
+        if project_name is None:
+            self.project_name = os.getenv('PINECONE_PROJECT')
+        else:
+            self.project_name = project_name
 
     def to_dict(self) -> dict:
         return {
             'api_key': self.api_key,
-            'endpoint': self.endpoint
+            'endpoint': self.endpoint,
+            'projectName': self.project_name,
+            'environment': self.environment
         }

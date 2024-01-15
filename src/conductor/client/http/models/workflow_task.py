@@ -1,7 +1,10 @@
 import pprint
 import re  # noqa: F401
+from typing import List, Union, Self
 
 import six
+
+from conductor.client.http.models.state_change_event import StateChangeConfig, StateChangeEventType, StateChangeEvent
 
 
 class WorkflowTask(object):
@@ -46,7 +49,8 @@ class WorkflowTask(object):
         'retry_count': 'int',
         'evaluator_type': 'str',
         'expression': 'str',
-        'workflow_task_type': 'str'
+        'workflow_task_type': 'str',
+        'on_state_change': 'dict(str, StateChangeConfig)'
     }
 
     attribute_map = {
@@ -79,7 +83,8 @@ class WorkflowTask(object):
         'retry_count': 'retryCount',
         'evaluator_type': 'evaluatorType',
         'expression': 'expression',
-        'workflow_task_type': 'workflowTaskType'
+        'workflow_task_type': 'workflowTaskType',
+        'on_state_change': 'onStateChange'
     }
 
     def __init__(self, name=None, task_reference_name=None, description=None, input_parameters=None, type=None,
@@ -89,7 +94,7 @@ class WorkflowTask(object):
                  sub_workflow_param=None, join_on=None, sink=None, optional=None, task_definition=None,
                  rate_limited=None, default_exclusive_join_task=None, async_complete=None, loop_condition=None,
                  loop_over=None, retry_count=None, evaluator_type=None, expression=None,
-                 workflow_task_type=None):  # noqa: E501
+                 workflow_task_type=None, on_state_change: dict[str, StateChangeConfig] = None):  # noqa: E501
         """WorkflowTask - a model defined in Swagger"""  # noqa: E501
         self._name = None
         self._task_reference_name = None
@@ -122,6 +127,7 @@ class WorkflowTask(object):
         self._expression = None
         self._workflow_task_type = None
         self.discriminator = None
+        self._on_state_change = None
         self.name = name
         self.task_reference_name = task_reference_name
         if description is not None:
@@ -180,6 +186,8 @@ class WorkflowTask(object):
             self.expression = expression
         if workflow_task_type is not None:
             self.workflow_task_type = workflow_task_type
+        if on_state_change is not None:
+            self._on_state_change = on_state_change
 
     @property
     def name(self):
@@ -806,17 +814,17 @@ class WorkflowTask(object):
         :param workflow_task_type: The workflow_task_type of this WorkflowTask.  # noqa: E501
         :type: str
         """
-        allowed_values = ["SIMPLE", "DYNAMIC", "FORK_JOIN", "FORK_JOIN_DYNAMIC", "DECISION", "SWITCH", "JOIN",
-                          "DO_WHILE", "SUB_WORKFLOW", "START_WORKFLOW", "EVENT", "WAIT", "HUMAN", "USER_DEFINED",
-                          "HTTP", "LAMBDA", "INLINE", "EXCLUSIVE_JOIN", "TERMINATE", "KAFKA_PUBLISH",
-                          "JSON_JQ_TRANSFORM", "SET_VARIABLE"]  # noqa: E501
-        if workflow_task_type not in allowed_values:
-            raise ValueError(
-                "Invalid value for `workflow_task_type` ({0}), must be one of {1}"  # noqa: E501
-                .format(workflow_task_type, allowed_values)
-            )
-
         self._workflow_task_type = workflow_task_type
+
+    @property
+    def on_state_change(self) -> dict[str, List[StateChangeEvent]]:
+        return self._on_state_change
+
+    @on_state_change.setter
+    def on_state_change(self, state_change: StateChangeConfig):
+        self._on_state_change = {
+            state_change.type : state_change.events
+        }
 
     def to_dict(self):
         """Returns the model properties as a dict"""
