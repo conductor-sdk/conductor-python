@@ -127,6 +127,7 @@ class WorkflowTask(object):
         self._expression = None
         self._workflow_task_type = None
         self.discriminator = None
+        self._on_state_change = None
         self.name = name
         self.task_reference_name = task_reference_name
         if description is not None:
