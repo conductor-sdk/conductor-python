@@ -7,6 +7,7 @@ from conductor.client.http.models.correlation_ids_search_request import Correlat
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.http.models.workflow import Workflow
+from conductor.client.http.models.workflow_state_update import WorkflowStateUpdate
 from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
 
 
@@ -37,7 +38,7 @@ class WorkflowClient(ABC):
     def execute_workflow(
             self,
             start_workflow_request: StartWorkflowRequest,
-            request_id: str,
+            request_id: str = None,
             wait_until_task_ref: Optional[str] = None,
             wait_for_seconds: int = 30
     ) -> WorkflowRun:
@@ -100,4 +101,9 @@ class WorkflowClient(ABC):
 
     @abstractmethod
     def update_variables(self, workflow_id: str, variables: dict[str, object] = {}) -> None:
+        pass
+
+    @abstractmethod
+    def update_state(self, workflow_id: str, update_requesst: WorkflowStateUpdate,
+                     wait_until_task_ref_names: List[str] = None, wait_for_seconds : int = None) -> WorkflowRun:
         pass

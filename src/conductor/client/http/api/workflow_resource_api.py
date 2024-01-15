@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import re  # noqa: F401
+import uuid
 
 # python 2 and python 3 compatibility library
 import six
@@ -197,6 +198,8 @@ class WorkflowResourceApi(object):
             collection_formats=collection_formats)
 
     def execute_workflow(self, body, request_id, name, version, **kwargs):  # noqa: E501
+        if request_id is None:
+            request_id = str(uuid.uuid4())
         """Execute a workflow synchronously  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -2919,6 +2922,130 @@ class WorkflowResourceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type=None,  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def update_workflow_and_task_state(self, update_requesst, workflow_id, **kwargs):  # noqa: E501
+        request_id = str(uuid.uuid4())
+        """Update a workflow state by updating variables or in progress task  # noqa: E501
+
+        Updates the workflow variables, tasks and triggers evaluation.  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.update_workflow_and_task_state(update_requesst, request_id, workflow_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param WorkflowStateUpdate body: (required)
+        :param str request_id: (required)
+        :param str workflow_id: (required)
+        :param str wait_until_task_ref:
+        :param int wait_for_seconds:
+        :return: WorkflowRun
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.update_workflow_and_task_state_with_http_info(update_requesst, request_id, workflow_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.update_workflow_and_task_state_with_http_info(update_requesst, request_id, workflow_id, **kwargs)  # noqa: E501
+            return data
+
+    def update_workflow_and_task_state_with_http_info(self, body, request_id, workflow_id, **kwargs):  # noqa: E501
+        """Update a workflow state by updating variables or in progress task  # noqa: E501
+
+        Updates the workflow variables, tasks and triggers evaluation.  # noqa: E501
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.update_workflow_and_task_state_with_http_info(body, request_id, workflow_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param WorkflowStateUpdate body: (required)
+        :param str request_id: (required)
+        :param str workflow_id: (required)
+        :param str wait_until_task_ref:
+        :param int wait_for_seconds:
+        :return: WorkflowRun
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'request_id', 'workflow_id', 'wait_until_task_ref', 'wait_for_seconds']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method update_workflow_and_task_state" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `update_workflow_and_task_state`")  # noqa: E501
+        # verify the required parameter 'request_id' is set
+        if ('request_id' not in params or
+                params['request_id'] is None):
+            raise ValueError("Missing the required parameter `request_id` when calling `update_workflow_and_task_state`")  # noqa: E501
+        # verify the required parameter 'workflow_id' is set
+        if ('workflow_id' not in params or
+                params['workflow_id'] is None):
+            raise ValueError("Missing the required parameter `workflow_id` when calling `update_workflow_and_task_state`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'workflow_id' in params:
+            path_params['workflowId'] = params['workflow_id']  # noqa: E501
+
+        query_params = []
+        if 'request_id' in params:
+            query_params.append(('requestId', params['request_id']))  # noqa: E501
+        if 'wait_until_task_ref' in params:
+            query_params.append(('waitUntilTaskRef', params['wait_until_task_ref']))  # noqa: E501
+        if 'wait_for_seconds' in params:
+            query_params.append(('waitForSeconds', params['wait_for_seconds']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['*/*'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = ['api_key']  # noqa: E501
+
+        return self.api_client.call_api(
+            '/workflow/{workflowId}/state', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='WorkflowRun',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

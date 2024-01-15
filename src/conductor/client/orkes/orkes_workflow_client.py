@@ -8,6 +8,7 @@ from conductor.client.http.models.rerun_workflow_request import RerunWorkflowReq
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.workflow_run import WorkflowRun
+from conductor.client.http.models.workflow_state_update import WorkflowStateUpdate
 from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
 from conductor.client.orkes.orkes_base_client import OrkesBaseClient
 from conductor.client.workflow_client import WorkflowClient
@@ -44,7 +45,7 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
     def execute_workflow(
             self,
             start_workflow_request: StartWorkflowRequest,
-            request_id: str,
+            request_id: str = None,
             wait_until_task_ref: Optional[str] = None,
             wait_for_seconds: int = 30
     ) -> WorkflowRun:
@@ -168,3 +169,13 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
 
     def update_variables(self, workflow_id: str, variables: dict[str, object] = {}) -> None:
         self.workflowResourceApi.update_workflow_state(variables, workflow_id)
+
+    def update_state(self, workflow_id: str, update_requesst: WorkflowStateUpdate,
+                     wait_until_task_ref_names: List[str] = None, wait_for_seconds: int = None) -> WorkflowRun:
+        kwargs = {}
+        if wait_until_task_ref_names is not None:
+            kwargs['wait_until_task_ref'] = ','.join(wait_until_task_ref_names)
+        if wait_for_seconds is not None:
+            kwargs['wait_for_seconds'] = wait_for_seconds
+
+        return self.workflowResourceApi.update_workflow_and_task_state(update_requesst=update_requesst, workflow_id=workflow_id, **kwargs)
