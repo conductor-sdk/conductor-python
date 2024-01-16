@@ -59,7 +59,10 @@ virtualenv conductor
 source conductor/bin/activate
 ```
 
-Get Conductor Python SDK
+### Get Conductor Python SDK
+
+SDK needs Python 3.9+.
+
 ```shell
 python3 -m pip install conductor-python
 ```
