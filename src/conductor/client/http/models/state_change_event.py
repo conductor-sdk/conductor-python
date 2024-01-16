@@ -1,5 +1,6 @@
 from enum import Enum
-from typing import Self, Union, List
+from typing import Union, List
+from typing_extensions import Self
 
 
 class StateChangeEventType(Enum):

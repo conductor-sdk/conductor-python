@@ -1,6 +1,6 @@
 import pprint
 import re  # noqa: F401
-from typing import List, Union, Self
+from typing import List
 
 import six
 
