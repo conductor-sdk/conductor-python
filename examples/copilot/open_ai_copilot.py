@@ -1,3 +1,4 @@
+import json
 import os
 import random
 import string
@@ -9,8 +10,9 @@ from conductor.client.ai.integrations import OpenAIConfig
 from conductor.client.ai.orchestrator import AIOrchestrator
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.models import TaskDef
+from conductor.client.http.models import TaskDef, TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
+from conductor.client.http.models.workflow_state_update import WorkflowStateUpdate
 from conductor.client.orkes_clients import OrkesClients
 from conductor.client.worker.worker_task import worker_task
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
@@ -39,16 +41,24 @@ def start_workers(api_config):
 
 @worker_task(task_definition_name='get_customer_list')
 def get_customer_list() -> List[Customer]:
-    return [
-        Customer(id=1, name='American Airlines', annual_spend=2000000.00, country='US'),
-        Customer(id=2, name='GE healthcare', annual_spend=1000000.00, country='US'),
-        Customer(id=3, name='Bank of America', annual_spend=5000000.00, country='US')
-    ]
+    customers = []
+    for i in range(100):
+        customer_name = ''.join(random.choices(string.ascii_uppercase +
+                                               string.digits, k=5))
+        spend = random.randint(a=100000, b=9000000)
+        customers.append(
+            Customer(id=i, name='Customer ' + customer_name,
+                     annual_spend=spend,
+                     country='US')
+        )
+    return customers
+
 
 
 @worker_task(task_definition_name='get_top_n')
 def get_top_n_customers(n: int, customers: List[Customer]) -> List[Customer]:
-    end = min(n, len(customers))
+    customers.sort(key=lambda x: x.annual_spend, reverse=True)
+    end = min(n+1, len(customers))
     return customers[1: end]
 
 
@@ -60,8 +70,8 @@ def get_top_n_customers() -> str:
 
 
 @worker_task(task_definition_name='send_email')
-def send_email() -> str:
-    return 'OK'
+def send_email(customer: list[Customer], promo_code: str) -> str:
+    return f'Sent {promo_code} to {len(customer)} customers'
 
 
 @worker_task(task_definition_name='create_workflow')
@@ -78,7 +88,6 @@ def create_workflow(steps: list[str], inputs: dict[str, object]) -> dict:
             task = SimpleTask(task_reference_name=step, task_def_name=step)
             task.input_parameters.update(inputs[step])
             workflow >> task
-
 
     workflow.register(overwrite=True)
     print(f'\n\n\nRegistered workflow by name {workflow.name}\n')
@@ -110,6 +119,7 @@ def main():
     clients = OrkesClients(configuration=api_config)
     workflow_executor = clients.get_workflow_executor()
     metadata_client = clients.get_metadata_client()
+    workflow_client = clients.get_workflow_client()
     task_handler = start_workers(api_config=api_config)
 
     # register our two tasks
@@ -121,14 +131,15 @@ def main():
     prompt_text = """
     You are a helpful assistant that can answer questions using tools provided.  
     You have the following tools specified as functions in python:
-    1. get_customer_list() ->  Customer (useful to get the list of customers)
+    1. get_customer_list() ->  Customer (useful to get the list of customers / all the customers / customers)
     2. generate_promo_code() -> str (useful to generate a promocode for the customer)
-    3. send_email(customer: Customer) (useful when sending an email to a customer)
+    3. send_email(customer: Customer, promo_code: str) (useful when sending an email to a customer, promo code is the output of the generate_promo_code function)
     4. get_top_n(n: int, customers: List[Customer]) -> List[Customer]
         (
             useful to get the top N customers based on their spend.
             customers as input can come from the output of get_customer_list function using ${get_customer_list.output.result} 
-            reference
+            reference.
+            Needs list of customers as input to get the top N. 
         ).
     5. create_workflow(steps: List[str], inputs: dict[str, dict]) -> dict 
        (Useful to chain the function calls.  
@@ -151,6 +162,7 @@ def main():
       "function_parameters": "PARAMETERS FOR THE FUNCTION as a JSON map with key as parameter name and value as parameter value"
     }
     
+    Rule: Think about the steps to do this, but your output MUST be the above JSON formatted response.
     
     """
     open_ai_config = OpenAIConfig()
@@ -175,7 +187,7 @@ def main():
                                     instructions_template=prompt_name,
                                     messages=[
                                         ChatMessage(role='user',
-                                                    message='Get the list of top 5 customers and send email with promo code.  Review the promo codes before sending email.')
+                                                    message=user_input.output('query'))
                                     ],
                                     max_tokens=1024)
 
@@ -198,7 +210,7 @@ def main():
 
     call_function.default_case([call_one_fun])
 
-    wf >> chat_complete >> call_function
+    wf >> user_input >> chat_complete >> call_function
 
     # let's make sure we don't run it for more than 2 minutes -- avoid runaway loops
     wf.timeout_seconds(120).timeout_policy(timeout_policy=TimeoutPolicy.TIME_OUT_WORKFLOW)
@@ -214,8 +226,25 @@ def main():
     print(message)
     workflow_run = wf.execute(wait_until_task_ref=user_input.task_reference_name, wait_for_seconds=120)
     workflow_id = workflow_run.workflow_id
-    print(f'https://play.orkes.io/execution/{workflow_id}')
+    query = input('>> ')
+    input_task = workflow_run.get_task(task_reference_name=user_input.task_reference_name)
+    workflow_run = workflow_client.update_state(workflow_id=workflow_id,
+                                                update_requesst=WorkflowStateUpdate(
+                                                    task_reference_name=user_input.task_reference_name,
+                                                    task_result=TaskResult(task_id=input_task.task_id, output_data={
+                                                        'query': query
+                                                    }, status=TaskResultStatus.COMPLETED)
+                                                ),
+                                                wait_for_seconds=30)
+
+    print(f'https://pg-qa.orkesconductor.com/execution/{workflow_id}')
     task_handler.stop_processes()
+    output = json.dumps(workflow_run.output['result'], indent=3)
+    print(f"""
+    
+    {output}
+    
+    """)
 
 
 if __name__ == '__main__':
