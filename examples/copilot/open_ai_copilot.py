@@ -139,7 +139,7 @@ def main():
             useful to get the top N customers based on their spend.
             customers as input can come from the output of get_customer_list function using ${get_customer_list.output.result} 
             reference.
-            Needs list of customers as input to get the top N. 
+            This function needs a list of customers as input to get the top N. 
         ).
     5. create_workflow(steps: List[str], inputs: dict[str, dict]) -> dict 
        (Useful to chain the function calls.  
@@ -163,6 +163,7 @@ def main():
     }
     
     Rule: Think about the steps to do this, but your output MUST be the above JSON formatted response.
+    ONLY send the JSON response - nothing else!
     
     """
     open_ai_config = OpenAIConfig()
@@ -189,7 +190,7 @@ def main():
                                         ChatMessage(role='user',
                                                     message=user_input.output('query'))
                                     ],
-                                    max_tokens=1024)
+                                    max_tokens=2048)
 
     function_call = DynamicTask(task_reference_name='fn_call_ref', dynamic_task='SUB_WORKFLOW')
     function_call.input_parameters['steps'] = chat_complete.output('function_parameters.steps')
