@@ -238,12 +238,19 @@ def main():
                                                 ),
                                                 wait_for_seconds=30)
 
-    print(f'https://pg-qa.orkesconductor.com/execution/{workflow_id}')
+
     task_handler.stop_processes()
     output = json.dumps(workflow_run.output['result'], indent=3)
     print(f"""
     
     {output}
+    
+    """)
+
+    print(f"""
+    See the complete execution graph here: 
+    
+    {api_config.host.replace("/api", "")}/execution/{workflow_id}
     
     """)
 
