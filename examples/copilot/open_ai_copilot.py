@@ -2,7 +2,6 @@ import json
 import os
 import random
 import string
-import time
 from typing import List
 
 from conductor.client.ai.configuration import LLMProvider
@@ -16,7 +15,6 @@ from conductor.client.http.models.workflow_state_update import WorkflowStateUpda
 from conductor.client.orkes_clients import OrkesClients
 from conductor.client.worker.worker_task import worker_task
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
-from conductor.client.workflow.task.do_while_task import LoopTask
 from conductor.client.workflow.task.dynamic_task import DynamicTask
 from conductor.client.workflow.task.human_task import HumanTask
 from conductor.client.workflow.task.llm_tasks.llm_chat_complete import LlmChatComplete, ChatMessage
@@ -25,7 +23,6 @@ from conductor.client.workflow.task.sub_workflow_task import SubWorkflowTask
 from conductor.client.workflow.task.switch_task import SwitchTask
 from conductor.client.workflow.task.timeout_policy import TimeoutPolicy
 from conductor.client.workflow.task.wait_task import WaitTask
-
 from customer import Customer
 
 
@@ -54,11 +51,10 @@ def get_customer_list() -> List[Customer]:
     return customers
 
 
-
 @worker_task(task_definition_name='get_top_n')
 def get_top_n_customers(n: int, customers: List[Customer]) -> List[Customer]:
     customers.sort(key=lambda x: x.annual_spend, reverse=True)
-    end = min(n+1, len(customers))
+    end = min(n + 1, len(customers))
     return customers[1: end]
 
 
@@ -92,24 +88,6 @@ def create_workflow(steps: list[str], inputs: dict[str, object]) -> dict:
     workflow.register(overwrite=True)
     print(f'\n\n\nRegistered workflow by name {workflow.name}\n')
     return workflow.to_workflow_def().toJSON()
-
-
-@worker_task(task_definition_name='create_workflow2')
-def create_workflow_2(steps: list[str], inputs: dict[str, object]) -> ConductorWorkflow:
-    executor = OrkesClients().get_workflow_executor()
-    workflow = ConductorWorkflow(executor=executor, name='copilot_execution', version=1)
-
-    i = 0
-    prev_task = None
-    for step in steps:
-        task = SimpleTask(task_reference_name=step, task_def_name=step)
-        task.input_parameters.update(inputs[step])
-        workflow >> task
-        i = i + 1
-
-    print(f'workflow is {workflow.to_workflow_def().toJSON()}')
-    workflow_run = workflow.execute(workflow_input={}, wait_for_seconds=10)
-    return workflow_run.output
 
 
 def main():
@@ -237,7 +215,6 @@ def main():
                                                     }, status=TaskResultStatus.COMPLETED)
                                                 ),
                                                 wait_for_seconds=30)
-
 
     task_handler.stop_processes()
     output = json.dumps(workflow_run.output['result'], indent=3)
