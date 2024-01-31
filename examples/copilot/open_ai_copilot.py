@@ -77,7 +77,7 @@ def create_workflow(steps: list[str], inputs: dict[str, object]) -> dict:
 
     for step in steps:
         if step == 'review':
-            task = HumanTask(task_ref_name='review')
+            task = HumanTask(task_ref_name='review', display_name='review email', form_version=0, form_template='email_review')
             task.input_parameters.update(inputs[step])
             workflow >> task
         else:
