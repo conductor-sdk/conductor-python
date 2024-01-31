@@ -14,6 +14,7 @@ class TaskType(str, Enum):
     START_WORKFLOW = 'START_WORKFLOW'
     EVENT = 'EVENT'
     WAIT = 'WAIT'
+    WAIT_FOR_WEBHOOK = 'WAIT_FOR_WEBHOOK'
     HUMAN = 'HUMAN'
     USER_DEFINED = 'USER_DEFINED'
     HTTP = 'HTTP'
