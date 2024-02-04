@@ -74,16 +74,19 @@ In this section, we will create a simple "Hello World" application that uses Con
 
 **Use Code to create workflows**
 
-Create greetings_workflow.py with the following:
+Create [greetings_workflow.py](examples/greetings_workflow.py) with the following:
 ```python
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from examples.greetings import greet
+from greetings import greet
 
 def greetings_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
-    workflow = ConductorWorkflow(name='hello', executor=workflow_executor)
+    name = 'hello'
+    workflow = ConductorWorkflow(name=name, executor=workflow_executor)
+    workflow.version = 1
     workflow >> greet(task_ref_name='greet_ref', name=workflow.input('name'))
     return workflow
+
 
 ```
 
@@ -137,43 +140,36 @@ def greet(name: str) -> str:
 Let's add [greetings_main.py](examples/greetings_main.py) with the `main` method:
 
 ```python
-from multiprocessing import set_start_method
-
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.models import WorkflowRun
+from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from examples.greetings_workflow import greetings_workflow
+from greetings_workflow import greetings_workflow
 
 
-def greetings_workflow_run(name: str, workflow_executor: WorkflowExecutor) -> WorkflowRun:
-    return workflow_executor.execute(name='hello', version=1, workflow_input={'name': name})
-
-
-def register_workflow(workflow_executor: WorkflowExecutor):
+def register_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
     workflow = greetings_workflow(workflow_executor=workflow_executor)
     workflow.register(True)
+    return workflow
+
 
 def main():
-  
     # points to http://localhost:8080/api by default
     api_config = Configuration()
 
     workflow_executor = WorkflowExecutor(configuration=api_config)
 
     # Needs to be done only when registering a workflow one-time
-    register_workflow(workflow_executor)
+    workflow = register_workflow(workflow_executor)
 
-    task_handler = TaskHandler(
-        workers=[],
-        configuration=api_config,
-        scan_for_annotated_workers=True,
-        import_modules=['examples.greetings']
-    )
+    task_handler = TaskHandler(configuration=api_config)
     task_handler.start_processes()
 
-    result = greetings_workflow_run('Orkes', workflow_executor)
-    print(f'workflow result: {result.output["result"]}')
+    workflow_run = workflow_executor.execute(name=workflow.name, version=workflow.version,
+                                             workflow_input={'name': 'Orkes'})
+
+    print(f'\nworkflow result: {workflow_run.output["result"]}\n')
+    print(f'see the workflow execution here: {api_config.ui_host}/execution/{workflow_run.workflow_id}\n')
     task_handler.stop_processes()
 
 
