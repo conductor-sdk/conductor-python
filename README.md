@@ -16,12 +16,14 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Install SDK](#install-sdk)
+  - [Get Conductor Python SDK](#get-conductor-python-sdk)
   - [Setup SDK](#setup-sdk)
 - [Start Conductor Server](#start-conductor-server)
-- [Build a conductor workflow based application](#build-a-conductor-workflow-based-application)
+- [Simple Hello World Application using Conductor](#simple-hello-world-application-using-conductor)
   - [Step 1: Create a Workflow](#step-1-create-a-workflow)
   - [Step 2: Write Worker](#step-2-write-worker)
   - [Step 3: Write _your_ application](#step-3-write-_your_-application)
+- [Using Conductor in your application](#using-conductor-in-your-application)
 - [Implementing Workers](#implementing-workers)
   - [Design Principles for Workers](#design-principles-for-workers)
 - [System Tasks](#system-tasks)
