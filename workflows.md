@@ -112,11 +112,30 @@ if __name__ == '__main__':
     main()
 
 ```
+
+```shell
+>> python3 dynamic_workflow.py 
+
+2024-02-03 19:54:35,700 [32853] conductor.client.automator.task_handler INFO     created worker with name=get_user_email and domain=None
+2024-02-03 19:54:35,781 [32853] conductor.client.automator.task_handler INFO     created worker with name=send_email and domain=None
+2024-02-03 19:54:35,859 [32853] conductor.client.automator.task_handler INFO     TaskHandler initialized
+2024-02-03 19:54:35,859 [32853] conductor.client.automator.task_handler INFO     Starting worker processes...
+2024-02-03 19:54:35,861 [32853] conductor.client.automator.task_runner INFO     Polling task get_user_email with domain None with polling interval 0.1
+2024-02-03 19:54:35,861 [32853] conductor.client.automator.task_handler INFO     Started 2 TaskRunner process
+2024-02-03 19:54:35,862 [32853] conductor.client.automator.task_handler INFO     Started all processes
+2024-02-03 19:54:35,862 [32853] conductor.client.automator.task_runner INFO     Polling task send_email with domain None with polling interval 0.1
+sending email to user_a@example.com with subject Hello from Orkes and body Test Email
+
+workflow output:  {'email': 'user_a@example.com'}
+
+2024-02-03 19:54:36,309 [32853] conductor.client.automator.task_handler INFO     Stopped worker processes...
+```
 see [dynamic_workflow.py](examples/dynamic_workflow.py) for a fully functional example.
 
 see [kitchensink.py](examples/kitchensink.py) for a more complex example. 
 
-**For more complex workflow example with all the supported features, see [kitchensink.py](examples/kitchensink.py)**
+### Kitchensink Workflow 
+For more complex workflow example with all the supported features, see [kitchensink.py](examples/kitchensink.py)
 
 ## Executing Workflows
 [WorkflowClient](src/conductor/client/workflow_client.py) interface provides all the APIs required to work with workflow executions.
@@ -129,7 +148,7 @@ clients = OrkesClients(configuration=api_config)
 workflow_client = clients.get_workflow_client() 
 ```
 ### Execute workflow asynchronously
-Useful when workflows are long-running  
+Useful when workflows are long-running.
 ```python
 from conductor.client.http.models import StartWorkflowRequest
 
@@ -141,7 +160,7 @@ request.input = {'name': 'Orkes'}
 workflow_id = workflow_client.start_workflow(request)
 ```
 ### Execute workflow synchronously
-Useful when workflows complete very quickly - usually under 20-30 second
+Useful when workflows complete very quickly - usually under 20-30 second.
 ```python
 from conductor.client.http.models import StartWorkflowRequest
 
@@ -159,7 +178,7 @@ workflow_run = workflow_client.execute_workflow(
 ## Managing Workflow Executions
 > [!note] 
 > See [workflow_ops.py](examples/workflow_ops.py) for a fully working application that demonstrates
-> working with the workflow executions
+> working with the workflow executions and sending signals to the workflow to manage its state.
 
 Workflows represent te application state.  With Conductor, you can query the workflow execution state anytime during its lifecycle.
 You can also send Signals to the workflow that determines the outcome of the workflow state.
@@ -372,8 +391,6 @@ self.assertEqual(run.status, 'COMPLETED')
 ### Example Unit Testing application
 See [test_workflows.py](examples/test_workflows.py) for a fully functional example on how to test a moderately complex
 workflow with branches.
-
-## Working with Tasks using APIs
 
 
 
