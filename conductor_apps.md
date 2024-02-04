@@ -8,7 +8,10 @@ In this section, we will dive deeper into integrating Conductor in your applicat
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Adding Conductor SDK to your application](#adding-conductor-sdk-to-your-application)
-- [Managing Workflow & Task definitions](#managing-workflow--task-definitions)
+- [Testing your workflows](#testing-your-workflows)
+  - [Example Unit Testing application](#example-unit-testing-application)
+- [Workflow deployments using CI/CD](#workflow-deployments-using-cicd)
+- [Versioning workflows](#versioning-workflows)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

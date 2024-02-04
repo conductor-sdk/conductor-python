@@ -30,8 +30,6 @@ In this section, we will dive deeper into creating and executing Conductor workf
 - [Handling Failures, Retries and Rate Limits](#handling-failures-retries-and-rate-limits)
   - [Retries](#retries)
   - [Rate Limits](#rate-limits)
-- [Testing your workflows](#testing-your-workflows)
-  - [Example Unit Testing application](#example-unit-testing-application)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

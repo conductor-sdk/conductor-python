@@ -18,7 +18,7 @@ Worker implements a task in the workflow.  (note: _often times worker and task a
   - [Javascript Executor Task](#javascript-executor-task)
   - [Json Processing using JQ](#json-processing-using-jq)
 - [Worker vs Microservice / HTTP endpoints](#worker-vs-microservice--http-endpoints)
-- [Working with Tasks using APIs](#working-with-tasks-using-apis)
+- [Deploying Workers in production](#deploying-workers-in-production)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
