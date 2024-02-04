@@ -1,10 +1,7 @@
-# Writing Service Workers
+# Writing Workers
 
-Conductor workflows are orchestration of tasks.  
 A Workflow task represents a unit of business logic that achieves a specific goal such as check inventory, initiate payment transfer etc.
-
-A service worker is a lightweight alternative to writing Microservices which typically requires a load balancer, HTTP endpoint and some sort of API management system.
-
+Worker implements a task in the workflow.  (note: _often times worker and task are used interchangeably in various blogs, docs etc._)
 
 ## Content
 
@@ -20,6 +17,7 @@ A service worker is a lightweight alternative to writing Microservices which typ
   - [HTTP Task](#http-task)
   - [Javascript Executor Task](#javascript-executor-task)
   - [Json Processing using JQ](#json-processing-using-jq)
+- [Worker vs Microservice / HTTP endpoints](#worker-vs-microservice--http-endpoints)
 - [Working with Tasks using APIs](#working-with-tasks-using-apis)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -33,6 +31,17 @@ Conductor workers are services (similar to microservices) that follow [Single Re
 Workers can be hosted along with the workflow or running a distributed environment where a single workflow uses workers 
 that are deployed and running in different machines/vms/containers.  Whether to keep all the workers in the same application or 
 run them as distributed application is a design and architectural choice.  Conductor is well suited for both kind of scenarios.
+
+You create or convert any existing python function to a distributed worker by adding `@worker_task` annotation to it.
+Here is a simple worker that takes `name` as input and returns greetings:
+
+```python
+from conductor.client.worker.worker_task import worker_task
+
+@worker_task(task_definition_name='greetings')
+def greetings(name: str) -> str:
+    return f'Hello, {name}'
+```
 
 A worker can take inputs which are primitives - `str`, `int`, `float`, `bool` etc. or can be complex data classes.
 
@@ -93,7 +102,7 @@ Each worker embodies design pattern and follows certain basic principles:
 1. Workers are stateless and do not implement a workflow specific logic.
 2. Each worker executes a very specific task and produces well-defined output given specific inputs.
 3. Workers are meant to be idempotent (or should handle cases where the task that partially executed gets rescheduled due to timeouts etc.)
-4. Workers do not implement the logic to handle retries etc, that is taken care by the Conductor server.
+4. Workers do not implement the logic to handle retries etc., that is taken care by the Conductor server.
 
 ## System Task Workers
 A system task worker is a pre-built, general purpose worker that is part of your Conductor server distribution.
@@ -213,6 +222,17 @@ jq = JsonJQTask(task_ref_name='jq_process', script=jq_script)
 }
 ```
 
+## Worker vs Microservice / HTTP endpoints
+
+>[!TIP] Workers are a lightweight alternative to exposing an HTTP endpoint and orchestrating using `HTTP` task. 
+> Using workers is a recommended approach if you do not need to expose the service over HTTP or gRPC endpoints.
+
+There are several advantages to this approach:
+1. **No need for an API management layer** : Given there are no exposed endpoints and workers are self load-balancing.
+2. **Reduced infrastructure footprint** :  No need for an API gateway/load balancer.
+3. All the communication is initiated from worker using polling - avoiding need to open up any incoming TCP ports.
+4. Workers **self-regulate** when busy, they only poll as much as they can handle.  Backpressure handling is done out of the box.
+5. Workers can be scale up / down easily based on the demand by increasing the no. of processes.
 
 ## Working with Tasks using APIs
 
