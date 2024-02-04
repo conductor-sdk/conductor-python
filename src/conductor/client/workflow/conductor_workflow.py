@@ -5,6 +5,7 @@ from shortuuid import uuid
 from typing_extensions import Self
 
 from conductor.client.http.models import *
+from conductor.client.http.models.start_workflow_request import IdempotencyStrategy
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.fork_task import ForkTask
 from conductor.client.workflow.task.join_task import JoinTask
@@ -192,7 +193,8 @@ class ConductorWorkflow:
         return self._executor.start_workflow(start_workflow_request)
 
     def execute(self, workflow_input: Any = {}, wait_until_task_ref: str = '', wait_for_seconds: int = 10,
-                request_id: str = None) -> WorkflowRun:
+                request_id: str = None,
+                idempotency_key: str = None, idempotency_strategy : IdempotencyStrategy = IdempotencyStrategy.FAIL) -> WorkflowRun:
         """
         Executes a workflow synchronously.  Useful for short duration workflow (e.g. < 20 seconds)
         Parameters
@@ -211,6 +213,9 @@ class ConductorWorkflow:
         request.input = workflow_input
         request.name = request.workflow_def.name
         request.version = 1
+        if idempotency_key is not None:
+            request.idempotency_key = idempotency_key
+            request.idempotency_strategy = idempotency_strategy
         run = self._executor.execute_workflow(request, wait_until_task_ref=wait_until_task_ref,
                                               wait_for_seconds=wait_for_seconds, request_id=request_id)
 

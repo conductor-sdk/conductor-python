@@ -1,7 +1,16 @@
 import pprint
 import re  # noqa: F401
+from enum import Enum
 
 import six
+
+
+class IdempotencyStrategy(str, Enum):
+    FAIL = "FAIL",
+    RETURN_EXISTING = "RETURN_EXISTING"
+
+    def __str__(self) -> str:
+        return self.name.__str__()
 
 
 class StartWorkflowRequest(object):
@@ -25,7 +34,9 @@ class StartWorkflowRequest(object):
         'workflow_def': 'WorkflowDef',
         'external_input_payload_storage_path': 'str',
         'priority': 'int',
-        'created_by': 'str'
+        'created_by': 'str',
+        'idempotency_key': 'str',
+        'idempotency_strategy':'IdempotencyStrategy'
     }
 
     attribute_map = {
@@ -37,11 +48,14 @@ class StartWorkflowRequest(object):
         'workflow_def': 'workflowDef',
         'external_input_payload_storage_path': 'externalInputPayloadStoragePath',
         'priority': 'priority',
-        'created_by': 'createdBy'
+        'created_by': 'createdBy',
+        'idempotency_key': 'idempotencyKey',
+        'idempotency_strategy': 'idempotencyStrategy'
     }
 
     def __init__(self, name=None, version=None, correlation_id=None, input=None, task_to_domain=None, workflow_def=None,
-                 external_input_payload_storage_path=None, priority=None, created_by=None):  # noqa: E501
+                 external_input_payload_storage_path=None, priority=None, created_by=None,
+                 idempotency_key: str = None, idempotency_strategy: IdempotencyStrategy = IdempotencyStrategy.FAIL):  # noqa: E501
         """StartWorkflowRequest - a model defined in Swagger"""  # noqa: E501
         self._name = None
         self._version = None
@@ -70,6 +84,12 @@ class StartWorkflowRequest(object):
             self.priority = priority
         if created_by is not None:
             self.created_by = created_by
+        if idempotency_key is not None:
+            self._idempotency_key = idempotency_key
+            self._idempotency_strategy = idempotency_strategy
+        else:
+            self._idempotency_key = None
+            self._idempotency_strategy = IdempotencyStrategy.FAIL
 
     @property
     def name(self):
@@ -258,6 +278,22 @@ class StartWorkflowRequest(object):
         """
 
         self._created_by = created_by
+
+    @property
+    def idempotency_key(self):
+        return self._idempotency_key
+
+    @idempotency_key.setter
+    def idempotency_key(self, idempotency_key: str):
+        self._idempotency_key = idempotency_key
+
+    @property
+    def idempotency_strategy(self) -> IdempotencyStrategy:
+        return self._idempotency_strategy
+
+    @idempotency_strategy.setter
+    def idempotency_strategy(self, idempotency_strategy : IdempotencyStrategy):
+        self._idempotency_strategy = idempotency_strategy
 
     def to_dict(self):
         """Returns the model properties as a dict"""
