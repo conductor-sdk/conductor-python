@@ -25,8 +25,7 @@ from conductor.client.http.models.search_result_workflow_schedule_execution_mode
 from conductor.client.http.models.search_result_workflow_summary import SearchResultWorkflowSummary
 from conductor.client.http.models.skip_task_request import SkipTaskRequest
 from conductor.client.http.models.start_workflow import StartWorkflow
-from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
-from conductor.client.http.models.start_workflow_request import IdempotencyStrategy
+from conductor.client.http.models.start_workflow_request import StartWorkflowRequest, IdempotencyStrategy
 from conductor.client.http.models.sub_workflow_params import SubWorkflowParams
 from conductor.client.http.models.subject_ref import SubjectRef
 from conductor.client.http.models.tag_object import TagObject
