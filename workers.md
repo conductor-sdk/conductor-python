@@ -224,7 +224,8 @@ jq = JsonJQTask(task_ref_name='jq_process', script=jq_script)
 
 ## Worker vs Microservice / HTTP endpoints
 
-> [!tip] Workers are a lightweight alternative to exposing an HTTP endpoint and orchestrating using `HTTP` task. 
+> [!tip] 
+> Workers are a lightweight alternative to exposing an HTTP endpoint and orchestrating using `HTTP` task. 
 >  Using workers is a recommended approach if you do not need to expose the service over HTTP or gRPC endpoints.
 
 There are several advantages to this approach:
