@@ -39,7 +39,7 @@ def main():
     workflow_run = start_workflow(workflow_client)
     workflow_id = workflow_run.workflow_id
     print(f'started workflow with id {workflow_id}')
-    print(f'You can monitor the workflow in the UI here: {api_config.host}/{workflow_id}')
+    print(f'You can monitor the workflow in the UI here: {api_config.ui_host}/execution/{workflow_id}')
 
     update_request = WorkflowStateUpdate()
     update_request.task_reference_name = 'simple_task_ref1_case1_1'

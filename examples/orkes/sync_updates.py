@@ -21,7 +21,7 @@ def create_workflow(clients: OrkesClients) -> ConductorWorkflow:
     switch.switch_case('case1', [wait_case_1])
     switch.switch_case('case2', [wait_case_2])
 
-    workflow >> http >> switch
+    workflow >> http >> wait >> switch
 
     return workflow
 
@@ -38,6 +38,7 @@ def main():
     workflow_run = workflow.execute(workflow_input={}, wait_for_seconds=10,
                                                     wait_until_task_ref='wait_task_ref')
     print(f'started {workflow_run.workflow_id}')
+    print(f'see the execution at {api_config.ui_host}/execution/{workflow_run.workflow_id}')
 
     task_result = TaskResult()
     task_result.status = TaskResultStatus.COMPLETED
