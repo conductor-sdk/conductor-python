@@ -30,7 +30,7 @@ def main():
 
     workflow_id = start_workflow(clients.get_workflow_executor())
     print(f'started workflow with id {workflow_id}')
-    print(f'You can monitor the workflow in the UI here: http://localhost:1234/execution/{workflow_id}')
+    print(f'You can monitor the workflow in the UI here: {api_config.ui_host}/execution/{workflow_id}')
 
     # Get the workflow execution status
     workflow = workflow_client.get_workflow(workflow_id=workflow_id, include_tasks=True)
@@ -65,12 +65,7 @@ def main():
     last_task = workflow.tasks[len(workflow.tasks) - 1]
     print(
         f'workflow status is {workflow.status} and status of last task {last_task.reference_task_name} is {last_task.status}')
-
-    # Terminate the workflow
-    workflow_client.terminate_workflow(workflow_id=workflow_id, reason='terminating for testing')
-
-    # wait for a couple of seconds for the workflow to complete
-    time.sleep(5)
+    time.sleep(2)
 
     rerun_request = RerunWorkflowRequest()
     rerun_request.re_run_from_task_id = workflow.tasks[1].task_id
@@ -113,6 +108,11 @@ def main():
                                             query=f' status IN (RUNNING) AND correlationId = "{correlation_id}" ')
     # shouldn't find anything!
     print(f'found {len(search_results.results)} workflows with correlation id {correlation_id}')
+
+    # Terminate the workflow
+    workflow_client.terminate_workflow(workflow_id=workflow_id, reason='terminating for testing')
+
+
 
 
 if __name__ == '__main__':

@@ -33,7 +33,7 @@ def main():
 
     metadata_client.register_task_def(task_def=task_def)
 
-    print(f'registered the task -- see the details http://localhost:1234/taskDef/{task_def.name}')
+    print(f'registered the task -- see the details {api_config.ui_host}/taskDef/{task_def.name}')
 
 
 if __name__ == '__main__':

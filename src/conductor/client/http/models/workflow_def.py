@@ -605,6 +605,11 @@ class WorkflowDef(object):
         return object_mapper.to_json(obj=self)
 
 
+def to_workflow_def(data: str = None, json_data: dict = None) -> WorkflowDef:
+    if json_data is not None:
+        return object_mapper.from_json(json_data, WorkflowDef)
+    if data is not None:
+        return object_mapper.from_json(json.loads(data), WorkflowDef)
+    raise Exception('missing data or json_data parameter')
 
-def to_workflow_def(data: str) -> WorkflowDef:
-    return object_mapper.from_json(json.loads(data), WorkflowDef)
+

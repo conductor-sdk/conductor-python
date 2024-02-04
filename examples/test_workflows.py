@@ -11,7 +11,13 @@ from greetings import greet
 
 
 class WorkflowUnitTest(unittest.TestCase):
+    """
+    This is an example of how to write a UNIT test for the workflow
+    to run:
 
+    python3 -m unittest discover --verbose --start-directory=./
+
+    """
     @classmethod
     def setUpClass(cls) -> None:
         api_config = Configuration()

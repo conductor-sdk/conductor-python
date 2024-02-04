@@ -1,10 +1,21 @@
+import json
+
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.models import StartWorkflowRequest, RerunWorkflowRequest, TaskResult, WorkflowRun
+from conductor.client.http.models import StartWorkflowRequest, RerunWorkflowRequest, TaskResult, WorkflowRun, \
+    WorkflowDef
 from conductor.client.http.models.task_result_status import TaskResultStatus
+from conductor.client.http.models.workflow_def import to_workflow_def
 from conductor.client.http.models.workflow_state_update import WorkflowStateUpdate
 from conductor.client.orkes_clients import OrkesClients
 from conductor.client.workflow_client import WorkflowClient
 
+
+def read_and_register_workflow(clients: OrkesClients) -> None:
+    file = open('re_run_workflow.json')
+    json_data = json.load(file)
+    workflow = to_workflow_def(json_data=json_data)
+    print(f'loaded workflow {workflow}')
+    clients.get_metadata_client().update_workflow_def(workflow, overwrite=True)
 
 def start_workflow(workflow_client: WorkflowClient) -> WorkflowRun:
     request = StartWorkflowRequest()
@@ -21,7 +32,9 @@ def main():
     api_config = Configuration()
     clients = OrkesClients(configuration=api_config)
     workflow_client = clients.get_workflow_client()
-    task_client = clients.get_task_client()
+
+    # Let's load up the workflow definition from a file and register
+    read_and_register_workflow(clients)
 
     workflow_run = start_workflow(workflow_client)
     workflow_id = workflow_run.workflow_id
