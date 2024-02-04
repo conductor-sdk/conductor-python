@@ -36,7 +36,7 @@ class StartWorkflowRequest(object):
         'priority': 'int',
         'created_by': 'str',
         'idempotency_key': 'str',
-        'idempotency_strategy':'IdempotencyStrategy'
+        'idempotency_strategy':'str'
     }
 
     attribute_map = {
