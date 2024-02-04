@@ -63,7 +63,7 @@ export CONDUCTOR_AUTH_SECRET=your_key_secret
 
 ## Start Conductor Server
 ```shell
-docker run --init -p 8080:8080 -p 1234:5000 conductoross/conductor-standalone:3.15.0
+docker run --init -p 8080:8080 -p 5000:5000 conductoross/conductor-standalone:3.15.0
 ```
 After starting the server navigate to http://localhost:1234 to ensure the server has started successfully.
 

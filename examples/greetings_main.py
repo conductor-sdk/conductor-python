@@ -1,17 +1,15 @@
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.models import WorkflowRun
+from conductor.client.configuration.settings.authentication_settings import AuthenticationSettings
+from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from greetings_workflow import greetings_workflow
 
 
-def greetings_workflow_run(name: str, workflow_executor: WorkflowExecutor) -> WorkflowRun:
-    return workflow_executor.execute(name='hello', version=1, workflow_input={'name': name})
-
-
-def register_workflow(workflow_executor: WorkflowExecutor):
+def register_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
     workflow = greetings_workflow(workflow_executor=workflow_executor)
     workflow.register(True)
+    return workflow
 
 
 def main():
@@ -21,16 +19,15 @@ def main():
     workflow_executor = WorkflowExecutor(configuration=api_config)
 
     # Needs to be done only when registering a workflow one-time
-    register_workflow(workflow_executor)
+    workflow = register_workflow(workflow_executor)
 
-    task_handler = TaskHandler(
-        configuration=api_config,
-        import_modules=['greetings']  # import workers from this module
-    )
+    task_handler = TaskHandler(configuration=api_config)
     task_handler.start_processes()
 
-    result = greetings_workflow_run('Orkes', workflow_executor)
-    print(f'\nworkflow result: {result.output["result"]}\n')
+    workflow_run = workflow_executor.execute(name=workflow.name, version=workflow.version,
+                                             workflow_input={'name': 'Orkes'})
+
+    print(f'\nworkflow result: {workflow_run.output["result"]}\n')
     task_handler.stop_processes()
 
 

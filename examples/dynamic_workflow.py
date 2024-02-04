@@ -38,8 +38,9 @@ def main():
         'email': get_email.output('result')
     })
 
-    result = workflow.execute(workflow_input={'userid': 'user_a'})
-    print(f'\nworkflow output:  {result.output}\n')
+    workflow_run = workflow.execute(workflow_input={'userid': 'user_a'})
+    print(f'\nworkflow output:  {workflow_run.output}\n')
+    print(f'check the workflow execution here: {api_config.ui_host}/execution/{workflow_run.workflow_id}')
     task_handler.stop_processes()
 
 
