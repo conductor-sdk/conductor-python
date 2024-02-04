@@ -24,9 +24,7 @@ def main():
     register_workflow(workflow_executor)
 
     task_handler = TaskHandler(
-        workers=[],
         configuration=api_config,
-        scan_for_annotated_workers=True,
         import_modules=['greetings']  # import workers from this module
     )
     task_handler.start_processes()
