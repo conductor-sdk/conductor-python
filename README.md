@@ -195,7 +195,7 @@ In this guide, we will dive deeper into each of these topic.
 
 ### [Create and Run Conductor Workers](workers.md)
 ### [Create Conductor Workflows](workflows.md)
-### [Using Conductor in your Application](CONDUCTOR_APP.md)
+### [Using Conductor in your Application](conductor_apps.md)
 
 
 
