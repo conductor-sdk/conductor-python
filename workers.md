@@ -235,9 +235,9 @@ There are several advantages to this approach:
 4. Workers **self-regulate** when busy, they only poll as much as they can handle.  Backpressure handling is done out of the box.
 5. Workers can be scale up / down easily based on the demand by increasing the no. of processes.
 
-## Working with Tasks using APIs
-
-
+## Deploying Workers in production
+Conductor workers can run in cloud-native environment or on-prem and can easily be deployed like any other python application.
+Workers can run a containerized environment, VMs or on bare-metal just like you would deploy your other python applications.
 
 
 

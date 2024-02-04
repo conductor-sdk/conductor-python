@@ -4,7 +4,6 @@ from conductor.client.http.models import StartWorkflowRequest
 from conductor.client.orkes_clients import OrkesClients
 from conductor.client.worker.worker_task import worker_task
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
-from conductor.client.workflow.task.simple_task import SimpleTask
 from conductor.client.workflow.task.wait_for_webhook_task import wait_for_webhook
 
 

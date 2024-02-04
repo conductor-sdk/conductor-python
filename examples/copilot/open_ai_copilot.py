@@ -227,7 +227,7 @@ def main():
     print(f"""
     See the complete execution graph here: 
     
-    {api_config.host.replace("/api", "")}/execution/{workflow_id}
+    http://localhost:5001/execution/{workflow_id}
     
     """)
 

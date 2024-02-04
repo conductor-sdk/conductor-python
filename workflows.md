@@ -216,7 +216,7 @@ Useful when retrying from the last failed task is not enough and the whole workf
 `restart_workflow(self, workflow_id: str, use_latest_def: Optional[bool] = False)`
 
 ### Rerun a workflow from a specific task
-In the cases where a worflow needs to be restarted from a specific task rather than from the beginning, `re-run` provides that option.
+In the cases where a workflow needs to be restarted from a specific task rather than from the beginning, `re-run` provides that option.
 When issuing the re-run command to the workflow, you have the ability to specify the id of the task from where the workflow 
 should be restarted (as opposed to from the beginning) and optionally, the input of the workflow can also be changed:
 
@@ -342,42 +342,6 @@ POST /api/metadata/taskdef -d @task_def.json
 
 See [task_configure.py](examples/task_configure.py) for a detailed working app.
 
-## Testing your workflows
-Conductor SDK for python provides a full feature testing framework for your workflow based applications.
-The framework works well with any testing framework you prefer to use without imposing any specific framework.
-
-Conductor server provide a test endpoint `POST /api/workflow/test` that allows you to post a workflow along with the
-test execution data to evaluate the workflow.
-
-The goal of the test framework is as follows:
-1. Ability test the various branches of the workflow
-2. Confirm the execution of the workflow and tasks given fixed set of inputs and outputs
-3. Validate that the workflow completes or fails given specific inputs
-
-Here is example assertions from the test:
-
-```python
-
-...
-test_request = WorkflowTestRequest(name=wf.name, version=wf.version,
-                                       task_ref_to_mock_output=task_ref_to_mock_output,
-                                       workflow_def=wf.to_workflow_def())
-run = workflow_client.test_workflow(test_request=test_request)
-
-print(f'completed the test run')
-print(f'status: {run.status}')
-self.assertEqual(run.status, 'COMPLETED')
-
-...
-
-```
-
-> [!note]
-> Workflow workers are your regular python functions and can be tested with any of the available testing frameworks.
-
-### Example Unit Testing application
-See [test_workflows.py](examples/test_workflows.py) for a fully functional example on how to test a moderately complex
-workflow with branches.
 
 
 
