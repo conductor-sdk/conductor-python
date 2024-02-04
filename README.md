@@ -89,16 +89,8 @@ docker run --init -p 8080:8080 -p 1234:5000 conductoross/conductor-standalone:3.
 ```
 After starting the server navigate to http://localhost:1234 to ensure the server has started successfully.
 
-## Build a conductor workflow based application
-Conductor lets you create workflows either in code or using the configuration in JSON that can be created form the code or from the UI.
-We will explore both the options here.
-
-An application using Conductor uses the following:
-1. **Workflow**: Describes the application's state and how functions are wired.  Workflow is what gives your application's code durability and full-blown visualization in the Conductor UI.
-2. **Worker**: Stateless components.  Workers can be exposed as HTTP endpoints (aka Microservices) or can be simple task workers implemented using lightweight Conductor SDK in the framework and language of your choice.
-
-> [!note]
-> A single workflow application can have workers written in different languages.
+## Simple Hello World Application using Conductor
+In this section, we will create a simple "Hello World" application that uses Conductor. 
 
 ### Step 1: Create a Workflow
 
@@ -148,6 +140,9 @@ http://localhost:8080/api/metadata/workflow -d @workflow.json
 ### Step 2: Write Worker
 
 Create [greetings.py](examples/greetings.py) with a simple worker and a workflow function.
+
+> [!note]
+> A single workflow application can have workers written in different languages.
 
 ```python
 from conductor.client.worker.worker_task import worker_task
