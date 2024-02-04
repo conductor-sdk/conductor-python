@@ -193,7 +193,7 @@ There are three main ways you will use Conductor when building durable, resilien
 
 In this guide, we will dive deeper into each of these topic.
 
-### [Create and Run Conductor Workers](WORKERS.md)
+### [Create and Run Conductor Workers](workers.md)
 ### [Create Conductor Workflows](WORKFLOW.md)
 ### [Using Conductor in your Application](CONDUCTOR_APP.md)
 
