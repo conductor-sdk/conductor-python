@@ -211,6 +211,15 @@ if __name__ == '__main__':
 > [!NOTE]
 > That's it - you just created your first distributed python app!
 > 
+
+## Using Conductor in your application
+There are three main ways you will use Conductor when building durable, resilient, distributed applications.
+1. Write service workers that implements business logic to accomplish a specific goal - such as initiate payment transfer, get user information from database etc. 
+2. Create Conductor workflows that implements application state - A typical workflow implements SAGA pattern
+3. Use Conductor SDK and APIs to manage workflows from your application.
+
+In this guide, we will dive deeper into each of these topic.
+
 ## Implementing Workers
 The workers can be implemented by writing a simple python function and annotating the function with the `@worker_task`
 Conductor workers are services (similar to microservices) that follow [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single_responsibility_principle)
