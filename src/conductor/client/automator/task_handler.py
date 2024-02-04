@@ -46,7 +46,7 @@ class TaskHandler:
             workers: List[WorkerInterface] = None,
             configuration: Configuration = None,
             metrics_settings: MetricsSettings = None,
-            scan_for_annotated_workers: bool = None,
+            scan_for_annotated_workers: bool = True,
             import_modules: List[str] = None
     ):
         self.logger_process, self.queue = _setup_logging_queue(configuration)

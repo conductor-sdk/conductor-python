@@ -48,329 +48,75 @@ In this section, we will dive deeper into creating and executing Conductor workf
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Install SDK
-Create a virtual environment to build your package
-```shell
-virtualenv conductor
-source conductor/bin/activate
-```
+## Creating Workflows
+Conductor lets you create the workflows either using Python or JSON as the configuration.  
+Using Python as code to define and execute workflows let you build extremely powerful, dynamic workflows and run them on Conductor.
 
-### Get Conductor Python SDK
+When the workflows are fairly static, they can be designed using the Orkes UI (available when using orkes.io) and using APIs or SDKs to register and run the workflows.
 
-SDK needs Python 3.9+.
+Both the code and configuration approaches are equally powerful and similar in nature to how you treat Infrastructure as Code.
 
-```shell
-python3 -m pip install conductor-python
-```
-### Setup SDK
-
-Point the SDK to the Conductor Server API endpoint
-```shell
-export CONDUCTOR_SERVER_URL=http://localhost:8080/api
-```
-(Optionally) If you are using a Conductor server that requires authentication
-
-[How to obtain the key and secret from the conductor server
-](https://orkes.io/content/docs/getting-started/concepts/access-control)
-
-
-```shell
-export CONDUCTOR_AUTH_KEY=your_key
-export CONDUCTOR_AUTH_SECRET=your_key_secret
-```
-
-## Start Conductor Server
-```shell
-docker run --init -p 8080:8080 -p 1234:5000 conductoross/conductor-standalone:3.15.0
-```
-After starting the server navigate to http://localhost:1234 to ensure the server has started successfully.
-
-## Build a conductor workflow based application
-Conductor lets you create workflows either in code or using the configuration in JSON that can be created form the code or from the UI.
-We will explore both the options here.
-
-An application using Conductor uses the following:
-1. **Workflow**: Describes the application's state and how functions are wired.  Workflow is what gives your application's code durability and full-blown visualization in the Conductor UI.
-2. **Worker**: Stateless components.  Workers can be exposed as HTTP endpoints (aka Microservices) or can be simple task workers implemented using lightweight Conductor SDK in the framework and language of your choice.
-
-> [!note]
-> A single workflow application can have workers written in different languages.
-
-### Step 1: Create a Workflow
-
-**Use Code to create workflows**
-
-Create greetings_workflow.py with the following:
-```python
-from conductor.client.workflow.conductor_workflow import ConductorWorkflow
-from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from examples.greetings import greet
-
-def greetings_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
-    workflow = ConductorWorkflow(name='hello', executor=workflow_executor)
-    workflow >> greet(task_ref_name='greet_ref', name=workflow.input('name'))
-    return workflow
-
-```
-
-**(alternatively) Use JSON to create workflows**
-
-Create workflow.json with the following:
-```json
-{
-  "name": "hello",
-  "description": "hello workflow",
-  "version": 1,
-  "tasks": [
-    {
-      "name": "greet",
-      "taskReferenceName": "greet_ref",
-      "type": "SIMPLE",
-      "inputParameters": {
-        "name": "${workflow.input.name}"
-      }
-    }
-  ],
-  "timeoutPolicy": "TIME_OUT_WF",
-  "timeoutSeconds": 60
-}
-```
-Now, register this workflow with the server:
-```shell
-curl -X POST -H "Content-Type:application/json" \
-http://localhost:8080/api/metadata/workflow -d @workflow.json
-```
-
-### Step 2: Write Worker
-
-Create [greetings.py](examples/greetings.py) with a simple worker and a workflow function.
+### Execute dynamic workflows using Code
+For cases, where the workflows cannot be created statically ahead of the time, 
+Conductor is a powerful dynamic workflow execution platform that lets you create
+very complex workflows in code and execute them.  Useful when the workflow is unique for each execution.
 
 ```python
-from conductor.client.worker.worker_task import worker_task
-
-
-@worker_task(task_definition_name='greet')
-def greet(name: str) -> str:
-    return f'Hello my friend {name}'
-
-```
-
-### Step 3: Write _your_ application
-
-Let's add [greetings_main.py](examples/greetings_main.py) with the `main` method:
-
-```python
-from multiprocessing import set_start_method
-
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.models import WorkflowRun
-from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from examples.greetings_workflow import greetings_workflow
+from conductor.client.orkes_clients import OrkesClients
+from conductor.client.worker.worker_task import worker_task
+from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 
 
-def greetings_workflow_run(name: str, workflow_executor: WorkflowExecutor) -> WorkflowRun:
-    return workflow_executor.execute(name='hello', version=1, workflow_input={'name': name})
+@worker_task(task_definition_name='get_user_email')
+def get_user_email(userid: str) -> str:
+    return f'{userid}@example.com'
 
 
-def register_workflow(workflow_executor: WorkflowExecutor):
-    workflow = greetings_workflow(workflow_executor=workflow_executor)
-    workflow.register(True)
+@worker_task(task_definition_name='send_email')
+def send_email(email: str, subject: str, body: str):
+    print(f'sending email to {email} with subject {subject} and body {body}')
+
 
 def main():
-  
-    # points to http://localhost:8080/api by default
+
+    # defaults to reading the configuration using following env variables
+    # CONDUCTOR_SERVER_URL : conductor server e.g. https://play.orkes.io/api
+    # CONDUCTOR_AUTH_KEY : API Authentication Key
+    # CONDUCTOR_AUTH_SECRET: API Auth Secret
     api_config = Configuration()
 
-    workflow_executor = WorkflowExecutor(configuration=api_config)
-
-    # Needs to be done only when registering a workflow one-time
-    register_workflow(workflow_executor)
-
-    task_handler = TaskHandler(
-        workers=[],
-        configuration=api_config,
-        scan_for_annotated_workers=True,
-        import_modules=['examples.greetings']
-    )
+    task_handler = TaskHandler(configuration=api_config)
     task_handler.start_processes()
 
-    result = greetings_workflow_run('Orkes', workflow_executor)
-    print(f'workflow result: {result.output["result"]}')
+    clients = OrkesClients(configuration=api_config)
+    workflow_executor = clients.get_workflow_executor()
+    workflow = ConductorWorkflow(name='dynamic_workflow', version=1, executor=workflow_executor)
+    get_email = get_user_email(task_ref_name='get_user_email_ref', userid=workflow.input('userid'))
+    sendmail = send_email(task_ref_name='send_email_ref', email=get_email.output('result'), subject='Hello from Orkes',
+                          body='Test Email')
+    workflow >> get_email >> sendmail
+
+    # Configure the output of the workflow
+    workflow.output_parameters(output_parameters={
+        'email': get_email.output('result')
+    })
+
+    result = workflow.execute(workflow_input={'userid': 'user_a'})
+    print(f'\nworkflow output:  {result.output}\n')
     task_handler.stop_processes()
 
 
 if __name__ == '__main__':
     main()
-```
-
-> [!NOTE]
-> That's it - you just created your first distributed python app!
-> 
-
-## Using Conductor in your application
-There are three main ways you will use Conductor when building durable, resilient, distributed applications.
-1. Write service workers that implements business logic to accomplish a specific goal - such as initiate payment transfer, get user information from database etc. 
-2. Create Conductor workflows that implements application state - A typical workflow implements SAGA pattern
-3. Use Conductor SDK and APIs to manage workflows from your application.
-
-In this guide, we will dive deeper into each of these topic.
-
-## Implementing Workers
-The workers can be implemented by writing a simple python function and annotating the function with the `@worker_task`
-Conductor workers are services (similar to microservices) that follow [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single_responsibility_principle)
-
-Workers can be hosted along with the workflow or running a distributed environment where a single workflow uses workers 
-that are deployed and running in different machines/vms/containers.  Whether to keep all the workers in the same application or 
-run them as distributed application is a design and architectural choice.  Conductor is well suited for both kind of scenarios.
-
-A worker can take inputs which are primitives - `str`, `int`, `float`, `bool` etc. or can be complex data classes.
-
-Here is an example worker that uses `dataclass` as part of the worker input.
-
-```python
-from conductor.client.worker.worker_task import worker_task
-from dataclasses import dataclass
-
-@dataclass
-class OrderInfo:
-    order_id: int
-    sku: str
-    quantity: int
-    sku_price: float
-
-    
-@worker_task(task_definition_name='process_order')
-def process_order(order_info: OrderInfo) -> str:
-    return f'order: {order_info.order_id}'
 
 ```
+see [dynamic_workflow.py](examples/dynamic_workflow.py) for a fully functional example.
 
-### Design Principles for Workers
-Each worker embodies design pattern and follows certain basic principles:
+see [kitchensink.py](examples/kitchensink.py) for a more complex example. 
 
-1. Workers are stateless and do not implement a workflow specific logic.
-2. Each worker executes a very specific task and produces well-defined output given specific inputs.
-3. Workers are meant to be idempotent (or should handle cases where the task that partially executed gets rescheduled due to timeouts etc.)
-4. Workers do not implement the logic to handle retries etc, that is taken care by the Conductor server.
-
-## System Tasks
-System tasks are the pre-built workers that are available in every Conductor server.
-
-System tasks automates the repeated tasks such as calling an HTTP endpoint, 
-executing lightweight ECMA compliant javascript code, publishing to an event broker etc. 
-
-### Wait Task
-> [!tip]
-> Wait is a powerful way to have your system wait for a certain trigger such as an external event, certain date/time or duration such as 2 hours without having to manage threads, background processes or jobs.
-
-**Using code to create WAIT task**
-```python
-from conductor.client.workflow.task.wait_task import WaitTask
-
-# waits for 2 seconds before scheduling the next task
-wait_for_two_sec = WaitTask(task_ref_name='wait_for_2_sec', wait_for_seconds=2)
-
-# wait until end of jan
-wait_till_jan = WaitTask(task_ref_name='wait_till_jsn', wait_until='2024-01-31 00:00 UTC')
-
-# waits until an API call or an event is triggered
-wait_for_signal = WaitTask(task_ref_name='wait_till_jan_end')
-
-```
-**JSON configuration**
-```json
-{
-  "name": "wait",
-  "taskReferenceName": "wait_till_jan_end",
-  "type": "WAIT",
-  "inputParameters": {
-    "until": "2024-01-31 00:00 UTC"
-  }
-}
-```
-### HTTP Task
-Make a request to an HTTP(S) endpoint. The task allows making GET, PUT, POST, DELETE, HEAD, PATCH requests.
-
-**Using code to create an HTTP task**
-```python
-from conductor.client.workflow.task.http_task import HttpTask
-
-HttpTask(task_ref_name='call_remote_api', http_input={
-        'uri': 'https://orkes-api-tester.orkesconductor.com/api'
-    })
-```
-
-**JSON configuration**
-
-```json
-{
-  "name": "http_task",
-  "taskReferenceName": "http_task_ref",
-  "type" : "HTTP",
-  "uri": "https://orkes-api-tester.orkesconductor.com/api",
-  "method": "GET"
-}
-```
-
-### Javascript Executor Task
-Execute ECMA compliant Javascript code.  Useful when you need to write a script to do data mapping, calculations etc.
-
-
-```python
-from conductor.client.workflow.task.javascript_task import JavascriptTask
-
-say_hello_js = """
-function greetings() {
-    return {
-        "text": "hello " + $.name
-    }
-}
-greetings();
-"""
-
-js = JavascriptTask(task_ref_name='hello_script', script=say_hello_js, bindings={'name': '${workflow.input.name}'})
-```
-
-```json
-{
-  "name": "inline_task",
-  "taskReferenceName": "inline_task_ref",
-  "type": "INLINE",
-  "inputParameters": {
-    "expression": " function greetings() {\n  return {\n            \"text\": \"hello \" + $.name\n        }\n    }\n    greetings();",
-    "evaluatorType": "graaljs",
-    "name": "${workflow.input.name}"
-  }
-}
-```
-
-### Json Processing using JQ
-[jq](https://jqlang.github.io/jq/) is like sed for JSON data - you can use it to slice and filter and map and transform 
-structured data with the same ease that sed, awk, grep and friends let you play with text.
-
-```python
-from conductor.client.workflow.task.json_jq_task import JsonJQTask
-
-jq_script = """
-{ key3: (.key1.value1 + .key2.value2) }
-"""
-
-jq = JsonJQTask(task_ref_name='jq_process', script=jq_script)
-```
-
-```json
-{
-  "name": "json_transform_task",
-  "taskReferenceName": "json_transform_task_ref",
-  "type": "JSON_JQ_TRANSFORM",
-  "inputParameters": {
-    "key1": "k1",        
-    "key2": "k2",
-    "queryExpression": "{ key3: (.key1.value1 + .key2.value2) }",
-  }
-}
-```
+**For more complex workflow example with all the supported features, see [kitchensink.py](examples/kitchensink.py)**
 
 ## Executing Workflows
 [WorkflowClient](src/conductor/client/workflow_client.py) interface provides all the APIs required to work with workflow executions.
@@ -408,37 +154,7 @@ workflow_run = workflow_client.execute_workflow(
         start_workflow_request=request, 
         wait_for_seconds=12)
 ```
-### Execute dynamic workflows using Code
-For cases, where the workflows cannot be created statically ahead of the time, 
-Conductor is a powerful dynamic workflow execution platform that lets you create
-very complex workflows in code and execute them.  Useful when the workflow is unique for each execution.
 
-```python
-from conductor.client.automator.task_handler import TaskHandler
-from conductor.client.configuration.configuration import Configuration
-from conductor.client.orkes_clients import OrkesClients
-from conductor.client.worker.worker_task import worker_task
-from conductor.client.workflow.conductor_workflow import ConductorWorkflow
-
-
-workflow = ConductorWorkflow(name='dynamic_workflow', version=1, executor=workflow_executor)
-get_email = get_user_email(task_ref_name='get_user_email_ref', userid=workflow.input('userid'))
-sendmail = send_email(task_ref_name='send_email_ref', email=get_email.output('result'), subject='Hello from Orkes',
-                      body='Test Email')
-workflow >> get_email >> sendmail
-
-# Execute the workflow and get the workflow run result
-result = workflow.execute(workflow_input={'userid': 'usera'})
-
-# Print the workflow status
-print(f'workflow completed with status {result.status}')
-
-```
-see [dynamic_workflow.py](examples/dynamic_workflow.py) for a fully functional example.
-
-see [kitchensink.py](examples/kitchensink.py) for a more complex example. 
-
-**For more complex workflow example with all the supported features, see [kitchensink.py](examples/kitchensink.py)**
 
 ## Managing Workflow Executions
 > [!note] 

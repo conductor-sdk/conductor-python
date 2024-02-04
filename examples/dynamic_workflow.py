@@ -16,13 +16,14 @@ def send_email(email: str, subject: str, body: str):
 
 
 def main():
+
+    # defaults to reading the configuration using following env variables
+    # CONDUCTOR_SERVER_URL : conductor server e.g. https://play.orkes.io/api
+    # CONDUCTOR_AUTH_KEY : API Authentication Key
+    # CONDUCTOR_AUTH_SECRET: API Auth Secret
     api_config = Configuration()
 
-    task_handler = TaskHandler(
-        workers=[],
-        configuration=api_config,
-        scan_for_annotated_workers=True,
-    )
+    task_handler = TaskHandler(configuration=api_config)
     task_handler.start_processes()
 
     clients = OrkesClients(configuration=api_config)
@@ -33,8 +34,13 @@ def main():
                           body='Test Email')
     workflow >> get_email >> sendmail
 
+    # Configure the output of the workflow
+    workflow.output_parameters(output_parameters={
+        'email': get_email.output('result')
+    })
+
     result = workflow.execute(workflow_input={'userid': 'user_a'})
-    print(f'\nworkflow completed with status {result.status}\n')
+    print(f'\nworkflow output:  {result.output}\n')
     task_handler.stop_processes()
 
 
