@@ -22,13 +22,15 @@ _decorated_functions = {}
 _mp_fork_set = False
 if not _mp_fork_set:
     try:
-        set_start_method('fork')
+        if platform == 'win32':
+            set_start_method('spawn')
+        else:
+            set_start_method('fork')
         _mp_fork_set = True
     except Exception as e:
-        print(f'error when setting multiprocessing.set_start_method to fork - maybe the context is set {e.args}')
+        logger.info(f'error when setting multiprocessing.set_start_method - maybe the context is set {e.args}')
     if platform == "darwin":
         os.environ['no_proxy'] = '*'
-
 
 def register_decorated_fn(name: str, poll_interval: int, domain: str, worker_id: str, func):
     logger.info(f'decorated {name}')
@@ -43,10 +45,10 @@ def register_decorated_fn(name: str, poll_interval: int, domain: str, worker_id:
 class TaskHandler:
     def __init__(
             self,
-            workers: List[WorkerInterface] = None,
+            workers: List[WorkerInterface] = [],
             configuration: Configuration = None,
             metrics_settings: MetricsSettings = None,
-            scan_for_annotated_workers: bool = None,
+            scan_for_annotated_workers: bool = True,
             import_modules: List[str] = None
     ):
         self.logger_process, self.queue = _setup_logging_queue(configuration)

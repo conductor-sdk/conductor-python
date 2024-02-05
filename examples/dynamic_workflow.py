@@ -1,5 +1,6 @@
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
+from conductor.client.http.models.start_workflow_request import IdempotencyStrategy
 from conductor.client.orkes_clients import OrkesClients
 from conductor.client.worker.worker_task import worker_task
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
@@ -16,13 +17,13 @@ def send_email(email: str, subject: str, body: str):
 
 
 def main():
+    # defaults to reading the configuration using following env variables
+    # CONDUCTOR_SERVER_URL : conductor server e.g. https://play.orkes.io/api
+    # CONDUCTOR_AUTH_KEY : API Authentication Key
+    # CONDUCTOR_AUTH_SECRET: API Auth Secret
     api_config = Configuration()
 
-    task_handler = TaskHandler(
-        workers=[],
-        configuration=api_config,
-        scan_for_annotated_workers=True,
-    )
+    task_handler = TaskHandler(configuration=api_config)
     task_handler.start_processes()
 
     clients = OrkesClients(configuration=api_config)
@@ -33,8 +34,14 @@ def main():
                           body='Test Email')
     workflow >> get_email >> sendmail
 
-    result = workflow.execute(workflow_input={'userid': 'user_a'})
-    print(f'\nworkflow completed with status {result.status}\n')
+    # Configure the output of the workflow
+    workflow.output_parameters(output_parameters={
+        'email': get_email.output('result')
+    })
+
+    workflow_run = workflow.execute(workflow_input={'userid': 'user_a'})
+    print(f'\nworkflow output:  {workflow_run.output}\n')
+    print(f'check the workflow execution here: {api_config.ui_host}/execution/{workflow_run.workflow_id}')
     task_handler.stop_processes()
 
 

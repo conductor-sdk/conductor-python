@@ -6,7 +6,7 @@ from conductor.client.http.models import TaskResult, Task
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.worker.exception import NonRetryableException
 from conductor.client.worker.worker_task import worker_task
-from examples.workers.user_details import UserDetails
+from examples.orkes.workers.user_details import UserDetails
 
 
 @dataclass
