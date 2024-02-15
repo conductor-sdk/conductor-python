@@ -1,6 +1,6 @@
 import pprint
 import re  # noqa: F401
-from typing import List
+from typing import List, Dict
 
 import six
 
@@ -94,7 +94,7 @@ class WorkflowTask(object):
                  sub_workflow_param=None, join_on=None, sink=None, optional=None, task_definition=None,
                  rate_limited=None, default_exclusive_join_task=None, async_complete=None, loop_condition=None,
                  loop_over=None, retry_count=None, evaluator_type=None, expression=None,
-                 workflow_task_type=None, on_state_change: dict[str, StateChangeConfig] = None):  # noqa: E501
+                 workflow_task_type=None, on_state_change: Dict[str, StateChangeConfig] = None):  # noqa: E501
         """WorkflowTask - a model defined in Swagger"""  # noqa: E501
         self._name = None
         self._task_reference_name = None
@@ -817,7 +817,7 @@ class WorkflowTask(object):
         self._workflow_task_type = workflow_task_type
 
     @property
-    def on_state_change(self) -> dict[str, List[StateChangeEvent]]:
+    def on_state_change(self) -> Dict[str, List[StateChangeEvent]]:
         return self._on_state_change
 
     @on_state_change.setter

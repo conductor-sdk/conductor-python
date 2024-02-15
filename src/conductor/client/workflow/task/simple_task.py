@@ -1,3 +1,5 @@
+from typing import Dict
+
 from typing_extensions import Self
 
 from conductor.client.workflow.task.task import TaskInterface
@@ -13,7 +15,7 @@ class SimpleTask(TaskInterface):
         )
 
 
-def simple_task(task_def_name: str, task_reference_name: str, inputs: dict[str, object]) -> TaskInterface:
+def simple_task(task_def_name: str, task_reference_name: str, inputs: Dict[str, object]) -> TaskInterface:
     task = SimpleTask(task_def_name=task_def_name, task_reference_name=task_reference_name)
     task.input_parameters.update(inputs)
     return task
