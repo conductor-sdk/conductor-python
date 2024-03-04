@@ -40,14 +40,21 @@ class TestOrkesWorkflowClientIntg(unittest.TestCase):
         cls.config = get_configuration()
         cls.workflow_client = OrkesWorkflowClient(cls.config)
         logger.info(f'setting up TestOrkesWorkflowClientIntg with config {cls.config}')
-
-    def test_all(self):
         logger.info('START: integration tests')
+
+    @classmethod
+    def tearDownClass(cls):
+        logger.info('END: integration tests')
+
+    def test_workflows(self):
         configuration = self.config
         workflow_executor = WorkflowExecutor(configuration)
 
         # test_async.test_async_method(api_client)
         run_workflow_definition_tests(workflow_executor)
         run_workflow_execution_tests(configuration, workflow_executor)
-        TestOrkesClients(configuration=configuration).run()
-        logger.info('END: integration tests')
+
+    def test_orkes_clients(self):
+        TestOrkesClients(configuration=self.config).run()
+
+
