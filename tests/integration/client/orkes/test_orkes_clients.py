@@ -636,9 +636,11 @@ class TestOrkesClients:
         f = open(path, "r")
         workflowJSON = json.loads(f.read())
         workflowDef = self.api_client.deserialize_class(workflowJSON, "WorkflowDef")
+        f.close()
         return workflowDef
 
     def __get_test_inputs(self, path):
         f = open(path, "r")
         inputJSON = json.loads(f.read())
+        f.close()
         return inputJSON
