@@ -12,6 +12,7 @@ from conductor.client.http.api.secret_resource_api import SecretResourceApi
 from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.api.user_resource_api import UserResourceApi
 from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
+from conductor.client.http.api.environment_resource_api import EnvironmentResourceApi
 from conductor.client.http.api_client import ApiClient
 from conductor.client.orkes.api.tags_api import TagsApi
 
@@ -34,3 +35,4 @@ class OrkesBaseClient(object):
         self.tagsApi = TagsApi(self.api_client)
         self.integrationApi = IntegrationResourceApi(self.api_client)
         self.promptApi = PromptResourceApi(self.api_client)
+        self.environmentResourceApi = EnvironmentResourceApi(self.api_client)

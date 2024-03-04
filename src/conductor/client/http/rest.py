@@ -79,6 +79,9 @@ class RESTClientObject(object):
                     request_body = '{}'
                     if body is not None:
                         request_body = json.dumps(body)
+                        if isinstance(body, str):
+                            request_body = request_body.strip('"')
+
                     r = self.connection.request(
                         method, url,
                         data=request_body,

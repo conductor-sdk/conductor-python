@@ -31,6 +31,7 @@ WORKFLOW_NAME = 'IntegrationTestOrkesClientsWf_' + SUFFIX
 TASK_TYPE = 'IntegrationTestOrkesClientsTask_' + SUFFIX
 SCHEDULE_NAME = 'IntegrationTestSchedulerClientSch_' + SUFFIX
 SECRET_NAME = 'IntegrationTestSecretClientSec_' + SUFFIX
+VARIABLE_NAME = 'IntegrationTestOrkesClientsVar_' + SUFFIX
 APPLICATION_NAME = 'IntegrationTestAuthClientApp_' + SUFFIX
 USER_ID = 'integrationtest_' + SUFFIX[0:5].lower() + "@orkes.io"
 GROUP_ID = 'integrationtest_group_' + SUFFIX[0:5].lower()
@@ -50,6 +51,7 @@ class TestOrkesClients:
         self.scheduler_client = orkes_clients.get_scheduler_client()
         self.secret_client = orkes_clients.get_secret_client()
         self.authorization_client = orkes_clients.get_authorization_client()
+        self.env_variable_client = orkes_clients.get_env_variable_client()
         self.workflow_id = None
 
     def run(self) -> None:
@@ -66,6 +68,7 @@ class TestOrkesClients:
         self.test_workflow_lifecycle(workflowDef, workflow)
         self.test_task_lifecycle()
         self.test_secret_lifecycle()
+        self.test_environment_variable_lifecycle()
         self.test_scheduler_lifecycle(workflowDef)
         self.test_application_lifecycle()
         self.__test_unit_test_workflow()
@@ -143,6 +146,34 @@ class TestOrkesClients:
             self.secret_client.get_secret(SECRET_NAME + "_2")
         except ApiException as e:
             assert e.code == 404
+
+    def test_environment_variable_lifecycle(self):
+        env_vars = self.env_variable_client.get_all_env_variables()
+
+        num_env_vars = len(env_vars)
+
+        self.env_variable_client.save_env_variable(VARIABLE_NAME, 'env_var_value')
+
+        assert self.env_variable_client.get_env_variable(VARIABLE_NAME), 'env_var_value'
+
+        self.env_variable_client.save_env_variable(VARIABLE_NAME + "_2", 'val_2')
+
+        env_vars = self.env_variable_client.get_all_env_variables()
+
+        assert len(env_vars) == num_env_vars + 2
+
+        self.env_variable_client.delete_env_variable(VARIABLE_NAME + '_2')
+
+        try:
+            self.env_variable_client.get_env_variable(VARIABLE_NAME + '_2')
+        except ApiException as e:
+            assert e.code == 404
+
+        self.env_variable_client.delete_env_variable(VARIABLE_NAME)
+
+        env_vars = self.env_variable_client.get_all_env_variables()
+
+        assert len(env_vars.keys()) == num_env_vars
 
     def test_scheduler_lifecycle(self, workflowDef):
         startWorkflowRequest = StartWorkflowRequest(
@@ -605,9 +636,11 @@ class TestOrkesClients:
         f = open(path, "r")
         workflowJSON = json.loads(f.read())
         workflowDef = self.api_client.deserialize_class(workflowJSON, "WorkflowDef")
+        f.close()
         return workflowDef
 
     def __get_test_inputs(self, path):
         f = open(path, "r")
         inputJSON = json.loads(f.read())
+        f.close()
         return inputJSON
