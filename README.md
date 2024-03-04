@@ -194,6 +194,11 @@ In this guide, we will dive deeper into each of these topic.
 ### [Using Conductor in your Application](conductor_apps.md)
 
 
-
-
-
+## Using Conductor clients to manage resources
+### [Metadata Client for Workflow & Task Definitions](docs/metadata/README.md)
+### [Workflow Client for Workflow Executions](docs/workflow/README.md)
+### [Task Client for Task Executions](docs/task/README.md)
+### [Scheduler Client for Schedule Management](docs/schedule/README.md)
+### [Secret Client for Managing Secrets](docs/secret/README.md)
+### [Environment Variable Client for managing Environment Variables](docs/env_variable/README.md)
+### [Authorization Client for managing Users, Groups, Applications and Permissions](docs/authorization/README.md)
