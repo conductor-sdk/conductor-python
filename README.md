@@ -18,7 +18,6 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
 - [Install SDK](#install-sdk)
   - [Get Conductor Python SDK](#get-conductor-python-sdk)
   - [Setup SDK](#setup-sdk)
-- [Start Conductor Server](#start-conductor-server)
 - [Simple Hello World Application using Conductor](#simple-hello-world-application-using-conductor)
   - [Step 1: Create a Workflow](#step-1-create-a-workflow)
   - [Step 2: Write Worker](#step-2-write-worker)
@@ -47,7 +46,7 @@ python3 -m pip install conductor-python
 ## Simple Hello World Application using Conductor
 In this section, we will create a simple "Hello World" application that uses Conductor. 
 
-### Step 1: Create a [Workflow](https://docs.conductor-oss.org/devguide/concepts/workflows.html](https://github.com/Srividhya-S-Subramanian/conductor-python-v1/blob/main/workflows.md)
+### Step 1: Create a [Workflow](workflows.md)
 
 **Use Code to create workflows**
 
@@ -95,7 +94,7 @@ curl -X POST -H "Content-Type:application/json" \
 http://localhost:8080/api/metadata/workflow -d @workflow.json
 ```
 
-### Step 2: Write [Worker](https://docs.conductor-oss.org/devguide/concepts/workers.html)
+### Step 2: Write [Worker](workers.md)
 
 Create [greetings.py](examples/greetings.py) with a simple worker and a workflow function.
 
@@ -203,7 +202,7 @@ def main():
     task_handler.start_processes()
 
     #workflow_run = workflow_executor.execute(name=workflow.name, version=workflow.version,
-                                             workflow_input={'name': 'Orkes'})
+                                             #workflow_input={'name': 'Orkes'})
 
     #print(f'\nworkflow result: {workflow_run.output["result"]}\n')
     #print(f'see the workflow execution here: {api_config.ui_host}/execution/{workflow_run.workflow_id}\n')
