@@ -70,7 +70,7 @@ After starting the server navigate to http://localhost:5000 to ensure the server
 ## Simple Hello World Application using Conductor
 In this section, we will create a simple "Hello World" application that uses Conductor. 
 
-### Step 1: Create a Workflow
+### Step 1: Create a [Workflow](https://docs.conductor-oss.org/devguide/concepts/workflows.html)
 
 **Use Code to create workflows**
 
@@ -118,7 +118,7 @@ curl -X POST -H "Content-Type:application/json" \
 http://localhost:8080/api/metadata/workflow -d @workflow.json
 ```
 
-### Step 2: Write Worker
+### Step 2: Write [Worker](https://docs.conductor-oss.org/devguide/concepts/workers.html)
 
 Create [greetings.py](examples/greetings.py) with a simple worker and a workflow function.
 
