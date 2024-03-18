@@ -44,29 +44,6 @@ SDK needs Python 3.9+.
 ```shell
 python3 -m pip install conductor-python
 ```
-### Setup SDK
-
-Point the SDK to the Conductor Server API endpoint
-```shell
-export CONDUCTOR_SERVER_URL=http://localhost:8080/api
-```
-(Optionally) If you are using a Conductor server that requires authentication
-
-[How to obtain the key and secret from the conductor server
-](https://orkes.io/content/docs/getting-started/concepts/access-control)
-
-
-```shell
-export CONDUCTOR_AUTH_KEY=your_key
-export CONDUCTOR_AUTH_SECRET=your_key_secret
-```
-
-## Start Conductor Server
-```shell
-docker run --init -p 8080:8080 -p 5000:5000 conductoross/conductor-standalone:3.15.0
-```
-After starting the server navigate to http://localhost:5000 to ensure the server has started successfully.
-
 ## Simple Hello World Application using Conductor
 In this section, we will create a simple "Hello World" application that uses Conductor. 
 
@@ -176,10 +153,85 @@ def main():
 if __name__ == '__main__':
     main()
 ```
+## Running your distributed python app
 
+### Setup SDK
+
+Point the SDK to the Conductor Server API endpoint. Now, let's test the app locally.
+```shell
+export CONDUCTOR_SERVER_URL=http://localhost:8080/api
+```
+### Start Conductor Server
+```shell
+docker run --init -p 8080:8080 -p 5000:5000 conductoross/conductor-standalone:3.15.0
+```
+After starting the server navigate to http://localhost:5000 to ensure the server has started successfully. Go ahead and run your code.
+```
+python greetings_workflow.py
+```
+Now, the workflow gets executed and the result can be observed by opening http:localhost:5000/ in your Web Browser as shown below. 'hello' workflow has been created. Open the executions tab and notice that hello workflow has been executed. 
+<img width="1434" alt="Screenshot 2024-03-18 at 12 30 07" src="https://github.com/Srividhya-S-Subramanian/conductor-python-v1/assets/163816773/11e829b6-d46a-4b47-b2cf-0bf524a6ebdc">
+
+Open the Workbench tab and try running the 'hello' workflow. You will notice that the workflow execution fails. This is because task_handler.stop_processes() [greetings_main.py], stops all the workers. So, workers are not available to execute the tasks.
+
+Now, let's update greetings_main.py
+
+```python
+from conductor.client.automator.task_handler import TaskHandler
+from conductor.client.configuration.configuration import Configuration
+from conductor.client.workflow.conductor_workflow import ConductorWorkflow
+from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
+from greetings_workflow import greetings_workflow
+
+
+def register_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
+    workflow = greetings_workflow(workflow_executor=workflow_executor)
+    workflow.register(True)
+    return workflow
+
+
+def main():
+    # points to http://localhost:8080/api by default
+    api_config = Configuration()
+
+    workflow_executor = WorkflowExecutor(configuration=api_config)
+
+    # Needs to be done only when registering a workflow one-time
+    workflow = register_workflow(workflow_executor)
+
+    task_handler = TaskHandler(configuration=api_config)
+    task_handler.start_processes()
+
+    #workflow_run = workflow_executor.execute(name=workflow.name, version=workflow.version,
+                                             workflow_input={'name': 'Orkes'})
+
+    #print(f'\nworkflow result: {workflow_run.output["result"]}\n')
+    #print(f'see the workflow execution here: {api_config.ui_host}/execution/{workflow_run.workflow_id}\n')
+    #task_handler.stop_processes()
+
+
+if __name__ == '__main__':
+    main()
+```
+Now, you can run the workflow from the UI successfully, since we have commented the lines of code used to run the workflow and stop the workers.
+
+## Run the workflow on Orkes
+Update the Conductor Server URL. 
+```shell
+export CONDUCTOR_SERVER_URL=https://[cluster-name].orkesconductor.io/api
+```
+(Optionally) If you are using a Conductor server that requires authentication
+
+[How to obtain the key and secret from the conductor server
+](https://orkes.io/content/docs/getting-started/concepts/access-control)
+
+
+```shell
+export CONDUCTOR_AUTH_KEY=your_key
+export CONDUCTOR_AUTH_SECRET=your_key_secret
+```
 > [!NOTE]
-> That's it - you just created your first distributed python app!
-> 
+> That's it - you just created and executed your first distributed workflow!
 
 ## Using Conductor in your application
 There are three main ways you will use Conductor when building durable, resilient, distributed applications.
@@ -192,6 +244,9 @@ In this guide, we will dive deeper into each of these topic.
 ### [Create and Run Conductor Workers](workers.md)
 ### [Create Conductor Workflows](workflows.md)
 ### [Using Conductor in your Application](conductor_apps.md)
+
+
+
 
 
 
