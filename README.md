@@ -47,7 +47,7 @@ python3 -m pip install conductor-python
 ## Simple Hello World Application using Conductor
 In this section, we will create a simple "Hello World" application that uses Conductor. 
 
-### Step 1: Create a [Workflow](https://docs.conductor-oss.org/devguide/concepts/workflows.html)
+### Step 1: Create a [Workflow](https://docs.conductor-oss.org/devguide/concepts/workflows.html](https://github.com/Srividhya-S-Subramanian/conductor-python-v1/blob/main/workflows.md)
 
 **Use Code to create workflows**
 
