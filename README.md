@@ -26,6 +26,12 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
   - [Create and Run Conductor Workers](#create-and-run-conductor-workers)
   - [Create Conductor Workflows](#create-conductor-workflows)
   - [Using Conductor in your Application](#using-conductor-in-your-application)
+- [Running your distributed workflow](#running-your-distributed-workflow)
+  - [Setup SDK](#setup-sdk)
+  - [Start Conductor Server](#start-conductor-server)
+- [Run the workflow on Orkes](#run-the-workflow-on-Orkes)
+  
+  
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -152,7 +158,7 @@ def main():
 if __name__ == '__main__':
     main()
 ```
-## Running your distributed python app
+## Running your distributed workflow
 
 ### Setup SDK
 
