@@ -2,6 +2,7 @@
 This is a dynamic workflow that can be created and executed at run time.
 dynamic_workflow will run worker tasks get_user_email and send_email in the same order.
 For use cases in which the workflow cannot be defined statically, dynamic workflows is a useful approach.
+For detailed explanation, https://github.com/conductor-sdk/conductor-python/blob/main/workflows.md
 """
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
