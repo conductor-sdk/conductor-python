@@ -165,7 +165,7 @@ workflow_run = workflow_client.execute_workflow(
 > See [workflow_ops.py](examples/workflow_ops.py) for a fully working application that demonstrates
 > working with the workflow executions and sending signals to the workflow to manage its state.
 
-Workflows represent te application state.  With Conductor, you can query the workflow execution state anytime during its lifecycle.
+Workflows represent the application state.  With Conductor, you can query the workflow execution state anytime during its lifecycle.
 You can also send Signals to the workflow that determines the outcome of the workflow state.
 
 [WorkflowClient](src/conductor/client/workflow_client.py) is the client interface used to manage workflow executions.
