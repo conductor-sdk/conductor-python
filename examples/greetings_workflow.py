@@ -1,3 +1,6 @@
+"""
+For detailed explanation https://github.com/conductor-sdk/conductor-python/blob/main/README.md#step-1-create-a-workflow
+"""
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from greetings import greet
