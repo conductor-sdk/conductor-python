@@ -238,6 +238,10 @@ export CONDUCTOR_AUTH_SECRET=your_key_secret
 > [!NOTE]
 > That's it - you just created and executed your first distributed workflow!
 
+## How does the app work?
+<img width="1020" alt="Screenshot 2024-03-19 at 14 47 45" src="https://github.com/Srividhya-S-Subramanian/conductor-python-v1/assets/163816773/8cdd4bde-eb39-4dcb-90d0-bc752f374e16">
+
+
 ## Using Conductor in your application
 There are three main ways you will use Conductor when building durable, resilient, distributed applications.
 1. Write service workers that implements business logic to accomplish a specific goal - such as initiate payment transfer, get user information from database etc. 
@@ -249,6 +253,7 @@ In this guide, we will dive deeper into each of these topic.
 ### [Create and Run Conductor Workers](workers.md)
 ### [Create Conductor Workflows](workflows.md)
 ### [Using Conductor in your Application](conductor_apps.md)
+
 
 
 
