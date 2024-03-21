@@ -8,7 +8,6 @@ Worker implements a task in the workflow.  (note: _often times worker and task a
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [](#)
 - [Implementing Workers](#implementing-workers)
   - [Managing workers in _your_ application](#managing-workers-in-_your_-application)
 - [Design Principles for Workers](#design-principles-for-workers)

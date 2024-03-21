@@ -1,3 +1,7 @@
+"""
+This file contains a Simple Worker that can be used in any workflow.
+For detailed information https://github.com/conductor-sdk/conductor-python/blob/main/README.md#step-2-write-worker
+""""
 from conductor.client.worker.worker_task import worker_task
 
 
