@@ -1,8 +1,9 @@
 # Conductor Workflows
-Workflow can be defined as the collection of tasks and operators that specifies the order and execution of the defined tasks. 
-This orchestration occurs in a hybrid ecosystem that encircles serverless functions, microservices, and monolithic applications. 
 
-In this section, we will dive deeper into creating and executing Conductor workflows using Python SDK.
+Workflow can be defined as the collection of tasks and operators that specify the order and execution of the defined tasks. This orchestration occurs in a hybrid ecosystem that encircles serverless functions, microservices, and monolithic applications.
+
+
+This section will dive deeper into creating and executing Conductor workflows using Python SDK.
 
 [![GitHub stars](https://img.shields.io/github/stars/conductor-oss/conductor.svg?style=social&label=Star&maxAge=)](https://GitHub.com/conductor-oss/conductor/)
 
@@ -12,39 +13,42 @@ In this section, we will dive deeper into creating and executing Conductor workf
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Creating Workflows](#creating-workflows)
-  - [Execute dynamic workflows using Code](#execute-dynamic-workflows-using-code)
-  - [Kitchensink Workflow](#kitchensink-workflow)
+  - [Execute Dynamic Workflows Using Code](#execute-dynamic-workflows-using-code)
+  - [Kitchen-Sink Workflow](#kitchen-sink-workflow)
 - [Executing Workflows](#executing-workflows)
-  - [Execute workflow asynchronously](#execute-workflow-asynchronously)
-  - [Execute workflow synchronously](#execute-workflow-synchronously)
+  - [Execute Workflow Asynchronously](#execute-workflow-asynchronously)
+  - [Execute Workflow Synchronously](#execute-workflow-synchronously)
 - [Managing Workflow Executions](#managing-workflow-executions)
-  - [Get the execution status](#get-the-execution-status)
-  - [Update workflow state variables](#update-workflow-state-variables)
-  - [Terminate running workflows](#terminate-running-workflows)
-  - [Retry failed workflows](#retry-failed-workflows)
-  - [Restart workflows](#restart-workflows)
-  - [Rerun a workflow from a specific task](#rerun-a-workflow-from-a-specific-task)
-  - [Pause a running workflow](#pause-a-running-workflow)
-  - [Resume paused workflow](#resume-paused-workflow)
-- [Searching for workflows](#searching-for-workflows)
+  - [Get Execution Status](#get-execution-status)
+  - [Update Workflow State Variables](#update-workflow-state-variables)
+  - [Terminate Running Workflows](#terminate-running-workflows)
+  - [Retry Failed Workflows](#retry-failed-workflows)
+  - [Restart Workflows](#restart-workflows)
+  - [Rerun Workflow from a Specific Task](#rerun-workflow-from-a-specific-task)
+  - [Pause Running Workflow](#pause-running-workflow)
+  - [Resume Paused Workflow](#resume-paused-workflow)
+- [Searching for Workflows](#searching-for-workflows)
 - [Handling Failures, Retries and Rate Limits](#handling-failures-retries-and-rate-limits)
   - [Retries](#retries)
   - [Rate Limits](#rate-limits)
+    - [Task Registration](#task-registration)
+    - [Update Task Definition:](#update-task-definition)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Creating Workflows
-Conductor lets you create the workflows either using Python or JSON as the configuration.  
-Using Python as code to define and execute workflows let you build extremely powerful, dynamic workflows and run them on Conductor.
 
-When the workflows are fairly static, they can be designed using the Orkes UI (available when using orkes.io) and using APIs or SDKs to register and run the workflows.
+Conductor lets you create the workflows using either Python or JSON as the configuration.
+
+Using Python as code to define and execute workflows lets you build extremely powerful, dynamic workflows and run them on Conductor.
+
+When the workflows are relatively static, they can be designed using the Orkes UI (available when using Orkes Conductor) and APIs or SDKs to register and run the workflows.
 
 Both the code and configuration approaches are equally powerful and similar in nature to how you treat Infrastructure as Code.
 
-### Execute dynamic workflows using Code
-For cases, where the workflows cannot be created statically ahead of the time, 
-Conductor is a powerful dynamic workflow execution platform that lets you create
-very complex workflows in code and execute them.  Useful when the workflow is unique for each execution.
+### Execute Dynamic Workflows Using Code
+
+For cases where the workflows cannot be created statically ahead of time, Conductor is a powerful dynamic workflow execution platform that lets you create very complex workflows in code and execute them. It is useful when the workflow is unique for each execution.
 
 ```python
 from conductor.client.automator.task_handler import TaskHandler
@@ -118,15 +122,16 @@ workflow output:  {'email': 'user_a@example.com'}
 
 2024-02-03 19:54:36,309 [32853] conductor.client.automator.task_handler INFO     Stopped worker processes...
 ```
-see [dynamic_workflow.py](examples/dynamic_workflow.py) for a fully functional example.
+See [dynamic_workflow.py](examples/dynamic_workflow.py) for a fully functional example.
 
-see [kitchensink.py](examples/kitchensink.py) for a more complex example. 
+### Kitchen-Sink Workflow 
 
-### Kitchensink Workflow 
-For more complex workflow example with all the supported features, see [kitchensink.py](examples/kitchensink.py)
+For a more complex workflow example with all the supported features, see [kitchensink.py](examples/kitchensink.py).
 
 ## Executing Workflows
-[WorkflowClient](src/conductor/client/workflow_client.py) interface provides all the APIs required to work with workflow executions.
+
+The [WorkflowClient](src/conductor/client/workflow_client.py) interface provides all the APIs required to work with workflow executions.
+
 ```python
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.orkes_clients import OrkesClients
@@ -135,8 +140,10 @@ api_config = Configuration()
 clients = OrkesClients(configuration=api_config)
 workflow_client = clients.get_workflow_client() 
 ```
-### Execute workflow asynchronously
-Useful when workflows are long-running.
+### Execute Workflow Asynchronously
+
+UUseful when workflows are long-running.
+
 ```python
 from conductor.client.http.models import StartWorkflowRequest
 
@@ -147,8 +154,10 @@ request.input = {'name': 'Orkes'}
 # workflow id is the unique execution id associated with this execution
 workflow_id = workflow_client.start_workflow(request)
 ```
-### Execute workflow synchronously
-Useful when workflows complete very quickly - usually under 20-30 second.
+### Execute Workflow Synchronously
+
+Applicable when workflows complete very quickly - usually under 20-30 seconds.
+
 ```python
 from conductor.client.http.models import StartWorkflowRequest
 
@@ -165,11 +174,9 @@ workflow_run = workflow_client.execute_workflow(
 
 ## Managing Workflow Executions
 > [!note] 
-> See [workflow_ops.py](examples/workflow_ops.py) for a fully working application that demonstrates
-> working with the workflow executions and sending signals to the workflow to manage its state.
+> See [workflow_ops.py](examples/workflow_ops.py)  for a fully working application that demonstrates working with the workflow executions and sending signals to the workflow to manage its state.
 
-Workflows represent the application state.  With Conductor, you can query the workflow execution state anytime during its lifecycle.
-You can also send Signals to the workflow that determines the outcome of the workflow state.
+Workflows represent the application state. With Conductor, you can query the workflow execution state anytime during its lifecycle. You can also send signals to the workflow that determines the outcome of the workflow state.
 
 [WorkflowClient](src/conductor/client/workflow_client.py) is the client interface used to manage workflow executions.
 
@@ -182,102 +189,102 @@ clients = OrkesClients(configuration=api_config)
 workflow_client = clients.get_workflow_client()
 ```
 
-### Get the execution status
-The following method lets you query the status of the workflow execution given the id.
-When the `include_tasks` is set the response also includes all the completed and in progress tasks.
+### Get Execution Status
+
+The following method lets you query the status of the workflow execution given the id. When the `include_tasks` is set, the response also includes all the completed and in-progress tasks.
 
 `get_workflow(workflow_id: str, include_tasks: Optional[bool] = True) -> Workflow`
 
-### Update workflow state variables
-Variables inside a workflow are the equivalent to global variables in a program. 
+### Update Workflow State Variables
+
+Variables inside a workflow are the equivalent of global variables in a program.
 
 `update_variables(self, workflow_id: str, variables: dict[str, object] = {})`
 
-### Terminate running workflows
-Terminates a running workflow.  Any pending tasks are cancelled and no further work is scheduled for this workflow upon termination.
-A failure workflow will be triggered, but can be avoided if `trigger_failure_workflow` is set to False.
+### Terminate Running Workflows
+
+Used to terminate a running workflow. Any pending tasks are canceled, and no further work is scheduled for this workflow upon termination. A failure workflow will be triggered but can be avoided if `trigger_failure_workflow` is set to False.
 
 `terminate_workflow(self, workflow_id: str, reason: Optional[str] = None, trigger_failure_workflow: bool = False)`
 
-### Retry failed workflows
-If the workflow has failed due to one of the task failure after exhausting the retries for the task, the workflow can 
-still be resumed by calling the retry.
+### Retry Failed Workflows
+
+If the workflow has failed due to one of the task failures after exhausting the retries for the task, the workflow can still be resumed by calling the retry.
 
 `retry_workflow(self, workflow_id: str, resume_subworkflow_tasks: Optional[bool] = False)`
 
 When a sub-workflow inside a workflow has failed, there are two options:
-1. re-trigger the sub-workflow from the start (Default behavior)
-2. resume the sub-workflow from the failed task (set `resume_subworkflow_tasks` to `True`)
 
-``
-### Restart workflows
-A workflow in the terminal state (COMPLETED, TERMINATED, FAILED) can be restarted from the beginning. 
-Useful when retrying from the last failed task is not enough and the whole workflow needs to be started again.
+1. Re-trigger the sub-workflow from the start (Default behavior).
+2. Resume the sub-workflow from the failed task (set  `resume_subworkflow_tasks` to True).
+
+### Restart Workflows
+
+A workflow in the terminal state (COMPLETED, TERMINATED, FAILED) can be restarted from the beginning. Useful when retrying from the last failed task is insufficient, and the whole workflow must be started again.
 
 `restart_workflow(self, workflow_id: str, use_latest_def: Optional[bool] = False)`
 
-### Rerun a workflow from a specific task
-In the cases where a workflow needs to be restarted from a specific task rather than from the beginning, `re-run` provides that option.
-When issuing the re-run command to the workflow, you have the ability to specify the id of the task from where the workflow 
-should be restarted (as opposed to from the beginning) and optionally, the input of the workflow can also be changed:
+### Rerun Workflow from a Specific Task
+
+In the cases where a workflow needs to be restarted from a specific task rather than from the beginning, rerun provides that option. When issuing the rerun command to the workflow, you can specify the task ID from where the workflow should be restarted (as opposed to from the beginning), and optionally, the workflow's input can also be changed.
 
 `rerun_workflow(self, workflow_id: str, rerun_workflow_request: RerunWorkflowRequest)`
 
 > [!tip]
-> re-run is one of the most powerful feature Conductor has, givingin you unparalleled control over the workflow restart
+> Rerun is one of the most powerful features Conductor has, giving you unparalleled control over the workflow restart.
 > 
 
-### Pause a running workflow
-A running workflow can be put to a PAUSED status.  A paused workflow lets the currently running tasks complete, 
-but does not schedule any new tasks until resumed.
+### Pause Running Workflow
+
+A running workflow can be put to a PAUSED status. A paused workflow lets the currently running tasks complete but does not schedule any new tasks until resumed.
 
 `pause_workflow(self, workflow_id: str)`
 
-### Resume paused workflow
-Resume operation resumes the currently paused workflow, immediately evaluating its state and scheduling the next set of
-tasks.
+### Resume Paused Workflow
+
+Resume operation resumes the currently paused workflow, immediately evaluating its state and scheduling the next set of tasks.
 
 `resume_workflow(self, workflow_id: str)`
 
-## Searching for workflows
-Workflow executions are retained until removed from Conductor.  This gives complete visibility into all the executions an 
-application has - regardless of the number of executions.  Conductor has a poewrful search API that allows you to search 
-for workflow executions. 
+## Searching for Workflows
+
+Workflow executions are retained until removed from the Conductor. This gives complete visibility into all the executions an application has - regardless of the number of executions. Conductor has a powerful search API that allows you to search for workflow executions.
 
 `search(self, start, size, free_text: str = '*', query: str = None) -> ScrollableSearchResultWorkflowSummary`
 
-* **free_text**: Free text search to look for specific words in the workflow and task input/output
-* **query** SQL like query to search against specific fields in the workflow. 
+* **free_text**: Free text search to look for specific words in the workflow and task input/output.
+* **query** SQL-like query to search against specific fields in the workflow.
 
-Supported fields for **query**
+Here are the supported fields for **query**:
 
 | field       | description     |
 |-------------|-----------------|
-| status      |workflow status  |
-| correlationId |correlation Id   |
-| workflowType |name of the workflow |
- | version     |workflow version |
-|startTime|start time of the workflow in unix millis|
+| status      |The status of the workflow. |
+| correlationId |The ID to correlate the workflow execution to other executions.   |
+| workflowType |The name of the workflow. |
+ | version     |The version of the workflow. |
+|startTime|The start time of the workflow is in milliseconds.|
 
 
 ## Handling Failures, Retries and Rate Limits
-Conductor lets you embrace failures rather than worry about failures and complexities that are introduced in the system
-to handle failures.
 
-All the aspect of handling failures, retries, rate limits etc. are driven by the configuration that can be updated in 
-real-time without having to re-deploy your application.
+Conductor lets you embrace failures rather than worry about the complexities introduced in the system to handle failures.
+
+All the aspects of handling failures, retries, rate limits, etc., are driven by the configuration that can be updated in real time without re-deploying your application.
 
 ### Retries
-Each task in Conductor workflow can be configured to handle failures with retries, 
-along with the retry policy (linear, fixed, exponential backoff) and max. number of retry attempts allowed.
+
+Each task in the Conductor workflow can be configured to handle failures with retries, along with the retry policy (linear, fixed, exponential backoff) and maximum number of retry attempts allowed.
 
 See [Error Handling](https://orkes.io/content/error-handling) for more details.
 
 ### Rate Limits
-What happens when a task is operating on a critical resource that can only handle so many requests at a time?
-Tasks can be configured to have a fixed concurrency (X request at a time) or a rate (Y tasks / time window).
 
-**Task Registration**
+What happens when a task is operating on a critical resource that can only handle a few requests at a time? Tasks can be configured to have a fixed concurrency (X request at a time) or a rate (Y tasks/time window).
+
+
+#### Task Registration
+
 ```python
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models import TaskDef
@@ -336,7 +343,9 @@ def main():
   "rateLimitFrequencyInSeconds": 1
 }
 ```
-Update the task definition:
+
+#### Update Task Definition:
+
 ```shell
 POST /api/metadata/taskdef -d @task_def.json
 ```
