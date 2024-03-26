@@ -29,7 +29,7 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
   - [Setup SDK](#setup-sdk)
   - [Start Conductor Server](#start-conductor-server)
 - [Running Workflow in Orkes Conductor](#running-workflow-in-orkes-conductor)
-- [How Does App Work?](#how-does-the-app-work)
+- [How Does App Work?](#how-does-app-work)
 - [Using Conductor in Your Application](#using-conductor-in-your-application)
   - [Create and Run Conductor Workers](#create-and-run-conductor-workers)
   - [Create Conductor Workflows](#create-conductor-workflows)
