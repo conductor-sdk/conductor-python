@@ -29,7 +29,7 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
   - [Setup SDK](#setup-sdk)
   - [Start Conductor Server](#start-conductor-server)
 - [Running Workflow in Orkes Conductor](#running-workflow-in-orkes-conductor)
-- [How does the app work?](#how-does-the-app-work)
+- [How Does App Work?](#how-does-the-app-work)
 - [Using Conductor in Your Application](#using-conductor-in-your-application)
   - [Create and Run Conductor Workers](#create-and-run-conductor-workers)
   - [Create Conductor Workflows](#create-conductor-workflows)
@@ -260,7 +260,8 @@ Now, run the application from IDE and view the results from Conductor UI.
 > [!NOTE]
 > That's it - you just created and executed your first distributed Python app!
 
-## How does the app work?
+## How Does App Work?
+
 <img width="1020" alt="Screenshot 2024-03-19 at 14 47 45" src="https://github.com/Srividhya-S-Subramanian/conductor-python-v1/assets/163816773/8cdd4bde-eb39-4dcb-90d0-bc752f374e16">
 
 
