@@ -20,17 +20,17 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
 - [Install Conductor Python SDK](#install-conductor-python-sdk)
   - [Get Conductor Python SDK](#get-conductor-python-sdk)
 - [Hello World Application Using Conductor](#hello-world-application-using-conductor)
-  - [Step 1: Create the Workflow](#step-1-create-the-workflow)
-    - [Creating workflows by code](#creating-workflows-by-code)
-    - [(Alternatively) Creating workflows in JSON](#alternatively-creating-workflows-in-json)
-  - [Step 2: Write the Task Worker](#step-2-write-the-task-worker)
-  - [Step 3: Write the _Hello World_ Application](#step-3-write-the-_hello-world_-application)
-- [Running workflows on Conductor standalone (installed locally)](#running-workflows-on-conductor-standalone-installed-locally)
-  - [Setup the environment variable](#setup-the-environment-variables)
+  - [Step 1: Create Workflow](#step-1-create-workflow)
+    - [Creating Workflows by Code](#creating-workflows-by-code)
+    - [(Alternatively) Creating Workflows in JSON](#alternatively-creating-workflows-in-json)
+  - [Step 2: Write Task Worker](#step-2-write-task-worker)
+  - [Step 3: Write _Hello World_ Application](#step-3-write-_hello-world_-application)
+- [Running Workflows on Conductor Standalone (Installed Locally)](#running-workflows-on-conductor-standalone-installed-locally)
+  - [Setup Environment Variable](#setup-environment-variable)
   - [Start Conductor Server](#start-conductor-server)
-- [Execute the Hello World application](#rexecute-the-hello-world-application)
-- [Running workflows on Orkes Conductor](#running-workflows-on-orkes-conductor)
-- [Learn more about Conductor Python SDK](#learn-more-about-conductor-python-sdk)
+  - [Execute the Hello World application](#execute-the-hello-world-application)
+- [Running Workflows on Orkes Conductor](#running-workflows-on-orkes-conductor)
+- [Learn More about Conductor Python SDK](#learn-more-about-conductor-python-sdk)
   - [Create and Run Conductor Workers](#create-and-run-conductor-workers)
   - [Create Conductor Workflows](#create-conductor-workflows)
   - [Using Conductor in your Application](#using-conductor-in-your-application)
@@ -58,9 +58,9 @@ python3 -m pip install conductor-python
 
 In this section, we will create a simple "Hello World" application that executes a "greetings" workflow managed by Conductor.
 
-### Step 1: Create the Workflow
+### Step 1: Create Workflow
 
-#### Creating workflows by code
+#### Creating Workflows by Code
 
 Create [greetings_workflow.py](examples/helloworld/greetings_workflow.py) with the following:
 
@@ -79,7 +79,7 @@ def greetings_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow
 
 ```
 
-#### (Alternatively) Creating workflows in JSON
+#### (Alternatively) Creating Workflows in JSON
 
 Create `greetings_workflow.json` with the following:
 
@@ -103,7 +103,7 @@ Create `greetings_workflow.json` with the following:
 }
 ```
 
-Workflows must be registered to the conductor server, use the API to register the greetings workflow from the JSON file above:
+Workflows must be registered to the Conductor server. Use the API to register the greetings workflow from the JSON file above:
 ```shell
 curl -X POST -H "Content-Type:application/json" \
 http://localhost:8080/api/metadata/workflow -d @greetings_workflow.json
@@ -111,7 +111,7 @@ http://localhost:8080/api/metadata/workflow -d @greetings_workflow.json
 > [!note]
 > To use the Conductor API, the Conductor server must be up and running (see [Running over Conductor standalone (installed locally)](#running-over-conductor-standalone-installed-locally)
 
-### Step 2: Write the Task Worker
+### Step 2: Write Task Worker
 
 Using Python, a worker represents a function with the worker_task decorator. Create [greetings_worker.py](examples/helloworld/greetings_worker.py) file as illustrated below:
 
@@ -129,7 +129,7 @@ def greet(name: str) -> str:
 ```
 Now we are ready to write our main application that will execute our workflow.
 
-### Step 3: Write the _Hello World_ Application
+### Step 3: Write _Hello World_ Application
 
 Let's add [helloworld.py](examples/helloworld/helloworld.py) with a `main` method:
 
@@ -171,9 +171,9 @@ def main():
 if __name__ == '__main__':
     main()
 ```
-## Running workflows on Conductor standalone (installed locally)
+## Running Workflows on Conductor Standalone (Installed Locally)
 
-### Setup the environment variable
+### Setup Environment Variable
 
 Set the following environment variable to point the SDK to the Conductor Server API endpoint:
 
@@ -248,7 +248,7 @@ if __name__ == '__main__':
 
 By commenting the lines that execute the workflow and stop the task polling mechanism, we can re-run the app and run the workflow from the Conductor UI. The task is executed successfully.
 
-## Running workflows on Orkes Conductor
+## Running Workflows on Orkes Conductor
 
 For running the workflow in Orkes Conductor,
 
@@ -276,7 +276,7 @@ Run the application and view the executions status from Conductor's UI Console.
 > [!NOTE]
 > That's it - you just created and executed your first distributed Python app!
 
-## Learn more about Conductor Python SDK
+## Learn More about Conductor Python SDK
 
 There are three main ways you can use Conductor when building durable, resilient, distributed applications.
 
