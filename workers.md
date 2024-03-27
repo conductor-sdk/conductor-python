@@ -8,7 +8,6 @@ A Workflow task represents a unit of business logic that achieves a specific goa
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [](#)
 - [Implementing Workers](#implementing-workers)
   - [Managing Workers in Application](#managing-workers-in-application)
 - [Design Principles for Workers](#design-principles-for-workers)
