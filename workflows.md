@@ -142,7 +142,7 @@ workflow_client = clients.get_workflow_client()
 ```
 ### Execute Workflow Asynchronously
 
-UUseful when workflows are long-running.
+Useful when workflows are long-running.
 
 ```python
 from conductor.client.http.models import StartWorkflowRequest
@@ -193,25 +193,33 @@ workflow_client = clients.get_workflow_client()
 
 The following method lets you query the status of the workflow execution given the id. When the `include_tasks` is set, the response also includes all the completed and in-progress tasks.
 
-`get_workflow(workflow_id: str, include_tasks: Optional[bool] = True) -> Workflow`
+```python
+get_workflow(workflow_id: str, include_tasks: Optional[bool] = True) -> Workflow
+```
 
 ### Update Workflow State Variables
 
 Variables inside a workflow are the equivalent of global variables in a program.
 
-`update_variables(self, workflow_id: str, variables: dict[str, object] = {})`
+```python
+update_variables(self, workflow_id: str, variables: dict[str, object] = {})
+```
 
 ### Terminate Running Workflows
 
 Used to terminate a running workflow. Any pending tasks are canceled, and no further work is scheduled for this workflow upon termination. A failure workflow will be triggered but can be avoided if `trigger_failure_workflow` is set to False.
 
-`terminate_workflow(self, workflow_id: str, reason: Optional[str] = None, trigger_failure_workflow: bool = False)`
+```python
+terminate_workflow(self, workflow_id: str, reason: Optional[str] = None, trigger_failure_workflow: bool = False)
+```
 
 ### Retry Failed Workflows
 
 If the workflow has failed due to one of the task failures after exhausting the retries for the task, the workflow can still be resumed by calling the retry.
 
-`retry_workflow(self, workflow_id: str, resume_subworkflow_tasks: Optional[bool] = False)`
+```python
+retry_workflow(self, workflow_id: str, resume_subworkflow_tasks: Optional[bool] = False)
+```
 
 When a sub-workflow inside a workflow has failed, there are two options:
 
@@ -222,13 +230,17 @@ When a sub-workflow inside a workflow has failed, there are two options:
 
 A workflow in the terminal state (COMPLETED, TERMINATED, FAILED) can be restarted from the beginning. Useful when retrying from the last failed task is insufficient, and the whole workflow must be started again.
 
-`restart_workflow(self, workflow_id: str, use_latest_def: Optional[bool] = False)`
+```python
+restart_workflow(self, workflow_id: str, use_latest_def: Optional[bool] = False)
+```
 
 ### Rerun Workflow from a Specific Task
 
 In the cases where a workflow needs to be restarted from a specific task rather than from the beginning, rerun provides that option. When issuing the rerun command to the workflow, you can specify the task ID from where the workflow should be restarted (as opposed to from the beginning), and optionally, the workflow's input can also be changed.
 
-`rerun_workflow(self, workflow_id: str, rerun_workflow_request: RerunWorkflowRequest)`
+```python
+rerun_workflow(self, workflow_id: str, rerun_workflow_request: RerunWorkflowRequest)
+```
 
 > [!tip]
 > Rerun is one of the most powerful features Conductor has, giving you unparalleled control over the workflow restart.
@@ -238,19 +250,25 @@ In the cases where a workflow needs to be restarted from a specific task rather 
 
 A running workflow can be put to a PAUSED status. A paused workflow lets the currently running tasks complete but does not schedule any new tasks until resumed.
 
-`pause_workflow(self, workflow_id: str)`
+```python
+pause_workflow(self, workflow_id: str)
+```
 
 ### Resume Paused Workflow
 
 Resume operation resumes the currently paused workflow, immediately evaluating its state and scheduling the next set of tasks.
 
-`resume_workflow(self, workflow_id: str)`
+```python
+resume_workflow(self, workflow_id: str)
+```
 
 ## Searching for Workflows
 
 Workflow executions are retained until removed from the Conductor. This gives complete visibility into all the executions an application has - regardless of the number of executions. Conductor has a powerful search API that allows you to search for workflow executions.
 
-`search(self, start, size, free_text: str = '*', query: str = None) -> ScrollableSearchResultWorkflowSummary`
+```python
+search(self, start, size, free_text: str = '*', query: str = None) -> ScrollableSearchResultWorkflowSummary
+```
 
 * **free_text**: Free text search to look for specific words in the workflow and task input/output.
 * **query** SQL-like query to search against specific fields in the workflow.
@@ -351,9 +369,3 @@ POST /api/metadata/taskdef -d @task_def.json
 ```
 
 See [task_configure.py](examples/task_configure.py) for a detailed working app.
-
-
-
-
-
-

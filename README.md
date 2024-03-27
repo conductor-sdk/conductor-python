@@ -1,6 +1,6 @@
 # Conductor OSS Python SDK
 
-Python SDK for working with https://github.com/conductor-oss/conductor
+Python SDK for working with https://github.com/conductor-oss/conductor.
 
 [Conductor](https://www.conductor-oss.org/) is the leading open-source orchestration platform allowing developers to build highly scalable distributed applications.
 
@@ -28,7 +28,7 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
 - [Running Workflows on Conductor Standalone (Installed Locally)](#running-workflows-on-conductor-standalone-installed-locally)
   - [Setup Environment Variable](#setup-environment-variable)
   - [Start Conductor Server](#start-conductor-server)
-  - [Execute the Hello World application](#execute-the-hello-world-application)
+  - [Execute Hello World Application](#execute-hello-world-application)
 - [Running Workflows on Orkes Conductor](#running-workflows-on-orkes-conductor)
 - [Learn More about Conductor Python SDK](#learn-more-about-conductor-python-sdk)
   - [Create and Run Conductor Workers](#create-and-run-conductor-workers)
@@ -39,7 +39,7 @@ Show support for the Conductor OSS.  Please help spread the awareness by starrin
 
 ## Install Conductor Python SDK
 
-Before installing Conductor Python SDK, it is a good practice to setup a dedicated virtual environment as follow:
+Before installing Conductor Python SDK, it is a good practice to set up a dedicated virtual environment as follows:
 
 ```shell
 virtualenv conductor
@@ -127,7 +127,7 @@ def greet(name: str) -> str:
     return f'Hello {name}'
 
 ```
-Now we are ready to write our main application that will execute our workflow.
+Now, we are ready to write our main application, which will execute our workflow.
 
 ### Step 3: Write _Hello World_ Application
 
@@ -189,7 +189,7 @@ docker run --init -p 8080:8080 -p 5000:5000 conductoross/conductor-standalone:3.
 ```
 To ensure the server has started successfully, open Conductor UI on http://localhost:5000.
 
-### Execute the Hello World application
+### Execute Hello World Application
 
 To run the application, type the following command:
 
@@ -197,13 +197,13 @@ To run the application, type the following command:
 python helloworld.py
 ```
 
-Now the workflow is executed, and its execution status can be viewed from Conductor UI (http://localhost:5000).
+Now, the workflow is executed, and its execution status can be viewed from Conductor UI (http://localhost:5000).
 
 Navigate to the **Executions** tab to view the workflow execution.
 
 <img width="1434" alt="Screenshot 2024-03-18 at 12 30 07" src="https://github.com/Srividhya-S-Subramanian/conductor-python-v1/assets/163816773/11e829b6-d46a-4b47-b2cf-0bf524a6ebdc">
 
-Open the Workbench tab and try running the 'grettings' workflow. You will notice that the workflow execution fails. This is because the task_handler.stop_processes() [helloworld.py] function is called and stops all workers included in the app and therefore there is no worker up and running to execute the tasks.
+Open the Workbench tab and try running the 'greetings' workflow. You will notice that the workflow execution fails. This is because the task_handler.stop_processes() [helloworld.py] function is called and stops all workers included in the app, and therefore, there is no worker up and running to execute the tasks.
 
 Now, let's update the app `helloworld.py`
 
@@ -258,7 +258,7 @@ For running the workflow in Orkes Conductor,
 export CONDUCTOR_SERVER_URL=https://[cluster-name].orkesconductor.io/api
 ```
 
-- If you want to run the workflow on the Orkes Conductor Playground, set the Conductor Server variable as follow:
+- If you want to run the workflow on the Orkes Conductor Playground, set the Conductor Server variable as follows:
 
 ```shell
 export CONDUCTOR_SERVER_URL=https://play.orkes.io/api
@@ -271,7 +271,7 @@ export CONDUCTOR_AUTH_KEY=your_key
 export CONDUCTOR_AUTH_SECRET=your_key_secret
 ```
 
-Run the application and view the executions status from Conductor's UI Console.
+Run the application and view the execution status from Conductor's UI Console.
 
 > [!NOTE]
 > That's it - you just created and executed your first distributed Python app!
