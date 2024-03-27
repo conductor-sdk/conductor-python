@@ -7,7 +7,7 @@ from greetings import greet
 
 
 def greetings_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
-    name = 'hello'
+    name = 'greetings'
     workflow = ConductorWorkflow(name=name, executor=workflow_executor)
     workflow.version = 1
     workflow >> greet(task_ref_name='greet_ref', name=workflow.input('name'))
