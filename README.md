@@ -109,7 +109,7 @@ curl -X POST -H "Content-Type:application/json" \
 http://localhost:8080/api/metadata/workflow -d @greetings_workflow.json
 ```
 > [!note]
-> To use the Conductor API, the Conductor server must be up and running (see [Running over Conductor standalone (installed locally)](#running-over-conductor-standalone-installed-locally)
+> To use the Conductor API, the Conductor server must be up and running (see [Running over Conductor standalone (installed locally)](#running-over-conductor-standalone-installed-locally)).
 
 ### Step 2: Write Task Worker
 

@@ -275,7 +275,7 @@ search(self, start, size, free_text: str = '*', query: str = None) -> Scrollable
 
 Here are the supported fields for **query**:
 
-| field       | description     |
+| Field       | Description     |
 |-------------|-----------------|
 | status      |The status of the workflow. |
 | correlationId |The ID to correlate the workflow execution to other executions.   |
