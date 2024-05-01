@@ -18,6 +18,7 @@ class TaskType(str, Enum):
     HUMAN = 'HUMAN'
     USER_DEFINED = 'USER_DEFINED'
     HTTP = 'HTTP'
+    HTTP_POLL = 'HTTP_POLL'
     LAMBDA = 'LAMBDA'
     INLINE = 'INLINE'
     EXCLUSIVE_JOIN = 'EXCLUSIVE_JOIN'
