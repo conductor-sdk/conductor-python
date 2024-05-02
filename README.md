@@ -67,7 +67,7 @@ Create [greetings_workflow.py](examples/helloworld/greetings_workflow.py) with t
 ```python
 from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from greetings import greet
+from greetings_worker import greet
 
 def greetings_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
     name = 'greetings'
@@ -204,47 +204,6 @@ Navigate to the **Executions** tab to view the workflow execution.
 <img width="1434" alt="Screenshot 2024-03-18 at 12 30 07" src="https://github.com/Srividhya-S-Subramanian/conductor-python-v1/assets/163816773/11e829b6-d46a-4b47-b2cf-0bf524a6ebdc">
 
 Open the Workbench tab and try running the 'greetings' workflow. You will notice that the workflow execution fails. This is because the task_handler.stop_processes() [helloworld.py] function is called and stops all workers included in the app, and therefore, there is no worker up and running to execute the tasks.
-
-Now, let's update the app `helloworld.py`
-
-```python
-from conductor.client.automator.task_handler import TaskHandler
-from conductor.client.configuration.configuration import Configuration
-from conductor.client.workflow.conductor_workflow import ConductorWorkflow
-from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
-from greetings_workflow import greetings_workflow
-
-
-def register_workflow(workflow_executor: WorkflowExecutor) -> ConductorWorkflow:
-    workflow = greetings_workflow(workflow_executor=workflow_executor)
-    workflow.register(True)
-    return workflow
-
-
-def main():
-    # points to http://localhost:8080/api by default
-    api_config = Configuration()
-
-    workflow_executor = WorkflowExecutor(configuration=api_config)
-
-    # Needs to be done only when registering a workflow one-time
-    # workflow = register_workflow(workflow_executor)
-
-    task_handler = TaskHandler(configuration=api_config)
-    task_handler.start_processes()
-
-    # workflow_run = workflow_executor.execute(name=workflow.name, version=workflow.version,
-                                             workflow_input={'name': 'World'})
-
-    # print(f'\nworkflow result: {workflow_run.output["result"]}\n')
-    # print(f'see the workflow execution here: {api_config.ui_host}/execution/{workflow_run.workflow_id}\n')
-    
-    # task_handler.stop_processes()
-
-
-if __name__ == '__main__':
-    main()
-```
 
 By commenting the lines that execute the workflow and stop the task polling mechanism, we can re-run the app and run the workflow from the Conductor UI. The task is executed successfully.
 
