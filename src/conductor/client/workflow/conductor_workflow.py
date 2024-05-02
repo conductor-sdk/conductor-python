@@ -194,7 +194,7 @@ class ConductorWorkflow:
 
     def execute(self, workflow_input: Any = {}, wait_until_task_ref: str = '', wait_for_seconds: int = 10,
                 request_id: str = None,
-                idempotency_key: str = None, idempotency_strategy : IdempotencyStrategy = IdempotencyStrategy.FAIL) -> WorkflowRun:
+                idempotency_key: str = None, idempotency_strategy : IdempotencyStrategy = IdempotencyStrategy.FAIL, task_to_domain: dict[str, str] = None) -> WorkflowRun:
         """
         Executes a workflow synchronously.  Useful for short duration workflow (e.g. < 20 seconds)
         Parameters
@@ -216,6 +216,8 @@ class ConductorWorkflow:
         if idempotency_key is not None:
             request.idempotency_key = idempotency_key
             request.idempotency_strategy = idempotency_strategy
+        if task_to_domain is not None:
+            request.task_to_domain = task_to_domain
         run = self._executor.execute_workflow(request, wait_until_task_ref=wait_until_task_ref,
                                               wait_for_seconds=wait_for_seconds, request_id=request_id)
 
