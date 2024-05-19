@@ -34,6 +34,8 @@ class TaskInterface(ABC):
         self.input_parameters = input_parameters
         self._cache_key = cache_key
         self._cache_ttl_second = cache_ttl_second
+        self._expression = None
+        self._evaluator_type = None
 
     @property
     def task_reference_name(self) -> str:
@@ -64,6 +66,22 @@ class TaskInterface(ABC):
         if not isinstance(name, str):
             raise Exception('invalid type')
         self._name = name
+
+    @property
+    def expression(self) -> str:
+        return self._expression
+
+    @expression.setter
+    def expression(self, expression: str) -> None:
+        self._expression = expression
+
+    @property
+    def evaluator_type(self) -> str:
+        return self._evaluator_type
+
+    @evaluator_type.setter
+    def evaluator_type(self, evaluator_type: str) -> None:
+        self._evaluator_type = evaluator_type
 
     def cache(self, cache_key: str, cache_ttl_second: int):
         self._cache_key = cache_key
@@ -122,7 +140,9 @@ class TaskInterface(ABC):
             description=self._description,
             input_parameters=self._input_parameters,
             optional=self._optional,
-            cache_config=cache_config
+            cache_config=cache_config,
+            expression=self._expression,
+            evaluator_type=self._evaluator_type
         )
 
     def output(self, json_path: str = None) -> str:
