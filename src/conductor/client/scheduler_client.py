@@ -13,7 +13,7 @@ class SchedulerClient(ABC):
         pass
 
     @abstractmethod
-    def get_schedule(self, name: str) -> (Optional[WorkflowSchedule], str):
+    def get_schedule(self, name: str) -> WorkflowSchedule:
         pass
 
     @abstractmethod
