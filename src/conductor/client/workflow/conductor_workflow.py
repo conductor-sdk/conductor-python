@@ -192,9 +192,28 @@ class ConductorWorkflow:
         start_workflow_request.version = self.version
         return self._executor.start_workflow(start_workflow_request)
 
+    def start_workflow_with_input(self, workflow_input: dict = {}, correlation_id=None, task_to_domain=None,
+                 priority=None, idempotency_key: str = None, idempotency_strategy: IdempotencyStrategy = IdempotencyStrategy.FAIL) -> str:
+        """
+        Starts the workflow with given inputs and parameters and returns the id of the started workflow
+        """
+
+        start_workflow_request = StartWorkflowRequest()
+        start_workflow_request.workflow_def = self.to_workflow_def()
+        start_workflow_request.name = self.name
+        start_workflow_request.version = self.version
+        start_workflow_request.input = workflow_input
+        start_workflow_request.correlation_id = correlation_id
+        start_workflow_request.idempotency_key = idempotency_key
+        start_workflow_request.idempotency_strategy = idempotency_strategy
+        start_workflow_request.priority = priority
+        start_workflow_request.task_to_domain =task_to_domain
+
+        return self._executor.start_workflow(start_workflow_request)
+
     def execute(self, workflow_input: Any = {}, wait_until_task_ref: str = '', wait_for_seconds: int = 10,
                 request_id: str = None,
-                idempotency_key: str = None, idempotency_strategy : IdempotencyStrategy = IdempotencyStrategy.FAIL) -> WorkflowRun:
+                idempotency_key: str = None, idempotency_strategy : IdempotencyStrategy = IdempotencyStrategy.FAIL, task_to_domain: dict[str, str] = None) -> WorkflowRun:
         """
         Executes a workflow synchronously.  Useful for short duration workflow (e.g. < 20 seconds)
         Parameters
@@ -216,6 +235,8 @@ class ConductorWorkflow:
         if idempotency_key is not None:
             request.idempotency_key = idempotency_key
             request.idempotency_strategy = idempotency_strategy
+        if task_to_domain is not None:
+            request.task_to_domain = task_to_domain
         run = self._executor.execute_workflow(request, wait_until_task_ref=wait_until_task_ref,
                                               wait_for_seconds=wait_for_seconds, request_id=request_id)
 
