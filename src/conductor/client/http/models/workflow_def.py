@@ -35,6 +35,7 @@ class WorkflowDef(object):
         'schema_version': 'int',
         'restartable': 'bool',
         'workflow_status_listener_enabled': 'bool',
+        'workflow_status_listener_sink': 'str',
         'owner_email': 'str',
         'timeout_policy': 'str',
         'timeout_seconds': 'int',
@@ -58,6 +59,7 @@ class WorkflowDef(object):
         'schema_version': 'schemaVersion',
         'restartable': 'restartable',
         'workflow_status_listener_enabled': 'workflowStatusListenerEnabled',
+        'workflow_status_listener_sink': 'workflowStatusListenerSink',
         'owner_email': 'ownerEmail',
         'timeout_policy': 'timeoutPolicy',
         'timeout_seconds': 'timeoutSeconds',
@@ -68,6 +70,7 @@ class WorkflowDef(object):
     def __init__(self, owner_app=None, create_time=None, update_time=None, created_by=None, updated_by=None, name=None,
                  description=None, version=None, tasks=None, input_parameters=None, output_parameters: dict = {},
                  failure_workflow=None, schema_version=None, restartable=None, workflow_status_listener_enabled=None,
+                 workflow_status_listener_sink=None,
                  owner_email=None, timeout_policy=None, timeout_seconds=None, variables=None,
                  input_template=None):  # noqa: E501
         """WorkflowDef - a model defined in Swagger"""  # noqa: E501
@@ -86,6 +89,7 @@ class WorkflowDef(object):
         self._schema_version = None
         self._restartable = None
         self._workflow_status_listener_enabled = None
+        self._workflow_status_listener_sink = None
         self._owner_email = None
         self._timeout_policy = None
         self._timeout_seconds = None
@@ -119,7 +123,9 @@ class WorkflowDef(object):
         if restartable is not None:
             self.restartable = restartable
         if workflow_status_listener_enabled is not None:
-            self.workflow_status_listener_enabled = workflow_status_listener_enabled
+            self._workflow_status_listener_enabled = workflow_status_listener_enabled
+        if workflow_status_listener_sink is not None:
+            self._workflow_status_listener_sink = workflow_status_listener_sink
         if owner_email is not None:
             self.owner_email = owner_email
         if timeout_policy is not None:
@@ -444,6 +450,14 @@ class WorkflowDef(object):
         """
 
         self._workflow_status_listener_enabled = workflow_status_listener_enabled
+
+    @property
+    def workflow_status_listener_sink(self):
+        return self._workflow_status_listener_sink
+
+    @workflow_status_listener_sink.setter
+    def workflow_status_listener_sink(self, workflow_status_listener_sink):
+        self._workflow_status_listener_sink = workflow_status_listener_sink
 
     @property
     def owner_email(self):
