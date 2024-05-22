@@ -36,6 +36,8 @@ class ConductorWorkflow:
         self._input_template = {}
         self._variables = {}
         self._restartable = True
+        self._workflow_status_listener_enabled = False
+        self._workflow_status_listener_sink = None
 
     @property
     def name(self) -> str:
@@ -100,6 +102,14 @@ class ConductorWorkflow:
             raise Exception('invalid type')
         self._restartable = deepcopy(restartable)
         return self
+
+    def enable_status_listener(self, sink_name: bool) -> Self:
+        self._workflow_status_listener_sink = sink_name
+        self._workflow_status_listener_enabled = True
+
+    def disable_status_listener(self) -> Self:
+        self._workflow_status_listener_sink = None
+        self._workflow_status_listener_enabled = False
 
     # Workflow output follows similar structure as task input
     # See https://conductor.netflix.com/how-tos/Tasks/task-inputs.html for more details
@@ -257,6 +267,8 @@ class ConductorWorkflow:
             timeout_seconds=self._timeout_seconds,
             variables=self._variables,
             input_template=self._input_template,
+            workflow_status_listener_enabled=self._workflow_status_listener_enabled,
+            workflow_status_listener_sink=self._workflow_status_listener_sink
         )
 
     def to_workflow_task(self):
