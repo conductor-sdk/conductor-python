@@ -47,6 +47,9 @@ def main():
 
     js = JavascriptTask(task_ref_name='hello_script', script=say_hello_js, bindings={'name': '${workflow.input.name}'})
 
+    # If using Orkes, remove the line
+    js.input_parameter('evaluatorType', 'javascript')
+
     http_call = HttpTask(task_ref_name='call_remote_api', http_input={
         'uri': 'https://orkes-api-tester.orkesconductor.com/api'
     })

@@ -1,5 +1,3 @@
-import json
-
 from conductor.client.automator.task_handler import TaskHandler
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models import WorkflowDef, WorkflowTask, Task, StartWorkflowRequest, TaskDef, TaskResult
@@ -7,7 +5,6 @@ from conductor.client.http.models.state_change_event import StateChangeConfig, S
 from conductor.client.http.models.task_result_status import TaskResultStatus
 from conductor.client.orkes_clients import OrkesClients
 from conductor.client.worker.worker_task import worker_task
-from conductor.client.workflow.conductor_workflow import ConductorWorkflow
 
 
 @worker_task(task_definition_name='audit_log')

@@ -5,6 +5,7 @@ from shortuuid import uuid
 from typing_extensions import Self
 
 from conductor.client.http.models import *
+from conductor.client.http.models.start_workflow_request import IdempotencyStrategy
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 from conductor.client.workflow.task.fork_task import ForkTask
 from conductor.client.workflow.task.join_task import JoinTask
@@ -35,6 +36,8 @@ class ConductorWorkflow:
         self._input_template = {}
         self._variables = {}
         self._restartable = True
+        self._workflow_status_listener_enabled = False
+        self._workflow_status_listener_sink = None
 
     @property
     def name(self) -> str:
@@ -99,6 +102,14 @@ class ConductorWorkflow:
             raise Exception('invalid type')
         self._restartable = deepcopy(restartable)
         return self
+
+    def enable_status_listener(self, sink_name: bool) -> Self:
+        self._workflow_status_listener_sink = sink_name
+        self._workflow_status_listener_enabled = True
+
+    def disable_status_listener(self) -> Self:
+        self._workflow_status_listener_sink = None
+        self._workflow_status_listener_enabled = False
 
     # Workflow output follows similar structure as task input
     # See https://conductor.netflix.com/how-tos/Tasks/task-inputs.html for more details
@@ -191,8 +202,28 @@ class ConductorWorkflow:
         start_workflow_request.version = self.version
         return self._executor.start_workflow(start_workflow_request)
 
+    def start_workflow_with_input(self, workflow_input: dict = {}, correlation_id=None, task_to_domain=None,
+                 priority=None, idempotency_key: str = None, idempotency_strategy: IdempotencyStrategy = IdempotencyStrategy.FAIL) -> str:
+        """
+        Starts the workflow with given inputs and parameters and returns the id of the started workflow
+        """
+
+        start_workflow_request = StartWorkflowRequest()
+        start_workflow_request.workflow_def = self.to_workflow_def()
+        start_workflow_request.name = self.name
+        start_workflow_request.version = self.version
+        start_workflow_request.input = workflow_input
+        start_workflow_request.correlation_id = correlation_id
+        start_workflow_request.idempotency_key = idempotency_key
+        start_workflow_request.idempotency_strategy = idempotency_strategy
+        start_workflow_request.priority = priority
+        start_workflow_request.task_to_domain =task_to_domain
+
+        return self._executor.start_workflow(start_workflow_request)
+
     def execute(self, workflow_input: Any = {}, wait_until_task_ref: str = '', wait_for_seconds: int = 10,
-                request_id: str = None) -> WorkflowRun:
+                request_id: str = None,
+                idempotency_key: str = None, idempotency_strategy : IdempotencyStrategy = IdempotencyStrategy.FAIL, task_to_domain: dict[str, str] = None) -> WorkflowRun:
         """
         Executes a workflow synchronously.  Useful for short duration workflow (e.g. < 20 seconds)
         Parameters
@@ -211,6 +242,11 @@ class ConductorWorkflow:
         request.input = workflow_input
         request.name = request.workflow_def.name
         request.version = 1
+        if idempotency_key is not None:
+            request.idempotency_key = idempotency_key
+            request.idempotency_strategy = idempotency_strategy
+        if task_to_domain is not None:
+            request.task_to_domain = task_to_domain
         run = self._executor.execute_workflow(request, wait_until_task_ref=wait_until_task_ref,
                                               wait_for_seconds=wait_for_seconds, request_id=request_id)
 
@@ -231,6 +267,8 @@ class ConductorWorkflow:
             timeout_seconds=self._timeout_seconds,
             variables=self._variables,
             input_template=self._input_template,
+            workflow_status_listener_enabled=self._workflow_status_listener_enabled,
+            workflow_status_listener_sink=self._workflow_status_listener_sink
         )
 
     def to_workflow_task(self):

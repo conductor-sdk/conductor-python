@@ -4,20 +4,12 @@ from typing import Any, Dict, List, Union
 
 from typing_extensions import Self
 
+from conductor.client.workflow.task.http_task import HttpTask, HttpInput, HttpMethod
 from conductor.client.workflow.task.task import TaskInterface
 from conductor.client.workflow.task.task_type import TaskType
 
 
-class HttpMethod(str, Enum):
-    GET = "GET",
-    PUT = "PUT",
-    POST = "POST",
-    DELETE = "DELETE",
-    HEAD = "HEAD",
-    OPTIONS = "OPTIONS"
-
-
-class HttpInput:
+class HttpPollInput():
     swagger_types = {
         '_uri': 'str',
         '_method': 'str',
@@ -27,6 +19,10 @@ class HttpInput:
         '_connection_time_out': 'int',
         '_read_timeout': 'int',
         '_body': 'str',
+        '_termination_condition': 'str',
+        '_polling_interval': 'int',
+        '_max_poll_count': 'int',
+        '_polling_strategy': str
     }
 
     attribute_map = {
@@ -38,9 +34,17 @@ class HttpInput:
         '_connection_time_out': 'connectionTimeOut',
         '_read_timeout': 'readTimeOut',
         '_body': 'body',
+        '_termination_condition': 'terminationCondition',
+        '_polling_interval': 'pollingInterval',
+        '_max_poll_count': 'maxPollCount',
+        '_polling_strategy': 'pollingStrategy'
     }
 
     def __init__(self,
+                 termination_condition: str = None,
+                 max_poll_count : int = 100,
+                 polling_interval : int = 100,
+                 polling_strategy: str = 'FIXED',
                  method: HttpMethod = HttpMethod.GET,
                  uri: str = None,
                  headers: Dict[str, List[str]] = None,
@@ -57,29 +61,16 @@ class HttpInput:
         self._connection_time_out = deepcopy(connection_time_out)
         self._read_timeout = deepcopy(read_timeout)
         self._body = deepcopy(body)
+        self._termination_condition = termination_condition
+        self._max_poll_count = max_poll_count
+        self._polling_interval = polling_interval
+        self._polling_strategy = polling_strategy
 
 
-class HttpTask(TaskInterface):
-    def __init__(self, task_ref_name: str, http_input: Union[HttpInput, dict]) -> Self:
-        if type(http_input) is dict and 'method' not in http_input:
-            http_input['method'] = 'GET'
+class HttpPollTask(TaskInterface):
+    def __init__(self, task_ref_name: str, http_input: HttpPollInput) -> Self:
         super().__init__(
             task_reference_name=task_ref_name,
-            task_type=TaskType.HTTP,
+            task_type=TaskType.HTTP_POLL,
             input_parameters={'http_request': http_input}
         )
-
-    def status_code(self) -> int:
-        return '${' + f'{self.task_reference_name}.output.response.statusCode' + '}'
-
-    def headers(self, json_path: str = None) -> str:
-        if json_path is None:
-            return '${' + f'{self.task_reference_name}.output.response.headers' + '}'
-        else:
-            return '${' + f'{self.task_reference_name}.output.response.headers.{json_path}' + '}'
-
-    def body(self, json_path: str = None) -> str:
-        if json_path is None:
-            return '${' + f'{self.task_reference_name}.output.response.body' + '}'
-        else:
-            return '${' + f'{self.task_reference_name}.output.response.body.{json_path}' + '}'

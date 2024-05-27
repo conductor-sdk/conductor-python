@@ -23,13 +23,13 @@ class Configuration:
         else:
             self.host = os.getenv('CONDUCTOR_SERVER_URL')
 
-        if self.host is None:
+        if self.host is None or self.host == '':
             self.host = 'http://localhost:8080/api'
 
         self.temp_folder_path = None
         self.__ui_host = os.getenv('CONDUCTOR_UI_SERVER_URL')
         if self.__ui_host is None:
-            self.__ui_host = self.host
+            self.__ui_host = self.host.replace('8080/api', '5000')
 
         if authentication_settings is not None:
             self.authentication_settings = authentication_settings
@@ -40,6 +40,7 @@ class Configuration:
                 self.authentication_settings = AuthenticationSettings(key_id=key, key_secret=secret)
             else:
                 self.authentication_settings = None
+
 
         # Debug switch
         self.debug = debug

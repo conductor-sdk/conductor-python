@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import List
+from typing import List, Dict, Any
 
 from typing_extensions import Self
 
@@ -43,3 +43,15 @@ class LoopTask(DoWhileTask):
             ),
             tasks=tasks,
         )
+
+
+class ForEachTask(DoWhileTask):
+    def __init__(self, task_ref_name: str, tasks: List[TaskInterface], iterate_over:str, variables: List[str] = None) -> Self:
+        super().__init__(
+            task_ref_name=task_ref_name,
+            termination_condition=get_for_loop_condition(
+                task_ref_name, 0,
+            ),
+            tasks=tasks,
+        )
+        super().input_parameter("items", iterate_over)

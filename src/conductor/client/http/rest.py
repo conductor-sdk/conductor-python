@@ -79,6 +79,8 @@ class RESTClientObject(object):
                     request_body = '{}'
                     if body is not None:
                         request_body = json.dumps(body)
+                        if isinstance(body, str):
+                            request_body = request_body.strip('"')
                     r = self.connection.request(
                         method, url,
                         data=request_body,
@@ -227,6 +229,8 @@ class AuthorizationException(ApiException):
             data = json.loads(http_resp.resp.text)
             if 'error' in data:
                 self._error_code = data['error']
+            else:
+                self._error_code = ''
         except (Exception):
             self._error_code = ''
         super().__init__(status, reason, http_resp, body)

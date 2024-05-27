@@ -4,7 +4,7 @@ from typing import Any, Dict, List
 
 from typing_extensions import Self, Union
 
-from conductor.client.http.models.workflow_task import WorkflowTask
+from conductor.client.http.models.workflow_task import WorkflowTask, CacheConfig
 from conductor.client.workflow.task.task_type import TaskType
 
 
@@ -23,13 +23,19 @@ class TaskInterface(ABC):
                  task_name: str = None,
                  description: str = None,
                  optional: bool = None,
-                 input_parameters: Dict[str, Any] = None) -> Self:
+                 input_parameters: Dict[str, Any] = None,
+                 cache_key : str = None,
+                 cache_ttl_second : int = 0) -> Self:
         self.task_reference_name = task_reference_name
         self.task_type = task_type
         self.name = task_name or task_reference_name
         self.description = description
         self.optional = optional
         self.input_parameters = input_parameters
+        self._cache_key = cache_key
+        self._cache_ttl_second = cache_ttl_second
+        self._expression = None
+        self._evaluator_type = None
 
     @property
     def task_reference_name(self) -> str:
@@ -60,6 +66,26 @@ class TaskInterface(ABC):
         if not isinstance(name, str):
             raise Exception('invalid type')
         self._name = name
+
+    @property
+    def expression(self) -> str:
+        return self._expression
+
+    @expression.setter
+    def expression(self, expression: str) -> None:
+        self._expression = expression
+
+    @property
+    def evaluator_type(self) -> str:
+        return self._evaluator_type
+
+    @evaluator_type.setter
+    def evaluator_type(self, evaluator_type: str) -> None:
+        self._evaluator_type = evaluator_type
+
+    def cache(self, cache_key: str, cache_ttl_second: int):
+        self._cache_key = cache_key
+        self._cache_ttl_second = cache_ttl_second
 
     @property
     def description(self) -> str:
@@ -104,6 +130,9 @@ class TaskInterface(ABC):
         return self
 
     def to_workflow_task(self) -> WorkflowTask:
+        cache_config = None
+        if self._cache_ttl_second > 0 and self._cache_key is not None:
+            cache_config = CacheConfig(key=self._cache_key, ttl_in_second=self._cache_ttl_second)
         return WorkflowTask(
             name=self._name,
             task_reference_name=self._task_reference_name,
@@ -111,13 +140,19 @@ class TaskInterface(ABC):
             description=self._description,
             input_parameters=self._input_parameters,
             optional=self._optional,
+            cache_config=cache_config,
+            expression=self._expression,
+            evaluator_type=self._evaluator_type
         )
 
     def output(self, json_path: str = None) -> str:
         if json_path is None:
             return '${' + f'{self.task_reference_name}.output' + '}'
         else:
-            return '${' + f'{self.task_reference_name}.output.{json_path}' + '}'
+            if json_path.startswith('.'):
+                return '${' + f'{self.task_reference_name}.output{json_path}' + '}'
+            else:
+                return '${' + f'{self.task_reference_name}.output.{json_path}' + '}'
 
     def input(self, json_path: str = None, key : str = None, value : Any = None) -> Union[str, Self]:
         if key is not None and value is not None:
