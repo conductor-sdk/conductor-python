@@ -91,7 +91,7 @@ def create_workflow(steps: list[str], inputs: dict[str, object]) -> dict:
 
 
 def main():
-    llm_provider = 'open_ai_' + os.getlogin()
+    llm_provider = 'openai_saas'
     chat_complete_model = 'gpt-4'
     api_config = Configuration()
     clients = OrkesClients(configuration=api_config)
@@ -147,10 +147,10 @@ def main():
     open_ai_config = OpenAIConfig()
 
     orchestrator = AIOrchestrator(api_configuration=api_config)
-    orchestrator.add_ai_integration(ai_integration_name=llm_provider, provider=LLMProvider.OPEN_AI,
-                                    models=[chat_complete_model],
-                                    description='openai config',
-                                    config=open_ai_config)
+    # orchestrator.add_ai_integration(ai_integration_name=llm_provider, provider=LLMProvider.OPEN_AI,
+    #                                 models=[chat_complete_model],
+    #                                 description='openai config',
+    #                                 config=open_ai_config)
 
     orchestrator.add_prompt_template(prompt_name, prompt_text, 'chat instructions')
 
@@ -178,13 +178,13 @@ def main():
 
     sub_workflow = SubWorkflowTask(task_ref_name='execute_workflow', workflow_name='copilot_execution', version=1)
 
-    create = create_workflow(task_ref_name='create_workflow', steps=chat_complete.output('function_parameters.steps'),
-                             inputs=chat_complete.output('function_parameters.inputs'))
-    call_function = SwitchTask(task_ref_name='to_call_or_not', case_expression=chat_complete.output('function'))
+    create = create_workflow(task_ref_name='create_workflow', steps=chat_complete.output('result.function_parameters.steps'),
+                             inputs=chat_complete.output('result.function_parameters.inputs'))
+    call_function = SwitchTask(task_ref_name='to_call_or_not', case_expression=chat_complete.output('result.function'))
     call_function.switch_case('create_workflow', [create, sub_workflow])
 
-    call_one_fun = DynamicTask(task_reference_name='call_one_fun_ref', dynamic_task=chat_complete.output('function'))
-    call_one_fun.input_parameters['inputs'] = chat_complete.output('function_parameters')
+    call_one_fun = DynamicTask(task_reference_name='call_one_fun_ref', dynamic_task=chat_complete.output('result.function'))
+    call_one_fun.input_parameters['inputs'] = chat_complete.output('result.function_parameters')
     call_one_fun.input_parameters['dynamicTaskInputParam'] = 'inputs'
 
     call_function.default_case([call_one_fun])
