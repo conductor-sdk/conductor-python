@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Dict
 
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models import SkipTaskRequest, WorkflowStatus, \
@@ -24,7 +24,7 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
     def start_workflow_by_name(
             self,
             name: str,
-            input: dict[str, object],
+            input: Dict[str, object],
             version: Optional[int] = None,
             correlationId: Optional[str] = None,
             priority: Optional[int] = None,
@@ -130,7 +130,7 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
             self,
             batch_request: CorrelationIdsSearchRequest,
             include_completed: bool = False,
-            include_tasks: bool = False) -> dict[str, List[Workflow]]:
+            include_tasks: bool = False) -> Dict[str, List[Workflow]]:
 
         """Given the list of correlation ids and list of workflow names, find and return workflows
         Returns a map with key as correlationId and value as a list of Workflows
@@ -150,7 +150,7 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
             correlation_ids: List[str],
             include_completed: bool = False,
             include_tasks: bool = False
-    ) -> dict[str, List[Workflow]]:
+    ) -> Dict[str, List[Workflow]]:
         """Lists workflows for the given correlation id list"""
         kwargs = {}
         if include_tasks:
@@ -167,7 +167,7 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
     def remove_workflow(self, workflow_id: str):
         self.workflowResourceApi.delete(workflow_id)
 
-    def update_variables(self, workflow_id: str, variables: dict[str, object] = {}) -> None:
+    def update_variables(self, workflow_id: str, variables: Dict[str, object] = {}) -> None:
         self.workflowResourceApi.update_workflow_state(variables, workflow_id)
 
     def update_state(self, workflow_id: str, update_requesst: WorkflowStateUpdate,
