@@ -16,11 +16,11 @@ RUN python3 -m pip install coverage
 RUN python3 -m pip install -r ./requirements.txt
 
 FROM python_test_base as unit_test
-ARG KEY
-ARG SECRET
+ARG CONDUCTOR_AUTH_KEY
+ARG CONDUCTOR_AUTH_SECRET
 ARG CONDUCTOR_SERVER_URL
-ENV KEY=${KEY}
-ENV SECRET=${SECRET}
+ENV CONDUCTOR_AUTH_KEY=${CONDUCTOR_AUTH_KEY}
+ENV CONDUCTOR_AUTH_SECRET=${CONDUCTOR_AUTH_SECRET}
 ENV CONDUCTOR_SERVER_URL=${CONDUCTOR_SERVER_URL}
 RUN ls -ltr
 RUN python3 -m unittest discover --verbose --start-directory=./tests/unit
@@ -28,11 +28,11 @@ RUN coverage run --source=./src/conductor/client/orkes -m unittest discover --ve
 RUN coverage report -m
 
 FROM python_test_base as test
-ARG KEY
-ARG SECRET
+ARG CONDUCTOR_AUTH_KEY
+ARG CONDUCTOR_AUTH_SECRET
 ARG CONDUCTOR_SERVER_URL
-ENV KEY=${KEY}
-ENV SECRET=${SECRET}
+ENV CONDUCTOR_AUTH_KEY=${CONDUCTOR_AUTH_KEY}
+ENV CONDUCTOR_AUTH_SECRET=${CONDUCTOR_AUTH_SECRET}
 ENV CONDUCTOR_SERVER_URL=${CONDUCTOR_SERVER_URL}
 RUN python3 ./tests/integration/main.py
 
