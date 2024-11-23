@@ -40,7 +40,10 @@ class WorkflowDef(object):
         'timeout_policy': 'str',
         'timeout_seconds': 'int',
         'variables': 'dict(str, object)',
-        'input_template': 'dict(str, object)'
+        'input_template': 'dict(str, object)',
+        'input_schema': 'SchemaDef',
+        'output_schema': 'SchemaDef',
+        'enforce_schema': 'bool'
     }
 
     attribute_map = {
@@ -64,15 +67,19 @@ class WorkflowDef(object):
         'timeout_policy': 'timeoutPolicy',
         'timeout_seconds': 'timeoutSeconds',
         'variables': 'variables',
-        'input_template': 'inputTemplate'
+        'input_template': 'inputTemplate',
+        'input_schema': 'inputSchema',
+        'output_schema': 'outputSchema',
+        'enforce_schema': 'enforceSchema'
     }
 
     def __init__(self, owner_app=None, create_time=None, update_time=None, created_by=None, updated_by=None, name=None,
-                 description=None, version=None, tasks=None, input_parameters=None, output_parameters: dict = {},
+                 description=None, version=None, tasks : List[WorkflowTask] = None, input_parameters=None, output_parameters: dict = {},
                  failure_workflow=None, schema_version=None, restartable=None, workflow_status_listener_enabled=None,
                  workflow_status_listener_sink=None,
                  owner_email=None, timeout_policy=None, timeout_seconds=None, variables=None,
-                 input_template=None):  # noqa: E501
+                 input_template=None,
+                 input_schema : 'SchemaDef' = None, output_schema : 'SchemaDef' = None, enforce_schema : bool =False):  # noqa: E501
         """WorkflowDef - a model defined in Swagger"""  # noqa: E501
         self._owner_app = None
         self._create_time = None
@@ -82,7 +89,7 @@ class WorkflowDef(object):
         self._name = None
         self._description = None
         self._version = None
-        self._tasks = []
+        self._tasks = tasks
         self._input_parameters = None
         self._output_parameters = None
         self._failure_workflow = None
@@ -135,6 +142,9 @@ class WorkflowDef(object):
             self.variables = variables
         if input_template is not None:
             self.input_template = input_template
+        self._input_schema = input_schema
+        self._output_schema = output_schema
+        self._enforce_schema = enforce_schema
 
     @property
     def owner_app(self):
@@ -568,6 +578,52 @@ class WorkflowDef(object):
         """
 
         self._input_template = input_template
+
+    @property
+    def input_schema(self) -> 'SchemaDef':
+        """Schema for the workflow input.
+        If enforce_schema is set then the input given to start this workflow MUST conform to this schema
+        If the validation fails, the start request will fail
+        """
+        return self._input_schema
+
+    @input_schema.setter
+    def input_schema(self, input_schema: 'SchemaDef'):
+        """Schema for the workflow input.
+        If enforce_schema is set then the input given to start this workflow MUST conform to this schema
+        If the validation fails, the start request will fail
+        """
+        self._input_schema = input_schema
+
+    @property
+    def output_schema(self) -> 'SchemaDef':
+        """Schema for the workflow output.
+        Note: The output is documentation purpose and not enforced given the workflow output can be non-deterministic
+        based on the branch execution logic (switch tasks etc)
+        """
+        return self._output_schema
+
+    @output_schema.setter
+    def output_schema(self, output_schema: 'SchemaDef'):
+        """Schema for the workflow output.
+        Note: The output is documentation purpose and not enforced given the workflow output can be non-deterministic
+        based on the branch execution logic (switch tasks etc)
+        """
+        self._output_schema = output_schema
+
+    @property
+    def enforce_schema(self) -> bool:
+        """If enforce_schema is set then the input given to start this workflow MUST conform to this schema
+        If the validation fails, the start request will fail
+        """
+        return self._enforce_schema
+
+    @enforce_schema.setter
+    def enforce_schema(self, enforce_schema: bool):
+        """If enforce_schema is set then the input given to start this workflow MUST conform to this schema
+        If the validation fails, the start request will fail
+        """
+        self._enforce_schema = enforce_schema
 
     def to_dict(self):
         """Returns the model properties as a dict"""

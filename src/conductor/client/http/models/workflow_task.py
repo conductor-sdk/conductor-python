@@ -121,7 +121,7 @@ class WorkflowTask(object):
                  dynamic_task_name_param=None, case_value_param=None, case_expression=None, script_expression=None,
                  decision_cases=None, dynamic_fork_join_tasks_param=None, dynamic_fork_tasks_param=None,
                  dynamic_fork_tasks_input_param_name=None, default_case=None, fork_tasks=None, start_delay=None,
-                 sub_workflow_param=None, join_on=None, sink=None, optional=None, task_definition=None,
+                 sub_workflow_param=None, join_on=None, sink=None, optional=None, task_definition : 'TaskDef' =None,
                  rate_limited=None, default_exclusive_join_task=None, async_complete=None, loop_condition=None,
                  loop_over=None, retry_count=None, evaluator_type=None, expression=None,
                  workflow_task_type=None, on_state_change: dict[str, StateChangeConfig] = None,

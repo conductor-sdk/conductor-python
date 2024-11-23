@@ -5,6 +5,7 @@ from conductor.client.metadata_client import MetadataClient
 from conductor.client.orkes.orkes_integration_client import OrkesIntegrationClient
 from conductor.client.orkes.orkes_metadata_client import OrkesMetadataClient
 from conductor.client.orkes.orkes_prompt_client import OrkesPromptClient
+from conductor.client.orkes.orkes_schema_client import OrkesSchemaClient
 from conductor.client.orkes.orkes_workflow_client import OrkesWorkflowClient
 from conductor.client.orkes.orkes_task_client import OrkesTaskClient
 from conductor.client.orkes.orkes_scheduler_client import OrkesSchedulerClient
@@ -12,6 +13,7 @@ from conductor.client.orkes.orkes_secret_client import OrkesSecretClient
 from conductor.client.orkes.orkes_authorization_client import OrkesAuthorizationClient
 from conductor.client.prompt_client import PromptClient
 from conductor.client.scheduler_client import SchedulerClient
+from conductor.client.schema_client import SchemaClient
 from conductor.client.secret_client import SecretClient
 from conductor.client.task_client import TaskClient
 from conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
@@ -50,3 +52,6 @@ class OrkesClients:
 
     def get_prompt_client(self) -> PromptClient:
         return OrkesPromptClient(self.configuration)
+
+    def get_schema_client(self) -> SchemaClient:
+        return OrkesSchemaClient(self.configuration)

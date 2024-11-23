@@ -53,3 +53,5 @@ from conductor.client.http.models.integration import Integration
 from conductor.client.http.models.integration_api import IntegrationApi
 from conductor.client.http.models.state_change_event import StateChangeEvent, StateChangeConfig, StateChangeEventType
 from conductor.client.http.models.workflow_task import CacheConfig
+from conductor.client.http.models.schema_def import SchemaDef
+from conductor.client.http.models.schema_def import SchemaType
