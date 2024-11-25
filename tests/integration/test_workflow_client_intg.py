@@ -23,13 +23,9 @@ logger = logging.getLogger(
 
 
 def get_configuration():
-    key = os.getenv('KEY')
-    secret = os.getenv('SECRET')
-    url = os.getenv('CONDUCTOR_SERVER_URL')
-    configuration = Configuration(server_api_url=url, authentication_settings=AuthenticationSettings(key, secret))
+    configuration = Configuration()
     configuration.debug = False
     configuration.apply_logging_config()
-    logger.info(f'key is {key} - {secret} - {url}')
     return configuration
 
 
