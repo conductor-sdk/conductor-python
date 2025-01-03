@@ -1,8 +1,10 @@
+from datetime import datetime
 import logging
 import os
 import sys
 import time
 import traceback
+from cachetools import TTLCache, cached
 
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.metrics_settings import MetricsSettings
@@ -255,3 +257,28 @@ class TaskRunner:
         key_upper = prefix.upper() + "_" + task_type + "_" + prop.upper()
         value = os.getenv(key_small, os.getenv(key_upper, value_all))
         return value
+
+
+class DjangoTaskRunner(TaskRunner):
+    """
+    Task runner takes care of closing/refreshing db connections.
+    """
+
+    def run(self):
+        self.django_fixup()
+        super().run()
+    
+    def django_fixup(self):
+        from .django import fixup
+        self.django = fixup(self)
+
+    def run_once(self):
+        super().run_once()
+        if self.django:
+            self.close_connections()
+
+    @cached(TTLCache(maxsize=1, ttl=600))
+    def close_connections(self):
+        self.django.worker_fixup.on_task_postrun()
+        
+        

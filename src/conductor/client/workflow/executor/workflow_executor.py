@@ -132,7 +132,7 @@ class WorkflowExecutor:
             correlation_ids: List[str],
             include_closed: bool = None,
             include_tasks: bool = None
-    ) -> dict[str, List[Workflow]]:
+    ) -> Dict[str, List[Workflow]]:
         """Lists workflows for the given correlation id list"""
         return self.workflow_client.get_by_correlation_ids(
             correlation_ids=correlation_ids,

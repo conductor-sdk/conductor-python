@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Set
 
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.orkes.models.metadata_tag import MetadataTag
@@ -16,7 +16,7 @@ class OrkesSecretClient(OrkesBaseClient, SecretClient):
     def get_secret(self, key: str) -> str:
         return self.secretResourceApi.get_secret(key)
 
-    def list_all_secret_names(self) -> set[str]:
+    def list_all_secret_names(self) -> Set[str]:
         return set(self.secretResourceApi.list_all_secret_names())
 
     def list_secrets_that_user_can_grant_access_to(self) -> List[str]:

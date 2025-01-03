@@ -6,3 +6,4 @@ typing-extensions >= 4.2.0
 astor >= 0.8.1
 shortuuid >= 1.0.11
 dacite >= 1.8.1
+cachetools==4.2.1

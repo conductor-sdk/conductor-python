@@ -1,6 +1,6 @@
 import pprint
 from enum import Enum
-
+from typing import Dict
 import six
 
 
@@ -30,7 +30,7 @@ class SchemaDef(object):
         'external_ref': 'externalRef'
     }
 
-    def __init__(self, name : str =None, version : int =1, type : SchemaType =None, data : dict[str, object] =None,
+    def __init__(self, name : str =None, version : int =1, type : SchemaType =None, data : Dict[str, object] =None,
                  external_ref : str =None):  # noqa: E501
         self._name = None
         self._version = None
@@ -104,7 +104,7 @@ class SchemaDef(object):
         self._type = type
 
     @property
-    def data(self) -> dict[str, object]:
+    def data(self) -> Dict[str, object]:
         """Gets the data of this SchemaDef.  # noqa: E501
 
         :return: The data of this SchemaDef.  # noqa: E501
@@ -113,7 +113,7 @@ class SchemaDef(object):
         return self._data
 
     @data.setter
-    def data(self, data: dict[str, object]):
+    def data(self, data: Dict[str, object]):
         """Sets the data of this SchemaDef.
 
         :param data: The data of this SchemaDef.  # noqa: E501
