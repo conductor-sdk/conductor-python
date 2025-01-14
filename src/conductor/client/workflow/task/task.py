@@ -11,7 +11,13 @@ from conductor.client.workflow.task.task_type import TaskType
 def get_task_interface_list_as_workflow_task_list(*tasks: Self) -> List[WorkflowTask]:
     converted_tasks = []
     for task in tasks:
-        converted_tasks.append(task.to_workflow_task())
+        wf_task = task.to_workflow_task()
+        if isinstance(wf_task, list):
+            # to_workflow_task() returned a list. E.g.: DynamicFork.to_workflow_task() returns the DynamicFork and the Join task.
+            for t in wf_task:
+                converted_tasks.append(t)
+        else:
+            converted_tasks.append(task.to_workflow_task())
     return converted_tasks
 
 
