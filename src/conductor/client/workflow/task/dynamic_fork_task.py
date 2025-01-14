@@ -9,27 +9,21 @@ from conductor.client.workflow.task.task_type import TaskType
 
 
 class DynamicForkTask(TaskInterface):
-    def __init__(self, task_ref_name: str, pre_fork_task: TaskInterface, join_task: JoinTask = None) -> Self:
+    def __init__(self, task_ref_name: str, tasks_param: str = 'dynamicTasks', tasks_input_param_name: str = 'dynamicTasksInputs', join_task: JoinTask = None) -> Self:
         super().__init__(
             task_reference_name=task_ref_name,
             task_type=TaskType.FORK_JOIN_DYNAMIC
         )
-        self._pre_fork_task = deepcopy(pre_fork_task)
+        self.tasks_param = tasks_param
+        self.tasks_input_param_name = tasks_input_param_name
         self._join_task = deepcopy(join_task)
 
     def to_workflow_task(self) -> WorkflowTask:
-        workflow = super().to_workflow_task()
-        workflow.dynamic_fork_join_tasks_param = 'forkedTasks'
-        workflow.dynamic_fork_tasks_input_param_name = 'forkedTasksInputs'
-        workflow.input_parameters['forkedTasks'] = self._pre_fork_task.output_ref(
-            'forkedTasks'
-        )
-        workflow.input_parameters['forkedTasksInputs'] = self._pre_fork_task.output_ref(
-            'forkedTasksInputs'
-        )
+        wf_task = super().to_workflow_task()
+        wf_task.dynamic_fork_join_tasks_param = self.tasks_param
+        wf_task.dynamic_fork_tasks_input_param_name = self.tasks_input_param_name
         tasks = [
-            self._pre_fork_task.to_workflow_task(),
-            workflow,
+            wf_task,
         ]
         if self._join_task != None:
             tasks.append(self._join_task.to_workflow_task())
