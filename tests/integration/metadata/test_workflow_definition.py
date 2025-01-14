@@ -167,7 +167,6 @@ def generate_set_variable_task() -> SetVariableTask:
 def generate_dynamic_fork_task() -> DynamicForkTask:
     return DynamicForkTask(
         task_ref_name='dynamic_fork',
-        pre_fork_task=generate_simple_task(10),
         join_task=JoinTask(
             'join', join_on=[]
         ),
