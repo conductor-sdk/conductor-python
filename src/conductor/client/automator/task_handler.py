@@ -5,7 +5,7 @@ from multiprocessing import Process, freeze_support, Queue, set_start_method, ge
 from sys import platform
 from typing import List
 
-from conductor.client.automator.task_runner import TaskRunner
+from conductor.client.automator.task_runner import  DjangoTaskRunner
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.configuration.settings.metrics_settings import MetricsSettings
 from conductor.client.telemetry.metrics_collector import MetricsCollector
@@ -142,7 +142,7 @@ class TaskHandler:
             configuration: Configuration,
             metrics_settings: MetricsSettings
     ) -> None:
-        task_runner = TaskRunner(worker, configuration, metrics_settings)
+        task_runner = DjangoTaskRunner(worker, configuration, metrics_settings)
         process = Process(target=task_runner.run)
         self.task_runner_processes.append(process)
 
