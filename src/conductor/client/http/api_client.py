@@ -212,9 +212,13 @@ class ApiClient(object):
                             for attr, _ in six.iteritems(obj.swagger_types)
                             if getattr(obj, attr) is not None}
             else:
-                obj_dict = {name: getattr(obj, name)
-                            for name in vars(obj)
-                            if getattr(obj, name) is not None}
+                try:
+                    obj_dict = {name: getattr(obj, name)
+                                for name in vars(obj)
+                                if getattr(obj, name) is not None}
+                except TypeError:
+                    # Fallback to string representation.
+                    return str(obj)
 
         return {key: self.sanitize_for_serialization(val)
                 for key, val in six.iteritems(obj_dict)}
