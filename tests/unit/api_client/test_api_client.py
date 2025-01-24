@@ -3,7 +3,7 @@ import uuid
 from conductor.client.http.api_client import ApiClient
 
 
-class TestOrkesAuthorizationClient(unittest.TestCase):
+class TestApiClient(unittest.TestCase):
 
     def test_sanitize_for_serialization_with_uuid(self):
         api_client = ApiClient()
