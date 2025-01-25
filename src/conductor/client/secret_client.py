@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Set
 from conductor.client.orkes.models.metadata_tag import MetadataTag
 
 
@@ -13,7 +13,7 @@ class SecretClient(ABC):
         pass
 
     @abstractmethod
-    def list_all_secret_names(self) -> set[str]:
+    def list_all_secret_names(self) -> Set[str]:
         pass
 
     @abstractmethod
