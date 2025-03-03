@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Dict
 
 from typing_extensions import Self
 
@@ -17,7 +17,7 @@ class LlmChatComplete(TaskInterface):
     def __init__(self, task_ref_name: str, llm_provider: str, model: str, messages: List[ChatMessage],
                  stop_words: Optional[List[str]] = [], max_tokens: Optional[int] = 100,
                  temperature: int = 0, top_p: int = 1, instructions_template: str = None,
-                 template_variables: dict[str, object] = {}) -> Self:
+                 template_variables: Dict[str, object] = {}) -> Self:
         optional_input_params = {}
 
         if stop_words:
@@ -45,7 +45,7 @@ class LlmChatComplete(TaskInterface):
             input_parameters=input_params
         )
 
-    def prompt_variables(self, variables: dict[str, object]) -> Self:
+    def prompt_variables(self, variables: Dict[str, object]) -> Self:
         self.input_parameters['promptVariables'].update(variables)
         return self
 

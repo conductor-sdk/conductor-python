@@ -2,6 +2,7 @@ from copy import deepcopy
 from typing import Any, Dict, List, Union
 
 from shortuuid import uuid
+from typing import Dict
 from typing_extensions import Self
 
 from conductor.client.http.models import *
@@ -223,7 +224,7 @@ class ConductorWorkflow:
 
     def execute(self, workflow_input: Any = {}, wait_until_task_ref: str = '', wait_for_seconds: int = 10,
                 request_id: str = None,
-                idempotency_key: str = None, idempotency_strategy : IdempotencyStrategy = IdempotencyStrategy.FAIL, task_to_domain: dict[str, str] = None) -> WorkflowRun:
+                idempotency_key: str = None, idempotency_strategy : IdempotencyStrategy = IdempotencyStrategy.FAIL, task_to_domain: Dict[str, str] = None) -> WorkflowRun:
         """
         Executes a workflow synchronously.  Useful for short duration workflow (e.g. < 20 seconds)
         Parameters

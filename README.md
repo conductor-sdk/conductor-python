@@ -691,7 +691,7 @@ get_workflow(workflow_id: str, include_tasks: Optional[bool] = True) -> Workflow
 Variables inside a workflow are the equivalent of global variables in a program.
 
 ```python
-update_variables(self, workflow_id: str, variables: dict[str, object] = {})
+update_variables(self, workflow_id: str, variables: Dict[str, object] = {})
 ```
 
 ### Terminate Running Workflows

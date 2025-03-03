@@ -1,5 +1,5 @@
 from abc import ABC
-
+from typing import Dict
 from typing_extensions import Self
 
 from conductor.client.workflow.task.task import TaskInterface
@@ -8,7 +8,7 @@ from conductor.client.workflow.task.task_type import TaskType
 
 class WaitForWebHookTask(TaskInterface, ABC):
 
-    def __init__(self, task_ref_name: str, matches: dict[str, object]) -> Self:
+    def __init__(self, task_ref_name: str, matches: Dict[str, object]) -> Self:
         """
         matches: dictionary of matching payload that acts as correction between the incoming webhook payload and a
         running workflow task - amongst all the running workflows.
@@ -37,7 +37,7 @@ class WaitForWebHookTask(TaskInterface, ABC):
         self.input_parameters['matches'] = matches
 
 
-def wait_for_webhook(task_ref_name: str, matches: dict[str, object], task_def_name: str = None) -> TaskInterface:
+def wait_for_webhook(task_ref_name: str, matches: Dict[str, object], task_def_name: str = None) -> TaskInterface:
     task = WaitForWebHookTask(task_ref_name=task_ref_name, matches=matches)
     if task_def_name is not None:
         task.name = task_def_name
