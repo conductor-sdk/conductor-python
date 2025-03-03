@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Dict
 
 from typing_extensions import Self
 
@@ -40,7 +40,7 @@ class LlmTextComplete(TaskInterface):
         )
         self.input_parameters['promptVariables'] = {}
 
-    def prompt_variables(self, variables: dict[str, object]) -> Self:
+    def prompt_variables(self, variables: Dict[str, object]) -> Self:
         self.input_parameters['promptVariables'].update(variables)
         return self
 

@@ -6,6 +6,7 @@ import re
 import tempfile
 import time
 from typing import Dict
+import uuid
 
 import six
 import urllib3
@@ -198,6 +199,8 @@ class ApiClient(object):
                          for sub_obj in obj)
         elif isinstance(obj, (datetime.datetime, datetime.date)):
             return obj.isoformat()
+        elif isinstance(obj, uuid.UUID): # needed for compatibility with Python 3.7
+            return str(obj) # Convert UUID to string
 
         if isinstance(obj, dict) or isinstance(obj, CaseInsensitiveDict):
             obj_dict = obj

@@ -1,3 +1,5 @@
+from typing import Dict
+
 class Prompt(object):
     swagger_types = {
         'name': 'str',
@@ -9,7 +11,7 @@ class Prompt(object):
         'variables': 'promptVariables'
     }
 
-    def __init__(self, name: str, variables: dict[str, object]):
+    def __init__(self, name: str, variables: Dict[str, object]):
         self._name = name
         self._variables = variables
 

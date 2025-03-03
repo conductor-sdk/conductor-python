@@ -2,7 +2,7 @@ import json
 import os
 import random
 import string
-from typing import List
+from typing import List, Dict
 
 from conductor.client.ai.configuration import LLMProvider
 from conductor.client.ai.integrations import OpenAIConfig
@@ -71,7 +71,7 @@ def send_email(customer: list[Customer], promo_code: str) -> str:
 
 
 @worker_task(task_definition_name='create_workflow')
-def create_workflow(steps: list[str], inputs: dict[str, object]) -> dict:
+def create_workflow(steps: list[str], inputs: Dict[str, object]) -> dict:
     executor = OrkesClients().get_workflow_executor()
     workflow = ConductorWorkflow(executor=executor, name='copilot_execution', version=1)
 

@@ -1,6 +1,6 @@
 ARG SDK_ORIGIN=no_sdk
 
-FROM python:3.11-alpine as python_base
+FROM python:3.7-alpine as python_base
 RUN apk add --no-cache tk
 
 FROM python_base as python_test_base

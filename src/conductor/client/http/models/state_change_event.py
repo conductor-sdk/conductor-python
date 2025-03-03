@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Union, List
+from typing import Union, List, Dict
 from typing_extensions import Self
 
 
@@ -14,7 +14,7 @@ class StateChangeEventType(Enum):
 class StateChangeEvent:
     swagger_types = {
         'type': 'str',
-        'payload': 'dict[str, object]'
+        'payload': 'Dict[str, object]'
     }
 
     attribute_map = {
@@ -22,7 +22,7 @@ class StateChangeEvent:
         'payload': 'payload'
     }
 
-    def __init__(self, type: str, payload: dict[str, object]) -> None:
+    def __init__(self, type: str, payload: Dict[str, object]) -> None:
         self._type = type
         self._payload = payload
 
@@ -39,7 +39,7 @@ class StateChangeEvent:
         return self._payload
 
     @payload.setter
-    def payload(self, payload: dict[str, object]) -> Self:
+    def payload(self, payload: Dict[str, object]) -> Self:
         self._payload = payload
 
 
