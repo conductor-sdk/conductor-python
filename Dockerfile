@@ -36,8 +36,12 @@ ENV CONDUCTOR_AUTH_SECRET=${CONDUCTOR_AUTH_SECRET}
 ENV CONDUCTOR_SERVER_URL=${CONDUCTOR_SERVER_URL}
 RUN python3 ./tests/integration/main.py
 
-FROM python_test_base as publish
+FROM python:3.11-alpine as publish
+RUN apk add --no-cache tk
 WORKDIR /package
+COPY --from=python_test_base /package /package
+ENV PYTHONPATH /package/src
+RUN python3 -m pip install -r ./requirements.txt
 RUN ls -ltr
 RUN python3 -m pip install setuptools wheel build twine
 ARG CONDUCTOR_PYTHON_VERSION
