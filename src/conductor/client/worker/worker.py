@@ -53,6 +53,7 @@ class Worker(WorkerInterface):
                  poll_interval: float = None,
                  domain: str = None,
                  worker_id: str = None,
+                 extend_lease_interval: float = None
                  ) -> Self:
         super().__init__(task_definition_name)
         self.api_client = ApiClient()
@@ -66,6 +67,8 @@ class Worker(WorkerInterface):
         else:
             self.worker_id = deepcopy(worker_id)
         self.execute_function = deepcopy(execute_function)
+        if extend_lease_interval is None:
+            self.extend_lease_interval = 0
 
     def execute(self, task: Task) -> TaskResult:
         task_input = {}
