@@ -292,45 +292,56 @@ class TaskRunner:
             while not stop_event.is_set():
                 stop_event.wait(interval)
 
-                if stop_event.is_set():
-                    break
+                for attempt in range(4):
+                    if stop_event.is_set():
+                        break
 
-                logger.debug(
-                    'Sending Extend lease for task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}'.format(
-                        task_id=task_result.task_id,
-                        workflow_instance_id=task_result.workflow_instance_id,
-                        task_definition_name=task_definition_name
-                    )
-                )
-                    
-                try:
-                    response = self.task_client.update_task(body=task_result)
+                    if attempt > 0:
+                        # Wait for [10s, 20s, 30s] before next attempt
+                        time.sleep(attempt * 10)
+
+                    if stop_event.is_set():
+                        break
 
                     logger.debug(
-                        'Extend Lease for task sent, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, response: {response}'.format(
+                        'Sending Extend lease for task, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}'.format(
                             task_id=task_result.task_id,
                             workflow_instance_id=task_result.workflow_instance_id,
-                            task_definition_name=task_definition_name,
-                            response=response
+                            task_definition_name=task_definition_name
                         )
                     )
+                    
+                    try:
+                        response = self.task_client.update_task(body=task_result)
 
-                except ApiException as ae:
-                    if ae.status == 404:
                         logger.debug(
-                            'Extend Lease stopping because received a 404 response for, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, response: {response}'.format(
+                            'Extend Lease for task sent, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, response: {response}'.format(
                                 task_id=task_result.task_id,
                                 workflow_instance_id=task_result.workflow_instance_id,
                                 task_definition_name=task_definition_name,
                                 response=response
                             )
                         )
+
                         break
-                    else:
+                    except Exception as e:
                         if self.metrics_collector is not None:
                             self.metrics_collector.increment_task_update_error(
                                 task_definition_name, type(e)
                             )
+
+                        if isinstance(e, ApiException):
+                            if e.status == 404:
+                                logger.debug(
+                                    'Extend Lease stopping because received a 404 response for, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}, response: {response}'.format(
+                                        task_id=task_result.task_id,
+                                        workflow_instance_id=task_result.workflow_instance_id,
+                                        task_definition_name=task_definition_name,
+                                        response=response
+                                    )
+                                )
+                                break
+
                         logger.error(
                             'Failed to extend task lease, id: {task_id}, workflow_instance_id: {workflow_instance_id}, '
                             'task_definition_name: {task_definition_name}, reason: {reason}'.format(
@@ -340,21 +351,6 @@ class TaskRunner:
                                 reason=traceback.format_exc()
                             )
                         )
-
-                except Exception as e:
-                    if self.metrics_collector is not None:
-                        self.metrics_collector.increment_task_update_error(
-                            task_definition_name, type(e)
-                        )
-                    logger.error(
-                        'Failed to extend task lease, id: {task_id}, workflow_instance_id: {workflow_instance_id}, '
-                        'task_definition_name: {task_definition_name}, reason: {reason}'.format(
-                            task_id=task_result.task_id,
-                            workflow_instance_id=task_result.workflow_instance_id,
-                            task_definition_name=task_definition_name,
-                            reason=traceback.format_exc()
-                        )
-                    )
             
             logger.debug(
             'Extend lease for task ended, id: {task_id}, workflow_instance_id: {workflow_instance_id}, task_definition_name: {task_definition_name}'.format(
