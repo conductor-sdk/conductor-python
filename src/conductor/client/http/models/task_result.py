@@ -306,7 +306,7 @@ class TaskResult(object):
     def extend_lease(self, extend_lease):
         """Sets the extend_lease of this TaskResult.
         :param extend_lease: The extend_lease of this TaskResult.  # noqa: E501
-        :type: str
+        :type: bool
         """
 
         self._extend_lease = extend_lease
