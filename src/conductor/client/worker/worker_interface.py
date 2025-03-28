@@ -15,6 +15,7 @@ class WorkerInterface(abc.ABC):
         self._task_definition_name_cache = None
         self._domain = None
         self._poll_interval = DEFAULT_POLLING_INTERVAL
+        self._extend_lease_interval = 0
 
     @abc.abstractmethod
     def execute(self, task: Task) -> TaskResult:
@@ -117,3 +118,11 @@ class WorkerInterface(abc.ABC):
     @poll_interval.setter
     def poll_interval(self, value):
         self._poll_interval = value
+
+    @property
+    def extend_lease_interval(self):
+        return self._extend_lease_interval
+
+    @extend_lease_interval.setter
+    def extend_lease_interval(self, value):
+        self._extend_lease_interval = value
