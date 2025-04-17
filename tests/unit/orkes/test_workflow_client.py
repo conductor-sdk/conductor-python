@@ -8,6 +8,7 @@ from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
 from conductor.client.http.models import SkipTaskRequest
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
+from conductor.client.http.models.task_run import TaskRun
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.workflow_def import WorkflowDef
 from conductor.client.http.models.workflow_run import WorkflowRun
@@ -77,17 +78,138 @@ class TestOrkesWorkflowClient(unittest.TestCase):
 
     @patch.object(WorkflowResourceApi, 'execute_workflow')
     def test_executeWorkflow(self, mock):
-        expectedWfRun = WorkflowRun()
-        mock.return_value = expectedWfRun
-        startWorkflowReq = StartWorkflowRequest()
-        startWorkflowReq.name = WORKFLOW_NAME
-        startWorkflowReq.version = 1
-        workflowRun = self.workflow_client.execute_workflow(
-            startWorkflowReq, "request_id", None, 30
+        # Original method - kept for backward compatibility
+        # It now returns SignalResponse but we should ensure it works with WorkflowRun instances
+        expected_wf_run = WorkflowRun(response_type="TARGET_WORKFLOW")
+        mock.return_value = expected_wf_run
+
+        start_workflow_req = StartWorkflowRequest()
+        start_workflow_req.name = WORKFLOW_NAME
+        start_workflow_req.version = 1
+
+        workflow_run = self.workflow_client.execute_workflow(
+            start_workflow_req, "request_id", None, 30
         )
-        mock.assert_called_with(body=startWorkflowReq, request_id="request_id", name=WORKFLOW_NAME, version=1,
-                                wait_until_task_ref=None, wait_for_seconds=30)
-        self.assertEqual(workflowRun, expectedWfRun)
+
+        mock.assert_called_with(body=start_workflow_req, request_id="request_id", name=WORKFLOW_NAME, version=1,
+                                wait_until_task_ref=None, wait_for_seconds=30, consistency='DURABLE',
+                                return_strategy='TARGET_WORKFLOW')
+
+        self.assertEqual(workflow_run, expected_wf_run)
+        self.assertEqual(workflow_run.response_type, "TARGET_WORKFLOW")
+
+    @patch.object(WorkflowResourceApi, 'execute_workflow')
+    def test_execute_workflow_with_target_workflow(self, mock):
+        # Test the new method that only returns WorkflowRun with TARGET_WORKFLOW strategy
+        expected_wf_run = WorkflowRun(response_type="TARGET_WORKFLOW", workflow_id="123")
+        mock.return_value = expected_wf_run
+
+        start_workflow_req = StartWorkflowRequest()
+        start_workflow_req.name = WORKFLOW_NAME
+        start_workflow_req.version = 1
+
+        workflow_run = self.workflow_client.execute_workflow_with_target_workflow(
+            start_workflow_req, "request_id", None, 10
+        )
+
+        mock.assert_called_with(body=start_workflow_req, request_id="request_id", name=WORKFLOW_NAME, version=1,
+                                wait_until_task_ref=None, wait_for_seconds=10, consistency='DURABLE',
+                                return_strategy='TARGET_WORKFLOW')
+
+        self.assertEqual(workflow_run, expected_wf_run)
+        self.assertEqual(workflow_run.response_type, "TARGET_WORKFLOW")
+        self.assertEqual(workflow_run.workflow_id, "123")
+
+    @patch.object(WorkflowResourceApi, 'execute_workflow')
+    def test_execute_workflow_with_blocking_workflow(self, mock):
+        # Test the new method that only returns WorkflowRun with BLOCKING_WORKFLOW strategy
+        expected_wf_run = WorkflowRun(response_type="BLOCKING_WORKFLOW", workflow_id="456")
+        mock.return_value = expected_wf_run
+
+        start_workflow_req = StartWorkflowRequest()
+        start_workflow_req.name = WORKFLOW_NAME
+        start_workflow_req.version = 1
+
+        workflow_run = self.workflow_client.execute_workflow_with_blocking_workflow(
+            start_workflow_req, "request_id", None, 10
+        )
+
+        mock.assert_called_with(body=start_workflow_req, request_id="request_id", name=WORKFLOW_NAME, version=1,
+                                wait_until_task_ref=None, wait_for_seconds=10, consistency='DURABLE',
+                                return_strategy='BLOCKING_WORKFLOW')
+
+        self.assertEqual(workflow_run, expected_wf_run)
+        self.assertEqual(workflow_run.response_type, "BLOCKING_WORKFLOW")
+        self.assertEqual(workflow_run.workflow_id, "456")
+
+    @patch.object(WorkflowResourceApi, 'execute_workflow')
+    def test_execute_workflow_with_blocking_task(self, mock):
+        # Test the new method that only returns TaskRun with BLOCKING_TASK strategy
+        expected_task_run = TaskRun(response_type="BLOCKING_TASK", task_id="task123")
+        mock.return_value = expected_task_run
+
+        start_workflow_req = StartWorkflowRequest()
+        start_workflow_req.name = WORKFLOW_NAME
+        start_workflow_req.version = 1
+
+        task_run = self.workflow_client.execute_workflow_with_blocking_task(
+            start_workflow_req, "request_id", None, 10
+        )
+
+        mock.assert_called_with(body=start_workflow_req, request_id="request_id", name=WORKFLOW_NAME, version=1,
+                                wait_until_task_ref=None, wait_for_seconds=10, consistency='DURABLE',
+                                return_strategy='BLOCKING_TASK')
+
+        self.assertEqual(task_run, expected_task_run)
+        self.assertEqual(task_run.response_type, "BLOCKING_TASK")
+        self.assertEqual(task_run.task_id, "task123")
+
+    @patch.object(WorkflowResourceApi, 'execute_workflow')
+    def test_execute_workflow_with_blocking_task_input(self, mock):
+        # Test the new method that only returns TaskRun with BLOCKING_TASK_INPUT strategy
+        expected_task_run = TaskRun(response_type="BLOCKING_TASK_INPUT", task_id="task456")
+        mock.return_value = expected_task_run
+
+        start_workflow_req = StartWorkflowRequest()
+        start_workflow_req.name = WORKFLOW_NAME
+        start_workflow_req.version = 1
+
+        task_run = self.workflow_client.execute_workflow_with_blocking_task_input(
+            start_workflow_req, "request_id", None, 10
+        )
+
+        mock.assert_called_with(body=start_workflow_req, request_id="request_id", name=WORKFLOW_NAME, version=1,
+                                wait_until_task_ref=None, wait_for_seconds=10, consistency='DURABLE',
+                                return_strategy='BLOCKING_TASK_INPUT')
+
+        self.assertEqual(task_run, expected_task_run)
+        self.assertEqual(task_run.response_type, "BLOCKING_TASK_INPUT")
+        self.assertEqual(task_run.task_id, "task456")
+
+    @patch.object(WorkflowResourceApi, 'execute_workflow')
+    def test_wrong_return_type_raises_error(self, mock):
+        # Test that type checking works and raises errors when wrong type is returned
+        start_workflow_req = StartWorkflowRequest()
+        start_workflow_req.name = WORKFLOW_NAME
+        start_workflow_req.version = 1
+
+        # Server returns TaskRun when we expect WorkflowRun
+        mock.return_value = TaskRun(task_id="task123", response_type="BLOCKING_TASK")
+
+        # This should raise TypeError because we're expecting WorkflowRun but got TaskRun
+        with self.assertRaises(TypeError):
+            self.workflow_client.execute_workflow_with_target_workflow(
+                start_workflow_req, "request_id", None, 10
+            )
+
+        # Similarly, when server returns WorkflowRun when we expect TaskRun
+        mock.return_value = WorkflowRun(workflow_id="wf123", response_type="TARGET_WORKFLOW")
+
+        # This should raise TypeError because we're expecting TaskRun but got WorkflowRun
+        with self.assertRaises(TypeError):
+            self.workflow_client.execute_workflow_with_blocking_task(
+                start_workflow_req, "request_id", None, 10
+            )
 
     @patch.object(WorkflowResourceApi, 'pause_workflow')
     def test_pauseWorkflow(self, mock):

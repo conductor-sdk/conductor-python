@@ -5,7 +5,9 @@ from conductor.client.http.models import SkipTaskRequest, WorkflowStatus, \
     ScrollableSearchResultWorkflowSummary
 from conductor.client.http.models.correlation_ids_search_request import CorrelationIdsSearchRequest
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
+from conductor.client.http.models.signal_response import SignalResponse
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
+from conductor.client.http.models.task_run import TaskRun
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.workflow_run import WorkflowRun
 from conductor.client.http.models.workflow_state_update import WorkflowStateUpdate
@@ -47,8 +49,10 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
             start_workflow_request: StartWorkflowRequest,
             request_id: str = None,
             wait_until_task_ref: Optional[str] = None,
-            wait_for_seconds: int = 30
-    ) -> WorkflowRun:
+            wait_for_seconds: int = 30,
+            consistency: str = "DURABLE",
+            return_strategy: str = "TARGET_WORKFLOW"
+    ) -> SignalResponse:
 
         return self.workflowResourceApi.execute_workflow(
             body=start_workflow_request,
@@ -57,7 +61,101 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
             name=start_workflow_request.name,
             wait_until_task_ref=wait_until_task_ref,
             wait_for_seconds=wait_for_seconds,
+            consistency=consistency,
+            return_strategy=return_strategy,
         )
+
+    def execute_workflow_with_target_workflow(
+            self,
+            start_workflow_request: StartWorkflowRequest,
+            request_id: str = None,
+            wait_until_task_ref: Optional[str] = None,
+            wait_for_seconds: int = 10,
+            consistency: str = "DURABLE"
+    ) -> WorkflowRun:
+        """Execute workflow and return target workflow"""
+        response = self.workflowResourceApi.execute_workflow(
+            body=start_workflow_request,
+            request_id=request_id,
+            version=start_workflow_request.version,
+            name=start_workflow_request.name,
+            wait_until_task_ref=wait_until_task_ref,
+            wait_for_seconds=wait_for_seconds,
+            consistency=consistency,
+            return_strategy="TARGET_WORKFLOW",
+        )
+        if not isinstance(response, WorkflowRun):
+            raise TypeError(f"Expected WorkflowRun but got {type(response).__name__}")
+        return response
+
+    def execute_workflow_with_blocking_workflow(
+            self,
+            start_workflow_request: StartWorkflowRequest,
+            request_id: str = None,
+            wait_until_task_ref: Optional[str] = None,
+            wait_for_seconds: int = 10,
+            consistency: str = "DURABLE"
+    ) -> WorkflowRun:
+        """Execute workflow and return blocking workflow"""
+        response = self.workflowResourceApi.execute_workflow(
+            body=start_workflow_request,
+            request_id=request_id,
+            version=start_workflow_request.version,
+            name=start_workflow_request.name,
+            wait_until_task_ref=wait_until_task_ref,
+            wait_for_seconds=wait_for_seconds,
+            consistency=consistency,
+            return_strategy="BLOCKING_WORKFLOW",
+        )
+        if not isinstance(response, WorkflowRun):
+            raise TypeError(f"Expected WorkflowRun but got {type(response).__name__}")
+        return response
+
+    def execute_workflow_with_blocking_task(
+            self,
+            start_workflow_request: StartWorkflowRequest,
+            request_id: str = None,
+            wait_until_task_ref: Optional[str] = None,
+            wait_for_seconds: int = 10,
+            consistency: str = "DURABLE"
+    ) -> TaskRun:
+        """Execute workflow and return blocking task"""
+        response = self.workflowResourceApi.execute_workflow(
+            body=start_workflow_request,
+            request_id=request_id,
+            version=start_workflow_request.version,
+            name=start_workflow_request.name,
+            wait_until_task_ref=wait_until_task_ref,
+            wait_for_seconds=wait_for_seconds,
+            consistency=consistency,
+            return_strategy="BLOCKING_TASK",
+        )
+        if not isinstance(response, TaskRun):
+            raise TypeError(f"Expected TaskRun but got {type(response).__name__}")
+        return response
+
+    def execute_workflow_with_blocking_task_input(
+            self,
+            start_workflow_request: StartWorkflowRequest,
+            request_id: str = None,
+            wait_until_task_ref: Optional[str] = None,
+            wait_for_seconds: int = 10,
+            consistency: str = "DURABLE"
+    ) -> TaskRun:
+        """Execute workflow and return blocking task input"""
+        response = self.workflowResourceApi.execute_workflow(
+            body=start_workflow_request,
+            request_id=request_id,
+            version=start_workflow_request.version,
+            name=start_workflow_request.name,
+            wait_until_task_ref=wait_until_task_ref,
+            wait_for_seconds=wait_for_seconds,
+            consistency=consistency,
+            return_strategy="BLOCKING_TASK_INPUT",
+        )
+        if not isinstance(response, TaskRun):
+            raise TypeError(f"Expected TaskRun but got {type(response).__name__}")
+        return response
 
     def pause_workflow(self, workflow_id: str):
         self.workflowResourceApi.pause_workflow(workflow_id)

@@ -5,7 +5,9 @@ from conductor.client.http.models import WorkflowRun, SkipTaskRequest, WorkflowS
     ScrollableSearchResultWorkflowSummary
 from conductor.client.http.models.correlation_ids_search_request import CorrelationIdsSearchRequest
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
+from conductor.client.http.models.signal_response import SignalResponse
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
+from conductor.client.http.models.task_run import TaskRun
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.workflow_state_update import WorkflowStateUpdate
 from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
@@ -40,8 +42,54 @@ class WorkflowClient(ABC):
             start_workflow_request: StartWorkflowRequest,
             request_id: str = None,
             wait_until_task_ref: Optional[str] = None,
-            wait_for_seconds: int = 30
+            wait_for_seconds: int = 10,  # Change to 10 to match server default
+            consistency: str = "DURABLE",
+            return_strategy: str = "TARGET_WORKFLOW"
+    ) -> SignalResponse:
+        pass
+
+    @abstractmethod
+    def execute_workflow_with_target_workflow(
+            self,
+            start_workflow_request: StartWorkflowRequest,
+            request_id: str = None,
+            wait_until_task_ref: Optional[str] = None,
+            wait_for_seconds: int = 10,
+            consistency: str = "DURABLE"
     ) -> WorkflowRun:
+        pass
+
+    @abstractmethod
+    def execute_workflow_with_blocking_workflow(
+            self,
+            start_workflow_request: StartWorkflowRequest,
+            request_id: str = None,
+            wait_until_task_ref: Optional[str] = None,
+            wait_for_seconds: int = 10,
+            consistency: str = "DURABLE"
+    ) -> WorkflowRun:
+        pass
+
+    @abstractmethod
+    def execute_workflow_with_blocking_task(
+            self,
+            start_workflow_request: StartWorkflowRequest,
+            request_id: str = None,
+            wait_until_task_ref: Optional[str] = None,
+            wait_for_seconds: int = 10,
+            consistency: str = "DURABLE"
+    ) -> TaskRun:
+        pass
+
+    @abstractmethod
+    def execute_workflow_with_blocking_task_input(
+            self,
+            start_workflow_request: StartWorkflowRequest,
+            request_id: str = None,
+            wait_until_task_ref: Optional[str] = None,
+            wait_for_seconds: int = 10,
+            consistency: str = "DURABLE"
+    ) -> TaskRun:
         pass
 
     @abstractmethod
