@@ -1,15 +1,15 @@
 from typing import Optional, List
 
-from conductor.client.configuration.configuration import Configuration
-from conductor.client.http.models import PollData, WorkflowRun
-from conductor.client.http.models.signal_response import SignalResponse
-from conductor.client.http.models.task import Task
-from conductor.client.http.models.task_exec_log import TaskExecLog
-from conductor.client.http.models.task_result import TaskResult
-from conductor.client.http.models.task_run import TaskRun
-from conductor.client.http.models.workflow import Workflow
-from conductor.client.orkes.orkes_base_client import OrkesBaseClient
-from conductor.client.task_client import TaskClient
+from src.conductor.client.configuration.configuration import Configuration
+from src.conductor.client.http.models import PollData, WorkflowRun
+from src.conductor.client.http.models.signal_response import SignalResponse
+from src.conductor.client.http.models.task import Task
+from src.conductor.client.http.models.task_exec_log import TaskExecLog
+from src.conductor.client.http.models.task_result import TaskResult
+from src.conductor.client.http.models.task_run import TaskRun
+from src.conductor.client.http.models.workflow import Workflow
+from src.conductor.client.orkes.orkes_base_client import OrkesBaseClient
+from src.conductor.client.task_client import TaskClient
 
 
 class OrkesTaskClient(OrkesBaseClient, TaskClient):
@@ -99,7 +99,6 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
     def signal_workflow_task_a_sync(
             self,
             workflow_id: str,
-            task_ref_name: str,
             status: str,
             output: object
     ) -> None:
@@ -107,7 +106,6 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
         Signal to a waiting task in a workflow asynchronously
 
         :param workflow_id: ID of the workflow
-        :param task_ref_name: Reference name of the task
         :param status: Status to set for the task (e.g. COMPLETED, FAILED)
         :param output: Output data for the task
         :return: None

@@ -5,9 +5,9 @@ from conductor.client.http.models import WorkflowRun, SkipTaskRequest, WorkflowS
     ScrollableSearchResultWorkflowSummary
 from conductor.client.http.models.correlation_ids_search_request import CorrelationIdsSearchRequest
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
-from conductor.client.http.models.signal_response import SignalResponse
+from src.conductor.client.http.models.signal_response import SignalResponse
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
-from conductor.client.http.models.task_run import TaskRun
+from src.conductor.client.http.models.task_run import TaskRun
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.workflow_state_update import WorkflowStateUpdate
 from conductor.client.http.models.workflow_test_request import WorkflowTestRequest
@@ -45,7 +45,7 @@ class WorkflowClient(ABC):
             wait_for_seconds: int = 10,  # Change to 10 to match server default
             consistency: str = "DURABLE",
             return_strategy: str = "TARGET_WORKFLOW"
-    ) -> SignalResponse:
+    ) -> WorkflowRun:
         pass
 
     @abstractmethod

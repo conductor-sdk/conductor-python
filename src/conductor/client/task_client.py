@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from typing import Optional, List
 
 from conductor.client.http.models import PollData, WorkflowRun
-from conductor.client.http.models.signal_response import SignalResponse
-from conductor.client.http.models.task_run import TaskRun
+from src.conductor.client.http.models.signal_response import SignalResponse
+from src.conductor.client.http.models.task_run import TaskRun
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
@@ -77,7 +77,6 @@ class TaskClient(ABC):
     def signal_workflow_task_a_sync(
             self,
             workflow_id: str,
-            task_ref_name: str,
             status: str,
             output: object
     ) -> None:
@@ -155,7 +154,6 @@ class TaskClient(ABC):
     def signal_workflow_task_with_blocking_task(
             self,
             workflow_id: str,
-            task_ref_name: str,
             status: str,
             output: object
     ) -> TaskRun:
