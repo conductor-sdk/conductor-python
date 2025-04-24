@@ -1,13 +1,14 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List, Dict
 
-from conductor.client.http.models import WorkflowRun, SkipTaskRequest, WorkflowStatus, \
+from conductor.client.http.models import SkipTaskRequest, WorkflowStatus, \
     ScrollableSearchResultWorkflowSummary
 from conductor.client.http.models.correlation_ids_search_request import CorrelationIdsSearchRequest
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
 from src.conductor.client.http.models.signal_response import SignalResponse
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from src.conductor.client.http.models.task_run import TaskRun
+from src.conductor.client.http.models.workflow_run import WorkflowRun
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.workflow_state_update import WorkflowStateUpdate
 from conductor.client.http.models.workflow_test_request import WorkflowTestRequest

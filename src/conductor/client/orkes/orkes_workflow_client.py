@@ -130,8 +130,7 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
             consistency=consistency,
             return_strategy="BLOCKING_TASK",
         )
-        if not isinstance(response, TaskRun):
-            raise TypeError(f"Expected TaskRun but got {type(response).__name__}")
+
         return response
 
     def execute_workflow_with_blocking_task_input(

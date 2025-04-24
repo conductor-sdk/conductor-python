@@ -1,13 +1,13 @@
 from typing import Optional, List
 
 from src.conductor.client.configuration.configuration import Configuration
-from src.conductor.client.http.models import PollData, WorkflowRun
-from src.conductor.client.http.models.signal_response import SignalResponse
+from src.conductor.client.http.models import PollData
 from src.conductor.client.http.models.task import Task
 from src.conductor.client.http.models.task_exec_log import TaskExecLog
 from src.conductor.client.http.models.task_result import TaskResult
 from src.conductor.client.http.models.task_run import TaskRun
 from src.conductor.client.http.models.workflow import Workflow
+from src.conductor.client.http.models.workflow_run import WorkflowRun
 from src.conductor.client.orkes.orkes_base_client import OrkesBaseClient
 from src.conductor.client.task_client import TaskClient
 
@@ -124,7 +124,7 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
             status: str,
             output: object,
             return_strategy: str = "TARGET_WORKFLOW"
-    ) -> SignalResponse:
+    ) -> WorkflowRun | TaskRun:
         """
         Signal to a waiting task in a workflow synchronously
 
@@ -173,9 +173,6 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
             return_strategy="TARGET_WORKFLOW"
         )
 
-        if not isinstance(response, WorkflowRun):
-            raise TypeError(f"Expected WorkflowRun but got {type(response).__name__}")
-
         return response
 
     def signal_workflow_task_with_blocking_workflow(
@@ -203,9 +200,6 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
             status=status,
             return_strategy="BLOCKING_WORKFLOW"
         )
-
-        if not isinstance(response, WorkflowRun):
-            raise TypeError(f"Expected WorkflowRun but got {type(response).__name__}")
 
         return response
 
@@ -235,9 +229,6 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
             return_strategy="BLOCKING_TASK"
         )
 
-        if not isinstance(response, TaskRun):
-            raise TypeError(f"Expected TaskRun but got {type(response).__name__}")
-
         return response
 
     def signal_workflow_task_with_blocking_task_input(
@@ -265,8 +256,5 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
             status=status,
             return_strategy="BLOCKING_TASK_INPUT"
         )
-
-        if not isinstance(response, TaskRun):
-            raise TypeError(f"Expected TaskRun but got {type(response).__name__}")
 
         return response

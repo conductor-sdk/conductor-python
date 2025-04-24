@@ -5,7 +5,6 @@ from time import sleep
 from src.conductor.client.configuration.configuration import Configuration
 from src.conductor.client.http.models.start_workflow_request import StartWorkflowRequest
 from src.conductor.client.orkes_clients import OrkesClients
-from src.conductor.client.workflow.conductor_workflow import ConductorWorkflow
 from src.conductor.client.http.api_client import ApiClient
 from src.conductor.client.workflow.executor.workflow_executor import WorkflowExecutor
 
@@ -35,7 +34,7 @@ class WorkflowClientTest:
         self.__test_execute_workflow_sync()
         self.__test_execute_workflow_durable()
         self.__test_execute_workflow_and_get_blocking_wf()
-
+        self.__test_execute_workflow_and_get_blocking_task()
         # Clean up
         self.__cleanup_test_workflow()
 
@@ -150,17 +149,72 @@ class WorkflowClientTest:
         assert workflow_run is not None, "Should return a response"
         assert workflow_run.workflow_id is not None, "Workflow ID should not be None"
         assert workflow_run.status == "RUNNING", "Workflow should be running"
-        print(f"✅ execute_workflow test passed")
+        print(f"✅ Workflow executed successfully")
 
-        self.task_client.signal_workflow_task_with_blocking_task(
+        wfRun = self.task_client.signal_workflow_task_with_blocking_workflow(
             workflow_run.workflow_id,
             output={"result": "success"},
             status="COMPLETED"
         )
-        print(f"Workflow task signaled successfully")
-
+        print(f"✅ Signaled WF Task successfully")
+        assert wfRun is not None, "Should return a response"
+        assert wfRun.status == "RUNNING", "Task should be running"
         sleep(2)
+
+        wfRun = self.task_client.signal_workflow_task_with_blocking_workflow(
+            workflow_run.workflow_id,
+            output={"result": "success"},
+            status="COMPLETED"
+        )
+        print(f"✅ Signaled WF Task successfully")
+        assert wfRun is not None, "Should return a response"
+        assert wfRun.status == "RUNNING", "Task should be running"
+        sleep(2)
+
         workflow = self.workflow_client.get_workflow(workflow_run.workflow_id, include_tasks=True)
+        assert workflow.status == "COMPLETED", "Workflow should be completed"
+
+    def __test_execute_workflow_and_get_blocking_task(self):
+        start_request = StartWorkflowRequest(
+            name=COMPLEX_PARENT_WF,
+            version=1,
+            input={"param1": "test_value", "param2": 123}
+        )
+
+        # Test with SYNCHRONOUS consistency
+        task_run = self.workflow_client.execute_workflow_with_blocking_task(
+            start_workflow_request=start_request,
+            request_id=None,  # Optional unique ID
+            wait_until_task_ref=None,
+            consistency="SYNCHRONOUS",
+            wait_for_seconds=1
+        )
+        assert task_run is not None, "Should return a response"
+        assert task_run.workflow_id is not None, "Workflow ID should not be None"
+        assert task_run.status == "RUNNING", "Workflow should be running"
+        print(f"✅ Workflow executed successfully")
+
+        taskRun = self.task_client.signal_workflow_task_with_blocking_task(
+            task_run.workflow_id,
+            output={"result": "success"},
+            status="COMPLETED"
+        )
+        print(f"✅ Signaled WF Task successfully")
+        assert taskRun is not None, "Should return a response"
+        assert taskRun.status == "RUNNING", "Task should be running"
+        sleep(2)
+
+        taskRun = self.task_client.signal_workflow_task_with_blocking_task(
+            task_run.workflow_id,
+            output={"result": "success"},
+            status="COMPLETED"
+        )
+        print(f"✅ Signaled WF Task successfully")
+        assert taskRun is not None, "Should return a response"
+        assert taskRun.status == "RUNNING", "Task should be running"
+        sleep(2)
+
+        workflow = self.workflow_client.get_workflow(task_run.workflow_id, include_tasks=True)
         assert workflow.status == "COMPLETED", "Workflow should be completed"
 
 
