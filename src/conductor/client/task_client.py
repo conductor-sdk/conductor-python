@@ -116,7 +116,6 @@ class TaskClient(ABC):
     def signal_workflow_task_with_target_workflow(
             self,
             workflow_id: str,
-            task_ref_name: str,
             status: str,
             output: object
     ) -> WorkflowRun:
@@ -135,7 +134,6 @@ class TaskClient(ABC):
     def signal_workflow_task_with_blocking_workflow(
             self,
             workflow_id: str,
-            task_ref_name: str,
             status: str,
             output: object
     ) -> WorkflowRun:
@@ -172,7 +170,6 @@ class TaskClient(ABC):
     def signal_workflow_task_with_blocking_task_input(
             self,
             workflow_id: str,
-            task_ref_name: str,
             status: str,
             output: object
     ) -> TaskRun:

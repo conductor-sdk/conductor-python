@@ -34,6 +34,7 @@ class WorkflowClientTest:
         # Run all workflow client tests
         self.__test_execute_workflow_sync()
         self.__test_execute_workflow_durable()
+        self.__test_execute_workflow_and_get_blocking_wf()
 
         # Clean up
         self.__cleanup_test_workflow()
@@ -184,8 +185,11 @@ class WorkflowClientTest:
     #     print(f"✅ execute_workflow test passed")
 
     def __cleanup_test_workflow(self):
-        self.metadata_client.unregister_workflow_def(TEST_WF_NAME, 1)
-        print(f"Test workflow {TEST_WF_NAME} unregistered")
+        self.metadata_client.unregister_workflow_def(WAIT_SIGNAL_WF, 1)
+        self.metadata_client.unregister_workflow_def(COMPLEX_PARENT_WF, 1)
+        self.metadata_client.unregister_workflow_def(COMPLEX_SUB_WF_1, 1)
+        self.metadata_client.unregister_workflow_def(COMPLEX_SUB_WF_2, 1)
+        print(f"✅All Test workflows unregistered")
 
 if __name__ == "__main__":
 

@@ -150,7 +150,6 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
     def signal_workflow_task_with_target_workflow(
             self,
             workflow_id: str,
-            task_ref_name: str,
             status: str,
             output: object
     ) -> WorkflowRun:
@@ -158,7 +157,6 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
         Signal to a waiting task in a workflow synchronously and return the target workflow
 
         :param workflow_id: ID of the workflow
-        :param task_ref_name: Reference name of the task
         :param status: Status to set for the task (e.g. COMPLETED, FAILED)
         :param output: Output data for the task
         :return: WorkflowRun of the target workflow
@@ -183,7 +181,6 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
     def signal_workflow_task_with_blocking_workflow(
             self,
             workflow_id: str,
-            task_ref_name: str,
             status: str,
             output: object
     ) -> WorkflowRun:
@@ -191,7 +188,6 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
         Signal to a waiting task in a workflow synchronously and return the blocking workflow
 
         :param workflow_id: ID of the workflow
-        :param task_ref_name: Reference name of the task
         :param status: Status to set for the task (e.g. COMPLETED, FAILED)
         :param output: Output data for the task
         :return: WorkflowRun of the blocking workflow
@@ -216,7 +212,6 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
     def signal_workflow_task_with_blocking_task(
             self,
             workflow_id: str,
-            task_ref_name: str,
             status: str,
             output: object
     ) -> TaskRun:
@@ -224,7 +219,6 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
         Signal to a waiting task in a workflow synchronously and return the blocking task
 
         :param workflow_id: ID of the workflow
-        :param task_ref_name: Reference name of the task
         :param status: Status to set for the task (e.g. COMPLETED, FAILED)
         :param output: Output data for the task
         :return: TaskRun of the blocking task
@@ -249,7 +243,6 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
     def signal_workflow_task_with_blocking_task_input(
             self,
             workflow_id: str,
-            task_ref_name: str,
             status: str,
             output: object
     ) -> TaskRun:
@@ -257,7 +250,6 @@ class OrkesTaskClient(OrkesBaseClient, TaskClient):
         Signal to a waiting task in a workflow synchronously and return the blocking task input
 
         :param workflow_id: ID of the workflow
-        :param task_ref_name: Reference name of the task
         :param status: Status to set for the task (e.g. COMPLETED, FAILED)
         :param output: Output data for the task
         :return: TaskRun of the blocking task input

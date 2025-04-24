@@ -1392,7 +1392,7 @@ class TaskResourceApi(object):
         auth_settings = ['api_key']  # noqa: E501
 
         return self.api_client.call_api(
-            '/api/tasks/{workflowId}/{status}/signal/sync', 'POST',
+            '/tasks/{workflowId}/{status}/signal/sync', 'POST',
             path_params,
             query_params,
             header_params,
