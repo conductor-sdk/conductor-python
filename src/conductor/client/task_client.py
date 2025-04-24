@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from typing import Optional, List
 
 from conductor.client.http.models import PollData
+from src.conductor.client.http.models.task_run import TaskRun
+from src.conductor.client.http.models.workflow_run import WorkflowRun
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_result import TaskResult
@@ -69,4 +71,94 @@ class TaskClient(ABC):
 
     @abstractmethod
     def get_task_poll_data(self, task_type: str) -> List[PollData]:
+        pass
+
+    @abstractmethod
+    def signal_workflow_task_a_sync(
+            self,
+            workflow_id: str,
+            status: str,
+            output: object
+    ) -> None:
+        """
+        Signal to a waiting task in a workflow asynchronously
+
+        :param workflow_id: ID of the workflow
+        :param task_ref_name: Reference name of the task
+        :param status: Status to set for the task (e.g. COMPLETED, FAILED)
+        :param output: Output data for the task
+        :return: None
+        """
+        pass
+
+    @abstractmethod
+    def signal_workflow_task_with_target_workflow(
+            self,
+            workflow_id: str,
+            status: str,
+            output: object
+    ) -> WorkflowRun:
+        """
+        Signal to a waiting task in a workflow synchronously and return the target workflow
+
+        :param workflow_id: ID of the workflow
+        :param task_ref_name: Reference name of the task
+        :param status: Status to set for the task (e.g. COMPLETED, FAILED)
+        :param output: Output data for the task
+        :return: WorkflowRun of the target workflow
+        """
+        pass
+
+    @abstractmethod
+    def signal_workflow_task_with_blocking_workflow(
+            self,
+            workflow_id: str,
+            status: str,
+            output: object
+    ) -> WorkflowRun:
+        """
+        Signal to a waiting task in a workflow synchronously and return the blocking workflow
+
+        :param workflow_id: ID of the workflow
+        :param task_ref_name: Reference name of the task
+        :param status: Status to set for the task (e.g. COMPLETED, FAILED)
+        :param output: Output data for the task
+        :return: WorkflowRun of the blocking workflow
+        """
+        pass
+
+    @abstractmethod
+    def signal_workflow_task_with_blocking_task(
+            self,
+            workflow_id: str,
+            status: str,
+            output: object
+    ) -> TaskRun:
+        """
+        Signal to a waiting task in a workflow synchronously and return the blocking task
+
+        :param workflow_id: ID of the workflow
+        :param task_ref_name: Reference name of the task
+        :param status: Status to set for the task (e.g. COMPLETED, FAILED)
+        :param output: Output data for the task
+        :return: TaskRun of the blocking task
+        """
+        pass
+
+    @abstractmethod
+    def signal_workflow_task_with_blocking_task_input(
+            self,
+            workflow_id: str,
+            status: str,
+            output: object
+    ) -> TaskRun:
+        """
+        Signal to a waiting task in a workflow synchronously and return the blocking task input
+
+        :param workflow_id: ID of the workflow
+        :param task_ref_name: Reference name of the task
+        :param status: Status to set for the task (e.g. COMPLETED, FAILED)
+        :param output: Output data for the task
+        :return: TaskRun of the blocking task input
+        """
         pass

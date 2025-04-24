@@ -214,7 +214,9 @@ class WorkflowResourceApi(object):
         :param int version: (required)
         :param str wait_until_task_ref:
         :param int wait_for_seconds:
-        :return: WorkflowRun
+        :param str consistency:
+        :param str return_strategy:
+        :return: SignalResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -240,12 +242,14 @@ class WorkflowResourceApi(object):
         :param int version: (required)
         :param str wait_until_task_ref:
         :param int wait_for_seconds:
-        :return: WorkflowRun
+        :param str consistency:
+        :param str return_strategy:
+        :return: SignalResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['body', 'request_id', 'name', 'version', 'wait_until_task_ref', 'wait_for_seconds']  # noqa: E501
+        all_params = ['body', 'name', 'version', 'request_id', 'wait_until_task_ref', 'wait_for_seconds', 'consistency', 'return_strategy']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -293,6 +297,10 @@ class WorkflowResourceApi(object):
             query_params.append(('waitUntilTaskRef', params['wait_until_task_ref']))  # noqa: E501
         if 'wait_for_seconds' in params:
             query_params.append(('waitForSeconds', params['wait_for_seconds']))  # noqa: E501
+        if 'consistency' in params:
+            query_params.append(('consistency', params['consistency']))  # noqa: E501
+        if 'return_strategy' in params:
+            query_params.append(('returnStrategy', params['return_strategy']))  # noqa: E501
 
         header_params = {}
 
@@ -321,7 +329,7 @@ class WorkflowResourceApi(object):
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='WorkflowRun',  # noqa: E501
+            response_type='SignalResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

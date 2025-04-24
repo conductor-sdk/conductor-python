@@ -5,10 +5,12 @@ from unittest.mock import patch, MagicMock
 
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api.task_resource_api import TaskResourceApi
+from conductor.client.http.models import WorkflowRun
 from conductor.client.http.models.task import Task
 from conductor.client.http.models.task_exec_log import TaskExecLog
 from conductor.client.http.models.task_result import TaskResult
 from conductor.client.http.models.task_result_status import TaskResultStatus
+from conductor.client.http.models.task_run import TaskRun
 from conductor.client.http.models.workflow import Workflow
 from conductor.client.http.rest import ApiException
 from conductor.client.orkes.orkes_task_client import OrkesTaskClient
@@ -19,6 +21,8 @@ TASK_ID = 'task_id_1'
 TASK_NAME_2 = 'ut_task_2'
 WORKER_ID = "ut_worker_id"
 DOMAIN = "test_domain"
+TASK_REF = "task_ref"
+WORKFLOW_ID = "workflow_id"
 
 
 class TestOrkesTaskClient(unittest.TestCase):
@@ -174,3 +178,149 @@ class TestOrkesTaskClient(unittest.TestCase):
         logs = self.task_client.get_task_logs(TASK_ID)
         mock.assert_called_with(TASK_ID)
         self.assertEqual(len(logs), 2)
+
+    @patch.object(TaskResourceApi, 'signal_workflow_task_a_sync')
+    def test_signal_workflow_task_a_sync(self, mock):
+        output = {"result": "value"}
+        status = "COMPLETED"
+
+        self.task_client.signal_workflow_task_a_sync(WORKFLOW_ID, TASK_REF, status, output)
+
+        mock.assert_called_with(output, WORKFLOW_ID, status)
+
+    @patch.object(TaskResourceApi, 'signal_workflow_task_sync')
+    def test_signal_workflow_task_sync(self, mock):
+        expected_response = WorkflowRun(workflow_id="123", response_type="TARGET_WORKFLOW")
+        mock.return_value = expected_response
+
+        output = {"result": "value"}
+        status = "COMPLETED"
+
+        result = self.task_client.signal_workflow_task_sync(
+            WORKFLOW_ID, TASK_REF, status, output, "TARGET_WORKFLOW"
+        )
+
+        mock.assert_called_with(
+            body=output,
+            workflow_id=WORKFLOW_ID,
+            status=status,
+            return_strategy="TARGET_WORKFLOW"
+        )
+
+        self.assertEqual(result, expected_response)
+
+    @patch.object(TaskResourceApi, 'signal_workflow_task_sync')
+    def test_signal_workflow_task_with_target_workflow(self, mock):
+        expected_response = WorkflowRun(workflow_id="123", response_type="TARGET_WORKFLOW")
+        mock.return_value = expected_response
+
+        output = {"result": "value"}
+        status = "COMPLETED"
+
+        result = self.task_client.signal_workflow_task_with_target_workflow(
+            WORKFLOW_ID, TASK_REF, status, output
+        )
+
+        mock.assert_called_with(
+            body=output,
+            workflow_id=WORKFLOW_ID,
+            status=status,
+            return_strategy="TARGET_WORKFLOW"
+        )
+
+        self.assertEqual(result, expected_response)
+        self.assertEqual(result.workflow_id, "123")
+        self.assertEqual(result.response_type, "TARGET_WORKFLOW")
+
+    @patch.object(TaskResourceApi, 'signal_workflow_task_sync')
+    def test_signal_workflow_task_with_blocking_workflow(self, mock):
+        expected_response = WorkflowRun(workflow_id="456", response_type="BLOCKING_WORKFLOW")
+        mock.return_value = expected_response
+
+        output = {"result": "value"}
+        status = "COMPLETED"
+
+        result = self.task_client.signal_workflow_task_with_blocking_workflow(
+            WORKFLOW_ID, TASK_REF, status, output
+        )
+
+        mock.assert_called_with(
+            body=output,
+            workflow_id=WORKFLOW_ID,
+            status=status,
+            return_strategy="BLOCKING_WORKFLOW"
+        )
+
+        self.assertEqual(result, expected_response)
+        self.assertEqual(result.workflow_id, "456")
+        self.assertEqual(result.response_type, "BLOCKING_WORKFLOW")
+
+    @patch.object(TaskResourceApi, 'signal_workflow_task_sync')
+    def test_signal_workflow_task_with_blocking_task(self, mock):
+        expected_response = TaskRun(task_id="789", response_type="BLOCKING_TASK")
+        mock.return_value = expected_response
+
+        output = {"result": "value"}
+        status = "COMPLETED"
+
+        result = self.task_client.signal_workflow_task_with_blocking_task(
+            WORKFLOW_ID, TASK_REF, status, output
+        )
+
+        mock.assert_called_with(
+            body=output,
+            workflow_id=WORKFLOW_ID,
+            status=status,
+            return_strategy="BLOCKING_TASK"
+        )
+
+        self.assertEqual(result, expected_response)
+        self.assertEqual(result.task_id, "789")
+        self.assertEqual(result.response_type, "BLOCKING_TASK")
+
+    @patch.object(TaskResourceApi, 'signal_workflow_task_sync')
+    def test_signal_workflow_task_with_blocking_task_input(self, mock):
+        expected_response = TaskRun(task_id="101", response_type="BLOCKING_TASK_INPUT")
+        mock.return_value = expected_response
+
+        output = {"result": "value"}
+        status = "COMPLETED"
+
+        result = self.task_client.signal_workflow_task_with_blocking_task_input(
+            WORKFLOW_ID, TASK_REF, status, output
+        )
+
+        mock.assert_called_with(
+            body=output,
+            workflow_id=WORKFLOW_ID,
+            status=status,
+            return_strategy="BLOCKING_TASK_INPUT"
+        )
+
+        self.assertEqual(result, expected_response)
+        self.assertEqual(result.task_id, "101")
+        self.assertEqual(result.response_type, "BLOCKING_TASK_INPUT")
+
+    @patch.object(TaskResourceApi, 'signal_workflow_task_sync')
+    def test_wrong_return_type_raises_error(self, mock):
+        # Test that type checking works and raises errors when wrong type is returned
+        output = {"result": "value"}
+        status = "COMPLETED"
+
+        # Server returns TaskRun when we expect WorkflowRun
+        mock.return_value = TaskRun(task_id="123", response_type="BLOCKING_TASK")
+
+        # This should raise TypeError because we're expecting WorkflowRun but got TaskRun
+        with self.assertRaises(TypeError):
+            self.task_client.signal_workflow_task_with_target_workflow(
+                WORKFLOW_ID, TASK_REF, status, output
+            )
+
+        # Similarly, when server returns WorkflowRun when we expect TaskRun
+        mock.return_value = WorkflowRun(workflow_id="456", response_type="TARGET_WORKFLOW")
+
+        # This should raise TypeError because we're expecting TaskRun but got WorkflowRun
+        with self.assertRaises(TypeError):
+            self.task_client.signal_workflow_task_with_blocking_task(
+                WORKFLOW_ID, TASK_REF, status, output
+            )
