@@ -1,0 +1,17 @@
+{
+  "serverPojoMappings": [
+    {
+      "server": {
+        "owner": "orkes-io",
+        "repo": "orkes-conductor",
+        "module": "server",
+        "className": "io.orkes.conductor.server.rest.model.requests.AuthorizationRequest"
+      },
+      "sdk": {
+        "owner": "conductor-sdk",
+        "repo": "conductor-python",
+        "className": "conductor.client.http.models.authorization_request.py"
+      }
+    }
+  ]
+}

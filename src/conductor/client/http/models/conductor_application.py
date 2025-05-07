@@ -2,6 +2,7 @@ import pprint
 import re  # noqa: F401
 
 import six
+from deprecated import deprecated
 
 
 class ConductorApplication(object):
@@ -19,20 +20,29 @@ class ConductorApplication(object):
     swagger_types = {
         'id': 'str',
         'name': 'str',
-        'created_by': 'str'
+        'created_by': 'str',
+        'create_time': 'int',
+        'update_time': 'int',
+        'updated_by': 'str'
     }
 
     attribute_map = {
         'id': 'id',
         'name': 'name',
-        'created_by': 'createdBy'
+        'created_by': 'createdBy',
+        'create_time': 'createTime',
+        'update_time': 'updateTime',
+        'updated_by': 'updatedBy'
     }
 
-    def __init__(self, id=None, name=None, created_by=None):  # noqa: E501
+    def __init__(self, id=None, name=None, created_by=None, create_time=None, update_time=None, updated_by=None):  # noqa: E501
         """ConductorApplication - a model defined in Swagger"""  # noqa: E501
         self._id = None
         self._name = None
         self._created_by = None
+        self._create_time = None
+        self._update_time = None
+        self._updated_by = None
         self.discriminator = None
         if id is not None:
             self.id = id
@@ -40,6 +50,12 @@ class ConductorApplication(object):
             self.name = name
         if created_by is not None:
             self.created_by = created_by
+        if create_time is not None:
+            self.create_time = create_time
+        if update_time is not None:
+            self.update_time = update_time
+        if updated_by is not None:
+            self.updated_by = updated_by
 
     @property
     def id(self):
@@ -103,6 +119,69 @@ class ConductorApplication(object):
         """
 
         self._created_by = created_by
+
+    @property
+    def create_time(self):
+        """Gets the create_time of this ConductorApplication.  # noqa: E501
+
+
+        :return: The create_time of this ConductorApplication.  # noqa: E501
+        :rtype: int
+        """
+        return self._create_time
+
+    @create_time.setter
+    def create_time(self, create_time):
+        """Sets the create_time of this ConductorApplication.
+
+
+        :param create_time: The create_time of this ConductorApplication.  # noqa: E501
+        :type: int
+        """
+
+        self._create_time = create_time
+
+    @property
+    def update_time(self):
+        """Gets the update_time of this ConductorApplication.  # noqa: E501
+
+
+        :return: The update_time of this ConductorApplication.  # noqa: E501
+        :rtype: int
+        """
+        return self._update_time
+
+    @update_time.setter
+    def update_time(self, update_time):
+        """Sets the update_time of this ConductorApplication.
+
+
+        :param update_time: The update_time of this ConductorApplication.  # noqa: E501
+        :type: int
+        """
+
+        self._update_time = update_time
+
+    @property
+    def updated_by(self):
+        """Gets the updated_by of this ConductorApplication.  # noqa: E501
+
+
+        :return: The updated_by of this ConductorApplication.  # noqa: E501
+        :rtype: str
+        """
+        return self._updated_by
+
+    @updated_by.setter
+    def updated_by(self, updated_by):
+        """Sets the updated_by of this ConductorApplication.
+
+
+        :param updated_by: The updated_by of this ConductorApplication.  # noqa: E501
+        :type: str
+        """
+
+        self._updated_by = updated_by
 
     def to_dict(self):
         """Returns the model properties as a dict"""

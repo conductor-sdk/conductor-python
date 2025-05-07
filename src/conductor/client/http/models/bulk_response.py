@@ -18,18 +18,21 @@ class BulkResponse(object):
     """
     swagger_types = {
         'bulk_error_results': 'dict(str, str)',
-        'bulk_successful_results': 'list[str]'
+        'bulk_successful_results': 'list[str]',
+        'message': 'str'
     }
 
     attribute_map = {
         'bulk_error_results': 'bulkErrorResults',
-        'bulk_successful_results': 'bulkSuccessfulResults'
+        'bulk_successful_results': 'bulkSuccessfulResults',
+        'message': 'message'
     }
 
     def __init__(self, bulk_error_results=None, bulk_successful_results=None):  # noqa: E501
         """BulkResponse - a model defined in Swagger"""  # noqa: E501
         self._bulk_error_results = None
         self._bulk_successful_results = None
+        self._message = "Bulk Request has been processed."
         self.discriminator = None
         if bulk_error_results is not None:
             self.bulk_error_results = bulk_error_results
@@ -40,6 +43,7 @@ class BulkResponse(object):
     def bulk_error_results(self):
         """Gets the bulk_error_results of this BulkResponse.  # noqa: E501
 
+        Key - entityId Value - error message processing this entity
 
         :return: The bulk_error_results of this BulkResponse.  # noqa: E501
         :rtype: dict(str, str)
@@ -50,6 +54,7 @@ class BulkResponse(object):
     def bulk_error_results(self, bulk_error_results):
         """Sets the bulk_error_results of this BulkResponse.
 
+        Key - entityId Value - error message processing this entity
 
         :param bulk_error_results: The bulk_error_results of this BulkResponse.  # noqa: E501
         :type: dict(str, str)
@@ -77,6 +82,35 @@ class BulkResponse(object):
         """
 
         self._bulk_successful_results = bulk_successful_results
+
+    @property
+    def message(self):
+        """Gets the message of this BulkResponse.  # noqa: E501
+
+
+        :return: The message of this BulkResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._message
+
+    def append_success_response(self, result):
+        """Appends a successful result to bulk_successful_results.  # noqa: E501
+
+        :param result: The result to append to bulk_successful_results
+        """
+        if self._bulk_successful_results is None:
+            self._bulk_successful_results = []
+        self._bulk_successful_results.append(result)
+
+    def append_failed_response(self, id, error_message):
+        """Appends a failed result to bulk_error_results.  # noqa: E501
+
+        :param id: The entity ID that failed
+        :param error_message: The error message for the failed entity
+        """
+        if self._bulk_error_results is None:
+            self._bulk_error_results = {}
+        self._bulk_error_results[id] = error_message
 
     def to_dict(self):
         """Returns the model properties as a dict"""

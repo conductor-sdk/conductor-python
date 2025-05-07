@@ -1,5 +1,6 @@
 import pprint
 import re  # noqa: F401
+from deprecated import deprecated
 
 import six
 
@@ -173,6 +174,7 @@ class ConductorUser(object):
         self._uuid = uuid
 
     @property
+    @deprecated
     def application_user(self):
         """Gets the application_user of this ConductorUser.  # noqa: E501
 
@@ -183,6 +185,7 @@ class ConductorUser(object):
         return self._application_user
 
     @application_user.setter
+    @deprecated
     def application_user(self, application_user):
         """Sets the application_user of this ConductorUser.
 
