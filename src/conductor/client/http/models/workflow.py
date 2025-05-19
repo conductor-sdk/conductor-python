@@ -1,7 +1,7 @@
 import pprint
 import re  # noqa: F401
 import six
-from dataclasses import dataclass, field, InitVar, post_init
+from dataclasses import dataclass, field, InitVar
 from typing import Dict, List, Optional, Set, Any, Union
 from deprecated import deprecated
 
@@ -976,4 +976,136 @@ class Workflow:
 
     @property
     def rate_limited(self):
-        """Gets the rate
+        return self.rate_limited
+    @rate_limited.setter
+    def rate_limited(self, rate_limited):
+        self.rate_limited = rate_limited
+
+    @property
+    def start_time(self):
+        """Gets the start_time of this Workflow.  # noqa: E501
+
+
+        :return: The start_time of this Workflow.  # noqa: E501
+        :rtype: int
+        """
+        return self._start_time
+
+    @start_time.setter
+    def start_time(self, start_time):
+        """Sets the start_time of this Workflow.
+
+
+        :param start_time: The start_time of this Workflow.  # noqa: E501
+        :type: int
+        """
+
+        self._start_time = start_time
+
+    @property
+    def workflow_name(self):
+        """Gets the workflow_name of this Workflow.  # noqa: E501
+
+
+        :return: The workflow_name of this Workflow.  # noqa: E501
+        :rtype: str
+        """
+        return self._workflow_name
+
+    @workflow_name.setter
+    def workflow_name(self, workflow_name):
+        """Sets the workflow_name of this Workflow.
+
+
+        :param workflow_name: The workflow_name of this Workflow.  # noqa: E501
+        :type: str
+        """
+
+        self._workflow_name = workflow_name
+
+    @property
+    def workflow_version(self):
+        """Gets the workflow_version of this Workflow.  # noqa: E501
+
+
+        :return: The workflow_version of this Workflow.  # noqa: E501
+        :rtype: int
+        """
+        return self._workflow_version
+
+    @workflow_version.setter
+    def workflow_version(self, workflow_version):
+        """Sets the workflow_version of this Workflow.
+
+
+        :param workflow_version: The workflow_version of this Workflow.  # noqa: E501
+        :type: int
+        """
+
+        self._workflow_version = workflow_version
+
+    def to_dict(self):
+        """Returns the model properties as a dict"""
+        result = {}
+
+        for attr, _ in six.iteritems(self.swagger_types):
+            value = getattr(self, attr)
+            if isinstance(value, list):
+                result[attr] = list(map(
+                    lambda x: x.to_dict() if hasattr(x, "to_dict") else x,
+                    value
+                ))
+            elif hasattr(value, "to_dict"):
+                result[attr] = value.to_dict()
+            elif isinstance(value, dict):
+                result[attr] = dict(map(
+                    lambda item: (item[0], item[1].to_dict())
+                    if hasattr(item[1], "to_dict") else item,
+                    value.items()
+                ))
+            else:
+                result[attr] = value
+        if issubclass(Workflow, dict):
+            for key, value in self.items():
+                result[key] = value
+
+        return result
+
+    def to_str(self):
+        """Returns the string representation of the model"""
+        return pprint.pformat(self.to_dict())
+
+    def __repr__(self):
+        """For `print` and `pprint`"""
+        return self.to_str()
+
+    def __eq__(self, other):
+        """Returns true if both objects are equal"""
+        if not isinstance(other, Workflow):
+            return False
+
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        """Returns true if both objects are not equal"""
+        return not self == other
+
+    @property
+    def current_task(self) -> Task:
+        current = None
+        for task in self.tasks:
+            if task.status == 'SCHEDULED' or task.status == 'IN_PROGRESS':
+                current = task
+        return current
+
+    def get_task(self, name: str = None, task_reference_name: str = None) -> Task:
+        if name is None and task_reference_name is None:
+            raise Exception('ONLY one of name or task_reference_name MUST be provided.  None were provided')
+        if name is not None and not task_reference_name is None:
+            raise Exception('ONLY one of name or task_reference_name MUST be provided.  both were provided')
+
+        current = None
+        for task in self.tasks:
+            if task.task_def_name == name or task.workflow_task.task_reference_name == task_reference_name:
+                current = task
+        return current

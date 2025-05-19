@@ -9,7 +9,7 @@ import six
 from deprecated import deprecated
 
 from conductor.client.helpers.helper import ObjectMapper
-from conductor.client.http.models import WorkflowTask, SchemaDef, RateLimitConfig
+from conductor.client.http.models import WorkflowTask, SchemaDef, RateLimit
 
 object_mapper = ObjectMapper()
 
@@ -43,7 +43,7 @@ class WorkflowDef:
     _output_schema: SchemaDef = field(default=None)
     _enforce_schema: bool = field(default=None)
     _metadata: Dict[str, Any] = field(default=None)
-    _rate_limit_config: RateLimitConfig = field(default=None)
+    _rate_limit_config: RateLimit = field(default=None)
     
     # Deprecated fields
     _owner_app: str = field(default=None)
@@ -66,7 +66,7 @@ class WorkflowDef:
     version: InitVar[Optional[int]] = None
     tasks: InitVar[Optional[List[WorkflowTask]]] = None
     input_parameters: InitVar[Optional[List[str]]] = None
-    output_parameters: InitVar[Optional[Dict[str, Any]]] = {}
+    output_parameters: InitVar[Optional[Dict[str, Any]]] = None
     failure_workflow: InitVar[Optional[str]] = None
     schema_version: InitVar[Optional[int]] = None
     restartable: InitVar[Optional[bool]] = None
@@ -81,7 +81,7 @@ class WorkflowDef:
     output_schema: InitVar[Optional[SchemaDef]] = None
     enforce_schema: InitVar[Optional[bool]] = False
     metadata: InitVar[Optional[Dict[str, Any]]] = None
-    rate_limit_config: InitVar[Optional[RateLimitConfig]] = None
+    rate_limit_config: InitVar[Optional[RateLimit]] = None
 
     swagger_types = {
         'owner_app': 'str',
@@ -148,7 +148,7 @@ class WorkflowDef:
                  owner_email=None, timeout_policy=None, timeout_seconds=None, variables=None,
                  input_template=None,
                  input_schema : 'SchemaDef' = None, output_schema : 'SchemaDef' = None, enforce_schema : bool = False,
-                 metadata: Dict[str, Any] = None, rate_limit_config: RateLimitConfig = None):  # noqa: E501
+                 metadata: Dict[str, Any] = None, rate_limit_config: RateLimit = None):  # noqa: E501
         """WorkflowDef - a model defined in Swagger"""  # noqa: E501
         self._owner_app = None
         self._create_time = None
@@ -799,7 +799,7 @@ class WorkflowDef:
         self._metadata = metadata
 
     @property
-    def rate_limit_config(self) -> RateLimitConfig:
+    def rate_limit_config(self) -> RateLimit:
         """Gets the rate_limit_config of this WorkflowDef.  # noqa: E501
 
         :return: The rate_limit_config of this WorkflowDef.  # noqa: E501
@@ -808,7 +808,7 @@ class WorkflowDef:
         return self._rate_limit_config
 
     @rate_limit_config.setter
-    def rate_limit_config(self, rate_limit_config: RateLimitConfig):
+    def rate_limit_config(self, rate_limit_config: RateLimit):
         """Sets the rate_limit_config of this WorkflowDef.  # noqa: E501
 
         :param rate_limit_config: The rate_limit_config of this WorkflowDef.  # noqa: E501

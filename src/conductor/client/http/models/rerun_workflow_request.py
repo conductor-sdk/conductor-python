@@ -1,9 +1,9 @@
 import pprint
-import re  # noqa: F401
 import six
 from dataclasses import dataclass, field, InitVar
 from typing import Dict, Any, Optional
-from dataclasses import asdict
+from functools import partial
+from deprecated import deprecated
 
 
 @dataclass
@@ -12,59 +12,38 @@ class RerunWorkflowRequest:
 
     Do not edit the class manually.
     """
-    """
-    Attributes:
-      swagger_types (dict): The key is attribute name
-                            and the value is attribute type.
-      attribute_map (dict): The key is attribute name
-                            and the value is json key in definition.
-    """
-    re_run_from_workflow_id: Optional[str] = field(default=None)
-    workflow_input: Optional[Dict[str, Any]] = field(default=None)
-    re_run_from_task_id: Optional[str] = field(default=None)
-    task_input: Optional[Dict[str, Any]] = field(default=None)
-    correlation_id: Optional[str] = field(default=None)
-    
-    # InitVar parameters for the __init__ method
-    re_run_from_workflow_id_init: InitVar[Optional[str]] = None
-    workflow_input_init: InitVar[Optional[Dict[str, Any]]] = None
-    re_run_from_task_id_init: InitVar[Optional[str]]] = None
-    task_input_init: InitVar[Optional[Dict[str, Any]]] = None
-    correlation_id_init: InitVar[Optional[str]] = None
-    
-    # Private backing fields
+
     _re_run_from_workflow_id: Optional[str] = field(default=None, init=False, repr=False)
     _workflow_input: Optional[Dict[str, Any]] = field(default=None, init=False, repr=False)
     _re_run_from_task_id: Optional[str] = field(default=None, init=False, repr=False)
     _task_input: Optional[Dict[str, Any]] = field(default=None, init=False, repr=False)
     _correlation_id: Optional[str] = field(default=None, init=False, repr=False)
-    
-    # Class variables
-    swagger_types = {
+
+    re_run_from_workflow_id: InitVar[Optional[str]] = None
+    workflow_input: InitVar[Optional[Dict[str, Any]]] = None
+    re_run_from_task_id: InitVar[Optional[str]] = None
+    task_input: InitVar[Optional[Dict[str, Any]]] = None
+    correlation_id: InitVar[Optional[str]] = None
+
+    # Class properties for swagger documentation
+    swagger_types: Dict[str, str] = field(default_factory=lambda: {
         're_run_from_workflow_id': 'str',
         'workflow_input': 'dict(str, object)',
         're_run_from_task_id': 'str',
         'task_input': 'dict(str, object)',
         'correlation_id': 'str'
-    }
+    }, init=False)
 
-    attribute_map = {
+    attribute_map: Dict[str, str] = field(default_factory=lambda: {
         're_run_from_workflow_id': 'reRunFromWorkflowId',
         'workflow_input': 'workflowInput',
         're_run_from_task_id': 'reRunFromTaskId',
         'task_input': 'taskInput',
         'correlation_id': 'correlationId'
-    }
-    
-    def __init__(self, re_run_from_workflow_id=None, workflow_input=None, re_run_from_task_id=None, task_input=None,
-                 correlation_id=None):  # noqa: E501
-        """RerunWorkflowRequest - a model defined in Swagger"""  # noqa: E501
-        self._re_run_from_workflow_id = None
-        self._workflow_input = None
-        self._re_run_from_task_id = None
-        self._task_input = None
-        self._correlation_id = None
-        self.discriminator = None
+    }, init=False)
+
+    def __post_init__(self, re_run_from_workflow_id, workflow_input, re_run_from_task_id, task_input, correlation_id):
+        """Initialize attributes after @dataclass initialization"""
         if re_run_from_workflow_id is not None:
             self.re_run_from_workflow_id = re_run_from_workflow_id
         if workflow_input is not None:
@@ -75,26 +54,17 @@ class RerunWorkflowRequest:
             self.task_input = task_input
         if correlation_id is not None:
             self.correlation_id = correlation_id
-    
-    def __post_init__(self, re_run_from_workflow_id_init, workflow_input_init, re_run_from_task_id_init, 
-                     task_input_init, correlation_id_init):
-        """Post initialization for dataclass"""
-        # Only set values from InitVars if they weren't already set by __init__
-        if self._re_run_from_workflow_id is None and re_run_from_workflow_id_init is not None:
-            self.re_run_from_workflow_id = re_run_from_workflow_id_init
-        if self._workflow_input is None and workflow_input_init is not None:
-            self.workflow_input = workflow_input_init
-        if self._re_run_from_task_id is None and re_run_from_task_id_init is not None:
-            self.re_run_from_task_id = re_run_from_task_id_init
-        if self._task_input is None and task_input_init is not None:
-            self.task_input = task_input_init
-        if self._correlation_id is None and correlation_id_init is not None:
-            self.correlation_id = correlation_id_init
+        self.discriminator = None
+
+    def __init__(self, re_run_from_workflow_id=None, workflow_input=None, re_run_from_task_id=None, task_input=None,
+                 correlation_id=None):  # noqa: E501
+        """RerunWorkflowRequest - a model defined in Swagger"""  # noqa: E501
+        # This method is kept for backward compatibility
+        pass
 
     @property
     def re_run_from_workflow_id(self):
         """Gets the re_run_from_workflow_id of this RerunWorkflowRequest.  # noqa: E501
-
 
         :return: The re_run_from_workflow_id of this RerunWorkflowRequest.  # noqa: E501
         :rtype: str
@@ -105,17 +75,14 @@ class RerunWorkflowRequest:
     def re_run_from_workflow_id(self, re_run_from_workflow_id):
         """Sets the re_run_from_workflow_id of this RerunWorkflowRequest.
 
-
         :param re_run_from_workflow_id: The re_run_from_workflow_id of this RerunWorkflowRequest.  # noqa: E501
         :type: str
         """
-
         self._re_run_from_workflow_id = re_run_from_workflow_id
 
     @property
     def workflow_input(self):
         """Gets the workflow_input of this RerunWorkflowRequest.  # noqa: E501
-
 
         :return: The workflow_input of this RerunWorkflowRequest.  # noqa: E501
         :rtype: dict(str, object)
@@ -126,17 +93,14 @@ class RerunWorkflowRequest:
     def workflow_input(self, workflow_input):
         """Sets the workflow_input of this RerunWorkflowRequest.
 
-
         :param workflow_input: The workflow_input of this RerunWorkflowRequest.  # noqa: E501
         :type: dict(str, object)
         """
-
         self._workflow_input = workflow_input
 
     @property
     def re_run_from_task_id(self):
         """Gets the re_run_from_task_id of this RerunWorkflowRequest.  # noqa: E501
-
 
         :return: The re_run_from_task_id of this RerunWorkflowRequest.  # noqa: E501
         :rtype: str
@@ -147,17 +111,14 @@ class RerunWorkflowRequest:
     def re_run_from_task_id(self, re_run_from_task_id):
         """Sets the re_run_from_task_id of this RerunWorkflowRequest.
 
-
         :param re_run_from_task_id: The re_run_from_task_id of this RerunWorkflowRequest.  # noqa: E501
         :type: str
         """
-
         self._re_run_from_task_id = re_run_from_task_id
 
     @property
     def task_input(self):
         """Gets the task_input of this RerunWorkflowRequest.  # noqa: E501
-
 
         :return: The task_input of this RerunWorkflowRequest.  # noqa: E501
         :rtype: dict(str, object)
@@ -168,17 +129,14 @@ class RerunWorkflowRequest:
     def task_input(self, task_input):
         """Sets the task_input of this RerunWorkflowRequest.
 
-
         :param task_input: The task_input of this RerunWorkflowRequest.  # noqa: E501
         :type: dict(str, object)
         """
-
         self._task_input = task_input
 
     @property
     def correlation_id(self):
         """Gets the correlation_id of this RerunWorkflowRequest.  # noqa: E501
-
 
         :return: The correlation_id of this RerunWorkflowRequest.  # noqa: E501
         :rtype: str

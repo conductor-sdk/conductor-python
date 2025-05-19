@@ -1086,4 +1086,163 @@ class Task:
         """Sets the sub_workflow_id of this Task.
 
 
-        :param sub_workflow_id: The sub
+        :param sub_workflow_id: The sub_workflow_id of this Task.  # noqa: E501
+        :type: str
+        """
+
+        self._sub_workflow_id = sub_workflow_id
+
+    @property
+    def subworkflow_changed(self):
+        """Gets the subworkflow_changed of this Task.  # noqa: E501
+
+
+        :return: The subworkflow_changed of this Task.  # noqa: E501
+        :rtype: bool
+        """
+        return self._subworkflow_changed
+
+    @subworkflow_changed.setter
+    def subworkflow_changed(self, subworkflow_changed):
+        """Sets the subworkflow_changed of this Task.
+
+
+        :param subworkflow_changed: The subworkflow_changed of this Task.  # noqa: E501
+        :type: bool
+        """
+
+        self._subworkflow_changed = subworkflow_changed
+
+    @property
+    def parent_task_id(self):
+        return self._parent_task_id
+
+    @parent_task_id.setter
+    def parent_task_id(self, parent_task_id):
+        self._parent_task_id = parent_task_id
+
+    @property
+    def first_start_time(self):
+        return self._first_start_time
+
+    @first_start_time.setter
+    def first_start_time(self, first_start_time):
+        self._first_start_time = first_start_time
+
+    @property
+    def loop_over_task(self):
+        """Gets the loop_over_task of this Task.  # noqa: E501
+
+
+        :return: The loop_over_task of this Task.  # noqa: E501
+        :rtype: bool
+        """
+        return self._loop_over_task
+
+    @loop_over_task.setter
+    def loop_over_task(self, loop_over_task):
+        """Sets the loop_over_task of this Task.
+
+
+        :param loop_over_task: The loop_over_task of this Task.  # noqa: E501
+        :type: bool
+        """
+
+        self._loop_over_task = loop_over_task
+
+    @property
+    def task_definition(self):
+        """Gets the task_definition of this Task.  # noqa: E501
+
+
+        :return: The task_definition of this Task.  # noqa: E501
+        :rtype: TaskDef
+        """
+        return self._task_definition
+
+    @task_definition.setter
+    def task_definition(self, task_definition):
+        """Sets the task_definition of this Task.
+
+
+        :param task_definition: The task_definition of this Task.  # noqa: E501
+        :type: TaskDef
+        """
+
+        self._task_definition = task_definition
+
+    @property
+    def queue_wait_time(self):
+        """Gets the queue_wait_time of this Task.  # noqa: E501
+
+
+        :return: The queue_wait_time of this Task.  # noqa: E501
+        :rtype: int
+        """
+        return self._queue_wait_time
+
+    @queue_wait_time.setter
+    def queue_wait_time(self, queue_wait_time):
+        """Sets the queue_wait_time of this Task.
+
+
+        :param queue_wait_time: The queue_wait_time of this Task.  # noqa: E501
+        :type: int
+        """
+
+        self._queue_wait_time = queue_wait_time
+
+    def to_dict(self):
+        """Returns the model properties as a dict"""
+        result = {}
+
+        for attr, _ in six.iteritems(self.swagger_types):
+            value = getattr(self, attr)
+            if isinstance(value, list):
+                result[attr] = list(map(
+                    lambda x: x.to_dict() if hasattr(x, "to_dict") else x,
+                    value
+                ))
+            elif hasattr(value, "to_dict"):
+                result[attr] = value.to_dict()
+            elif isinstance(value, dict):
+                result[attr] = dict(map(
+                    lambda item: (item[0], item[1].to_dict())
+                    if hasattr(item[1], "to_dict") else item,
+                    value.items()
+                ))
+            else:
+                result[attr] = value
+        if issubclass(Task, dict):
+            for key, value in self.items():
+                result[key] = value
+
+        return result
+
+    def to_str(self):
+        """Returns the string representation of the model"""
+        return pprint.pformat(self.to_dict())
+
+    def __repr__(self):
+        """For `print` and `pprint`"""
+        return self.to_str()
+
+    def __eq__(self, other):
+        """Returns true if both objects are equal"""
+        if not isinstance(other, Task):
+            return False
+
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        """Returns true if both objects are not equal"""
+        return not self == other
+
+    def to_task_result(self, status: TaskResultStatus = TaskResultStatus.COMPLETED) -> TaskResult:
+        task_result = TaskResult(
+            task_id=self.task_id,
+            workflow_instance_id=self.workflow_instance_id,
+            worker_id=self.worker_id,
+            status=status,
+        )
+        return task_result

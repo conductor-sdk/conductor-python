@@ -12,7 +12,6 @@ class SubjectType(str, Enum):
     USER = "USER",
     ROLE = "ROLE",
     GROUP = "GROUP",
-    @deprecated("TAG is deprecated in the Java SDK")
     TAG = "TAG"
 
 
