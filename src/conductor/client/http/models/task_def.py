@@ -304,8 +304,8 @@ class TaskDef:
         if total_timeout_seconds is not None:
             self.total_timeout_seconds = total_timeout_seconds
 
-    @deprecated
     @property
+    @deprecated
     def owner_app(self):
         """Gets the owner_app of this TaskDef.  # noqa: E501
 

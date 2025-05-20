@@ -9,7 +9,8 @@ import six
 from deprecated import deprecated
 
 from conductor.client.helpers.helper import ObjectMapper
-from conductor.client.http.models import WorkflowTask, SchemaDef, RateLimit
+from conductor.client.http.models import WorkflowTask, RateLimit
+from conductor.client.http.models.schema_def import SchemaDef  # Direct import to break circular dependency
 
 object_mapper = ObjectMapper()
 
