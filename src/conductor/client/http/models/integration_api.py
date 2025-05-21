@@ -26,7 +26,7 @@ class IntegrationApi:
     _updated_by: Optional[str] = field(default=None, repr=False)
     _updated_on: Optional[int] = field(default=None, repr=False)
     
-    swagger_types: Dict[str, str] = field(default_factory=lambda: {
+    swagger_types = {
         'api': 'str',
         'configuration': 'dict(str, object)',
         'created_by': 'str',
@@ -37,9 +37,9 @@ class IntegrationApi:
         'tags': 'list[TagObject]',
         'updated_by': 'str',
         'updated_on': 'int'
-    }, repr=False)
+    }
 
-    attribute_map: Dict[str, str] = field(default_factory=lambda: {
+    attribute_map = {
         'api': 'api',
         'configuration': 'configuration',
         'created_by': 'createdBy',
@@ -50,7 +50,7 @@ class IntegrationApi:
         'tags': 'tags',
         'updated_by': 'updatedBy',
         'updated_on': 'updatedOn'
-    }, repr=False)
+    }
 
     discriminator: Optional[str] = field(default=None, repr=False)
 

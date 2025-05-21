@@ -22,15 +22,15 @@ class GenerateTokenRequest:
     key_secret: Optional[str] = field(default=None)
     
     # Class variables
-    swagger_types: Dict[str, str] = field(default_factory=lambda: {
+    swagger_types = {
         'key_id': 'str',
         'key_secret': 'str'
-    })
+    }
     
-    attribute_map: Dict[str, str] = field(default_factory=lambda: {
+    attribute_map = {
         'key_id': 'keyId',
         'key_secret': 'keySecret'
-    })
+    }
     
     def __init__(self, key_id=None, key_secret=None):  # noqa: E501
         """GenerateTokenRequest - a model defined in Swagger"""  # noqa: E501

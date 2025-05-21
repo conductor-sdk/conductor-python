@@ -5,6 +5,8 @@ from typing import Dict, Any, Optional
 import six
 from deprecated import deprecated
 
+from conductor.client.http.models.auditable import Auditable
+
 
 class SchemaType(str, Enum):
     JSON = "JSON",
@@ -16,22 +18,24 @@ class SchemaType(str, Enum):
 
 
 @dataclass
-class SchemaDef:
-    swagger_types: Dict[str, str] = field(default_factory=lambda: {
+class SchemaDef(Auditable):
+    swagger_types = {
+        **Auditable.swagger_types,
         'name': 'str',
         'version': 'int',
         'type': 'str',
         'data': 'dict(str, object)',
         'external_ref': 'str'
-    })
+    }
 
-    attribute_map: Dict[str, str] = field(default_factory=lambda: {
+    attribute_map = {
+        **Auditable.attribute_map,
         'name': 'name',
         'version': 'version',
         'type': 'type',
         'data': 'data',
         'external_ref': 'externalRef'
-    })
+    }
 
     # Private fields for properties
     _name: Optional[str] = field(default=None, init=False)

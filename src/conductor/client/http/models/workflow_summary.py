@@ -67,7 +67,7 @@ class WorkflowSummary:
     _input_size: Optional[int] = field(init=False, repr=False, default=None)
     
     # For backward compatibility
-    swagger_types: Dict[str, str] = field(init=False, repr=False, default_factory=lambda: {
+    swagger_types = {
         'workflow_type': 'str',
         'version': 'int',
         'workflow_id': 'str',
@@ -89,9 +89,9 @@ class WorkflowSummary:
         'created_by': 'str',
         'output_size': 'int',
         'input_size': 'int'
-    })
+    }
     
-    attribute_map: Dict[str, str] = field(init=False, repr=False, default_factory=lambda: {
+    attribute_map = {
         'workflow_type': 'workflowType',
         'version': 'version',
         'workflow_id': 'workflowId',
@@ -113,7 +113,7 @@ class WorkflowSummary:
         'created_by': 'createdBy',
         'output_size': 'outputSize',
         'input_size': 'inputSize'
-    })
+    }
     
     discriminator: Optional[str] = field(init=False, repr=False, default=None)
     

@@ -37,7 +37,7 @@ class PromptTemplateTestRequest:
     _top_p: Optional[float] = field(init=False, repr=False, default=None)
     
     # Class variables
-    swagger_types: Dict[str, str] = field(init=False, repr=False, default_factory=lambda: {
+    swagger_types = {
         'llm_provider': 'str',
         'model': 'str',
         'prompt': 'str',
@@ -45,9 +45,9 @@ class PromptTemplateTestRequest:
         'stop_words': 'list[str]',
         'temperature': 'float',
         'top_p': 'float'
-    })
+    }
     
-    attribute_map: Dict[str, str] = field(init=False, repr=False, default_factory=lambda: {
+    attribute_map = {
         'llm_provider': 'llmProvider',
         'model': 'model',
         'prompt': 'prompt',
@@ -55,7 +55,7 @@ class PromptTemplateTestRequest:
         'stop_words': 'stopWords',
         'temperature': 'temperature',
         'top_p': 'topP'
-    })
+    }
     
     discriminator: None = field(init=False, repr=False, default=None)
     

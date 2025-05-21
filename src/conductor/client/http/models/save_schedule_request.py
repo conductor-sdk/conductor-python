@@ -19,7 +19,7 @@ class SaveScheduleRequest:
       attribute_map (dict): The key is attribute name
                             and the value is json key in definition.
     """
-    swagger_types: Dict[str, str] = field(default_factory=lambda: {
+    swagger_types = {
         'name': 'str',
         'cron_expression': 'str',
         'run_catchup_schedule_instances': 'bool',
@@ -31,9 +31,9 @@ class SaveScheduleRequest:
         'schedule_end_time': 'int',
         'zone_id': 'str',
         'description': 'str'
-    })
+    }
 
-    attribute_map: Dict[str, str] = field(default_factory=lambda: {
+    attribute_map = {
         'name': 'name',
         'cron_expression': 'cronExpression',
         'run_catchup_schedule_instances': 'runCatchupScheduleInstances',
@@ -45,7 +45,7 @@ class SaveScheduleRequest:
         'schedule_end_time': 'scheduleEndTime',
         'zone_id': 'zoneId',
         'description': 'description'
-    })
+    }
 
     name: InitVar[Optional[str]] = None
     cron_expression: InitVar[Optional[str]] = None

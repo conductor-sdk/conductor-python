@@ -33,7 +33,7 @@ class Integration:
     _updated_on: Optional[int] = field(default=None, init=False)
     _apis: Optional[List['IntegrationApi']] = field(default=None, init=False)
     
-    swagger_types: Dict[str, str] = field(default_factory=lambda: {
+    swagger_types = {
         'category': 'str',
         'configuration': 'dict(str, object)',
         'created_by': 'str',
@@ -47,9 +47,9 @@ class Integration:
         'updated_by': 'str',
         'updated_on': 'int',
         'apis': 'list[IntegrationApi]'
-    }, init=False)
+    }
 
-    attribute_map: Dict[str, str] = field(default_factory=lambda: {
+    attribute_map = {
         'category': 'category',
         'configuration': 'configuration',
         'created_by': 'createdBy',
@@ -63,7 +63,7 @@ class Integration:
         'updated_by': 'updatedBy',
         'updated_on': 'updatedOn',
         'apis': 'apis'
-    }, init=False)
+    }
 
     def __init__(self, category=None, configuration=None, created_by=None, created_on=None, description=None,
                  enabled=None, models_count=None, name=None, tags=None, type=None, updated_by=None,

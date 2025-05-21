@@ -31,17 +31,17 @@ class TagString:
     _type: Optional[str] = field(default=None, init=False, repr=False)
     _value: Optional[str] = field(default=None, init=False, repr=False)
 
-    swagger_types: Dict[str, str] = field(default_factory=lambda: {
+    swagger_types = {
         'key': 'str',
         'type': 'str',
         'value': 'str'
-    }, repr=False)
+    }
 
-    attribute_map: Dict[str, str] = field(default_factory=lambda: {
+    attribute_map = {
         'key': 'key',
         'type': 'type',
         'value': 'value'
-    }, repr=False)
+    }
 
     discriminator: None = field(default=None, repr=False)
 

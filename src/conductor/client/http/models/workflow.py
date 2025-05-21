@@ -976,10 +976,10 @@ class Workflow:
 
     @property
     def rate_limited(self):
-        return self.rate_limited
+        return self._rate_limited
     @rate_limited.setter
     def rate_limited(self, rate_limited):
-        self.rate_limited = rate_limited
+        self._rate_limited = rate_limited
 
     @property
     def start_time(self):
