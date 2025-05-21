@@ -53,8 +53,11 @@ class SchemaDef(Auditable):
     
     discriminator: Any = field(default=None, init=False)
 
-    def __init__(self, name: str = None, version: int = 1, type: SchemaType = None, data: Dict[str, object] = None,
-                 external_ref: str = None):  # noqa: E501
+    def __init__(self, name: str = None, version: int = 1, type: SchemaType = None,
+                 data: Dict[str, object] = None, external_ref: str = None,
+                 owner_app: str = None, create_time: int = None, update_time: int = None,
+                 created_by: str = None, updated_by: str = None):  # noqa: E501
+        super().__init__()
         self._name = None
         self._version = None
         self._type = None
@@ -71,6 +74,18 @@ class SchemaDef(Auditable):
             self.data = data
         if external_ref is not None:
             self.external_ref = external_ref
+
+        # Set Auditable fields
+        if owner_app is not None:
+            self.owner_app = owner_app
+        if create_time is not None:
+            self.create_time = create_time
+        if update_time is not None:
+            self.update_time = update_time
+        if created_by is not None:
+            self.created_by = created_by
+        if updated_by is not None:
+            self.updated_by = updated_by
 
     def __post_init__(self, name_init: Optional[str], version_init: Optional[int], 
                      type_init: Optional[SchemaType], data_init: Optional[Dict[str, object]],

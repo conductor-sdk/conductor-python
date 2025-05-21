@@ -1,7 +1,7 @@
 import uuid
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
-from typing_extensions import Self, Optional
+from typing_extensions import Self
 
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.api.metadata_resource_api import MetadataResourceApi
