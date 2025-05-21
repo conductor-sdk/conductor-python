@@ -26,21 +26,21 @@ class RerunWorkflowRequest:
     correlation_id: InitVar[Optional[str]] = None
 
     # Class properties for swagger documentation
-    swagger_types: Dict[str, str] = field(default_factory=lambda: {
+    swagger_types =  {
         're_run_from_workflow_id': 'str',
         'workflow_input': 'dict(str, object)',
         're_run_from_task_id': 'str',
         'task_input': 'dict(str, object)',
         'correlation_id': 'str'
-    }, init=False)
+    }
 
-    attribute_map: Dict[str, str] = field(default_factory=lambda: {
+    attribute_map = {
         're_run_from_workflow_id': 'reRunFromWorkflowId',
         'workflow_input': 'workflowInput',
         're_run_from_task_id': 'reRunFromTaskId',
         'task_input': 'taskInput',
         'correlation_id': 'correlationId'
-    }, init=False)
+    }
 
     def __post_init__(self, re_run_from_workflow_id, workflow_input, re_run_from_task_id, task_input, correlation_id):
         """Initialize attributes after @dataclass initialization"""

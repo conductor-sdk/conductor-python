@@ -19,7 +19,7 @@ class WorkflowScheduleExecutionModel:
       attribute_map (dict): The key is attribute name
                             and the value is json key in definition.
     """
-    swagger_types: Dict[str, str] = field(default_factory=lambda: {
+    swagger_types = {
         'execution_id': 'str',
         'schedule_name': 'str',
         'scheduled_time': 'int',
@@ -32,9 +32,9 @@ class WorkflowScheduleExecutionModel:
         'state': 'str',
         'zone_id': 'str',
         'org_id': 'str'
-    })
+    }
 
-    attribute_map: Dict[str, str] = field(default_factory=lambda: {
+    attribute_map = {
         'execution_id': 'executionId',
         'schedule_name': 'scheduleName',
         'scheduled_time': 'scheduledTime',
@@ -47,7 +47,7 @@ class WorkflowScheduleExecutionModel:
         'state': 'state',
         'zone_id': 'zoneId',
         'org_id': 'orgId'
-    })
+    }
 
     execution_id: Optional[str] = field(default=None)
     schedule_name: Optional[str] = field(default=None)

@@ -19,13 +19,13 @@ class CreateOrUpdateApplicationRequest:
       attribute_map (dict): The key is attribute name
                             and the value is json key in definition.
     """
-    swagger_types: Dict[str, str] = field(default_factory=lambda: {
+    swagger_types = {
         'name': 'str'
-    })
+    }
 
-    attribute_map: Dict[str, str] = field(default_factory=lambda: {
+    attribute_map = {
         'name': 'name'
-    })
+    }
 
     name: InitVar[Optional[str]] = None
     _name: Optional[str] = field(default=None, init=False)

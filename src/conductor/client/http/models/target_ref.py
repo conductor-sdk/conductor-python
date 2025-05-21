@@ -29,15 +29,15 @@ class TargetRef:
       attribute_map (dict): The key is attribute name
                             and the value is json key in definition.
     """
-    swagger_types: Dict[str, str] = field(default_factory=lambda: {
+    swagger_types = {
         'type': 'str',
         'id': 'str'
-    })
+    }
 
-    attribute_map: Dict[str, str] = field(default_factory=lambda: {
+    attribute_map = {
         'type': 'type',
         'id': 'id'
-    })
+    }
 
     # Dataclass fields
     type: Optional[str] = field(default=None)

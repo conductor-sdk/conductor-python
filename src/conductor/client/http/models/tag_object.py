@@ -2,6 +2,7 @@
 
 import pprint
 import re  # noqa: F401
+import six
 from dataclasses import dataclass, field, InitVar
 from typing import Any, Dict, List, Optional
 from enum import Enum

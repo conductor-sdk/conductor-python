@@ -19,19 +19,19 @@ class PollData:
       attribute_map (dict): The key is attribute name
                             and the value is json key in definition.
     """
-    swagger_types: Dict[str, str] = field(default_factory=lambda: {
+    swagger_types = {
         'queue_name': 'str',
         'domain': 'str',
         'worker_id': 'str',
         'last_poll_time': 'int'
-    })
+    }
 
-    attribute_map: Dict[str, str] = field(default_factory=lambda: {
+    attribute_map = {
         'queue_name': 'queueName',
         'domain': 'domain',
         'worker_id': 'workerId',
         'last_poll_time': 'lastPollTime'
-    })
+    }
 
     queue_name: Optional[str] = field(default=None)
     domain: Optional[str] = field(default=None)

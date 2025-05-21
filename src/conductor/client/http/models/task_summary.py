@@ -19,7 +19,7 @@ class TaskSummary:
       attribute_map (dict): The key is attribute name
                             and the value is json key in definition.
     """
-    swagger_types: Dict[str, str] = field(default_factory=lambda: {
+    swagger_types = {
         'workflow_id': 'str',
         'workflow_type': 'str',
         'correlation_id': 'str',
@@ -40,9 +40,9 @@ class TaskSummary:
         'external_output_payload_storage_path': 'str',
         'workflow_priority': 'int',
         'domain': 'str'
-    })
+    }
 
-    attribute_map: Dict[str, str] = field(default_factory=lambda: {
+    attribute_map = {
         'workflow_id': 'workflowId',
         'workflow_type': 'workflowType',
         'correlation_id': 'correlationId',
@@ -63,7 +63,7 @@ class TaskSummary:
         'external_output_payload_storage_path': 'externalOutputPayloadStoragePath',
         'workflow_priority': 'workflowPriority',
         'domain': 'domain'
-    })
+    }
 
     # Dataclass fields with default values
     workflow_id: Optional[str] = field(default=None)
