@@ -10,6 +10,15 @@ from conductor.client.http.models.state_change_event import StateChangeConfig, S
 
 @dataclass
 class CacheConfig:
+    swagger_types = {
+        'key': 'str',
+        'ttl_in_second': 'int'
+    }
+
+    attribute_map = {
+        'key': 'key',
+        'ttl_in_second': 'ttlInSecond'
+    }
     _key: str = field(default=None, repr=False)
     _ttl_in_second: int = field(default=None, repr=False)
 

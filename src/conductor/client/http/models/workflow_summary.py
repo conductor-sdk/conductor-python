@@ -624,9 +624,7 @@ class WorkflowSummary:
         :return: The output_size of this WorkflowSummary.  # noqa: E501
         :rtype: int
         """
-        if self._output is not None:
-            return len(self._output)
-        return 0
+        return self._output_size
 
     @output_size.setter
     @deprecated(reason="This field is not present in the Java POJO")
@@ -649,9 +647,7 @@ class WorkflowSummary:
         :return: The input_size of this WorkflowSummary.  # noqa: E501
         :rtype: int
         """
-        if self._input is not None:
-            return len(self._input)
-        return 0
+        return self._input_size
 
     @input_size.setter
     @deprecated(reason="This field is not present in the Java POJO")

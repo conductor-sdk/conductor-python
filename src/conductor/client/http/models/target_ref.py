@@ -11,6 +11,7 @@ class TargetType(str, Enum):
     TASK_DEF = "TASK_DEF",
     APPLICATION = "APPLICATION",
     USER = "USER",
+    SECRET = "SECRET",
     SECRET_NAME = "SECRET_NAME",
     TAG = "TAG",
     DOMAIN = "DOMAIN"
