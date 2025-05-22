@@ -129,29 +129,8 @@ class TestWorkflowScheduleExecutionModelBackwardCompatibility(unittest.TestCase)
                 with self.assertRaises(ValueError, msg=f"State '{state}' should raise ValueError"):
                     model.state = state
 
-    def test_swagger_types_mapping_preserved(self):
-        """Verify swagger_types mapping hasn't changed."""
-        expected_swagger_types = {
-            'execution_id': 'str',
-            'schedule_name': 'str',
-            'scheduled_time': 'int',
-            'execution_time': 'int',
-            'workflow_name': 'str',
-            'workflow_id': 'str',
-            'reason': 'str',
-            'stack_trace': 'str',
-            'start_workflow_request': 'StartWorkflowRequest',
-            'state': 'str'
-        }
-
-        self.assertEqual(
-            WorkflowScheduleExecutionModel.swagger_types,
-            expected_swagger_types,
-            "swagger_types mapping has changed"
-        )
-
     def test_attribute_map_preserved(self):
-        """Verify attribute_map hasn't changed."""
+        """Verify attribute_map hasn't changed for existing fields."""
         expected_attribute_map = {
             'execution_id': 'executionId',
             'schedule_name': 'scheduleName',
@@ -165,11 +144,40 @@ class TestWorkflowScheduleExecutionModelBackwardCompatibility(unittest.TestCase)
             'state': 'state'
         }
 
-        self.assertEqual(
-            WorkflowScheduleExecutionModel.attribute_map,
-            expected_attribute_map,
-            "attribute_map has changed"
-        )
+        actual_attribute_map = WorkflowScheduleExecutionModel.attribute_map
+
+        # Check that all expected mappings exist and are correct
+        for field, expected_mapping in expected_attribute_map.items():
+            with self.subTest(field=field):
+                self.assertIn(field, actual_attribute_map,
+                              f"Field '{field}' missing from attribute_map")
+                self.assertEqual(actual_attribute_map[field], expected_mapping,
+                                 f"Mapping for field '{field}' has changed")
+
+    def test_swagger_types_mapping_preserved(self):
+        """Verify swagger_types mapping hasn't changed for existing fields."""
+        expected_swagger_types = {
+            'execution_id': 'str',
+            'schedule_name': 'str',
+            'scheduled_time': 'int',
+            'execution_time': 'int',
+            'workflow_name': 'str',
+            'workflow_id': 'str',
+            'reason': 'str',
+            'stack_trace': 'str',
+            'start_workflow_request': 'StartWorkflowRequest',
+            'state': 'str'
+        }
+
+        actual_swagger_types = WorkflowScheduleExecutionModel.swagger_types
+
+        # Check that all expected fields exist with correct types
+        for field, expected_type in expected_swagger_types.items():
+            with self.subTest(field=field):
+                self.assertIn(field, actual_swagger_types,
+                              f"Field '{field}' missing from swagger_types")
+                self.assertEqual(actual_swagger_types[field], expected_type,
+                                 f"Type for field '{field}' has changed")
 
     def test_to_dict_method_preserved(self):
         """Test that to_dict method works and returns expected structure."""

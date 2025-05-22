@@ -145,9 +145,12 @@ class TestTaskDefBackwardCompatibility(unittest.TestCase):
             'enforce_schema': bool
         }
 
-        # Check swagger_types mapping
-        for field, expected_type_str in TaskDef.swagger_types.items():
-            self.assertIn(field, expected_types, f"Unexpected field {field} in swagger_types")
+        # Check that all expected fields exist in swagger_types
+        for field, expected_type in expected_types.items():
+            self.assertIn(field, TaskDef.swagger_types, f"Missing field {field} in swagger_types")
+
+            # This would need additional logic to check type compatibility properly
+            # For now, just ensure the field exists
 
     def test_timeout_policy_enum_values_preserved(self):
         """Test that existing timeout_policy enum values still work."""

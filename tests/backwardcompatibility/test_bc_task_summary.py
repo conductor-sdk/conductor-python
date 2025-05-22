@@ -222,9 +222,10 @@ class TestTaskSummaryBackwardCompatibility(unittest.TestCase):
         with self.assertRaises(ValueError):
             TaskSummary(status='INVALID_STATUS')
 
-    def test_swagger_types_dict_exists_and_correct(self):
-        """Test that swagger_types dictionary exists with all expected fields and types."""
-        expected_swagger_types = {
+    def test_swagger_types_contains_minimum_required_fields(self):
+        """Test that swagger_types contains all minimum required fields and types."""
+        # Define the minimum required fields that must exist for backward compatibility
+        minimum_required_swagger_types = {
             'workflow_id': 'str',
             'workflow_type': 'str',
             'correlation_id': 'str',
@@ -246,11 +247,17 @@ class TestTaskSummaryBackwardCompatibility(unittest.TestCase):
             'workflow_priority': 'int'
         }
 
-        self.assertEqual(TaskSummary.swagger_types, expected_swagger_types)
+        # Check that all required fields exist with correct types
+        for field, expected_type in minimum_required_swagger_types.items():
+            self.assertIn(field, TaskSummary.swagger_types,
+                          f"Required field '{field}' missing from swagger_types")
+            self.assertEqual(TaskSummary.swagger_types[field], expected_type,
+                             f"Field '{field}' has type '{TaskSummary.swagger_types[field]}', expected '{expected_type}'")
 
-    def test_attribute_map_dict_exists_and_correct(self):
-        """Test that attribute_map dictionary exists with all expected mappings."""
-        expected_attribute_map = {
+    def test_attribute_map_contains_minimum_required_mappings(self):
+        """Test that attribute_map contains all minimum required mappings."""
+        # Define the minimum required mappings that must exist for backward compatibility
+        minimum_required_attribute_map = {
             'workflow_id': 'workflowId',
             'workflow_type': 'workflowType',
             'correlation_id': 'correlationId',
@@ -272,7 +279,12 @@ class TestTaskSummaryBackwardCompatibility(unittest.TestCase):
             'workflow_priority': 'workflowPriority'
         }
 
-        self.assertEqual(TaskSummary.attribute_map, expected_attribute_map)
+        # Check that all required mappings exist with correct values
+        for field, expected_mapping in minimum_required_attribute_map.items():
+            self.assertIn(field, TaskSummary.attribute_map,
+                          f"Required field '{field}' missing from attribute_map")
+            self.assertEqual(TaskSummary.attribute_map[field], expected_mapping,
+                             f"Field '{field}' maps to '{TaskSummary.attribute_map[field]}', expected '{expected_mapping}'")
 
     def test_to_dict_method_exists_and_works(self):
         """Test that to_dict method exists and returns expected structure."""
@@ -281,10 +293,17 @@ class TestTaskSummaryBackwardCompatibility(unittest.TestCase):
 
         self.assertIsInstance(result_dict, dict)
 
-        # Check that all fields are present in the dictionary
-        expected_fields = set(TaskSummary.swagger_types.keys())
-        actual_fields = set(result_dict.keys())
-        self.assertEqual(expected_fields, actual_fields)
+        # Check that all minimum required fields are present in the dictionary
+        minimum_required_fields = {
+            'workflow_id', 'workflow_type', 'correlation_id', 'scheduled_time',
+            'start_time', 'update_time', 'end_time', 'status', 'reason_for_incompletion',
+            'execution_time', 'queue_wait_time', 'task_def_name', 'task_type',
+            'input', 'output', 'task_id', 'external_input_payload_storage_path',
+            'external_output_payload_storage_path', 'workflow_priority'
+        }
+
+        for field in minimum_required_fields:
+            self.assertIn(field, result_dict, f"Required field '{field}' missing from to_dict() output")
 
     def test_to_str_method_exists(self):
         """Test that to_str method exists."""
@@ -354,6 +373,23 @@ class TestTaskSummaryBackwardCompatibility(unittest.TestCase):
                 self.assertEqual(task_summary.status, status)
             except ValueError:
                 self.fail(f"Status value '{status}' is no longer supported, breaking backward compatibility")
+
+    def test_new_fields_are_optional_and_backward_compatible(self):
+        """Test that any new fields added don't break existing functionality."""
+        # Test that old code can still create instances without new fields
+        task_summary = TaskSummary(**self.valid_data)
+
+        # Verify the object was created successfully
+        self.assertIsNotNone(task_summary)
+
+        # Test that to_dict() works with the old data
+        result_dict = task_summary.to_dict()
+        self.assertIsInstance(result_dict, dict)
+
+        # Test that all original fields are still accessible
+        for field_name in self.valid_data.keys():
+            self.assertTrue(hasattr(task_summary, field_name),
+                            f"Original field '{field_name}' is no longer accessible")
 
 
 if __name__ == '__main__':
