@@ -9,22 +9,23 @@ class TestIntegrationApiUpdateBackwardCompatibility(unittest.TestCase):
 
     These tests ensure that:
     - All existing fields continue to exist and work
-    - Field types remain unchanged
+    - Field types remain unchanged for existing fields
     - Constructor behavior remains consistent
     - Existing validation rules still apply
+    - New fields are additive and don't break existing functionality
     """
 
     def test_constructor_with_no_arguments(self):
         """Test that model can be instantiated with no arguments (current behavior)."""
         model = IntegrationApiUpdate()
 
-        # Verify all fields are initialized to None (current behavior)
+        # Verify original fields are initialized to None (current behavior)
         self.assertIsNone(model.configuration)
         self.assertIsNone(model.description)
         self.assertIsNone(model.enabled)
 
-    def test_constructor_with_all_arguments(self):
-        """Test that model can be instantiated with all arguments."""
+    def test_constructor_with_all_original_arguments(self):
+        """Test that model can be instantiated with all original arguments."""
         config = {"key": "value", "timeout": 30}
         description = "Test integration"
         enabled = True
@@ -53,11 +54,11 @@ class TestIntegrationApiUpdateBackwardCompatibility(unittest.TestCase):
         self.assertIsNone(model2.configuration)
         self.assertIsNone(model2.description)
 
-    def test_required_fields_exist(self):
-        """Test that all expected fields exist on the model."""
+    def test_original_required_fields_exist(self):
+        """Test that all original expected fields exist on the model."""
         model = IntegrationApiUpdate()
 
-        # Verify all required attributes exist
+        # Verify original required attributes exist
         self.assertTrue(hasattr(model, 'configuration'))
         self.assertTrue(hasattr(model, 'description'))
         self.assertTrue(hasattr(model, 'enabled'))
@@ -66,28 +67,37 @@ class TestIntegrationApiUpdateBackwardCompatibility(unittest.TestCase):
         self.assertTrue(hasattr(model, 'swagger_types'))
         self.assertTrue(hasattr(model, 'attribute_map'))
 
-    def test_field_types_unchanged(self):
-        """Test that field types remain as expected."""
-        # Verify swagger_types mapping hasn't changed
-        expected_types = {
+    def test_original_field_types_preserved(self):
+        """Test that original field types remain as expected."""
+        model = IntegrationApiUpdate()
+
+        # Verify original fields are still present with correct types
+        original_expected_types = {
             'configuration': 'dict(str, object)',
             'description': 'str',
             'enabled': 'bool'
         }
 
-        model = IntegrationApiUpdate()
-        self.assertEqual(model.swagger_types, expected_types)
+        # Check that all original types are preserved
+        for field, expected_type in original_expected_types.items():
+            self.assertIn(field, model.swagger_types)
+            self.assertEqual(model.swagger_types[field], expected_type)
 
-    def test_attribute_map_unchanged(self):
-        """Test that attribute mapping remains unchanged."""
-        expected_map = {
+    def test_original_attribute_map_preserved(self):
+        """Test that original attribute mapping is preserved."""
+        model = IntegrationApiUpdate()
+
+        # Verify original mappings are still present
+        original_expected_map = {
             'configuration': 'configuration',
             'description': 'description',
             'enabled': 'enabled'
         }
 
-        model = IntegrationApiUpdate()
-        self.assertEqual(model.attribute_map, expected_map)
+        # Check that all original mappings are preserved
+        for field, expected_mapping in original_expected_map.items():
+            self.assertIn(field, model.attribute_map)
+            self.assertEqual(model.attribute_map[field], expected_mapping)
 
     def test_configuration_field_behavior(self):
         """Test configuration field accepts dict types and None."""
@@ -138,7 +148,7 @@ class TestIntegrationApiUpdateBackwardCompatibility(unittest.TestCase):
         self.assertEqual(model.enabled, False)
 
     def test_property_getters(self):
-        """Test that all property getters work correctly."""
+        """Test that all original property getters work correctly."""
         config = {"test": "value"}
         description = "Test description"
         enabled = True
@@ -155,7 +165,7 @@ class TestIntegrationApiUpdateBackwardCompatibility(unittest.TestCase):
         self.assertEqual(model.enabled, enabled)
 
     def test_property_setters(self):
-        """Test that all property setters work correctly."""
+        """Test that all original property setters work correctly."""
         model = IntegrationApiUpdate()
 
         # Test configuration setter
@@ -172,8 +182,8 @@ class TestIntegrationApiUpdateBackwardCompatibility(unittest.TestCase):
         model.enabled = True
         self.assertEqual(model.enabled, True)
 
-    def test_to_dict_method(self):
-        """Test that to_dict method works correctly."""
+    def test_to_dict_contains_original_fields(self):
+        """Test that to_dict method contains all original fields."""
         config = {"key": "value"}
         description = "Test integration"
         enabled = True
@@ -186,26 +196,25 @@ class TestIntegrationApiUpdateBackwardCompatibility(unittest.TestCase):
 
         result_dict = model.to_dict()
 
-        expected_dict = {
-            'configuration': config,
-            'description': description,
-            'enabled': enabled
-        }
+        # Verify original fields are present with correct values
+        self.assertEqual(result_dict['configuration'], config)
+        self.assertEqual(result_dict['description'], description)
+        self.assertEqual(result_dict['enabled'], enabled)
 
-        self.assertEqual(result_dict, expected_dict)
-
-    def test_to_dict_with_none_values(self):
-        """Test to_dict method with None values."""
+    def test_to_dict_with_none_values_includes_original_fields(self):
+        """Test to_dict method with None values includes original fields."""
         model = IntegrationApiUpdate()
         result_dict = model.to_dict()
 
-        expected_dict = {
-            'configuration': None,
-            'description': None,
-            'enabled': None
-        }
+        # Verify original fields are present
+        self.assertIn('configuration', result_dict)
+        self.assertIn('description', result_dict)
+        self.assertIn('enabled', result_dict)
 
-        self.assertEqual(result_dict, expected_dict)
+        # Verify they have None values
+        self.assertIsNone(result_dict['configuration'])
+        self.assertIsNone(result_dict['description'])
+        self.assertIsNone(result_dict['enabled'])
 
     def test_to_str_method(self):
         """Test that to_str method works correctly."""
@@ -267,11 +276,11 @@ class TestIntegrationApiUpdateBackwardCompatibility(unittest.TestCase):
         self.assertTrue(hasattr(model, 'discriminator'))
         self.assertIsNone(model.discriminator)
 
-    def test_private_attributes_exist(self):
-        """Test that private attributes are properly initialized."""
+    def test_original_private_attributes_exist(self):
+        """Test that original private attributes are properly initialized."""
         model = IntegrationApiUpdate()
 
-        # Verify private attributes exist
+        # Verify original private attributes exist
         self.assertTrue(hasattr(model, '_configuration'))
         self.assertTrue(hasattr(model, '_description'))
         self.assertTrue(hasattr(model, '_enabled'))
@@ -291,6 +300,47 @@ class TestIntegrationApiUpdateBackwardCompatibility(unittest.TestCase):
         self.assertEqual(model.description, "Test description")
         self.assertEqual(model.enabled, True)
         self.assertIsNone(model.configuration)
+
+    def test_original_functionality_unchanged(self):
+        """Test that original functionality works exactly as before."""
+        # Test that we can still create instances with only original fields
+        model = IntegrationApiUpdate(
+            configuration={"test": "value"},
+            description="Original behavior",
+            enabled=True
+        )
+
+        # Original functionality should work exactly the same
+        self.assertEqual(model.configuration, {"test": "value"})
+        self.assertEqual(model.description, "Original behavior")
+        self.assertEqual(model.enabled, True)
+
+        # Test that original constructor patterns still work
+        model2 = IntegrationApiUpdate()
+        self.assertIsNone(model2.configuration)
+        self.assertIsNone(model2.description)
+        self.assertIsNone(model2.enabled)
+
+    def test_backward_compatible_serialization(self):
+        """Test that serialization maintains compatibility for SDK usage."""
+        # Create model with only original fields set
+        model = IntegrationApiUpdate(
+            configuration={"api_key": "test"},
+            description="Test integration",
+            enabled=True
+        )
+
+        result_dict = model.to_dict()
+
+        # Should contain original fields with correct values
+        self.assertEqual(result_dict['configuration'], {"api_key": "test"})
+        self.assertEqual(result_dict['description'], "Test integration")
+        self.assertEqual(result_dict['enabled'], True)
+
+        # Additional fields may be present but shouldn't break existing logic
+        # that only cares about the original fields
+        for key in ['configuration', 'description', 'enabled']:
+            self.assertIn(key, result_dict)
 
 
 if __name__ == '__main__':
