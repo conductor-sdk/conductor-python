@@ -58,6 +58,8 @@ class TestSchemaDefBackwardCompatibility(unittest.TestCase):
         # Test explicit None sets version to None
         schema = SchemaDef(version=None)
         self.assertIsNone(schema.version)
+
+    def test_constructor_with_partial_args(self):
         """Test constructor with partial arguments."""
         schema = SchemaDef(name=self.valid_name, version=self.valid_version)
 
@@ -174,7 +176,7 @@ class TestSchemaDefBackwardCompatibility(unittest.TestCase):
         # Verify to_dict returns a dictionary
         self.assertIsInstance(result, dict)
 
-        # Verify all fields are in the result
+        # Verify all original fields are in the result
         self.assertIn('name', result)
         self.assertIn('version', result)
         self.assertIn('type', result)
@@ -223,7 +225,8 @@ class TestSchemaDefBackwardCompatibility(unittest.TestCase):
         self.assertTrue(schema1 != "not_a_schema")
 
     def test_swagger_types_attribute(self):
-        """Test that swagger_types class attribute exists and has expected structure."""
+        """Test that all original swagger_types exist with correct types."""
+        # Define the original expected types that must exist
         expected_types = {
             'name': 'str',
             'version': 'int',
@@ -232,10 +235,19 @@ class TestSchemaDefBackwardCompatibility(unittest.TestCase):
             'external_ref': 'str'
         }
 
-        self.assertEqual(SchemaDef.swagger_types, expected_types)
+        # Check that all expected fields exist with correct types
+        for field, expected_type in expected_types.items():
+            self.assertIn(field, SchemaDef.swagger_types,
+                          f"Field '{field}' missing from swagger_types")
+            self.assertEqual(SchemaDef.swagger_types[field], expected_type,
+                             f"Field '{field}' has wrong type in swagger_types")
+
+        # Verify swagger_types is a dictionary (structure check)
+        self.assertIsInstance(SchemaDef.swagger_types, dict)
 
     def test_attribute_map_attribute(self):
-        """Test that attribute_map class attribute exists and has expected structure."""
+        """Test that all original attribute mappings exist correctly."""
+        # Define the original expected mappings that must exist
         expected_map = {
             'name': 'name',
             'version': 'version',
@@ -244,7 +256,15 @@ class TestSchemaDefBackwardCompatibility(unittest.TestCase):
             'external_ref': 'externalRef'
         }
 
-        self.assertEqual(SchemaDef.attribute_map, expected_map)
+        # Check that all expected mappings exist
+        for field, expected_mapping in expected_map.items():
+            self.assertIn(field, SchemaDef.attribute_map,
+                          f"Field '{field}' missing from attribute_map")
+            self.assertEqual(SchemaDef.attribute_map[field], expected_mapping,
+                             f"Field '{field}' has wrong mapping in attribute_map")
+
+        # Verify attribute_map is a dictionary (structure check)
+        self.assertIsInstance(SchemaDef.attribute_map, dict)
 
     def test_discriminator_attribute(self):
         """Test that discriminator attribute exists and is accessible."""
@@ -288,6 +308,75 @@ class TestSchemaDefBackwardCompatibility(unittest.TestCase):
         self.assertEqual(schema.type, SchemaType.AVRO)
         self.assertEqual(schema.data, {"test": "data"})
         self.assertEqual(schema.external_ref, "ref")
+
+    def test_backward_compatibility_core_functionality(self):
+        """Test that core functionality remains unchanged."""
+        # Test that the class can be instantiated and used exactly as before
+        schema = SchemaDef()
+
+        # Test property setting and getting
+        schema.name = "compatibility_test"
+        schema.version = 5
+        schema.type = SchemaType.JSON
+        schema.data = {"test": "data"}
+        schema.external_ref = "http://test.com"
+
+        # Test all properties return expected values
+        self.assertEqual(schema.name, "compatibility_test")
+        self.assertEqual(schema.version, 5)
+        self.assertEqual(schema.type, SchemaType.JSON)
+        self.assertEqual(schema.data, {"test": "data"})
+        self.assertEqual(schema.external_ref, "http://test.com")
+
+        # Test serialization still works
+        result_dict = schema.to_dict()
+        self.assertIsInstance(result_dict, dict)
+
+        # Test string representation still works
+        result_str = schema.to_str()
+        self.assertIsInstance(result_str, str)
+
+    def test_original_api_surface_unchanged(self):
+        """Test that the original API surface is completely unchanged."""
+        # Create instance using original constructor signature
+        schema = SchemaDef(
+            name="api_test",
+            version=1,
+            type=SchemaType.AVRO,
+            data={"original": "api"},
+            external_ref="original_ref"
+        )
+
+        # Verify all original methods exist and work
+        self.assertTrue(callable(getattr(schema, 'to_dict', None)))
+        self.assertTrue(callable(getattr(schema, 'to_str', None)))
+
+        # Verify original properties exist and work
+        original_properties = ['name', 'version', 'type', 'data', 'external_ref']
+        for prop in original_properties:
+            self.assertTrue(hasattr(schema, prop))
+            # Test that we can get and set each property
+            original_value = getattr(schema, prop)
+            setattr(schema, prop, original_value)
+            self.assertEqual(getattr(schema, prop), original_value)
+
+    def test_inheritance_does_not_break_original_behavior(self):
+        """Test that inheritance doesn't affect original SchemaDef behavior."""
+        # Create two instances with same data
+        schema1 = SchemaDef(name="test", version=1, type=SchemaType.JSON)
+        schema2 = SchemaDef(name="test", version=1, type=SchemaType.JSON)
+
+        # Test equality still works
+        self.assertEqual(schema1, schema2)
+
+        # Test inequality works
+        schema3 = SchemaDef(name="different", version=1, type=SchemaType.JSON)
+        self.assertNotEqual(schema1, schema3)
+
+        # Test that additional inherited fields don't interfere with core equality
+        # (This tests that __eq__ method handles inheritance correctly)
+        self.assertEqual(schema1.__dict__.keys() & {'_name', '_version', '_type', '_data', '_external_ref'},
+                         schema2.__dict__.keys() & {'_name', '_version', '_type', '_data', '_external_ref'})
 
 
 if __name__ == '__main__':
