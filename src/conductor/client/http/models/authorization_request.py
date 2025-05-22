@@ -42,11 +42,11 @@ class AuthorizationRequest:
     subject: InitVar[Optional['SubjectRef']] = None
     target: InitVar[Optional['TargetRef']] = None
     access: InitVar[Optional[List[str]]] = None
-    
+
     _subject: Optional['SubjectRef'] = field(default=None, init=False, repr=False)
     _target: Optional['TargetRef'] = field(default=None, init=False, repr=False)
     _access: Optional[List[str]] = field(default=None, init=False, repr=False)
-    
+
     discriminator: str = field(default=None, init=False, repr=False)
 
     def __init__(self, subject=None, target=None, access=None):  # noqa: E501
@@ -125,7 +125,9 @@ class AuthorizationRequest:
         :type: list[str]
         """
         allowed_values = [e.value for e in AccessEnum]  # noqa: E501
-        if access and not set(access).issubset(set(allowed_values)):
+
+        # Preserve original behavior: call set(access) directly to maintain TypeError for None
+        if not set(access).issubset(set(allowed_values)):
             raise ValueError(
                 "Invalid values for `access` [{0}], must be a subset of [{1}]"  # noqa: E501
                 .format(", ".join(map(str, set(access) - set(allowed_values))),  # noqa: E501
