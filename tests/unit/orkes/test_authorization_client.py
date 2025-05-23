@@ -46,7 +46,9 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
     def setUpClass(cls):
         configuration = Configuration("http://localhost:8080/api")
         cls.authorization_client = OrkesAuthorizationClient(configuration)
-        cls.conductor_application = ConductorApplication(APP_ID, APP_NAME, USER_ID)
+        cls.conductor_application = ConductorApplication(APP_ID, APP_NAME, USER_ID,1699236095031,  # create_time
+        1699236095031,  # update_time
+        USER_ID)
         cls.access_key = CreatedAccessKey(ACCESS_KEY_ID, ACCESS_KEY_SECRET)
         cls.app_keys = [
             AccessKey(ACCESS_KEY_ID, AccessKeyStatus.ACTIVE, 1698926045112),
@@ -118,6 +120,9 @@ class TestOrkesAuthorizationClient(unittest.TestCase):
             "id": APP_ID,
             "name": APP_NAME,
             "createdBy": USER_ID,
+            "updatedBy": USER_ID,
+            "createTime": 1699236095031,
+            "updateTime": 1699236095031
         }
         app = self.authorization_client.get_application(APP_ID)
         mock.assert_called_with(APP_ID)

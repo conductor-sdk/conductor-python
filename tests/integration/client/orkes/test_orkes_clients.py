@@ -602,12 +602,44 @@ class TestOrkesClients:
         assert queue_size == 0
 
     def __get_workflow_definition(self, path):
-        f = open(path, "r")
+        # Import os if not already imported
+        import os
+
+        # Get directory of current script
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+
+        # Path to project root (need to go up several directories)
+        # From /tests/integration/client/orkes/ to project root
+        project_root = os.path.abspath(os.path.join(current_dir, '..', '..', '..', '..'))
+
+        # Construct path from project root
+        actual_path = os.path.join(project_root, path)
+
+        # For debugging
+        print(f"Attempting to open file at: {actual_path}")
+
+        f = open(actual_path, "r")
         workflowJSON = json.loads(f.read())
         workflowDef = self.api_client.deserialize_class(workflowJSON, "WorkflowDef")
         return workflowDef
 
     def __get_test_inputs(self, path):
-        f = open(path, "r")
+        # Import os if not already imported
+        import os
+
+        # Get directory of current script
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+
+        # Path to project root (need to go up several directories)
+        # From /tests/integration/client/orkes/ to project root
+        project_root = os.path.abspath(os.path.join(current_dir, '..', '..', '..', '..'))
+
+        # Construct path from project root
+        actual_path = os.path.join(project_root, path)
+
+        # For debugging
+        print(f"Attempting to open file at: {actual_path}")
+
+        f = open(actual_path, "r")
         inputJSON = json.loads(f.read())
         return inputJSON

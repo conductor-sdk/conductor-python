@@ -1,10 +1,13 @@
 import pprint
 import re  # noqa: F401
-
 import six
+from dataclasses import dataclass, field, fields
+from typing import Dict, List, Optional, Any
+from deprecated import deprecated
 
 
-class IntegrationApi(object):
+@dataclass
+class IntegrationApi:
     """
     Attributes:
       swagger_types (dict): The key is attribute name
@@ -12,6 +15,17 @@ class IntegrationApi(object):
       attribute_map (dict): The key is attribute name
                             and the value is json key in definition.
     """
+    _api: Optional[str] = field(default=None, repr=False)
+    _configuration: Optional[Dict[str, Any]] = field(default=None, repr=False)
+    _created_by: Optional[str] = field(default=None, repr=False)
+    _created_on: Optional[int] = field(default=None, repr=False)
+    _description: Optional[str] = field(default=None, repr=False)
+    _enabled: Optional[bool] = field(default=None, repr=False)
+    _integration_name: Optional[str] = field(default=None, repr=False)
+    _tags: Optional[List['TagObject']] = field(default=None, repr=False)
+    _updated_by: Optional[str] = field(default=None, repr=False)
+    _updated_on: Optional[int] = field(default=None, repr=False)
+    
     swagger_types = {
         'api': 'str',
         'configuration': 'dict(str, object)',
@@ -37,6 +51,8 @@ class IntegrationApi(object):
         'updated_by': 'updatedBy',
         'updated_on': 'updatedOn'
     }
+
+    discriminator: Optional[str] = field(default=None, repr=False)
 
     def __init__(self, api=None, configuration=None, created_by=None, created_on=None, description=None, enabled=None,
                  integration_name=None, tags=None, updated_by=None, updated_on=None):  # noqa: E501
@@ -72,6 +88,10 @@ class IntegrationApi(object):
             self.updated_by = updated_by
         if updated_on is not None:
             self.updated_on = updated_on
+
+    def __post_init__(self):
+        """Post initialization for dataclass"""
+        pass
 
     @property
     def api(self):
@@ -116,6 +136,7 @@ class IntegrationApi(object):
         self._configuration = configuration
 
     @property
+    @deprecated
     def created_by(self):
         """Gets the created_by of this IntegrationApi.  # noqa: E501
 
@@ -126,6 +147,7 @@ class IntegrationApi(object):
         return self._created_by
 
     @created_by.setter
+    @deprecated
     def created_by(self, created_by):
         """Sets the created_by of this IntegrationApi.
 
@@ -137,6 +159,7 @@ class IntegrationApi(object):
         self._created_by = created_by
 
     @property
+    @deprecated
     def created_on(self):
         """Gets the created_on of this IntegrationApi.  # noqa: E501
 
@@ -147,6 +170,7 @@ class IntegrationApi(object):
         return self._created_on
 
     @created_on.setter
+    @deprecated
     def created_on(self, created_on):
         """Sets the created_on of this IntegrationApi.
 
@@ -242,6 +266,7 @@ class IntegrationApi(object):
         self._tags = tags
 
     @property
+    @deprecated
     def updated_by(self):
         """Gets the updated_by of this IntegrationApi.  # noqa: E501
 
@@ -252,6 +277,7 @@ class IntegrationApi(object):
         return self._updated_by
 
     @updated_by.setter
+    @deprecated
     def updated_by(self, updated_by):
         """Sets the updated_by of this IntegrationApi.
 
@@ -263,6 +289,7 @@ class IntegrationApi(object):
         self._updated_by = updated_by
 
     @property
+    @deprecated
     def updated_on(self):
         """Gets the updated_on of this IntegrationApi.  # noqa: E501
 
@@ -273,6 +300,7 @@ class IntegrationApi(object):
         return self._updated_on
 
     @updated_on.setter
+    @deprecated
     def updated_on(self, updated_on):
         """Sets the updated_on of this IntegrationApi.
 

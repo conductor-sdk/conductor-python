@@ -1,10 +1,13 @@
 import pprint
 import re  # noqa: F401
-
 import six
+from dataclasses import dataclass, field, InitVar
+from typing import Dict, List, Optional, Any
+from deprecated import deprecated
 
 
-class IntegrationDef(object):
+@dataclass
+class IntegrationDef:
     """
     Attributes:
       swagger_types (dict): The key is attribute name
@@ -15,7 +18,7 @@ class IntegrationDef(object):
     swagger_types = {
         'category': 'str',
         'category_label': 'str',
-        'configuration': 'dict(str, object)',
+        'configuration': 'list[IntegrationDefFormField]',
         'description': 'str',
         'enabled': 'bool',
         'icon_name': 'str',
@@ -35,6 +38,30 @@ class IntegrationDef(object):
         'tags': 'tags',
         'type': 'type'
     }
+
+    category: Optional[str] = field(default=None)
+    category_label: Optional[str] = field(default=None)
+    description: Optional[str] = field(default=None)
+    enabled: Optional[bool] = field(default=None)
+    icon_name: Optional[str] = field(default=None)
+    name: Optional[str] = field(default=None)
+    tags: Optional[List[str]] = field(default=None)
+    type: Optional[str] = field(default=None)
+    configuration: Optional[List[Any]] = field(default=None)
+    
+    # Private backing fields for properties
+    _category: Optional[str] = field(init=False, repr=False, default=None)
+    _category_label: Optional[str] = field(init=False, repr=False, default=None)
+    _description: Optional[str] = field(init=False, repr=False, default=None)
+    _enabled: Optional[bool] = field(init=False, repr=False, default=None)
+    _icon_name: Optional[str] = field(init=False, repr=False, default=None)
+    _name: Optional[str] = field(init=False, repr=False, default=None)
+    _tags: Optional[List[str]] = field(init=False, repr=False, default=None)
+    _type: Optional[str] = field(init=False, repr=False, default=None)
+    _configuration: Optional[List[Any]] = field(init=False, repr=False, default=None)
+    
+    # For backward compatibility
+    discriminator: Optional[str] = field(init=False, repr=False, default=None)
 
     def __init__(self, category=None, category_label=None, configuration=None, description=None, enabled=None,
                  icon_name=None, name=None, tags=None, type=None):  # noqa: E501
@@ -67,6 +94,27 @@ class IntegrationDef(object):
             self.tags = tags
         if type is not None:
             self.type = type
+
+    def __post_init__(self):
+        """Initialize properties after dataclass initialization"""
+        if self.category is not None:
+            self.category = self.category
+        if self.category_label is not None:
+            self.category_label = self.category_label
+        if self.configuration is not None:
+            self.configuration = self.configuration
+        if self.description is not None:
+            self.description = self.description
+        if self.enabled is not None:
+            self.enabled = self.enabled
+        if self.icon_name is not None:
+            self.icon_name = self.icon_name
+        if self.name is not None:
+            self.name = self.name
+        if self.tags is not None:
+            self.tags = self.tags
+        if self.type is not None:
+            self.type = self.type
 
     @property
     def category(self):
@@ -122,7 +170,7 @@ class IntegrationDef(object):
 
 
         :return: The configuration of this IntegrationDef.  # noqa: E501
-        :rtype: dict(str, object)
+        :rtype: list[IntegrationDefFormField]
         """
         return self._configuration
 
@@ -132,7 +180,7 @@ class IntegrationDef(object):
 
 
         :param configuration: The configuration of this IntegrationDef.  # noqa: E501
-        :type: dict(str, object)
+        :type: list[IntegrationDefFormField]
         """
 
         self._configuration = configuration

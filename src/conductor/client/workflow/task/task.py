@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from copy import deepcopy
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
-from typing_extensions import Self, Union
+from typing_extensions import Self
 
 from conductor.client.http.models.workflow_task import WorkflowTask, CacheConfig
 from conductor.client.workflow.task.task_type import TaskType
