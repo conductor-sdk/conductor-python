@@ -24,6 +24,8 @@ ENV CONDUCTOR_AUTH_SECRET=${CONDUCTOR_AUTH_SECRET}
 ENV CONDUCTOR_SERVER_URL=${CONDUCTOR_SERVER_URL}
 RUN ls -ltr
 RUN python3 -m unittest discover --verbose --start-directory=./tests/unit
+RUN python3 -m unittest discover --verbose --start-directory=./tests/backwardcompatibility
+RUN python3 -m unittest discover --verbose --start-directory=./tests/serdesertest
 RUN coverage run --source=./src/conductor/client/orkes -m unittest discover --verbose --start-directory=./tests/integration
 RUN coverage report -m
 
