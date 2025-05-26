@@ -9,7 +9,7 @@ COPY / /package
 WORKDIR /package
 RUN pwd
 RUN ls -ltr
-ENV PYTHONPATH /package/src
+ENV PYTHONPATH /package/src:/package/tests
 RUN python3 -m pip install pylint
 #RUN python3 -m pylint --disable=all ./src
 RUN python3 -m pip install coverage
