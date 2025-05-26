@@ -1,8 +1,11 @@
 import pprint
+from dataclasses import dataclass, field, InitVar
 from enum import Enum
-from typing import Dict
-
+from typing import Dict, Any, Optional
 import six
+from deprecated import deprecated
+
+from conductor.client.http.models.auditable import Auditable
 
 
 class SchemaType(str, Enum):
@@ -14,8 +17,10 @@ class SchemaType(str, Enum):
         return self.name.__str__()
 
 
-class SchemaDef(object):
+@dataclass
+class SchemaDef(Auditable):
     swagger_types = {
+        **Auditable.swagger_types,
         'name': 'str',
         'version': 'int',
         'type': 'str',
@@ -24,6 +29,7 @@ class SchemaDef(object):
     }
 
     attribute_map = {
+        **Auditable.attribute_map,
         'name': 'name',
         'version': 'version',
         'type': 'type',
@@ -31,8 +37,27 @@ class SchemaDef(object):
         'external_ref': 'externalRef'
     }
 
-    def __init__(self, name : str =None, version : int =1, type : SchemaType =None, data : Dict[str, object] =None,
-                 external_ref : str =None):  # noqa: E501
+    # Private fields for properties
+    _name: Optional[str] = field(default=None, init=False)
+    _version: int = field(default=1, init=False)
+    _type: Optional[SchemaType] = field(default=None, init=False)
+    _data: Optional[Dict[str, object]] = field(default=None, init=False)
+    _external_ref: Optional[str] = field(default=None, init=False)
+    
+    # InitVars for constructor parameters
+    name_init: InitVar[Optional[str]] = None
+    version_init: InitVar[Optional[int]] = 1
+    type_init: InitVar[Optional[SchemaType]] = None
+    data_init: InitVar[Optional[Dict[str, object]]] = None
+    external_ref_init: InitVar[Optional[str]] = None
+    
+    discriminator: Any = field(default=None, init=False)
+
+    def __init__(self, name: str = None, version: int = 1, type: SchemaType = None,
+                 data: Dict[str, object] = None, external_ref: str = None,
+                 owner_app: str = None, create_time: int = None, update_time: int = None,
+                 created_by: str = None, updated_by: str = None):  # noqa: E501
+        super().__init__()
         self._name = None
         self._version = None
         self._type = None
@@ -49,6 +74,25 @@ class SchemaDef(object):
             self.data = data
         if external_ref is not None:
             self.external_ref = external_ref
+
+        # Set Auditable fields
+        if owner_app is not None:
+            self.owner_app = owner_app
+        if create_time is not None:
+            self.create_time = create_time
+        if update_time is not None:
+            self.update_time = update_time
+        if created_by is not None:
+            self.created_by = created_by
+        if updated_by is not None:
+            self.updated_by = updated_by
+
+    def __post_init__(self, name_init: Optional[str], version_init: Optional[int], 
+                     type_init: Optional[SchemaType], data_init: Optional[Dict[str, object]],
+                     external_ref_init: Optional[str]):
+        # This is called after __init__ when using @dataclass
+        # We don't need to do anything here as __init__ handles initialization
+        pass
 
     @property
     def name(self):
@@ -69,6 +113,7 @@ class SchemaDef(object):
         self._name = name
 
     @property
+    @deprecated
     def version(self):
         """Gets the version of this SchemaDef.  # noqa: E501
 
@@ -78,6 +123,7 @@ class SchemaDef(object):
         return self._version
 
     @version.setter
+    @deprecated
     def version(self, version):
         """Sets the version of this SchemaDef.
 
@@ -96,7 +142,7 @@ class SchemaDef(object):
         return self._type
 
     @type.setter
-    def type(self, type:SchemaType):
+    def type(self, type: SchemaType):
         """Sets the type of this SchemaDef.
 
         :param type: The type of this SchemaDef.  # noqa: E501

@@ -1,13 +1,15 @@
 import pprint
 import re  # noqa: F401
-from typing import List, Dict
-
+from dataclasses import dataclass, field, InitVar, fields, asdict, is_dataclass
+from typing import List, Dict, Optional, Any, Union
 import six
+from deprecated import deprecated
 
 from conductor.client.http.models.state_change_event import StateChangeConfig, StateChangeEventType, StateChangeEvent
 
 
-class CacheConfig(object):
+@dataclass
+class CacheConfig:
     swagger_types = {
         'key': 'str',
         'ttl_in_second': 'int'
@@ -17,8 +19,10 @@ class CacheConfig(object):
         'key': 'key',
         'ttl_in_second': 'ttlInSecond'
     }
+    _key: str = field(default=None, repr=False)
+    _ttl_in_second: int = field(default=None, repr=False)
 
-    def __init__(self, key: str, ttl_in_second: int):
+    def __init__(self, key: str = None, ttl_in_second: int = None):
         self._key = key
         self._ttl_in_second = ttl_in_second
 
@@ -39,7 +43,8 @@ class CacheConfig(object):
         self._ttl_in_second = ttl_in_second
 
 
-class WorkflowTask(object):
+@dataclass
+class WorkflowTask:
     """
     Attributes:
       swagger_types (dict): The key is attribute name
@@ -47,6 +52,41 @@ class WorkflowTask(object):
       attribute_map (dict): The key is attribute name
                             and the value is json key in definition.
     """
+    _name: str = field(default=None, repr=False)
+    _task_reference_name: str = field(default=None, repr=False)
+    _description: str = field(default=None, repr=False)
+    _input_parameters: Dict[str, Any] = field(default=None, repr=False)
+    _type: str = field(default=None, repr=False)
+    _dynamic_task_name_param: str = field(default=None, repr=False)
+    _case_value_param: str = field(default=None, repr=False)
+    _case_expression: str = field(default=None, repr=False)
+    _script_expression: str = field(default=None, repr=False)
+    _decision_cases: Dict[str, List['WorkflowTask']] = field(default=None, repr=False)
+    _dynamic_fork_join_tasks_param: str = field(default=None, repr=False)
+    _dynamic_fork_tasks_param: str = field(default=None, repr=False)
+    _dynamic_fork_tasks_input_param_name: str = field(default=None, repr=False)
+    _default_case: List['WorkflowTask'] = field(default=None, repr=False)
+    _fork_tasks: List[List['WorkflowTask']] = field(default=None, repr=False)
+    _start_delay: int = field(default=None, repr=False)
+    _sub_workflow_param: Any = field(default=None, repr=False)
+    _join_on: List[str] = field(default=None, repr=False)
+    _sink: str = field(default=None, repr=False)
+    _optional: bool = field(default=None, repr=False)
+    _task_definition: Any = field(default=None, repr=False)
+    _rate_limited: bool = field(default=None, repr=False)
+    _default_exclusive_join_task: List[str] = field(default=None, repr=False)
+    _async_complete: bool = field(default=None, repr=False)
+    _loop_condition: str = field(default=None, repr=False)
+    _loop_over: List['WorkflowTask'] = field(default=None, repr=False)
+    _retry_count: int = field(default=None, repr=False)
+    _evaluator_type: str = field(default=None, repr=False)
+    _expression: str = field(default=None, repr=False)
+    _workflow_task_type: str = field(default=None, repr=False)
+    _on_state_change: Dict[str, List[StateChangeEvent]] = field(default=None, repr=False)
+    _cache_config: CacheConfig = field(default=None, repr=False)
+    _join_status: str = field(default=None, repr=False)
+    _permissive: bool = field(default=None, repr=False)
+
     swagger_types = {
         'name': 'str',
         'task_reference_name': 'str',
@@ -79,7 +119,9 @@ class WorkflowTask(object):
         'expression': 'str',
         'workflow_task_type': 'str',
         'on_state_change': 'dict(str, StateChangeConfig)',
-        'cache_config': 'CacheConfig'
+        'cache_config': 'CacheConfig',
+        'join_status': 'str',
+        'permissive': 'bool'
     }
 
     attribute_map = {
@@ -93,7 +135,7 @@ class WorkflowTask(object):
         'case_expression': 'caseExpression',
         'script_expression': 'scriptExpression',
         'decision_cases': 'decisionCases',
-        'dynamic_fork_join_tasks_param': 'dynamicForkTasksParam',
+        'dynamic_fork_join_tasks_param': 'dynamicForkJoinTasksParam',
         'dynamic_fork_tasks_param': 'dynamicForkTasksParam',
         'dynamic_fork_tasks_input_param_name': 'dynamicForkTasksInputParamName',
         'default_case': 'defaultCase',
@@ -114,7 +156,9 @@ class WorkflowTask(object):
         'expression': 'expression',
         'workflow_task_type': 'workflowTaskType',
         'on_state_change': 'onStateChange',
-        'cache_config': 'cacheConfig'
+        'cache_config': 'cacheConfig',
+        'join_status': 'joinStatus',
+        'permissive': 'permissive'
     }
 
     def __init__(self, name=None, task_reference_name=None, description=None, input_parameters=None, type=None,
@@ -125,7 +169,7 @@ class WorkflowTask(object):
                  rate_limited=None, default_exclusive_join_task=None, async_complete=None, loop_condition=None,
                  loop_over=None, retry_count=None, evaluator_type=None, expression=None,
                  workflow_task_type=None, on_state_change: Dict[str, StateChangeConfig] = None,
-                 cache_config: CacheConfig = None):  # noqa: E501
+                 cache_config: CacheConfig = None, join_status=None, permissive=None):  # noqa: E501
         """WorkflowTask - a model defined in Swagger"""  # noqa: E501
         self._name = None
         self._task_reference_name = None
@@ -160,6 +204,8 @@ class WorkflowTask(object):
         self.discriminator = None
         self._on_state_change = None
         self._cache_config = None
+        self._join_status = None
+        self._permissive = None
         self.name = name
         self.task_reference_name = task_reference_name
         if description is not None:
@@ -221,6 +267,13 @@ class WorkflowTask(object):
         if on_state_change is not None:
             self._on_state_change = on_state_change
         self._cache_config = cache_config
+        if join_status is not None:
+            self.join_status = join_status
+        if permissive is not None:
+            self.permissive = permissive
+
+    def __post_init__(self):
+        pass
 
     @property
     def name(self):
@@ -347,6 +400,7 @@ class WorkflowTask(object):
         self._dynamic_task_name_param = dynamic_task_name_param
 
     @property
+    @deprecated
     def case_value_param(self):
         """Gets the case_value_param of this WorkflowTask.  # noqa: E501
 
@@ -357,6 +411,7 @@ class WorkflowTask(object):
         return self._case_value_param
 
     @case_value_param.setter
+    @deprecated
     def case_value_param(self, case_value_param):
         """Sets the case_value_param of this WorkflowTask.
 
@@ -368,6 +423,7 @@ class WorkflowTask(object):
         self._case_value_param = case_value_param
 
     @property
+    @deprecated
     def case_expression(self):
         """Gets the case_expression of this WorkflowTask.  # noqa: E501
 
@@ -378,6 +434,7 @@ class WorkflowTask(object):
         return self._case_expression
 
     @case_expression.setter
+    @deprecated
     def case_expression(self, case_expression):
         """Sets the case_expression of this WorkflowTask.
 
@@ -431,6 +488,7 @@ class WorkflowTask(object):
         self._decision_cases = decision_cases
 
     @property
+    @deprecated
     def dynamic_fork_join_tasks_param(self):
         """Gets the dynamic_fork_join_tasks_param of this WorkflowTask.  # noqa: E501
 
@@ -441,6 +499,7 @@ class WorkflowTask(object):
         return self._dynamic_fork_join_tasks_param
 
     @dynamic_fork_join_tasks_param.setter
+    @deprecated
     def dynamic_fork_join_tasks_param(self, dynamic_fork_join_tasks_param):
         """Sets the dynamic_fork_join_tasks_param of this WorkflowTask.
 
@@ -830,6 +889,7 @@ class WorkflowTask(object):
         self._expression = expression
 
     @property
+    @deprecated
     def workflow_task_type(self):
         """Gets the workflow_task_type of this WorkflowTask.  # noqa: E501
 
@@ -840,6 +900,7 @@ class WorkflowTask(object):
         return self._workflow_task_type
 
     @workflow_task_type.setter
+    @deprecated
     def workflow_task_type(self, workflow_task_type):
         """Sets the workflow_task_type of this WorkflowTask.
 
@@ -851,21 +912,85 @@ class WorkflowTask(object):
 
     @property
     def on_state_change(self) -> Dict[str, List[StateChangeEvent]]:
+        """Gets the on_state_change of this WorkflowTask.  # noqa: E501
+
+
+        :return: The on_state_change of this WorkflowTask.  # noqa: E501
+        :rtype: Dict[str, List[StateChangeEvent]]
+        """
         return self._on_state_change
 
     @on_state_change.setter
     def on_state_change(self, state_change: StateChangeConfig):
+        """Sets the on_state_change of this WorkflowTask.
+
+
+        :param state_change: The on_state_change of this WorkflowTask.  # noqa: E501
+        :type: StateChangeConfig
+        """
         self._on_state_change = {
             state_change.type: state_change.events
         }
 
     @property
     def cache_config(self) -> CacheConfig:
+        """Gets the cache_config of this WorkflowTask.  # noqa: E501
+
+
+        :return: The cache_config of this WorkflowTask.  # noqa: E501
+        :rtype: CacheConfig
+        """
         return self._cache_config
 
     @cache_config.setter
     def cache_config(self, cache_config: CacheConfig):
+        """Sets the cache_config of this WorkflowTask.
+
+
+        :param cache_config: The cache_config of this WorkflowTask.  # noqa: E501
+        :type: CacheConfig
+        """
         self._cache_config = cache_config
+
+    @property
+    def join_status(self):
+        """Gets the join_status of this WorkflowTask.  # noqa: E501
+
+
+        :return: The join_status of this WorkflowTask.  # noqa: E501
+        :rtype: str
+        """
+        return self._join_status
+
+    @join_status.setter
+    def join_status(self, join_status):
+        """Sets the join_status of this WorkflowTask.
+
+
+        :param join_status: The join_status of this WorkflowTask.  # noqa: E501
+        :type: str
+        """
+        self._join_status = join_status
+
+    @property
+    def permissive(self):
+        """Gets the permissive of this WorkflowTask.  # noqa: E501
+
+
+        :return: The permissive of this WorkflowTask.  # noqa: E501
+        :rtype: bool
+        """
+        return self._permissive
+
+    @permissive.setter
+    def permissive(self, permissive):
+        """Sets the permissive of this WorkflowTask.
+
+
+        :param permissive: The permissive of this WorkflowTask.  # noqa: E501
+        :type: bool
+        """
+        self._permissive = permissive
 
     def to_dict(self):
         """Returns the model properties as a dict"""

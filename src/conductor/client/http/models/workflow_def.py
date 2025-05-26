@@ -1,17 +1,22 @@
 import json
 import pprint
 import re  # noqa: F401
-from typing import List
+from dataclasses import dataclass, field, InitVar, fields, Field
+from typing import List, Dict, Any, Optional, Union
+import dataclasses
 
 import six
+from deprecated import deprecated
 
 from conductor.client.helpers.helper import ObjectMapper
-from conductor.client.http.models import WorkflowTask
+from conductor.client.http.models import WorkflowTask, RateLimit
+from conductor.client.http.models.schema_def import SchemaDef  # Direct import to break circular dependency
 
 object_mapper = ObjectMapper()
 
 
-class WorkflowDef(object):
+@dataclass
+class WorkflowDef:
     """
     Attributes:
       swagger_types (dict): The key is attribute name
@@ -19,6 +24,66 @@ class WorkflowDef(object):
       attribute_map (dict): The key is attribute name
                             and the value is json key in definition.
     """
+    _name: str = field(default=None)
+    _description: str = field(default=None)
+    _version: int = field(default=None)
+    _tasks: List[WorkflowTask] = field(default=None)
+    _input_parameters: List[str] = field(default=None)
+    _output_parameters: Dict[str, Any] = field(default=None)
+    _failure_workflow: str = field(default=None)
+    _schema_version: int = field(default=None)
+    _restartable: bool = field(default=None)
+    _workflow_status_listener_enabled: bool = field(default=None)
+    _workflow_status_listener_sink: str = field(default=None)
+    _owner_email: str = field(default=None)
+    _timeout_policy: str = field(default=None)
+    _timeout_seconds: int = field(default=None)
+    _variables: Dict[str, Any] = field(default=None)
+    _input_template: Dict[str, Any] = field(default=None)
+    _input_schema: SchemaDef = field(default=None)
+    _output_schema: SchemaDef = field(default=None)
+    _enforce_schema: bool = field(default=None)
+    _metadata: Dict[str, Any] = field(default=None)
+    _rate_limit_config: RateLimit = field(default=None)
+    
+    # Deprecated fields
+    _owner_app: str = field(default=None)
+    _create_time: int = field(default=None)
+    _update_time: int = field(default=None)
+    _created_by: str = field(default=None)
+    _updated_by: str = field(default=None)
+    
+    # For backward compatibility
+    discriminator: Any = field(default=None)
+    
+    # Init parameters
+    owner_app: InitVar[Optional[str]] = None
+    create_time: InitVar[Optional[int]] = None
+    update_time: InitVar[Optional[int]] = None
+    created_by: InitVar[Optional[str]] = None
+    updated_by: InitVar[Optional[str]] = None
+    name: InitVar[Optional[str]] = None
+    description: InitVar[Optional[str]] = None
+    version: InitVar[Optional[int]] = None
+    tasks: InitVar[Optional[List[WorkflowTask]]] = None
+    input_parameters: InitVar[Optional[List[str]]] = None
+    output_parameters: InitVar[Optional[Dict[str, Any]]] = None
+    failure_workflow: InitVar[Optional[str]] = None
+    schema_version: InitVar[Optional[int]] = None
+    restartable: InitVar[Optional[bool]] = None
+    workflow_status_listener_enabled: InitVar[Optional[bool]] = None
+    workflow_status_listener_sink: InitVar[Optional[str]] = None
+    owner_email: InitVar[Optional[str]] = None
+    timeout_policy: InitVar[Optional[str]] = None
+    timeout_seconds: InitVar[Optional[int]] = None
+    variables: InitVar[Optional[Dict[str, Any]]] = None
+    input_template: InitVar[Optional[Dict[str, Any]]] = None
+    input_schema: InitVar[Optional[SchemaDef]] = None
+    output_schema: InitVar[Optional[SchemaDef]] = None
+    enforce_schema: InitVar[Optional[bool]] = False
+    metadata: InitVar[Optional[Dict[str, Any]]] = None
+    rate_limit_config: InitVar[Optional[RateLimit]] = None
+
     swagger_types = {
         'owner_app': 'str',
         'create_time': 'int',
@@ -43,7 +108,9 @@ class WorkflowDef(object):
         'input_template': 'dict(str, object)',
         'input_schema': 'SchemaDef',
         'output_schema': 'SchemaDef',
-        'enforce_schema': 'bool'
+        'enforce_schema': 'bool',
+        'metadata': 'dict(str, object)',
+        'rate_limit_config': 'RateLimitConfig'
     }
 
     attribute_map = {
@@ -70,7 +137,9 @@ class WorkflowDef(object):
         'input_template': 'inputTemplate',
         'input_schema': 'inputSchema',
         'output_schema': 'outputSchema',
-        'enforce_schema': 'enforceSchema'
+        'enforce_schema': 'enforceSchema',
+        'metadata': 'metadata',
+        'rate_limit_config': 'rateLimitConfig'
     }
 
     def __init__(self, owner_app=None, create_time=None, update_time=None, created_by=None, updated_by=None, name=None,
@@ -79,7 +148,8 @@ class WorkflowDef(object):
                  workflow_status_listener_sink=None,
                  owner_email=None, timeout_policy=None, timeout_seconds=None, variables=None,
                  input_template=None,
-                 input_schema : 'SchemaDef' = None, output_schema : 'SchemaDef' = None, enforce_schema : bool =False):  # noqa: E501
+                 input_schema : 'SchemaDef' = None, output_schema : 'SchemaDef' = None, enforce_schema : bool = False,
+                 metadata: Dict[str, Any] = None, rate_limit_config: RateLimit = None):  # noqa: E501
         """WorkflowDef - a model defined in Swagger"""  # noqa: E501
         self._owner_app = None
         self._create_time = None
@@ -102,6 +172,8 @@ class WorkflowDef(object):
         self._timeout_seconds = None
         self._variables = None
         self._input_template = None
+        self._metadata = None
+        self._rate_limit_config = None
         self.discriminator = None
         if owner_app is not None:
             self.owner_app = owner_app
@@ -145,8 +217,71 @@ class WorkflowDef(object):
         self._input_schema = input_schema
         self._output_schema = output_schema
         self._enforce_schema = enforce_schema
+        if metadata is not None:
+            self.metadata = metadata
+        if rate_limit_config is not None:
+            self.rate_limit_config = rate_limit_config
+
+    def __post_init__(self, owner_app, create_time, update_time, created_by, updated_by, name, description, version,
+                     tasks, input_parameters, output_parameters, failure_workflow, schema_version, restartable,
+                     workflow_status_listener_enabled, workflow_status_listener_sink, owner_email, timeout_policy,
+                     timeout_seconds, variables, input_template, input_schema, output_schema, enforce_schema,
+                     metadata, rate_limit_config):
+        if owner_app is not None:
+            self.owner_app = owner_app
+        if create_time is not None:
+            self.create_time = create_time
+        if update_time is not None:
+            self.update_time = update_time
+        if created_by is not None:
+            self.created_by = created_by
+        if updated_by is not None:
+            self.updated_by = updated_by
+        if name is not None:
+            self.name = name
+        if description is not None:
+            self.description = description
+        if version is not None:
+            self.version = version
+        if tasks is not None:
+            self.tasks = tasks
+        if input_parameters is not None:
+            self.input_parameters = input_parameters
+        if output_parameters is not None:
+            self.output_parameters = output_parameters
+        if failure_workflow is not None:
+            self.failure_workflow = failure_workflow
+        if schema_version is not None:
+            self.schema_version = schema_version
+        if restartable is not None:
+            self.restartable = restartable
+        if workflow_status_listener_enabled is not None:
+            self.workflow_status_listener_enabled = workflow_status_listener_enabled
+        if workflow_status_listener_sink is not None:
+            self.workflow_status_listener_sink = workflow_status_listener_sink
+        if owner_email is not None:
+            self.owner_email = owner_email
+        if timeout_policy is not None:
+            self.timeout_policy = timeout_policy
+        if timeout_seconds is not None:
+            self.timeout_seconds = timeout_seconds
+        if variables is not None:
+            self.variables = variables
+        if input_template is not None:
+            self.input_template = input_template
+        if input_schema is not None:
+            self.input_schema = input_schema
+        if output_schema is not None:
+            self.output_schema = output_schema
+        if enforce_schema is not None:
+            self.enforce_schema = enforce_schema
+        if metadata is not None:
+            self.metadata = metadata
+        if rate_limit_config is not None:
+            self.rate_limit_config = rate_limit_config
 
     @property
+    @deprecated("This field is deprecated and will be removed in a future version")
     def owner_app(self):
         """Gets the owner_app of this WorkflowDef.  # noqa: E501
 
@@ -157,6 +292,7 @@ class WorkflowDef(object):
         return self._owner_app
 
     @owner_app.setter
+    @deprecated("This field is deprecated and will be removed in a future version")
     def owner_app(self, owner_app):
         """Sets the owner_app of this WorkflowDef.
 
@@ -168,6 +304,7 @@ class WorkflowDef(object):
         self._owner_app = owner_app
 
     @property
+    @deprecated("This field is deprecated and will be removed in a future version")
     def create_time(self):
         """Gets the create_time of this WorkflowDef.  # noqa: E501
 
@@ -178,6 +315,7 @@ class WorkflowDef(object):
         return self._create_time
 
     @create_time.setter
+    @deprecated("This field is deprecated and will be removed in a future version")
     def create_time(self, create_time):
         """Sets the create_time of this WorkflowDef.
 
@@ -189,6 +327,7 @@ class WorkflowDef(object):
         self._create_time = create_time
 
     @property
+    @deprecated("This field is deprecated and will be removed in a future version")
     def update_time(self):
         """Gets the update_time of this WorkflowDef.  # noqa: E501
 
@@ -199,6 +338,7 @@ class WorkflowDef(object):
         return self._update_time
 
     @update_time.setter
+    @deprecated("This field is deprecated and will be removed in a future version")
     def update_time(self, update_time):
         """Sets the update_time of this WorkflowDef.
 
@@ -210,6 +350,7 @@ class WorkflowDef(object):
         self._update_time = update_time
 
     @property
+    @deprecated("This field is deprecated and will be removed in a future version")
     def created_by(self):
         """Gets the created_by of this WorkflowDef.  # noqa: E501
 
@@ -220,6 +361,7 @@ class WorkflowDef(object):
         return self._created_by
 
     @created_by.setter
+    @deprecated("This field is deprecated and will be removed in a future version")
     def created_by(self, created_by):
         """Sets the created_by of this WorkflowDef.
 
@@ -231,6 +373,7 @@ class WorkflowDef(object):
         self._created_by = created_by
 
     @property
+    @deprecated("This field is deprecated and will be removed in a future version")
     def updated_by(self):
         """Gets the updated_by of this WorkflowDef.  # noqa: E501
 
@@ -241,6 +384,7 @@ class WorkflowDef(object):
         return self._updated_by
 
     @updated_by.setter
+    @deprecated("This field is deprecated and will be removed in a future version")
     def updated_by(self, updated_by):
         """Sets the updated_by of this WorkflowDef.
 
@@ -463,10 +607,22 @@ class WorkflowDef(object):
 
     @property
     def workflow_status_listener_sink(self):
+        """Gets the workflow_status_listener_sink of this WorkflowDef.  # noqa: E501
+
+
+        :return: The workflow_status_listener_sink of this WorkflowDef.  # noqa: E501
+        :rtype: str
+        """
         return self._workflow_status_listener_sink
 
     @workflow_status_listener_sink.setter
     def workflow_status_listener_sink(self, workflow_status_listener_sink):
+        """Sets the workflow_status_listener_sink of this WorkflowDef.
+
+
+        :param workflow_status_listener_sink: The workflow_status_listener_sink of this WorkflowDef.  # noqa: E501
+        :type: str
+        """
         self._workflow_status_listener_sink = workflow_status_listener_sink
 
     @property
@@ -625,6 +781,42 @@ class WorkflowDef(object):
         """
         self._enforce_schema = enforce_schema
 
+    @property
+    def metadata(self) -> Dict[str, Any]:
+        """Gets the metadata of this WorkflowDef.  # noqa: E501
+
+        :return: The metadata of this WorkflowDef.  # noqa: E501
+        :rtype: dict(str, object)
+        """
+        return self._metadata
+
+    @metadata.setter
+    def metadata(self, metadata: Dict[str, Any]):
+        """Sets the metadata of this WorkflowDef.  # noqa: E501
+
+        :param metadata: The metadata of this WorkflowDef.  # noqa: E501
+        :type: dict(str, object)
+        """
+        self._metadata = metadata
+
+    @property
+    def rate_limit_config(self) -> RateLimit:
+        """Gets the rate_limit_config of this WorkflowDef.  # noqa: E501
+
+        :return: The rate_limit_config of this WorkflowDef.  # noqa: E501
+        :rtype: RateLimitConfig
+        """
+        return self._rate_limit_config
+
+    @rate_limit_config.setter
+    def rate_limit_config(self, rate_limit_config: RateLimit):
+        """Sets the rate_limit_config of this WorkflowDef.  # noqa: E501
+
+        :param rate_limit_config: The rate_limit_config of this WorkflowDef.  # noqa: E501
+        :type: RateLimitConfig
+        """
+        self._rate_limit_config = rate_limit_config
+
     def to_dict(self):
         """Returns the model properties as a dict"""
         result = {}
@@ -681,5 +873,3 @@ def to_workflow_def(data: str = None, json_data: dict = None) -> WorkflowDef:
     if data is not None:
         return object_mapper.from_json(json.loads(data), WorkflowDef)
     raise Exception('missing data or json_data parameter')
-
-
