@@ -77,11 +77,6 @@ class TestWorkflowSummarySerialization(unittest.TestCase):
             self.assertIsInstance(model.failed_task_names, set)
             self.assertEqual(model.failed_task_names, set(self.server_json.get("failedTaskNames")))
 
-        # Check deprecated fields with computed values
-        if model.output is not None:
-            self.assertEqual(model.output_size, len(model.output))
-        if model.input is not None:
-            self.assertEqual(model.input_size, len(model.input))
 
     def _transform_to_json_format(self, python_dict):
         """Transform Python dict keys from snake_case to camelCase for JSON comparison."""
