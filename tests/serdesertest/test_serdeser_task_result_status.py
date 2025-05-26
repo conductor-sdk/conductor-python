@@ -68,9 +68,6 @@ class TestTaskResultSerde(unittest.TestCase):
         # 3. Serialize the TaskResult to a dictionary
         serialized_dict = task_result.to_dict()
 
-        # Print the keys to debug
-        print(f"Keys in serialized_dict: {serialized_dict.keys()}")
-        print(f"Keys in server_json: {self.server_json.keys()}")
 
         # 4. Check field by field based on what's actually in the serialized dict
         # This is a more robust approach that will work even if field names change

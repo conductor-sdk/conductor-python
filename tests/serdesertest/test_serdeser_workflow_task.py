@@ -102,7 +102,7 @@ class TestWorkflowTaskSerDe(unittest.TestCase):
             self.assertEqual(workflow_task.join_on, fixed_json_dict["joinOn"])
 
         # Print summary of fields in fixed JSON dict
-        print("Fields in fixed JSON dict:", fixed_json_dict.keys())
+        # print("Fields in fixed JSON dict:", fixed_json_dict.keys())
 
         # Demonstrate this approach works for a simple test case
         test_task = WorkflowTask(

@@ -14,7 +14,7 @@ class TestWorkflowDefSerDeSer(unittest.TestCase):
     def test_workflow_def_ser_deser(self):
         """Test serialization and deserialization of WorkflowDef"""
         # Print the original JSON structure for debugging
-        print("Original JSON structure:", json.dumps(self.server_json, indent=2))
+        # print("Original JSON structure:", json.dumps(self.server_json, indent=2))
 
         # Step 1: Deserialize JSON to WorkflowDef object
         # Since direct deserialization has issues with deprecated fields, we'll use the approach
@@ -32,7 +32,7 @@ class TestWorkflowDefSerDeSer(unittest.TestCase):
             serialized_json = json.loads(serialized_json)
 
         # Print the serialized structure for debugging
-        print("Serialized JSON structure:", json.dumps(serialized_json, indent=2))
+        # print("Serialized JSON structure:", json.dumps(serialized_json, indent=2))
 
         # Step 4: Verify the serialized JSON matches the original for essential properties
         self._compare_json(self.server_json, serialized_json)
