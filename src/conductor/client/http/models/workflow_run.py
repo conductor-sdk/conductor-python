@@ -4,12 +4,21 @@ import six
 from dataclasses import dataclass, field, InitVar
 from typing import Dict, List, Optional, Any
 from deprecated import deprecated
+from enum import Enum
 
 from conductor.client.http.models import Task
 
 terminal_status = ('COMPLETED', 'FAILED', 'TIMED_OUT', 'TERMINATED')
 successful_status = ('PAUSED', 'COMPLETED')
 running_status = ('RUNNING', 'PAUSED')
+
+
+class WorkflowSignalReturnStrategy(Enum):
+    """Enum for workflow signal return strategy"""
+    TARGET_WORKFLOW = "TARGET_WORKFLOW"
+    BLOCKING_WORKFLOW = "BLOCKING_WORKFLOW"
+    BLOCKING_TASK = "BLOCKING_TASK"
+    BLOCKING_TASK_INPUT = "BLOCKING_TASK_INPUT"
 
 
 @dataclass
@@ -38,7 +47,12 @@ class WorkflowRun:
     _variables: Optional[Dict[str, Any]] = field(default=None, init=False)
     _workflow_id: Optional[str] = field(default=None, init=False)
     _reason_for_incompletion: Optional[str] = field(default=None, init=False)
-    
+
+    # New SignalResponse fields
+    _response_type: Optional[str] = field(default=None, init=False)
+    _target_workflow_id: Optional[str] = field(default=None, init=False)
+    _target_workflow_status: Optional[str] = field(default=None, init=False)
+
     correlation_id: InitVar[Optional[str]] = None
     create_time: InitVar[Optional[int]] = None
     created_by: InitVar[Optional[str]] = None
@@ -52,7 +66,10 @@ class WorkflowRun:
     variables: InitVar[Optional[Dict[str, Any]]] = None
     workflow_id: InitVar[Optional[str]] = None
     reason_for_incompletion: InitVar[Optional[str]] = None
-    
+    response_type: InitVar[Optional[str]] = None
+    target_workflow_id: InitVar[Optional[str]] = None
+    target_workflow_status: InitVar[Optional[str]] = None
+
     swagger_types = {
         'correlation_id': 'str',
         'create_time': 'int',
@@ -65,7 +82,10 @@ class WorkflowRun:
         'tasks': 'list[Task]',
         'update_time': 'int',
         'variables': 'dict(str, object)',
-        'workflow_id': 'str'
+        'workflow_id': 'str',
+        'response_type': 'str',
+        'target_workflow_id': 'str',
+        'target_workflow_status': 'str'
     }
 
     attribute_map = {
@@ -80,12 +100,16 @@ class WorkflowRun:
         'tasks': 'tasks',
         'update_time': 'updateTime',
         'variables': 'variables',
-        'workflow_id': 'workflowId'
+        'workflow_id': 'workflowId',
+        'response_type': 'responseType',
+        'target_workflow_id': 'targetWorkflowId',
+        'target_workflow_status': 'targetWorkflowStatus'
     }
 
     def __init__(self, correlation_id=None, create_time=None, created_by=None, input=None, output=None, priority=None,
                  request_id=None, status=None, tasks=None, update_time=None, variables=None, workflow_id=None,
-                 reason_for_incompletion: str = None):  # noqa: E501
+                 reason_for_incompletion: str = None, response_type=None, target_workflow_id=None,
+                 target_workflow_status=None):  # noqa: E501
         """WorkflowRun - a model defined in Swagger"""  # noqa: E501
         self._correlation_id = None
         self._create_time = None
@@ -99,6 +123,9 @@ class WorkflowRun:
         self._update_time = None
         self._variables = None
         self._workflow_id = None
+        self._response_type = None
+        self._target_workflow_id = None
+        self._target_workflow_status = None
         self.discriminator = None
         if correlation_id is not None:
             self.correlation_id = correlation_id
@@ -124,10 +151,17 @@ class WorkflowRun:
             self.variables = variables
         if workflow_id is not None:
             self.workflow_id = workflow_id
+        if response_type is not None:
+            self.response_type = response_type
+        if target_workflow_id is not None:
+            self.target_workflow_id = target_workflow_id
+        if target_workflow_status is not None:
+            self.target_workflow_status = target_workflow_status
         self._reason_for_incompletion = reason_for_incompletion
 
-    def __post_init__(self, correlation_id, create_time, created_by, input, output, priority, request_id, status, 
-                     tasks, update_time, variables, workflow_id, reason_for_incompletion):
+    def __post_init__(self, correlation_id, create_time, created_by, input, output, priority, request_id, status,
+                      tasks, update_time, variables, workflow_id, reason_for_incompletion, response_type,
+                      target_workflow_id, target_workflow_status):
         if correlation_id is not None:
             self.correlation_id = correlation_id
         if create_time is not None:
@@ -152,6 +186,12 @@ class WorkflowRun:
             self.variables = variables
         if workflow_id is not None:
             self.workflow_id = workflow_id
+        if response_type is not None:
+            self.response_type = response_type
+        if target_workflow_id is not None:
+            self.target_workflow_id = target_workflow_id
+        if target_workflow_status is not None:
+            self.target_workflow_status = target_workflow_status
         if reason_for_incompletion is not None:
             self._reason_for_incompletion = reason_for_incompletion
 
@@ -301,6 +341,81 @@ class WorkflowRun:
         """
 
         self._request_id = request_id
+
+    @property
+    def response_type(self):
+        """Gets the response_type of this WorkflowRun.  # noqa: E501
+
+
+        :return: The response_type of this WorkflowRun.  # noqa: E501
+        :rtype: str
+        """
+        return self._response_type
+
+    @response_type.setter
+    def response_type(self, response_type):
+        """Sets the response_type of this WorkflowRun.
+
+
+        :param response_type: The response_type of this WorkflowRun.  # noqa: E501
+        :type: str
+        """
+        allowed_values = ["TARGET_WORKFLOW", "BLOCKING_WORKFLOW", "BLOCKING_TASK", "BLOCKING_TASK_INPUT"]  # noqa: E501
+        if response_type is not None and response_type not in allowed_values:
+            raise ValueError(
+                "Invalid value for `response_type` ({0}), must be one of {1}"  # noqa: E501
+                .format(response_type, allowed_values)
+            )
+
+        self._response_type = response_type
+
+    @property
+    def target_workflow_id(self):
+        """Gets the target_workflow_id of this WorkflowRun.  # noqa: E501
+
+
+        :return: The target_workflow_id of this WorkflowRun.  # noqa: E501
+        :rtype: str
+        """
+        return self._target_workflow_id
+
+    @target_workflow_id.setter
+    def target_workflow_id(self, target_workflow_id):
+        """Sets the target_workflow_id of this WorkflowRun.
+
+
+        :param target_workflow_id: The target_workflow_id of this WorkflowRun.  # noqa: E501
+        :type: str
+        """
+
+        self._target_workflow_id = target_workflow_id
+
+    @property
+    def target_workflow_status(self):
+        """Gets the target_workflow_status of this WorkflowRun.  # noqa: E501
+
+
+        :return: The target_workflow_status of this WorkflowRun.  # noqa: E501
+        :rtype: str
+        """
+        return self._target_workflow_status
+
+    @target_workflow_status.setter
+    def target_workflow_status(self, target_workflow_status):
+        """Sets the target_workflow_status of this WorkflowRun.
+
+
+        :param target_workflow_status: The target_workflow_status of this WorkflowRun.  # noqa: E501
+        :type: str
+        """
+        allowed_values = ["RUNNING", "COMPLETED", "FAILED", "TIMED_OUT", "TERMINATED", "PAUSED"]  # noqa: E501
+        if target_workflow_status is not None and target_workflow_status not in allowed_values:
+            raise ValueError(
+                "Invalid value for `target_workflow_status` ({0}), must be one of {1}"  # noqa: E501
+                .format(target_workflow_status, allowed_values)
+            )
+
+        self._target_workflow_status = target_workflow_status
 
     @property
     def status(self):
