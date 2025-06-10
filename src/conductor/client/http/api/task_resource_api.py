@@ -1926,7 +1926,7 @@ class TaskResourceApi(object):
             path_params['status'] = params['status']  # noqa: E501
 
         query_params = []
-        if 'return_strategy' in params:
+        if 'return_strategy' in params and params['return_strategy'] is not None:
             query_params.append(('returnStrategy', params['return_strategy']))  # noqa: E501
 
         header_params = {}

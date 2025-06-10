@@ -1,4 +1,5 @@
 import logging
+import time
 from multiprocessing import set_start_method
 from time import sleep
 
@@ -18,6 +19,9 @@ WORKFLOW_DESCRIPTION = "Python SDK Integration Test"
 TASK_NAME = "python_integration_test_task"
 WORKFLOW_VERSION = 1234
 WORKFLOW_OWNER_EMAIL = "test@test"
+COMPLEX_WF_NAME = 'complex_wf_signal_test'
+SUB_WF_1_NAME = 'complex_wf_signal_test_subworkflow_1'
+SUB_WF_2_NAME = 'complex_wf_signal_test_subworkflow_2'
 
 logger = logging.getLogger(
     Configuration.get_logging_formatted_name(
@@ -55,6 +59,11 @@ def run_workflow_execution_tests(configuration: Configuration, workflow_executor
             workflow_completion_timeout=5.0
         )
         test_decorated_workers(workflow_executor)
+
+        # Add signal tests here
+        run_signal_tests(configuration, workflow_executor)
+        logger.debug('finished signal API tests')
+
     except Exception as e:
         task_handler.stop_processes()
         raise Exception(f'failed integration tests, reason: {e}')
@@ -218,3 +227,423 @@ def _run_with_retry_attempt(f, params, retries=4) -> None:
             if attempt == retries - 1:
                 raise e
             sleep(1 << attempt)
+
+
+# ===== SIGNAL TESTS =====
+
+def run_signal_tests(configuration: Configuration, workflow_executor: WorkflowExecutor):
+    """Run all signal API tests using WorkflowExecutor methods"""
+    logger.info('START: Signal API tests using WorkflowExecutor')
+
+    try:
+        # Register signal test workflows (same as original test)
+        _register_signal_test_workflows(workflow_executor)
+
+        # Test sync signal with different return strategies
+        test_signal_target_workflow(workflow_executor)
+        test_signal_blocking_workflow(workflow_executor)
+        test_signal_blocking_task(workflow_executor)
+        test_signal_blocking_task_input(workflow_executor)
+
+        # Test default return strategy
+        test_signal_default_strategy(workflow_executor)
+
+        # Test async signal
+        test_signal_async(workflow_executor)
+
+        # Test to_dict fix
+        test_signal_to_dict_fix(workflow_executor)
+
+        logger.info('All signal tests completed successfully')
+
+    except Exception as e:
+        logger.error(f'Signal tests failed: {e}')
+        raise
+    finally:
+        # Cleanup
+        try:
+            workflow_executor.metadata_client.unregister_workflow_def(
+                COMPLEX_WF_NAME, 1
+            )
+            workflow_executor.metadata_client.unregister_workflow_def(
+                SUB_WF_1_NAME, 1
+            )
+            workflow_executor.metadata_client.unregister_workflow_def(
+                SUB_WF_2_NAME, 1
+            )
+        except Exception as cleanup_error:
+            logger.warning(f'Cleanup failed: {cleanup_error}')
+
+    logger.info('END: Signal API tests using WorkflowExecutor')
+
+
+def _register_signal_test_workflows(workflow_executor: WorkflowExecutor):
+    """Register the complex signal test workflows from JSON files"""
+    import json
+    import os
+
+    def _get_workflow_definition(path):
+        """Get workflow definition from JSON file, following existing pattern"""
+        # Get directory of current script
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+
+        # Path to project root (adjust based on your structure)
+        project_root = os.path.abspath(os.path.join(current_dir, '..', '..', '..'))
+
+        # Construct path from project root
+        actual_path = os.path.join(project_root, path)
+
+        # For debugging
+        logger.info(f"Attempting to load workflow from: {actual_path}")
+
+        try:
+            with open(actual_path, "r") as f:
+                workflow_json = json.loads(f.read())
+                # Convert to WorkflowDef object
+                api_client = workflow_executor.workflow_client.api_client
+                workflow_def = api_client.deserialize_class(workflow_json, "WorkflowDef")
+                return workflow_def
+        except FileNotFoundError:
+            logger.error(f"Workflow definition file not found: {actual_path}")
+            raise
+        except Exception as e:
+            logger.error(f"Error loading workflow definition: {e}")
+            raise
+
+    try:
+        # Register main workflow
+        complex_wf_def = _get_workflow_definition(f'tests/integration/resources/test_data/{COMPLEX_WF_NAME}.json')
+        workflow_executor.metadata_client.update1(body=[complex_wf_def], overwrite=True)
+        logger.info(f'Registered workflow: {COMPLEX_WF_NAME}')
+
+        # Register subworkflows
+        sub_wf1_def = _get_workflow_definition(f'tests/integration/resources/test_data/{SUB_WF_1_NAME}.json')
+        workflow_executor.metadata_client.update1(body=[sub_wf1_def], overwrite=True)
+        logger.info(f'Registered workflow: {SUB_WF_1_NAME}')
+
+        sub_wf2_def = _get_workflow_definition(f'tests/integration/resources/test_data/{SUB_WF_2_NAME}.json')
+        workflow_executor.metadata_client.update1(body=[sub_wf2_def], overwrite=True)
+        logger.info(f'Registered workflow: {SUB_WF_2_NAME}')
+
+    except Exception as e:
+        logger.warning(f'Some workflows may already be registered: {e}')
+
+    # Give time for workflow registration
+    time.sleep(1.0)
+
+
+def _start_complex_workflow(workflow_executor: WorkflowExecutor) -> str:
+    """Start complex workflow and return workflow ID"""
+    try:
+        start_request = StartWorkflowRequest(
+            name=COMPLEX_WF_NAME,
+            version=1,
+            input={}
+        )
+
+        # Use the workflow_executor.start_workflow method
+        workflow_id = workflow_executor.start_workflow(start_request)
+
+        assert workflow_id is not None, "Failed to start workflow"
+
+        # Brief wait for workflow initialization
+        time.sleep(0.5)
+        logger.info(f'Started workflow {workflow_id}')
+        return workflow_id
+
+    except Exception as e:
+        logger.error(f'Failed to start workflow: {e}')
+        raise
+
+
+def _complete_workflow(workflow_executor: WorkflowExecutor, workflow_id: str):
+    """Complete workflow by sending required signals"""
+    try:
+        # Send completion signals using signal_async method
+        time.sleep(5)
+        workflow_executor.signal_async(
+            workflow_id=workflow_id,
+            status="COMPLETED",
+            body={"result": "signal1"}
+        )
+        workflow_executor.signal_async(
+            workflow_id=workflow_id,
+            status="COMPLETED",
+            body={"result": "signal2"}
+        )
+
+        # Wait for completion with timeout
+        # max_wait_iterations = 500  # 5 seconds max
+        # for i in range(max_wait_iterations):
+        #     workflow = workflow_executor.get_workflow(workflow_id, include_tasks=True)
+        #     if workflow.status == "COMPLETED":
+        #         logger.info(f'Workflow {workflow_id} completed successfully')
+        #         return
+        #     time.sleep(0.1)
+        #
+        # raise TimeoutError(f'Workflow {workflow_id} did not complete within timeout')
+
+    except Exception as e:
+        logger.error(f'Failed to complete workflow {workflow_id}: {e}')
+        raise
+
+
+def test_signal_target_workflow(workflow_executor: WorkflowExecutor):
+    """Test signal with TARGET_WORKFLOW return strategy"""
+    logger.info('Testing signal with TARGET_WORKFLOW strategy...')
+
+    # Start workflow
+    workflow_id = _start_complex_workflow(workflow_executor)
+
+    # Wait and check workflow status
+    time.sleep(1.0)
+
+    # Debug: Check workflow status before signaling
+    try:
+        workflow = workflow_executor.get_workflow(workflow_id, include_tasks=True)
+        logger.info(f"Workflow status before signal: {workflow.status}")
+        logger.info(f"Workflow tasks: {len(workflow.tasks) if workflow.tasks else 0}")
+        if workflow.tasks:
+            for task in workflow.tasks:
+                logger.info(f"Task: {task.task_type}, Status: {task.status}, Ref: {task.reference_task_name}")
+    except Exception as e:
+        logger.warning(f"Could not get workflow status: {e}")
+
+    # Send signal with TARGET_WORKFLOW strategy
+    response = workflow_executor.signal(
+        workflow_id=workflow_id,
+        status="COMPLETED",
+        body={"result": "test_target_workflow"},
+        return_strategy="TARGET_WORKFLOW"
+    )
+
+    # Debug: Print response details
+    logger.info(f"Response object: {response}")
+    logger.info(f"Response type: {type(response)}")
+    if hasattr(response, '__dict__'):
+        logger.info(f"Response attributes: {response.__dict__}")
+    if hasattr(response, 'to_dict'):
+        try:
+            logger.info(f"Response to_dict: {response.to_dict()}")
+        except Exception as e:
+            logger.warning(f"to_dict failed: {e}")
+
+    # Validate response
+    assert response is not None, "Signal response is None"
+    assert hasattr(response, 'response_type'), "Response missing response_type attribute"
+    assert response.response_type == "TARGET_WORKFLOW", f"Expected TARGET_WORKFLOW, got {response.response_type}"
+    assert response.target_workflow_id == workflow_id, "Target workflow ID mismatch"
+
+    # Test helper methods
+    assert response.is_target_workflow(), "is_target_workflow() should return True"
+
+    workflow_data = response.get_workflow()
+    assert workflow_data is not None, "get_workflow() should return data"
+    assert workflow_data.get('workflowId') == workflow_id, "Workflow data should contain correct workflow_id"
+
+    # Wait for workflow completion
+    _complete_workflow(workflow_executor, workflow_id)
+
+    logger.info('TARGET_WORKFLOW strategy test completed')
+
+    # Test helper methods
+    assert response.is_target_workflow(), "is_target_workflow() should return True"
+
+    workflow_data = response.get_workflow()
+    assert workflow_data is not None, "get_workflow() should return data"
+    assert workflow_data.get('workflowId') == workflow_id, "Workflow data should contain correct workflow_id"
+
+    # Wait for workflow completion
+    _wait_for_workflow_completion(workflow_executor, workflow_id)
+
+    logger.info('TARGET_WORKFLOW strategy test completed')
+
+
+def test_signal_blocking_workflow(workflow_executor: WorkflowExecutor):
+    """Test signal with BLOCKING_WORKFLOW return strategy"""
+    logger.info('Testing signal with BLOCKING_WORKFLOW strategy...')
+
+    workflow_id = _start_complex_workflow(workflow_executor)
+    time.sleep(0.5)
+
+    response = workflow_executor.signal(
+        workflow_id=workflow_id,
+        status="COMPLETED",
+        body={"result": "test_blocking_workflow"},
+        return_strategy="BLOCKING_WORKFLOW"
+    )
+
+    # Validate response
+    assert response is not None, "Signal response is None"
+    assert response.response_type == "BLOCKING_WORKFLOW", f"Expected BLOCKING_WORKFLOW, got {response.response_type}"
+    assert response.target_workflow_id == workflow_id, "Target workflow ID mismatch"
+
+    # Test helper methods
+    assert response.is_blocking_workflow(), "is_blocking_workflow() should return True"
+
+    workflow_data = response.get_workflow()
+    assert workflow_data is not None, "get_workflow() should return data"
+
+    _complete_workflow(workflow_executor, workflow_id)
+    logger.info('BLOCKING_WORKFLOW strategy test completed')
+
+
+def test_signal_blocking_task(workflow_executor: WorkflowExecutor):
+    """Test signal with BLOCKING_TASK return strategy"""
+    logger.info('Testing signal with BLOCKING_TASK strategy...')
+
+    workflow_id = _start_complex_workflow(workflow_executor)
+    time.sleep(0.5)
+
+    response = workflow_executor.signal(
+        workflow_id=workflow_id,
+        status="COMPLETED",
+        body={"result": "test_blocking_task"},
+        return_strategy="BLOCKING_TASK"
+    )
+
+    # Validate response
+    assert response is not None, "Signal response is None"
+    assert response.response_type == "BLOCKING_TASK", f"Expected BLOCKING_TASK, got {response.response_type}"
+    assert response.target_workflow_id == workflow_id, "Target workflow ID mismatch"
+
+    # Test helper methods
+    assert response.is_blocking_task(), "is_blocking_task() should return True"
+
+    task_data = response.get_blocking_task()
+    assert task_data is not None, "get_blocking_task() should return data"
+    assert task_data.get('taskId') is not None, "Task data should contain task_id"
+
+    _complete_workflow(workflow_executor, workflow_id)
+    logger.info('BLOCKING_TASK strategy test completed')
+
+
+def test_signal_blocking_task_input(workflow_executor: WorkflowExecutor):
+    """Test signal with BLOCKING_TASK_INPUT return strategy"""
+    logger.info('Testing signal with BLOCKING_TASK_INPUT strategy...')
+
+    workflow_id = _start_complex_workflow(workflow_executor)
+    time.sleep(0.5)
+
+    response = workflow_executor.signal(
+        workflow_id=workflow_id,
+        status="COMPLETED",
+        body={"result": "test_blocking_task_input"},
+        return_strategy="BLOCKING_TASK_INPUT"
+    )
+
+    # Validate response
+    assert response is not None, "Signal response is None"
+    assert response.response_type == "BLOCKING_TASK_INPUT", f"Expected BLOCKING_TASK_INPUT, got {response.response_type}"
+    assert response.target_workflow_id == workflow_id, "Target workflow ID mismatch"
+
+    # Test helper methods
+    assert response.is_blocking_task_input(), "is_blocking_task_input() should return True"
+
+    task_data = response.get_blocking_task()
+    task_input = response.get_task_input()
+    assert task_data is not None, "get_blocking_task() should return data"
+    assert task_input is not None, "get_task_input() should return data"
+
+    _complete_workflow(workflow_executor, workflow_id)
+    logger.info('BLOCKING_TASK_INPUT strategy test completed')
+
+
+def test_signal_default_strategy(workflow_executor: WorkflowExecutor):
+    """Test signal with default return strategy"""
+    logger.info('Testing signal with default strategy...')
+
+    workflow_id = _start_complex_workflow(workflow_executor)
+    time.sleep(0.5)
+
+    # Don't specify return_strategy - should default to TARGET_WORKFLOW
+    response = workflow_executor.signal(
+        workflow_id=workflow_id,
+        status="COMPLETED",
+        body={"result": "test_default"}
+    )
+
+    # Validate response
+    assert response is not None, "Signal response is None"
+    assert response.response_type == "TARGET_WORKFLOW", f"Expected TARGET_WORKFLOW (default), got {response.response_type}"
+    assert response.target_workflow_id == workflow_id, "Target workflow ID mismatch"
+    assert response.is_target_workflow(), "Default should be TARGET_WORKFLOW"
+
+    _complete_workflow(workflow_executor, workflow_id)
+    logger.info('Default strategy test completed')
+
+
+def test_signal_async(workflow_executor: WorkflowExecutor):
+    """Test async signal"""
+    logger.info('Testing async signal...')
+
+    workflow_id = _start_complex_workflow(workflow_executor)
+    time.sleep(0.5)
+
+    # Send async signal (should not return response)
+    result = workflow_executor.signal_async(
+        workflow_id=workflow_id,
+        status="COMPLETED",
+        body={"result": "test_async"}
+    )
+
+    # Async signal should return None
+    assert result is None, "Async signal should return None"
+
+    _complete_workflow(workflow_executor, workflow_id)
+    logger.info('Async signal test completed')
+
+
+def test_signal_to_dict_fix(workflow_executor: WorkflowExecutor):
+    """Test that to_dict() returns actual values, not property objects"""
+    logger.info('Testing to_dict() method fix...')
+
+    workflow_id = _start_complex_workflow(workflow_executor)
+    time.sleep(0.5)
+
+    response = workflow_executor.signal(
+        workflow_id=workflow_id,
+        status="COMPLETED",
+        body={"result": "test_to_dict"},
+        return_strategy="BLOCKING_TASK"
+    )
+
+    response_dict = response.to_dict()
+
+    # Ensure no property objects in the output
+    response_str = str(response_dict)
+    assert 'property object' not in response_str, f"Found property objects in response: {response_str}"
+
+    # Verify actual string values
+    assert isinstance(response_dict.get('responseType'), str), "responseType should be string"
+    assert response_dict['responseType'] == 'BLOCKING_TASK', "responseType value incorrect"
+    assert isinstance(response_dict.get('taskId'), str), "taskId should be string"
+    assert isinstance(response_dict.get('targetWorkflowId'), str), "targetWorkflowId should be string"
+
+    _complete_workflow(workflow_executor, workflow_id)
+    logger.info('to_dict() method test completed')
+    dict['responseType'] == 'BLOCKING_TASK', "responseType value incorrect"
+    assert isinstance(response_dict.get('taskId'), str), "taskId should be string"
+    assert isinstance(response_dict.get('targetWorkflowId'), str), "targetWorkflowId should be string"
+
+    _wait_for_workflow_completion(workflow_executor, workflow_id)
+
+    logger.info('to_dict() method test completed')
+
+
+def _wait_for_workflow_completion(workflow_executor: WorkflowExecutor, workflow_id: str, timeout: int = 10):
+    """Wait for workflow to complete with timeout"""
+    max_iterations = timeout * 10  # Check every 0.1 seconds
+
+    for i in range(max_iterations):
+        try:
+            workflow = workflow_executor.get_workflow(workflow_id, include_tasks=False)
+            if workflow.status in ["COMPLETED", "FAILED", "TERMINATED"]:
+                logger.debug(f'Workflow {workflow_id} completed with status: {workflow.status}')
+                return
+        except Exception as e:
+            logger.warning(f'Error checking workflow status: {e}')
+
+        time.sleep(0.1)
+
+    logger.warning(f'Workflow {workflow_id} did not complete within {timeout} seconds')
