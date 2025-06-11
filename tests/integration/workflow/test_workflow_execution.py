@@ -622,7 +622,7 @@ def test_signal_to_dict_fix(workflow_executor: WorkflowExecutor):
 
     _complete_workflow(workflow_executor, workflow_id)
     logger.info('to_dict() method test completed')
-    dict['responseType'] == 'BLOCKING_TASK', "responseType value incorrect"
+    # dict['responseType'] == 'BLOCKING_TASK', "responseType value incorrect"
     assert isinstance(response_dict.get('taskId'), str), "taskId should be string"
     assert isinstance(response_dict.get('targetWorkflowId'), str), "targetWorkflowId should be string"
 
