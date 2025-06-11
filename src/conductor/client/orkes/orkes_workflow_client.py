@@ -47,16 +47,37 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
             start_workflow_request: StartWorkflowRequest,
             request_id: str = None,
             wait_until_task_ref: Optional[str] = None,
-            wait_for_seconds: int = 30
+            wait_for_seconds: int = 30,
+            consistency: Optional[str] = None,
+            return_strategy: Optional[str] = None
     ) -> WorkflowRun:
+        """Execute a workflow synchronously with optional reactive features
 
-        return self.workflowResourceApi.execute_workflow(
+        Args:
+            start_workflow_request: StartWorkflowRequest containing workflow details
+            request_id: Optional request ID for tracking
+            wait_until_task_ref: Wait until this task reference is reached
+            wait_for_seconds: How long to wait for completion (default 30)
+            consistency: Workflow consistency level - 'DURABLE' or 'EVENTUAL'
+            return_strategy: Return strategy - 'TARGET_WORKFLOW' or 'WAIT_WORKFLOW'
+
+        Returns:
+            WorkflowRun: The workflow execution result
+        """
+        if consistency is None:
+            consistency = 'DURABLE'
+        if return_strategy is None:
+            return_strategy = 'TARGET_WORKFLOW'
+
+        return self.workflowResourceApi.execute_workflow_cr(
             body=start_workflow_request,
             request_id=request_id,
             version=start_workflow_request.version,
             name=start_workflow_request.name,
             wait_until_task_ref=wait_until_task_ref,
             wait_for_seconds=wait_for_seconds,
+            consistency=consistency,
+            return_strategy=return_strategy
         )
 
     def pause_workflow(self, workflow_id: str):

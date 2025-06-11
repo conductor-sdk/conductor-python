@@ -40,7 +40,9 @@ class WorkflowClient(ABC):
             start_workflow_request: StartWorkflowRequest,
             request_id: str = None,
             wait_until_task_ref: Optional[str] = None,
-            wait_for_seconds: int = 30
+            wait_for_seconds: int = 30,
+            consistency: Optional[str] = None,
+            return_strategy: Optional[str] = None
     ) -> WorkflowRun:
         pass
 
