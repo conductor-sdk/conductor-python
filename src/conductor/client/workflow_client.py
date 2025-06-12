@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, List, Dict
 
 from conductor.client.http.models import WorkflowRun, SkipTaskRequest, WorkflowStatus, \
-    ScrollableSearchResultWorkflowSummary
+    ScrollableSearchResultWorkflowSummary, SignalResponse
 from conductor.client.http.models.correlation_ids_search_request import CorrelationIdsSearchRequest
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
@@ -40,10 +40,20 @@ class WorkflowClient(ABC):
             start_workflow_request: StartWorkflowRequest,
             request_id: str = None,
             wait_until_task_ref: Optional[str] = None,
+            wait_for_seconds: int = 30
+    ) -> WorkflowRun:
+        pass
+
+    @abstractmethod
+    def execute_workflow_cr(
+            self,
+            start_workflow_request: StartWorkflowRequest,
+            request_id: str = None,
+            wait_until_task_ref: Optional[str] = None,
             wait_for_seconds: int = 30,
             consistency: Optional[str] = None,
             return_strategy: Optional[str] = None
-    ) -> WorkflowRun:
+    ) -> SignalResponse:
         pass
 
     @abstractmethod

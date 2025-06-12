@@ -75,7 +75,7 @@ class TestOrkesWorkflowClient(unittest.TestCase):
         mock.assert_called_with(startWorkflowReq)
         self.assertEqual(wfId, WORKFLOW_UUID)
 
-    @patch.object(WorkflowResourceApi, 'execute_workflow_cr')
+    @patch.object(WorkflowResourceApi, 'execute_workflow')
     def test_executeWorkflow(self, mock):
         expectedWfRun = WorkflowRun()
         mock.return_value = expectedWfRun
@@ -86,8 +86,7 @@ class TestOrkesWorkflowClient(unittest.TestCase):
             startWorkflowReq, "request_id", None, 30
         )
         mock.assert_called_with(body=startWorkflowReq, request_id="request_id", name=WORKFLOW_NAME, version=1,
-                                wait_until_task_ref=None, wait_for_seconds=30, consistency='DURABLE',
-                                return_strategy='TARGET_WORKFLOW')
+                                wait_until_task_ref=None, wait_for_seconds=30)
         self.assertEqual(workflowRun, expectedWfRun)
 
     @patch.object(WorkflowResourceApi, 'pause_workflow')

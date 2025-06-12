@@ -46,14 +46,27 @@ class WorkflowExecutor:
         return workflow_id_list
 
     def execute_workflow(self, request: StartWorkflowRequest, wait_until_task_ref: str = None,
-                         wait_for_seconds: int = 10, request_id: str = None,
-                         consistency: str = None,
-                         return_strategy: str = None) -> WorkflowRun:  # todo change this to SignalResponse
+                         wait_for_seconds: int = 10, request_id: str = None) -> WorkflowRun:
         """Execute a workflow synchronously with optional reactive features"""
         if request_id is None:
             request_id = str(uuid.uuid4())
 
         return self.workflow_client.execute_workflow(
+            start_workflow_request=request,
+            request_id=request_id,
+            wait_until_task_ref=wait_until_task_ref,
+            wait_for_seconds=wait_for_seconds
+        )
+
+    def execute_workflow_cr(self, request: StartWorkflowRequest, wait_until_task_ref: str = None,
+                         wait_for_seconds: int = 10, request_id: str = None,
+                         consistency: str = None,
+                         return_strategy: str = None) -> SignalResponse:
+        """Execute a workflow synchronously with optional reactive features"""
+        if request_id is None:
+            request_id = str(uuid.uuid4())
+
+        return self.workflow_client.execute_workflow_cr(
             start_workflow_request=request,
             request_id=request_id,
             wait_until_task_ref=wait_until_task_ref,
