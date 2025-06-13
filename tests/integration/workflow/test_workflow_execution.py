@@ -371,18 +371,6 @@ def _complete_workflow(workflow_executor: WorkflowExecutor, workflow_id: str):
             status="COMPLETED",
             body={"result": "signal2"}
         )
-
-        # Wait for completion with timeout
-        # max_wait_iterations = 500  # 5 seconds max
-        # for i in range(max_wait_iterations):
-        #     workflow = workflow_executor.get_workflow(workflow_id, include_tasks=True)
-        #     if workflow.status == "COMPLETED":
-        #         logger.info(f'Workflow {workflow_id} completed successfully')
-        #         return
-        #     time.sleep(0.1)
-        #
-        # raise TimeoutError(f'Workflow {workflow_id} did not complete within timeout')
-
     except Exception as e:
         logger.error(f'Failed to complete workflow {workflow_id}: {e}')
         raise
