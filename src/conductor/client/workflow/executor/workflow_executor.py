@@ -47,7 +47,8 @@ class WorkflowExecutor:
 
     def execute_workflow(self, request: StartWorkflowRequest, wait_until_task_ref: str = None,
                          wait_for_seconds: int = 10, request_id: str = None) -> WorkflowRun:
-        """Execute a workflow synchronously with optional reactive features"""
+        """Executes a workflow with StartWorkflowRequest and waits for the completion of the workflow or until a
+        specific task in the workflow """
         if request_id is None:
             request_id = str(uuid.uuid4())
 
