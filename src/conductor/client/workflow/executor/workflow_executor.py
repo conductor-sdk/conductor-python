@@ -251,6 +251,24 @@ class WorkflowExecutor:
             task_id=task_id
         )
 
+    def signal(self, workflow_id: str, status: str, body: Dict[str, Any],
+               return_strategy: str = None) -> SignalResponse:
+        """Update running task in the workflow with given status and output synchronously and return back updated workflow"""
+        return self.task_client.signal_workflow_task_sync(
+            workflow_id=workflow_id,
+            status=status,
+            body=body,
+            return_strategy=return_strategy
+        )
+
+    def signal_async(self, workflow_id: str, status: str, body: Dict[str, Any]) -> None:
+        """Update running task in the workflow with given status and output asynchronously"""
+        return self.task_client.signal_workflow_task_async(
+            workflow_id=workflow_id,
+            status=status,
+            body=body
+        )
+
     def __get_task_result(self, task_id: str, workflow_id: str, task_output: Dict[str, Any], status: str) -> TaskResult:
         return TaskResult(
             workflow_instance_id=workflow_id,
