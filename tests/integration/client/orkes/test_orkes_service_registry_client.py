@@ -64,7 +64,7 @@ class TestOrkesServiceRegistryClient:
         service_registry = ServiceRegistry()
         service_registry.name = HTTP_SERVICE_NAME
         service_registry.type = ServiceType.HTTP.value
-        service_registry.service_uri = "https://petstore.swagger.io/v2/swagger.json"
+        service_registry.service_uri = "http://httpbin:8081/api-docs"
 
         self.client.add_or_update_service(service_registry)
 
@@ -83,7 +83,7 @@ class TestOrkesServiceRegistryClient:
         assert actual_service is not None, f"No http service found with name: {HTTP_SERVICE_NAME}"
         assert actual_service.name == HTTP_SERVICE_NAME
         assert actual_service.type == ServiceType.HTTP.value
-        assert actual_service.service_uri == "https://petstore.swagger.io/v2/swagger.json"
+        assert actual_service.service_uri == "http://httpbin:8081/api-docs"
         assert len(actual_service.methods) > 0
 
         initial_method_count = len(actual_service.methods)
@@ -125,7 +125,7 @@ class TestOrkesServiceRegistryClient:
         service_registry = ServiceRegistry()
         service_registry.name = GRPC_SERVICE_NAME
         service_registry.type = ServiceType.GRPC.value
-        service_registry.service_uri = "localhost:50051"
+        service_registry.service_uri = "grpcbin:50051"
 
         self.client.add_or_update_service(service_registry)
 
