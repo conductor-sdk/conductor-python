@@ -250,12 +250,9 @@ def test_execute_workflow_reactive_features(workflow_executor: WorkflowExecutor)
         input={'test_input': 'default_test'}
     )
 
-    workflow_run_1 = workflow_executor.execute_workflow_cr(
-        request=start_request,
-        wait_until_task_ref=TASK_NAME,
-        wait_for_seconds=30
-        # consistency and return_strategy should default to DURABLE and TARGET_WORKFLOW
-    )
+    workflow_run_1 = workflow_executor.execute_workflow_with_return_strategy(request=start_request,
+                                                                             wait_until_task_ref=TASK_NAME,
+                                                                             wait_for_seconds=30)
 
     assert workflow_run_1 is not None, "Workflow run should not be None"
     logger.debug(f'Test 1 - Workflow ID: {workflow_run_1.workflow_id}, Status: {workflow_run_1.status}')
@@ -272,13 +269,10 @@ def test_execute_workflow_reactive_features(workflow_executor: WorkflowExecutor)
         input={'test_input': 'durable_test'}
     )
 
-    workflow_run_2 = workflow_executor.execute_workflow_cr(
-        request=start_request_2,
-        wait_until_task_ref=TASK_NAME,
-        wait_for_seconds=30,
-        consistency='DURABLE',
-        return_strategy='BLOCKING_WORKFLOW'
-    )
+    workflow_run_2 = workflow_executor.execute_workflow_with_return_strategy(request=start_request_2,
+                                                                             wait_until_task_ref=TASK_NAME,
+                                                                             wait_for_seconds=30, consistency='DURABLE',
+                                                                             return_strategy='BLOCKING_WORKFLOW')
 
     assert workflow_run_2 is not None, "Workflow run should not be None"
     logger.debug(f'Test 2 - Workflow ID: {workflow_run_2.workflow_id}, Status: {workflow_run_2.status}')
@@ -295,13 +289,11 @@ def test_execute_workflow_reactive_features(workflow_executor: WorkflowExecutor)
     )
 
     try:
-        workflow_run_3 = workflow_executor.execute_workflow_cr(
-            request=start_request_3,
-            wait_until_task_ref=TASK_NAME,
-            wait_for_seconds=30,
-            consistency='DURABLE',
-            return_strategy='BLOCKING_WORKFLOW'
-        )
+        workflow_run_3 = workflow_executor.execute_workflow_with_return_strategy(request=start_request_3,
+                                                                                 wait_until_task_ref=TASK_NAME,
+                                                                                 wait_for_seconds=30,
+                                                                                 consistency='DURABLE',
+                                                                                 return_strategy='BLOCKING_WORKFLOW')
 
         assert workflow_run_3 is not None, "Workflow run should not be None"
         logger.debug(f'Test 3 - Workflow ID: {workflow_run_3.workflow_id}, Status: {workflow_run_3.status}')
@@ -323,13 +315,11 @@ def test_execute_workflow_reactive_features(workflow_executor: WorkflowExecutor)
         input={'test_input': 'synchronous_test'}
     )
 
-    workflow_run_4 = workflow_executor.execute_workflow_cr(
-        request=start_request_4,
-        wait_until_task_ref=TASK_NAME,
-        wait_for_seconds=30,
-        consistency='SYNCHRONOUS',
-        return_strategy='BLOCKING_TASK_INPUT'
-    )
+    workflow_run_4 = workflow_executor.execute_workflow_with_return_strategy(request=start_request_4,
+                                                                             wait_until_task_ref=TASK_NAME,
+                                                                             wait_for_seconds=30,
+                                                                             consistency='SYNCHRONOUS',
+                                                                             return_strategy='BLOCKING_TASK_INPUT')
 
     print(f"Raw response type: {type(workflow_run_4)}")
     if workflow_run_4 is None:
@@ -395,13 +385,10 @@ def test_execute_workflow_error_handling(workflow_executor: WorkflowExecutor):
 
     try:
         # This should work because None values get converted to defaults
-        workflow_run = workflow_executor.execute_workflow_cr(
-            request=start_request,
-            wait_until_task_ref=TASK_NAME,
-            wait_for_seconds=5,
-            consistency=None,  # Should default to 'DURABLE'
-            return_strategy=None  # Should default to 'TARGET_WORKFLOW'
-        )
+        workflow_run = workflow_executor.execute_workflow_with_return_strategy(request=start_request,
+                                                                               wait_until_task_ref=TASK_NAME,
+                                                                               wait_for_seconds=5, consistency=None,
+                                                                               return_strategy=None)
         logger.debug(f'Error handling test - Workflow created: {workflow_run.workflow_id}')
 
         if workflow_run.status == 'RUNNING':

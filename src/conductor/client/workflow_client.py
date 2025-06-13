@@ -45,7 +45,7 @@ class WorkflowClient(ABC):
         pass
 
     @abstractmethod
-    def execute_workflow_cr(
+    def execute_workflow_with_return_strategy(
             self,
             start_workflow_request: StartWorkflowRequest,
             request_id: str = None,

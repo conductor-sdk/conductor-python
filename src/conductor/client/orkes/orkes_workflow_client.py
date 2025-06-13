@@ -58,7 +58,7 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
             wait_for_seconds=wait_for_seconds
         )
 
-    def execute_workflow_cr(
+    def execute_workflow_with_return_strategy(
             self,
             start_workflow_request: StartWorkflowRequest,
             request_id: str = None,
@@ -85,16 +85,14 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
         if return_strategy is None:
             return_strategy = 'TARGET_WORKFLOW'
 
-        return self.workflowResourceApi.execute_workflow_cr(
-            body=start_workflow_request,
-            request_id=request_id,
-            version=start_workflow_request.version,
-            name=start_workflow_request.name,
-            wait_until_task_ref=wait_until_task_ref,
-            wait_for_seconds=wait_for_seconds,
-            consistency=consistency,
-            return_strategy=return_strategy
-        )
+        return self.workflowResourceApi.execute_workflow_with_return_strategy(body=start_workflow_request,
+                                                                              name=start_workflow_request.name,
+                                                                              version=start_workflow_request.version,
+                                                                              request_id=request_id,
+                                                                              wait_until_task_ref=wait_until_task_ref,
+                                                                              wait_for_seconds=wait_for_seconds,
+                                                                              consistency=consistency,
+                                                                              return_strategy=return_strategy)
 
     def pause_workflow(self, workflow_id: str):
         self.workflowResourceApi.pause_workflow(workflow_id)

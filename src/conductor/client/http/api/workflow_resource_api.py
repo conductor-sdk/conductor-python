@@ -3053,12 +3053,12 @@ class WorkflowResourceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def execute_workflow_cr(self, body, name, version, **kwargs):  # noqa: E501
+    def execute_workflow_with_return_strategy(self, body, name, version, **kwargs):  # noqa: E501
         """Execute a workflow synchronously with reactive response  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.execute_workflow_cr(body,name,version)
+        >>> thread = api.execute_workflow_with_return_strategy(body,name,version)
         >>> result = thread.get()
 
         :param async_req bool

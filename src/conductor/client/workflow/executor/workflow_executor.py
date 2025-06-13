@@ -58,7 +58,7 @@ class WorkflowExecutor:
             wait_for_seconds=wait_for_seconds
         )
 
-    def execute_workflow_cr(self, request: StartWorkflowRequest, wait_until_task_ref: str = None,
+    def execute_workflow_with_return_strategy(self, request: StartWorkflowRequest, wait_until_task_ref: str = None,
                          wait_for_seconds: int = 10, request_id: str = None,
                          consistency: str = None,
                          return_strategy: str = None) -> SignalResponse:
@@ -66,14 +66,12 @@ class WorkflowExecutor:
         if request_id is None:
             request_id = str(uuid.uuid4())
 
-        return self.workflow_client.execute_workflow_cr(
-            start_workflow_request=request,
-            request_id=request_id,
-            wait_until_task_ref=wait_until_task_ref,
-            wait_for_seconds=wait_for_seconds,
-            consistency=consistency,
-            return_strategy=return_strategy
-        )
+        return self.workflow_client.execute_workflow_with_return_strategy(start_workflow_request=request,
+                                                                          request_id=request_id,
+                                                                          wait_until_task_ref=wait_until_task_ref,
+                                                                          wait_for_seconds=wait_for_seconds,
+                                                                          consistency=consistency,
+                                                                          return_strategy=return_strategy)
 
     def execute(self, name: str, version: Optional[int] = None, workflow_input: Any = {},
                 wait_until_task_ref: str = None, wait_for_seconds: int = 10,
