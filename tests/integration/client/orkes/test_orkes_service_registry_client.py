@@ -140,7 +140,7 @@ class TestOrkesServiceRegistryClient:
         assert actual_service is not None, f"No service found with name: {GRPC_SERVICE_NAME}"
         assert actual_service.name == GRPC_SERVICE_NAME
         assert actual_service.type == ServiceType.GRPC.value
-        assert actual_service.service_uri == "localhost:50051"
+        assert actual_service.service_uri == "grpcbin:50051"
         assert len(actual_service.methods) == 0
 
         initial_method_count = len(actual_service.methods)
@@ -196,7 +196,7 @@ class TestOrkesServiceRegistryClient:
         service_registry = ServiceRegistry()
         service_registry.name = GRPC_SERVICE_NAME + "_proto"
         service_registry.type = ServiceType.GRPC.value
-        service_registry.service_uri = "localhost:50051"
+        service_registry.service_uri = "grpcbin:50051"
 
         self.client.add_or_update_service(service_registry)
 
