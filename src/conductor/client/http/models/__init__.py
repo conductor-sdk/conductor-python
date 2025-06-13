@@ -57,3 +57,4 @@ from conductor.client.http.models.state_change_event import StateChangeEvent, St
 from conductor.client.http.models.workflow_task import CacheConfig
 from conductor.client.http.models.schema_def import SchemaDef
 from conductor.client.http.models.schema_def import SchemaType
+from conductor.client.http.models.signal_response import SignalResponse, TaskStatus

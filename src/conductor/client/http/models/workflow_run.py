@@ -38,7 +38,7 @@ class WorkflowRun:
     _variables: Optional[Dict[str, Any]] = field(default=None, init=False)
     _workflow_id: Optional[str] = field(default=None, init=False)
     _reason_for_incompletion: Optional[str] = field(default=None, init=False)
-    
+
     correlation_id: InitVar[Optional[str]] = None
     create_time: InitVar[Optional[int]] = None
     created_by: InitVar[Optional[str]] = None
@@ -52,7 +52,7 @@ class WorkflowRun:
     variables: InitVar[Optional[Dict[str, Any]]] = None
     workflow_id: InitVar[Optional[str]] = None
     reason_for_incompletion: InitVar[Optional[str]] = None
-    
+
     swagger_types = {
         'correlation_id': 'str',
         'create_time': 'int',
@@ -126,7 +126,7 @@ class WorkflowRun:
             self.workflow_id = workflow_id
         self._reason_for_incompletion = reason_for_incompletion
 
-    def __post_init__(self, correlation_id, create_time, created_by, input, output, priority, request_id, status, 
+    def __post_init__(self, correlation_id, create_time, created_by, input, output, priority, request_id, status,
                      tasks, update_time, variables, workflow_id, reason_for_incompletion):
         if correlation_id is not None:
             self.correlation_id = correlation_id
