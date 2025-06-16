@@ -3076,17 +3076,17 @@ class WorkflowResourceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.execute_workflow_reactive_with_http_info(body, name, version, **kwargs)  # noqa: E501
+            return self.execute_workflow_with_return_strategy_with_http_info(body, name, version, **kwargs)  # noqa: E501
         else:
-            (data) = self.execute_workflow_reactive_with_http_info(body, name, version, **kwargs)  # noqa: E501
+            (data) = self.execute_workflow_with_return_strategy_with_http_info(body, name, version, **kwargs)  # noqa: E501
             return data
 
-    def execute_workflow_reactive_with_http_info(self, body, name, version, **kwargs):  # noqa: E501
+    def execute_workflow_with_return_strategy_with_http_info(self, body, name, version, **kwargs):  # noqa: E501
         """Execute a workflow synchronously with reactive response  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.execute_workflow_reactive_with_http_info(body, name, version, async_req=True)
+        >>> thread = api.execute_workflow_with_return_strategy_with_http_info(body, name, version, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
