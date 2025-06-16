@@ -2,7 +2,7 @@ from typing import Optional, List, Dict
 
 from conductor.client.configuration.configuration import Configuration
 from conductor.client.http.models import SkipTaskRequest, WorkflowStatus, \
-    ScrollableSearchResultWorkflowSummary
+    ScrollableSearchResultWorkflowSummary, SignalResponse
 from conductor.client.http.models.correlation_ids_search_request import CorrelationIdsSearchRequest
 from conductor.client.http.models.rerun_workflow_request import RerunWorkflowRequest
 from conductor.client.http.models.start_workflow_request import StartWorkflowRequest
@@ -58,6 +58,40 @@ class OrkesWorkflowClient(OrkesBaseClient, WorkflowClient):
             wait_until_task_ref=wait_until_task_ref,
             wait_for_seconds=wait_for_seconds,
         )
+
+    def execute_workflow_with_return_strategy(
+            self,
+            start_workflow_request: StartWorkflowRequest,
+            request_id: str = None,
+            wait_until_task_ref: Optional[str] = None,
+            wait_for_seconds: int = 30,
+            consistency: Optional[str] = None,
+            return_strategy: Optional[str] = None
+    ) -> SignalResponse:
+        """Execute a workflow synchronously with optional reactive features
+        Args:
+            start_workflow_request: StartWorkflowRequest containing workflow details
+            request_id: Optional request ID for tracking
+            wait_until_task_ref: Wait until this task reference is reached
+            wait_for_seconds: How long to wait for completion (default 30)
+            consistency: Workflow consistency level - 'DURABLE' or 'SYNCHRONOUS' or 'REGION_DURABLE'
+            return_strategy: Return strategy - 'TARGET_WORKFLOW' or 'BLOCKING_WORKFLOW' or 'BLOCKING_TASK' or 'BLOCKING_TASK_INPUT'
+        Returns:
+            WorkflowRun: The workflow execution result
+        """
+        if consistency is None:
+            consistency = 'DURABLE'
+        if return_strategy is None:
+            return_strategy = 'TARGET_WORKFLOW'
+
+        return self.workflowResourceApi.execute_workflow_with_return_strategy(body=start_workflow_request,
+                                                                              name=start_workflow_request.name,
+                                                                              version=start_workflow_request.version,
+                                                                              request_id=request_id,
+                                                                              wait_until_task_ref=wait_until_task_ref,
+                                                                              wait_for_seconds=wait_for_seconds,
+                                                                              consistency=consistency,
+                                                                              return_strategy=return_strategy)
 
     def pause_workflow(self, workflow_id: str):
         self.workflowResourceApi.pause_workflow(workflow_id)
