@@ -10,6 +10,7 @@ from conductor.client.http.api.prompt_resource_api import PromptResourceApi
 from conductor.client.http.api.scheduler_resource_api import SchedulerResourceApi
 from conductor.client.http.api.schema_resource_api import SchemaResourceApi
 from conductor.client.http.api.secret_resource_api import SecretResourceApi
+from conductor.client.http.api.service_registry_resource_api import ServiceRegistryResourceApi
 from conductor.client.http.api.task_resource_api import TaskResourceApi
 from conductor.client.http.api.user_resource_api import UserResourceApi
 from conductor.client.http.api.workflow_resource_api import WorkflowResourceApi
@@ -36,3 +37,4 @@ class OrkesBaseClient(object):
         self.integrationApi = IntegrationResourceApi(self.api_client)
         self.promptApi = PromptResourceApi(self.api_client)
         self.schemaApi = SchemaResourceApi(self.api_client)
+        self.serviceRegistryResourceApi = ServiceRegistryResourceApi(self.api_client)
